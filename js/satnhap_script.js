@@ -1,7 +1,7 @@
 // script.js
 
-let oldDataGlobal = {}; // Lưu dữ liệu phường/xã cũ từ oldData.json
-let newDataGlobal = {}; // Lưu dữ liệu phường/xã mới từ newData.json
+let oldDataGlobal = {}; // Lưu dữ liệu phường/xã cũ từ satnhap_old_data.json
+let newDataGlobal = {}; // Lưu dữ liệu phường/xã mới từ satnhap_new_data.json
 
 // Hàm load dữ liệu JSON từ file
 async function loadJSON(url) {
@@ -37,10 +37,11 @@ function updateOldUnitSelect(province) {
       const group = document.createElement('optgroup');
       group.label = districtName;
 
-      districtData[districtName].forEach(unitName => {
+      // Giả sử mỗi phần tử bây giờ là đối tượng có cấu trúc { name, mapApi }
+      districtData[districtName].forEach(unitObj => {
         const option = document.createElement('option');
-        option.value = JSON.stringify({ name: unitName });
-        option.textContent = unitName;
+        option.value = JSON.stringify(unitObj);
+        option.textContent = unitObj.name;
         group.appendChild(option);
       });
 
@@ -69,6 +70,25 @@ function findNewWardForOldUnit(oldUnit) {
   return null;
 }
 
+// Hàm cập nhật khung bản đồ dựa trên api của phường/xã cũ đã chọn
+function updateMapDisplay(oldUnit) {
+  const mapContainer = document.getElementById('map-container');
+  if (oldUnit && oldUnit.mapApi) {
+    mapContainer.innerHTML = `
+      <iframe src="${oldUnit.mapApi}" 
+              width="100%" 
+              height="360" 
+              style="border:0; border-radius:8px;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    `;
+  } else {
+    mapContainer.innerHTML = `<p>Vui lòng chọn xã/phường cũ để xem bản đồ.</p>`;
+  }
+}
+
 // Xử lý khi nhấn nút tìm kết quả
 function handleFindResult() {
   const oldUnitSelect = document.getElementById('old-unit-select');
@@ -76,7 +96,7 @@ function handleFindResult() {
   const resultDisplay = document.getElementById('result-display');
 
   if (selectedValue) {
-    const oldUnit = JSON.parse(selectedValue); // Chuyển chuỗi JSON thành object
+    const oldUnit = JSON.parse(selectedValue); // Chuyển chuỗi JSON thành object có { name, mapApi }
     const newWard = findNewWardForOldUnit(oldUnit);
     if (newWard) {
       resultDisplay.innerHTML = `
@@ -86,8 +106,11 @@ function handleFindResult() {
     } else {
       resultDisplay.innerHTML = `<p>Không tìm thấy phường mới tương ứng !!!</p>`;
     }
+    // Cập nhật bản đồ theo API của phường/xã đã chọn
+    updateMapDisplay(oldUnit);
   } else {
     resultDisplay.innerHTML = `<p>Vui lòng chọn xã/phường cũ.</p>`;
+    updateMapDisplay(null);
   }
 }
 
@@ -101,6 +124,8 @@ function setupEvents() {
   provinceSelect.addEventListener('change', () => {
     const selectedProvince = provinceSelect.value;
     updateOldUnitSelect(selectedProvince);
+    // Reset khung bản đồ khi thay đổi tỉnh
+    updateMapDisplay(null);
   });
 
   // Khi chọn xã/phường cũ, kích hoạt nút tìm nếu có giá trị

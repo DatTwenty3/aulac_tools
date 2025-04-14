@@ -13,33 +13,48 @@
       <div class="logo-container">
         <img src="logo/AULAC.png" alt="Logo Âu Lạc" class="logo">
       </div>
-      <h1>Công Cụ Tra Cứu Sáp Nhập Tỉnh</h1>
+      <h1>Công Cụ Tra Cứu Sát Nhập Tỉnh</h1>
       <p>Trà Vinh, Bến Tre, Vĩnh Long</p>
     </div>
   </header>
 
   <main>
-    <section id="selection" class="card">
-      <h3>Chọn Xã/Phường cũ để tìm Phường mới</h3>
-      <label for="province-select">Chọn tỉnh:</label>
-      <select id="province-select">
-        <option value="">-- Chọn tỉnh --</option>
-      </select>
-  
-      <label for="old-unit-select">Chọn xã/phường:</label>
-      <select id="old-unit-select" disabled>
-        <option value="">-- Chọn xã/phường --</option>
-      </select>
-  
-      <button id="find-btn" disabled>Tìm Xã/Phường mới</button>
-    </section>
-  
-    <section id="result" class="card">
-      <h3>Kết quả</h3>
-      <div id="result-display">
-        <p>Vui lòng chọn tỉnh và xã/phường cũ để xem kết quả.</p>
+    <div class="main-container">
+      <!-- Cột trái: phần form và kết quả -->
+      <div class="left-column">
+        <section id="selection" class="card">
+          <h3>Chọn Xã/Phường cũ để tìm Phường mới</h3>
+          <label for="province-select">Chọn tỉnh:</label>
+          <select id="province-select">
+            <option value="">-- Chọn tỉnh --</option>
+          </select>
+
+          <label for="old-unit-select">Chọn xã/phường:</label>
+          <select id="old-unit-select" disabled>
+            <option value="">-- Chọn xã/phường --</option>
+          </select>
+
+          <button id="find-btn" disabled>Tìm Xã/Phường mới</button>
+        </section>
+
+        <section id="result" class="card">
+          <h3>Kết quả</h3>
+          <div id="result-display">
+            <p>Vui lòng chọn tỉnh và xã/phường cũ để xem kết quả.</p>
+          </div>
+        </section>
       </div>
-    </section>
+
+      <!-- Cột phải: khung bản đồ minh họa -->
+      <div class="right-column">
+        <section id="map" class="card">
+          <h3>Bản đồ minh họa</h3>
+          <div id="map-container">
+            <p>Vui lòng chọn xã/phường cũ để xem bản đồ.</p>
+          </div>
+        </section>
+      </div>
+    </div>
   </main>
 
   <footer>
