@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tính định mức chi phí</title>
+  <link rel="stylesheet" href="css/tinhdutoan_style.css" />
+  <link rel="icon" type="image/png" href="logo/AULAC.png">
+</head>
+<body>
+  <div class="container">
+    <div class="logo-container">
+      <img src="logo/AULAC.png" alt="Logo Âu Lạc" class="logo">
+    </div>
+    <h1>Tính định mức các chi phí</h1>
+
+    <div class="form-group">
+      <label for="gxdValue">Chi phí xây dựng trước thuế (Gxd): </label>
+      <input type="number" id="gxdValue" step="any" placeholder="Nhập Gxd (tỷ đồng)" />
+    </div>
+
+    <div class="form-group">
+      <label for="gtbValue">Chi phí thiết bị trước thuế (Gtb): </label>
+      <input type="number" id="gtbValue" step="any" placeholder="Nhập Gtb (tỷ đồng)" />
+    </div>
+
+    <div class="form-group">
+      <strong>Chi phí xây dựng và thiết bị trước thuế (G):</strong>
+      <span id="gTotalDisplay">0.000</span> tỷ đồng
+    </div>
+
+    <div class="form-group">
+      <label for="typeSelect">Loại công trình:</label>
+      <select id="typeSelect">
+        <option value="" disabled selected>-- Chọn loại công trình --</option>
+      </select>
+    </div>
+
+    <!-- Dropdown cho Cấp công trình và Bước thiết kế dành riêng cho chi phí thiết kế kỹ thuật/bản vẽ thi công -->
+    <div class="form-group">
+      <label for="capCongTrinhSelect">Cấp công trình:</label>
+      <select id="capCongTrinhSelect">
+        <option value="" disabled selected>-- Chọn Cấp công trình --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="buocSelect">Bước thiết kế:</label>
+      <select id="buocSelect">
+        <option value="" disabled selected>-- Chọn Bước thiết kế --</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <button id="calcBtn">Tính toán</button>
+    </div>
+
+    <div id="resultSection" style="display: none;">
+      <div class="form-group">
+        <label for="costTypeSelect">Loại chi phí:</label>
+        <select id="costTypeSelect">
+          <option value="" disabled selected>-- Chọn loại chi phí --</option>
+        </select>
+      </div>
+
+      <div id="singleResult" class="result-box"></div>
+    </div>
+  </div>
+
+  <!-- PapaParse để parse CSV -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <script src="js/tinhdutoan_script.js"></script>
+</body>
+</html>

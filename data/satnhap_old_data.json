@@ -1,0 +1,124 @@
+{
+  "Trà Vinh": {
+    "THÀNH PHỐ TRÀ VINH": [
+    "phường 1",
+    "phường 3",
+    "phường 4",
+    "phường 5",
+    "phường 7",
+    "phường 8",
+    "phường 9",
+    "xã Long Đức"
+  ],
+    "HUYỆN CÀNG LONG": [
+    "xã Hoà Thuận",
+    "xã An Trường",
+    "xã An Trường A",
+    "xã Tân Bình",
+    "xã Đại Phước",
+    "xã Nhị Long",
+    "xã Đức Mỹ",
+    "xã Bình Phú",
+    "xã Đại Phúc",
+    "xã Phương Thạnh"
+  ],
+    "HUYỆN CHÂU THÀNH": [
+    "xã Nguyệt Hoá",
+    "xã Lương Hoà",
+    "xã Lương Hoà A",
+    "xã Song Lộc",
+    "xã Bình Chánh",
+    "xã Thanh Mỹ",
+    "xã Đa Lộc",
+    "xã Phước Hảo",
+    "xã Hưng Mỹ",
+    "xã Hoà Lợi"
+  ],
+    "HUYỆN CẦU KÈ": [
+    "thị trấn Cầu Kè",
+    "xã Hòa Ân",
+    "xã Châu Điền",
+    "xã Ninh Thới",
+    "xã Phong Phú",
+    "xã Phong Thạnh",
+    "xã Hoà Tân",
+    "xã An Phú Tân",
+    "xã Tam Ngãi",
+    "xã Thạnh Phú",
+    "xã Thông Hoá"
+  ],
+    "HUYỆN TIỀU CẦN": [
+    "xã Tân Hoà",
+    "xã Long Thới",
+    "thị trấn Cầu Quan",
+    "xã Hùng Hoà",
+    "xã Tân Hùng",
+    "xã Ngãi Hùng",
+    "xã Phú Cần",
+    "xã Hiếu Trung",
+    "thị trấn Tiểu Cần",
+    "xã Tạp Ngãi",
+    "xã Hiếu Tử"
+  ],
+    "HUYỆN CẦU NGANG": [
+    "thị trấn Mỹ Long",
+    "xã Mỹ Long Bắc",
+    "xã Mỹ Long Nam",
+    "xã Vinh Kim",
+    "xã Kim Hoà",
+    "xã Mỹ Hoà",
+    "xã Thuận Hoà",
+    "thị trấn Cầu Ngang",
+    "xã Hiệp Hoà",
+    "xã Nhị Trường",
+    "xã Trường Thọ",
+    "xã Hiệp Mỹ Đông",
+    "xã Hiệp Mỹ Tây",
+    "xã Long Sơn",
+    "xã Thạnh Hoà Sơn"
+  ],
+    "HUYỆN TRÀ CÚ": [
+    "xã An Quảng Hữu",
+    "xã Lưu Nghiệp Anh",
+    "Đại An",
+    "xã Đại An",
+    "thị trấn Định An",
+    "xã Kim Sơn",
+    "xã Hàm Tân",
+    "xã Hàm Giang",
+    "xã Ngãi Xuyên",
+    "xã Thanh Sơn",
+    "thị trấn Trà Cú",
+    "xã Long Hiệp",
+    "xã Tân Hiệp",
+    "xã Ngọc Biên",
+    "xã Tập Sơn",
+    "xã Phước Hưng",
+    "xã Tân Sơn"
+  ],
+    "THỊ XÃ DUYÊN HẢI": [
+    "phường 1 (DH)",
+    "phường 2 (DH)",
+    "xã Long Toàn",
+    "xã Dân Thành",
+    "xã Trường Long Hoà",
+    "xã Long Hữu",
+    "xã Hiệp Thạnh"
+  ],
+    "HUYỆN DUYÊN HẢI": [
+    "thị trấn Long Thành",
+    "xã Long Khánh",
+    "xã Đôn Châu",
+    "xã Đôn Xuân",
+    "xã Ngũ Lạc"
+  ]
+  },
+  "Bến Tre": [
+    {"name": "Phường 1"},
+    {"name": "Xã 3"}
+  ],
+  "Vĩnh Long": [
+    {"name": "Xã 4"},
+    {"name": "Xã 5"}
+  ]
+}

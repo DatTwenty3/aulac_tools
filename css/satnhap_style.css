@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f6fa;
+  color: #333;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  color: #007BFF;
+  margin-bottom: 8px;
+}
+
+header h2 {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+main {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.card {
+  background-color: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  color: #007BFF;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+select, button {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+select:disabled {
+  background-color: #eee;
+  cursor: not-allowed;
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  font-weight: 600;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+#result-display {
+  background-color: #e6f9e6;
+  border-left: 4px solid #66bb6a;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #333;
+  font-size: 1rem;
+}
+
+footer {
+  margin-top: 40px;
+  font-size: 0.9rem;
+  color: #888;
+  text-align: center;
+}
+
+.logo {
+  max-width: 120px; /* Giới hạn kích thước logo */
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}

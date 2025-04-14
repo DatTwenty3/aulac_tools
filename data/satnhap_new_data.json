@@ -1,0 +1,166 @@
+{
+  "phường Long Đức": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 4"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Long Đức"}
+  ],
+  "phường Trà Vinh": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 1"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 3"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 9"}
+  ],
+  "phường Nguyệt Hoá": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 7"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 8"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Nguyệt Hoá"}
+  ],
+  "phường Hoà Thuận": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 5"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hoà Thuận"}
+  ],
+  "xã An Trường": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tân Bình"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã An Trường"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã An Trường A"}
+  ],
+  "xã Nhị Long": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Nhị Long"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Đức Mỹ"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Đại Phước"}
+  ],
+  "xã Bình Phú": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Bình Phú"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Đại Phúc"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Phương Thạnh"}
+  ],
+  "xã Lương Hoà": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Lương Hoà"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Lương Hoà A"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Song Lộc"}
+  ],
+  "xã Châu Thành": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Bình Chánh"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Thanh Mỹ"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Đa Lộc"}
+  ],
+  "xã Hưng Mỹ": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Phước Hảo"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hưng Mỹ"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hoà Lợi"}
+  ],
+  "xã Cầu kè": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Cầu Kè"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hòa Ân"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Châu Điền"}
+  ],
+  "xã Phong Thạnh": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Ninh Thới"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Phong Phú"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Phong Thạnh"}
+  ],
+  "xã Hoà Tân": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hoà Tân"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã An Phú tân"}
+  ],
+  "xã Tam Ngãi": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tam Ngãi"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Thạnh Phú"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Thông Hoá"}
+  ],
+  "xã Tân Hoà": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tân Hoà"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Long Thới"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Cầu Quan"}
+  ],
+  "xã Hùng Hoà": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hùng Hoà"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tân Hùng"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Ngãi Hùng"}
+  ],
+  "xã Tiểu Cần": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Phú Cần"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hiếu Trung"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Tiểu Cần"}
+  ],
+  "xã Tạp Ngãi": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tạp Ngãi"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hiếu Tử"}
+  ],
+  "xã Mỹ Long Bắc": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Mỹ Long"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Mỹ Long Bắc"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Mỹ Long Nam"}
+  ],
+  "xã Vinh Kim": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Vinh Kim"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Kim Hoà"}
+  ],
+  "xã Cầu Ngang": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Cầu Ngang"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Mỹ Hoà"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Thuận Hoà"}
+  ],
+  "xã Nhị Trường": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hiệp Hoà"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Nhị Trường"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Trường Thọ"}
+  ],
+  "xã Hiệp Mỹ": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hiệp Mỹ Đông"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hiệp Mỹ Tây"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Long Sơn"}
+  ],
+  "xã Lưu Nghiệp Anh": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Lưu Nghiệp Anh"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã An Quảng Hữu"}
+  ],
+  "xã Đại An": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "Đại An"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Đại An"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Định An"}
+  ],
+  "xã Hàm Giang": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Kim Sơn"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hàm Tân"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hàm Giang"}
+  ],
+  "xã Trà Cú": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Ngãi Xuyên"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Thanh Sơn"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Trà Cú"}
+  ],
+  "xã Long Hiệp": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Long Hiệp"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tân Hiệp"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Ngọc Biên"}
+  ],
+  "xã Tập Sơn": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tập Sơn"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Phước Hưng"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tân Sơn"}
+  ],
+  "phường Duyên Hải": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 1 (DH)"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Long Toàn"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Dân Thành"}
+  ],
+  "phường Trường Long Hòa": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "phường 2 (DH)"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Trường Long Hoà"}
+  ],
+  "xã Long Hữu": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Long Hữu"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Hiệp Thạnh"}
+  ],
+  "xã Long Thành": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Long Thành"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Long Khánh"}
+  ],
+  "xã Đôn Châu": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Đôn Châu"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Đôn Xuân"}
+  ],
+  "xã Ngũ Lạc": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Ngũ Lạc"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Thạnh Hoà Sơn"}
+  ]
+}

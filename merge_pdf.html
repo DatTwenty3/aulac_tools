@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Công cụ ghép file PDF</title>
+  <!-- Link CSS -->
+  <link rel="stylesheet" href="css/merge_style.css">
+  <link rel="icon" type="image/png" href="logo/AULAC.png">
+  <!-- Thư viện SortableJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+  <!-- Thư viện pdf-lib -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <!-- Thư viện PDF.js để render preview trang đầu tiên của PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.216/pdf.min.js"></script>
+</head>
+<body>
+  <div class="container">
+
+    <div class="logo-container">
+      <img src="logo/AULAC.png" alt="Logo Âu Lạc" class="logo">
+    </div>
+
+    <h1>Công cụ ghép file PDF</h1>
+    <!-- Input upload file -->
+    <input type="file" id="file-input" accept="application/pdf" multiple>
+    
+    <!-- Danh sách các file PDF đã upload dưới dạng lưới -->
+    <div id="pdf-list" class="pdf-grid"></div>
+    
+    <!-- Nút ghép file -->
+    <button id="merge-btn">Ghép file PDF</button>
+  </div>
+  
+  <!-- Link file JavaScript -->
+  <script src="js/merge_script.js"></script>
+</body>
+</html>

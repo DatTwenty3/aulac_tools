@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuyển đổi Word sang Excel</title>
+    <link rel="stylesheet" href="css/word2excel.css">
+    <link rel="icon" type="image/png" href="logo/AULAC.png">
+</head>
+<body>
+
+    <div class="logo-container">
+        <img src="logo/AULAC.png" alt="Logo Âu Lạc" class="logo">
+    </div>
+
+    <h1>Công cụ chuyển đổi file Word sang Excel</h1>
+    <input type="file" id="fileInput" accept=".docx">
+    <button onclick="convertToExcel()">Chuyển đổi</button>
+
+    <!-- Thư viện mammoth.js để đọc file Word -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+    <!-- Thư viện xlsx.js để tạo file Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <!-- File JS xử lý logic -->
+    <script src="js/word2excel.js"></script>
+</body>
+</html>
