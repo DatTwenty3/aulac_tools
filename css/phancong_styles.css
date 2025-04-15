@@ -23,15 +23,16 @@ body {
 
 /* Tiêu đề trang */
 h1 {
-  font-size: 2.5rem;
+  font-size: 24px;
   text-align: center;
   margin-bottom: 20px;
-  color: #007bff;
+  color: #222;
 }
 
 h2, h3 {
-  color: #007bff;
-  margin: 20px 0 10px;
+  font-size: 1.1rem;
+  color: #222;
+  margin: 20px;
 }
 
 /* Form */
@@ -40,7 +41,7 @@ h2, h3 {
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .form-container input[type="text"],
