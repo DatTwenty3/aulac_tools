@@ -1,0 +1,184 @@
+/* Reset & font */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7f9fc;
+  color: #333;
+}
+
+/* Container chính */
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề trang */
+h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #007bff;
+}
+
+h2, h3 {
+  color: #007bff;
+  margin: 20px 0 10px;
+}
+
+/* Form */
+.form-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.form-container input[type="text"],
+.form-container input[type="number"] {
+  flex: 1 1 200px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-container input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.form-container button {
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+  background: #0069d9;
+}
+
+/* Danh sách nhân viên */
+#peopleList {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+#peopleList li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ecf0f1;
+  border-radius: 8px;
+  margin: 8px 0;
+  padding: 12px 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+#peopleList li button {
+  background: #e74c3c;
+  border: none;
+  color: #fff;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#peopleList li button:hover {
+  background: #c0392b;
+}
+
+/* Nút phân công & xuất excel */
+button#assignScheduleBtn,
+button#exportExcelBtn {
+  padding: 14px 30px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  background: #27ae60;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px 5px;
+  display: block;
+  width: 250px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+button#assignScheduleBtn:hover,
+button#exportExcelBtn:hover {
+  background: #1e8449;
+}
+
+/* Bảng kết quả phân công */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+table, th, td {
+  border: 1px solid #ddd;
+}
+
+th, td {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+th {
+  background-color: #007bff;
+  color: #fff;
+}
+
+td {
+  background-color: #f9f9f9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button#assignScheduleBtn,
+  button#exportExcelBtn {
+    width: 100%;
+  }
+}
+
+
+.logo-container {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.logo {
+  max-width: 120px; /* Giới hạn kích thước logo */
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
