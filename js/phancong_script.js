@@ -50,12 +50,18 @@ function renderPeopleList() {
   });
 }
 
-// Hàm phân công ca trực theo ngày từ thứ 2 đến thứ 6
-// Với mỗi phòng ban, mỗi ngày có 1 người được giao ca theo logic ban đầu.
-// Sau khi phân công xong, nếu vẫn còn nhân viên chưa có lượt trực (daysWorked == 0)
-// thì những người này sẽ được "vòng lại" (thêm vào ca trực của ngày thứ 2) của phòng ban đó.
+/**
+ * Hàm phân công ca trực:
+ * - Vòng 1: Phân công ban đầu cho mỗi ngày (thứ 2 - thứ 6) theo phòng ban dựa trên nguyên tắc ưu tiên người đang trực ngày hôm trước nếu còn khả năng,
+ *   hoặc chọn ứng viên đầu tiên chưa đủ số ngày trực.
+ * - Vòng 2: Với mỗi phòng ban và mỗi ngày, nếu còn ứng viên (dù đã từng phân công) mà chưa được phân công ở ngày đó và vẫn còn khả năng trực, phân công thêm.
+ * 
+ * Trả về một đối tượng chứa:
+ *    - schedule: Đối tượng lịch trình dạng { day: { dept: [list of assignments] } }
+ *    - weekdays: Mảng các ngày làm việc.
+ */
 function assignSchedule() {
-  // Nhóm nhân viên theo phòng ban (clone đối tượng để không làm thay đổi dữ liệu gốc)
+  // Nhóm nhân viên theo phòng ban, clone đối tượng để xử lý thuộc tính daysWorked mà không ảnh hưởng đến mảng people gốc
   const departments = {};
   people.forEach(person => {
     if (!departments[person.department]) {
@@ -64,31 +70,34 @@ function assignSchedule() {
     departments[person.department].push({ ...person });
   });
 
+  // Danh sách ngày làm việc từ thứ 2 đến thứ 6
   const weekdays = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6"];
+  // schedule: { day: { department: [list of ca trực] } }
   const schedule = {};
 
-  // Vòng phân công ban đầu: mỗi ngày, mỗi phòng ban có 1 ca trực
+  // --- Vòng 1: Phân công ban đầu ---
   weekdays.forEach(day => {
     schedule[day] = {};
+    // Với mỗi phòng ban
     for (let dept in departments) {
       let chosen = null;
       const candidates = departments[dept];
 
-      // Nếu không phải ngày thứ 2, kiểm tra xem người trực ngày hôm trước (nếu có) có thể tiếp tục không
+      // Nếu không phải thứ 2: ưu tiên giữ ca từ ngày hôm trước nếu ứng viên đó còn khả năng trực
       if (day !== "Thứ 2") {
         const prevDayIndex = weekdays.indexOf(day) - 1;
         const prevDay = weekdays[prevDayIndex];
         if (schedule[prevDay][dept] && schedule[prevDay][dept].length > 0) {
-          // Lấy người trực ngày hôm trước của phòng ban
-          const prevAssigned = schedule[prevDay][dept][0];
-          // Nếu người đó còn đủ số ngày trực, tìm trong danh sách ứng viên
-          chosen = candidates.find(c => c.id === prevAssigned.id && c.daysWorked < c.maxDays);
-          if (chosen) {
-            chosen.daysWorked++;
+          const prevAssigned = schedule[prevDay][dept][0]; // Ca chính của ngày hôm trước
+          if (prevAssigned.daysWorked < prevAssigned.maxDays) {
+            chosen = candidates.find(c => c.id === prevAssigned.id);
+            if (chosen) {
+              chosen.daysWorked++;
+            }
           }
         }
       }
-      // Nếu không có người tiếp tục, duyệt từ đầu danh sách
+      // Nếu không có ứng viên tiếp tục từ hôm trước, chọn ứng viên đầu tiên có thể trực
       if (!chosen) {
         for (let candidate of candidates) {
           if (candidate.daysWorked < candidate.maxDays) {
@@ -98,7 +107,7 @@ function assignSchedule() {
           }
         }
       }
-      // Ghi nhận kết quả ca trực (lưu dưới dạng mảng)
+      // Ghi nhận ca trực ban đầu cho phòng ban tại ngày đó
       if (chosen) {
         schedule[day][dept] = [chosen];
       } else {
@@ -107,72 +116,71 @@ function assignSchedule() {
     }
   });
 
-  // Sau khi phân công ban đầu, kiểm tra từng phòng ban xem có nhân viên nào chưa được phân công (daysWorked == 0)
-  // Nếu có, thêm các nhân viên đó vào ca trực của ngày thứ 2 của cùng phòng ban.
+  // --- Vòng 2: Phân công "vòng lại" ---
+  // Với mỗi phòng ban, duyệt qua tất cả các ngày.
+  // Nếu trong ngày nào đó chưa được phân công (cho phòng ban đã có ca trực ban đầu) và còn ứng viên có khả năng trực, thêm ca phụ.
   for (let dept in departments) {
-    const extraCandidates = departments[dept].filter(c => c.daysWorked === 0);
-    if (extraCandidates.length > 0) {
-      // Nếu chưa có ca trực trong ngày thứ 2 của phòng ban này thì khởi tạo mảng
-      if (!schedule["Thứ 2"][dept]) {
-        schedule["Thứ 2"][dept] = [];
+    weekdays.forEach(day => {
+      // Lấy danh sách các ca đã phân công trong ngày cho phòng ban đó
+      const alreadyAssignedIds = schedule[day][dept].map(p => p.id);
+      // Tìm ứng viên có thể trực (chưa đạt số ngày tối đa) và chưa được phân công ở ngày này
+      const candidate = departments[dept].find(c => c.daysWorked < c.maxDays && !alreadyAssignedIds.includes(c.id));
+      if (candidate) {
+        candidate.daysWorked++;
+        schedule[day][dept].push(candidate);
       }
-      extraCandidates.forEach(c => {
-        // Cập nhật số ngày làm vì được bổ sung ca trực
-        c.daysWorked++;
-        schedule["Thứ 2"][dept].push(c);
-      });
-    }
+    });
   }
 
-  return schedule;
+  return { schedule, weekdays };
 }
 
 // Xử lý nút phân công
 assignScheduleBtn.addEventListener("click", () => {
-  // Reset số ngày đã làm của tất cả nhân viên trước khi phân công
+  // Reset số ngày đã làm của tất cả nhân viên để đảm bảo thuật toán chạy đúng từ đầu
   people.forEach(person => person.daysWorked = 0);
-  const schedule = assignSchedule();
-  renderSchedule(schedule);
+  const result = assignSchedule();
+  renderSchedule(result);
 });
 
-// Hiển thị bảng ca trực, nhóm theo ngày (xử lý mảng các ca trực cho từng phòng ban)
-function renderSchedule(schedule) {
+// Hiển thị bảng ca trực, nhóm theo ngày và hiển thị theo thứ tự cột Nhân viên - Phòng ban
+function renderSchedule(result) {
+  const { schedule, weekdays } = result;
   let html = "<h2>Kết quả phân công ca trực</h2>";
-
-  // Duyệt qua từng ngày trong lịch trực
-  for (let day in schedule) {
+  
+  weekdays.forEach(day => {
     html += `<h3>${day}</h3>`;
     html += "<table border='1' style='width:100%; text-align:center; border-collapse: collapse; margin-bottom: 20px;'>";
     html += "<tr><th>Nhân viên</th><th>Phòng ban</th></tr>";
-
-    // Với mỗi phòng ban trong ngày đó
+    // Với mỗi phòng ban trong ngày đó, hiển thị tất cả các ca (ca chính và ca phụ)
     for (let dept in schedule[day]) {
-      // Vì có thể có nhiều nhân viên được giao ca trong cùng 1 phòng ban của 1 ngày
-      schedule[day][dept].forEach(person => {
+      schedule[day][dept].forEach(assignment => {
         html += `<tr>
-          <td>${person.name}</td>
-          <td>${dept}</td>
-        </tr>`;
+                    <td>${assignment.name}</td>
+                    <td>${dept}</td>
+                 </tr>`;
       });
     }
     html += "</table>";
-  }
+  });
+  
   scheduleResultEl.innerHTML = html;
 }
 
-// Xuất file Excel sử dụng SheetJS với cấu trúc: Ngày, Nhân viên, Phòng ban
+// Xuất file Excel sử dụng SheetJS với cấu trúc: cột "Ngày", "Nhân viên", "Phòng ban"
 exportExcelBtn.addEventListener("click", () => {
-  const schedule = assignSchedule();
+  const result = assignSchedule();
+  const { schedule, weekdays } = result;
   const data = [];
   data.push(["Ngày", "Nhân viên", "Phòng ban"]);
 
-  for (let day in schedule) {
+  weekdays.forEach(day => {
     for (let dept in schedule[day]) {
-      schedule[day][dept].forEach(person => {
-        data.push([day, person.name, dept]);
+      schedule[day][dept].forEach(assignment => {
+        data.push([day, assignment.name, dept]);
       });
     }
-  }
+  });
 
   const ws = XLSX.utils.aoa_to_sheet(data);
   const wb = XLSX.utils.book_new();
