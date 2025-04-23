@@ -100,7 +100,7 @@ const csvConfigs = [
   },
   {
     label: "Chi phí giám sát thi công xây dựng",
-    file: "data/chia_phi_giam_sat_thi_cong_xay_dung.csv",
+    file: "data/chi_phi_giam_sat_thi_cong_xay_dung.csv",
     data: [],
     thresholds: [],
     noteAbove: "*Theo thông tư 12/2021/TT-BXD",
