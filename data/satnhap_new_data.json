@@ -22,6 +22,15 @@
     {"oldProvince": "Trà Vinh", "oldUnit": "xã An Trường"},
     {"oldProvince": "Trà Vinh", "oldUnit": "xã An Trường A"}
   ],
+  "xã Tân An": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Tân An"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Huyền Hội"}
+  ],
+  "xã Càng Long": [
+    {"oldProvince": "Trà Vinh", "oldUnit": "thị trấn Càng Long"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Mỹ Cẩm"},
+    {"oldProvince": "Trà Vinh", "oldUnit": "xã Nhị Long Phú"}
+  ],
   "xã Nhị Long": [
     {"oldProvince": "Trà Vinh", "oldUnit": "xã Nhị Long"},
     {"oldProvince": "Trà Vinh", "oldUnit": "xã Đức Mỹ"},
