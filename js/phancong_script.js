@@ -54,7 +54,7 @@ function renderPeopleList() {
  * Hàm phân công ca trực:
  * - Vòng 1: Phân công ban đầu cho mỗi ngày (thứ 2 - thứ 6) theo phòng ban dựa trên nguyên tắc ưu tiên người đang trực ngày hôm trước nếu còn khả năng,
  *   hoặc chọn ứng viên đầu tiên chưa đủ số ngày trực.
- * - Vòng 2: Với mỗi phòng ban và mỗi ngày, nếu còn ứng viên (dù đã từng phân công) mà chưa được phân công ở ngày đó và vẫn còn khả năng trực, phân công thêm.
+ * - Vòng 2: Phân công thêm theo thứ tự ngược từ thứ 6 đến thứ 2, ưu tiên phân công vào ngày mà ứng viên chưa được phân công.
  * 
  * Trả về một đối tượng chứa:
  *    - schedule: Đối tượng lịch trình dạng { day: { dept: [list of assignments] } }
@@ -116,21 +116,27 @@ function assignSchedule() {
     }
   });
 
-  // --- Vòng 2: Phân công "vòng lại" ---
-  // Với mỗi phòng ban, duyệt qua tất cả các ngày.
-  // Nếu trong ngày nào đó chưa được phân công (cho phòng ban đã có ca trực ban đầu) và còn ứng viên có khả năng trực, thêm ca phụ.
-  for (let dept in departments) {
-    weekdays.forEach(day => {
+  // --- Vòng 2: Phân công "ngược lại" từ thứ 6 đến thứ 2 ---
+  weekdays.slice().reverse().forEach(day => {
+    for (let dept in departments) {
       // Lấy danh sách các ca đã phân công trong ngày cho phòng ban đó
       const alreadyAssignedIds = schedule[day][dept].map(p => p.id);
-      // Tìm ứng viên có thể trực (chưa đạt số ngày tối đa) và chưa được phân công ở ngày này
+      // Tìm ứng viên còn khả năng trực và chưa được phân công ở ngày này
       const candidate = departments[dept].find(c => c.daysWorked < c.maxDays && !alreadyAssignedIds.includes(c.id));
       if (candidate) {
-        candidate.daysWorked++;
-        schedule[day][dept].push(candidate);
+        // Tìm ngày sớm nhất chưa được phân công từ thứ 6 trở về thứ 2
+        for (let i = weekdays.length - 1; i >= 0; i--) {
+          const targetDay = weekdays[i];
+          const targetAssignedIds = schedule[targetDay][dept].map(p => p.id);
+          if (!targetAssignedIds.includes(candidate.id) && candidate.daysWorked < candidate.maxDays) {
+            candidate.daysWorked++;
+            schedule[targetDay][dept].push(candidate);
+            break; // Chỉ phân công vào một ngày, sau đó thoát vòng lặp
+          }
+        }
       }
-    });
-  }
+    }
+  });
 
   return { schedule, weekdays };
 }
