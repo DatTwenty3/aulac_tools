@@ -11,6 +11,12 @@ const topics = [
         subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
         file: "Hamcau_PLR.csv",
         icon: "🌉"
+    },
+    {
+        title: "Cầu - Hầm, Chuyên môn", 
+        subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
+        file: "Hamcau_CM.csv",
+        icon: "🌉"
     }
 ];
 
@@ -101,7 +107,7 @@ function startQuiz() {
     
     selectionSection.style.display = 'none';
     loadingSection.style.display = 'block';
-    document.getElementById('loadingText').textContent = `Đang đọc file ${currentTopic.file}...`;
+    document.getElementById('loadingText').textContent = `Đang tải dữ liệu...`;
     loadCSVFile(currentTopic.file);
 }
 
