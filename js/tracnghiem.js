@@ -2,33 +2,15 @@
 const topics = [
     {
         title: "Cầu - Hầm, Pháp luật chung",
-        subtitle: "Kiến thức pháp luật cơ bản về cầu hầm",
+        subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
         file: "PLC.csv",
         icon: "🌉"
     },
     {
         title: "Cầu - Hầm, Pháp luật riêng", 
-        subtitle: "Quy định chuyên ngành về cầu hầm",
+        subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
         file: "PLR.csv",
         icon: "🏗️"
-    },
-    {
-        title: "An toàn giao thông",
-        subtitle: "Luật giao thông đường bộ",
-        file: "ATGT.csv",
-        icon: "🚦"
-    },
-    {
-        title: "Xây dựng dân dụng",
-        subtitle: "Quy chuẩn xây dựng",
-        file: "XDDD.csv", 
-        icon: "🏢"
-    },
-    {
-        title: "Môi trường",
-        subtitle: "Luật bảo vệ môi trường",
-        file: "MT.csv",
-        icon: "🌱"
     }
 ];
 
@@ -230,6 +212,19 @@ function updateLoadingBar(percentage) {
     }
 }
 
+function formatQuestionText(raw) {
+    // Loại bỏ xuống dòng thừa, chuẩn hóa dấu xuống dòng
+    let text = raw.replace(/\r\n|\r|\n/g, ' ');
+    // Tách phần câu hỏi và đáp án (a. b. c. d.)
+    // Đảm bảo mỗi đáp án bắt đầu từ đầu dòng
+    text = text.replace(/([a-d]\.)/g, '<br><b>$1</b>');
+    // Nếu có đáp án dạng a) b) c) d)
+    text = text.replace(/([a-d]\))/g, '<br><b>$1</b>');
+    // Loại bỏ <br> đầu nếu có
+    text = text.replace(/^<br>/, '');
+    return text.trim();
+}
+
 function loadRandomQuestion() {
     // Chọn câu hỏi ngẫu nhiên
     const randomIndex = Math.floor(Math.random() * questions.length);
@@ -239,8 +234,8 @@ function loadRandomQuestion() {
     const questionNumber = currentQuestion.stt || '?';
     document.getElementById('questionNumber').textContent = `Câu hỏi #${questionNumber}`;
     
-    // Hiển thị câu hỏi với định dạng gốc
-    questionText.innerHTML = currentQuestion.question.replace(/\n/g, '<br>');
+    // Hiển thị câu hỏi với định dạng đẹp
+    questionText.innerHTML = formatQuestionText(currentQuestion.question);
     
     // Tạo 4 lựa chọn A, B, C, D
     const options = ['A', 'B', 'C', 'D'];
