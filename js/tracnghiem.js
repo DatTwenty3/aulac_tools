@@ -3,14 +3,14 @@ const topics = [
     {
         title: "Cầu - Hầm, Pháp luật chung",
         subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
-        file: "PLC.csv",
+        file: "Hamcau_PLC.csv",
         icon: "🌉"
     },
     {
         title: "Cầu - Hầm, Pháp luật riêng", 
         subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
-        file: "PLR.csv",
-        icon: "🏗️"
+        file: "Hamcau_PLR.csv",
+        icon: "🌉"
     }
 ];
 
