@@ -35,7 +35,26 @@ const topics = [
         subtitle: "Định giá xây dựng - Hạng II",
         file: "Dinhgia_CM.csv",
         icon: "💰"
-    }
+    },
+    {
+        title: "Khảo sát định hình, Pháp luật chung", 
+        subtitle: "Khảo sát địa hình - Hạng II",
+        file: "Khaosat_PLC.csv",
+        icon: "🔍"
+    },
+    {
+        title: "Khảo sát định hình, Pháp luật riêng", 
+        subtitle: "Khảo sát địa hình - Hạng II",
+        file: "Khaosat_PLR.csv",
+        icon: "🔍"
+    },
+    {
+        title: "Khảo sát định hình, Chuyên môn", 
+        subtitle: "Khảo sát địa hình - Hạng II",
+        file: "Khaosat_CM.csv",
+        icon: "🔍"
+    },
+    
 ];
 
 let questions = [];
