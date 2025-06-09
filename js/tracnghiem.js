@@ -30,6 +30,12 @@ const topics = [
         file: "Dinhgia_PLR.csv",
         icon: "💰"
     },
+    {
+        title: "Định giá, Chuyên môn", 
+        subtitle: "Định giá xây dựng - Hạng II",
+        file: "Dinhgia_CM.csv",
+        icon: "💰"
+    }
 ];
 
 let questions = [];
