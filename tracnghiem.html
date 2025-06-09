@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống ôn tập trắc nghiệm</title>
+    <link rel="stylesheet" href="css/tracnghiem.css">
+    <link rel="icon" type="image/png" href="logo/AULAC.png">
+</head>
+<body>
+    <div class="container">
+
+        <div class="logo-container">
+            <img src="logo/AULAC.png" alt="Logo Âu Lạc" class="logo">
+        </div>
+
+        <div class="header">
+            <h1 class="title">Hệ thống ôn tập trắc nghiệm thi chứng chỉ hành nghề</h1>
+            <p class="subtitle">Được xây dựng bởi LEDAT 😎</p>
+        </div>
+
+        <div id="selectionSection" class="upload-section">
+            <div class="section-title">
+                <span>📚</span>
+                <span>Chọn bộ câu hỏi</span>
+            </div>
+            <p class="section-subtitle">Vui lòng chọn chủ đề bạn muốn luyện tập</p>
+            
+            <div class="dropdown-container">
+                <label class="dropdown-label">Chủ đề:</label>
+                <div class="custom-select">
+                    <div class="select-styled" id="selectStyled">
+                        <span class="select-placeholder">-- Chọn chủ đề --</span>
+                    </div>
+                    <div class="select-options" id="selectOptions">
+                        <!-- Options sẽ được tạo bằng JavaScript -->
+                    </div>
+                </div>
+                <button class="start-button" id="startButton">Bắt đầu luyện tập</button>
+            </div>
+        </div>
+
+        <div id="loadingSection" class="loading-section">
+            <div class="section-title">
+                <span>⏳</span>
+                <span>Đang tải dữ liệu...</span>
+            </div>
+            <p class="loading-text" id="loadingText">Đang đọc dữ liệu...</p>
+            <div class="loading-bar-container">
+                <div class="loading-bar" id="loadingBar"></div>
+            </div>
+        </div>
+
+        <div id="quizContainer" class="quiz-container">
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalQuestions">0</div>
+                    <div class="stat-label">Tổng câu hỏi</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="correctAnswers">0</div>
+                    <div class="stat-label">Đúng</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="wrongAnswers">0</div>
+                    <div class="stat-label">Sai</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="accuracy">0%</div>
+                    <div class="stat-label">Độ chính xác</div>
+                </div>
+            </div>
+
+            <div class="question-card">
+                <div class="question-number" id="questionNumber">Câu hỏi #1</div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+                <div class="buttons">
+                    <button id="submitBtn" class="btn btn-primary" disabled>Xác nhận đáp án</button>
+                    <button id="nextBtn" class="btn btn-secondary" style="display: none;">Câu tiếp theo >></button>
+                    <button onclick="backToSelection()" class="btn" style="background: #6c757d; color: white; margin-left: auto;">
+                        ← Đổi chủ đề
+                    </button>
+                </div>
+                <div id="result" class="result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    <script src="js/tracnghiem.js"></script>
+</body>
+</html>
