@@ -17,7 +17,19 @@ const topics = [
         subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
         file: "Hamcau_CM.csv",
         icon: "🌉"
-    }
+    },
+    {
+        title: "Định giá, Pháp luật chung", 
+        subtitle: "Định giá xây dựng - Hạng II",
+        file: "Dinhgia_PLC.csv",
+        icon: "💰"
+    },
+    {
+        title: "Định giá, Pháp luật riêng", 
+        subtitle: "Định giá xây dựng - Hạng II",
+        file: "Dinhgia_PLR.csv",
+        icon: "💰"
+    },
 ];
 
 let questions = [];
