@@ -331,16 +331,36 @@ function submitAnswer() {
         result.innerHTML = '❌ Sai rồi! Đáp án đúng là: ' + correctAnswer;
     }
     
-    // Hiển thị nút next
-    submitBtn.style.display = 'none';
-    nextBtn.style.display = 'inline-block';
+    // Kiểm tra nếu hết câu hỏi thì hiển thị chúc mừng và tổng kết
+    if (remainingQuestions.length === 0) {
+        setTimeout(() => {
+            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+            quizContainer.innerHTML = `
+                <div class="result correct" style="font-size:1.5em; padding: 40px;">
+                    🎉 Chúc mừng bạn đã hoàn thành toàn bộ câu hỏi!<br>Vui lòng tải lại trang (F5) để bắt đầu lại.<br><br>
+                    <div style='font-size:1em; max-width:400px; margin:24px auto 0 auto; background:rgba(25,118,210,0.06); border-radius:12px; padding:18px 24px;'>
+                        <div style='text-align:center; font-weight:bold; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;'>Kết quả tổng kết:</div>
+                        • Tổng số câu: <b>${stats.total}</b><br>
+                        • Số câu đúng: <b style='color:#28a745;'>${stats.correct}</b><br>
+                        • Số câu sai: <b style='color:#dc3545;'>${stats.wrong}</b><br>
+                        • Độ chính xác: <b>${accuracy}%</b>
+                    </div>
+                </div>
+            `;
+        }, 1200);
+        submitBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+    } else {
+        // Hiển thị nút next
+        submitBtn.style.display = 'none';
+        nextBtn.style.display = 'inline-block';
+    }
 }
 
 function nextQuestion() {
+    if (remainingQuestions.length === 0) return; // Đã hết câu hỏi, không làm gì nữa
     loadRandomQuestion();
     submitBtn.style.display = 'inline-block';
-    
-    // Enable lại click cho options
     document.querySelectorAll('.option').forEach(opt => {
         opt.style.pointerEvents = 'auto';
     });
