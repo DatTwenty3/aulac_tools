@@ -242,16 +242,36 @@ function updateLoadingBar(percentage) {
 }
 
 function formatQuestionText(raw) {
-    // Loại bỏ xuống dòng thừa, chuẩn hóa dấu xuống dòng
+    // Chuẩn hóa xuống dòng thành 1 dòng
     let text = raw.replace(/\r\n|\r|\n/g, ' ');
-    // Tách phần câu hỏi và đáp án (a. b. c. d.)
-    // Đảm bảo mỗi đáp án bắt đầu từ đầu dòng
-    text = text.replace(/([a-d]\.)/g, '<br><b>$1</b>');
-    // Nếu có đáp án dạng a) b) c) d)
-    text = text.replace(/([a-d]\))/g, '<br><b>$1</b>');
-    // Loại bỏ <br> đầu nếu có
-    text = text.replace(/^<br>/, '');
-    return text.trim();
+
+    // Tìm vị trí bắt đầu đáp án a.
+    let match = text.match(/([aA][\.|\)]\s)/);
+    if (!match) return text.trim();
+
+    let idx = text.indexOf(match[0]);
+    let question = text.slice(0, idx).trim();
+    let answers = text.slice(idx);
+
+    // Tách đáp án, chỉ lấy đúng 4 đáp án a, b, c, d (không lặp, không trùng)
+    let answerArr = [];
+    let usedLabels = {};
+    let regex = /([a-dA-D][\.|\)])\s(.*?)(?= [a-dA-D][\.|\)]|$)/g;
+    let m;
+    while ((m = regex.exec(answers)) !== null) {
+        let label = m[1].toLowerCase();
+        if (!usedLabels[label] && answerArr.length < 4) {
+            answerArr.push(`<b>${m[1].toLowerCase()}</b> ${m[2].trim()}`);
+            usedLabels[label] = true;
+        }
+    }
+
+    // Nếu không đủ 4 đáp án, fallback về tách cũ
+    if (answerArr.length < 4) {
+        return text.replace(/([a-d]\.)/gi, '<br><b>$1</b>').replace(/^<br>/, '').trim();
+    }
+
+    return `<div style="margin-bottom:10px;">${question}</div>` + answerArr.map(a => `<div style="margin-bottom:4px;">${a}</div>`).join('');
 }
 
 function loadRandomQuestion() {
