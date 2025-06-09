@@ -279,14 +279,24 @@ function loadRandomQuestion() {
     if (remainingQuestions.length === 0) {
         quizContainer.innerHTML = `
             <div class="result correct" style="font-size:1.5em; padding: 40px;">
-                🎉 Chúc mừng bạn đã hoàn thành toàn bộ câu hỏi!<br>Hãy ôn tập lại để đạt kết quả tốt nhất!
-            </div>
-            <div style="text-align:center; margin-top:30px;">
-                <button onclick="backToSelection()" class="btn btn-secondary">← Đổi chủ đề</button>
+                🎉 Chúc mừng bạn đã hoàn thành toàn bộ câu hỏi!<br>Vui lòng tải lại trang (F5) để bắt đầu lại.<br><br>
+                <div style='font-size:1em; text-align:left; max-width:400px; margin:24px auto 0 auto; background:rgba(25,118,210,0.06); border-radius:12px; padding:18px 24px;'>
+                    <div style='text-align:center; font-weight:bold; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;'>Kết quả tổng kết:</div>
+                    • Tổng số câu: <b>${stats.total}</b><br>
+                    • Số câu đúng: <b style='color:#28a745;'>${stats.correct}</b><br>
+                    • Số câu sai: <b style='color:#dc3545;'>${stats.wrong}</b><br>
+                    • Độ chính xác: <b>${accuracy}%</b>
+                </div>
             </div>
         `;
         return;
     }
+
+    // Luôn reset lại nút xác nhận đáp án
+    submitBtn.style.display = 'inline-block';
+    submitBtn.disabled = true;
+    nextBtn.style.display = 'none';
+
     // Chọn câu hỏi ngẫu nhiên từ remainingQuestions
     const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
     currentQuestion = remainingQuestions[randomIndex];
@@ -317,8 +327,6 @@ function loadRandomQuestion() {
     
     // Reset trạng thái
     selectedAnswer = null;
-    submitBtn.disabled = true;
-    nextBtn.style.display = 'none';
     result.style.display = 'none';
     
     // Xóa các class highlight
