@@ -32,6 +32,12 @@ body {
     right: 0;
     height: 5px;
     background: linear-gradient(90deg, #1976d2, #ff9800);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    width: calc(100% - 0px);
+    box-sizing: border-box;
+    z-index: 1;
+    overflow: hidden;
 }
 
 .header {

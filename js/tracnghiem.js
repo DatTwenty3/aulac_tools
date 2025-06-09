@@ -24,6 +24,8 @@ let stats = {
     wrong: 0
 };
 
+let remainingQuestions = [];
+
 const selectionSection = document.getElementById('selectionSection');
 const loadingSection = document.getElementById('loadingSection');
 const quizContainer = document.getElementById('quizContainer');
@@ -146,6 +148,9 @@ async function loadCSVFile(filename) {
                 document.getElementById('totalQuestions').textContent = questions.length;
                 updateStats();
                 
+                // Khởi tạo mảng câu hỏi chưa làm
+                remainingQuestions = [...questions];
+                
                 // Hiển thị quiz sau một chút delay
                 setTimeout(() => {
                     loadingSection.style.display = 'none';
@@ -226,9 +231,23 @@ function formatQuestionText(raw) {
 }
 
 function loadRandomQuestion() {
-    // Chọn câu hỏi ngẫu nhiên
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    currentQuestion = questions[randomIndex];
+    // Nếu hết câu hỏi thì chúc mừng
+    if (remainingQuestions.length === 0) {
+        quizContainer.innerHTML = `
+            <div class="result correct" style="font-size:1.5em; padding: 40px;">
+                🎉 Chúc mừng bạn đã hoàn thành toàn bộ câu hỏi!<br>Hãy ôn tập lại để đạt kết quả tốt nhất!
+            </div>
+            <div style="text-align:center; margin-top:30px;">
+                <button onclick="backToSelection()" class="btn btn-secondary">← Đổi chủ đề</button>
+            </div>
+        `;
+        return;
+    }
+    // Chọn câu hỏi ngẫu nhiên từ remainingQuestions
+    const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+    currentQuestion = remainingQuestions[randomIndex];
+    // Xóa câu hỏi này khỏi mảng để không lặp lại
+    remainingQuestions.splice(randomIndex, 1);
     
     // Hiển thị số thứ tự từ cột stt
     const questionNumber = currentQuestion.stt || '?';
