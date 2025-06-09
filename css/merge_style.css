@@ -1,10 +1,14 @@
 /* 🌟 Thiết lập nền sáng nhưng sang trọng */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f8f9fa;
+  background: #e3f2fd;
   color: #333;
   margin: 0;
   padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Container chính với hiệu ứng bóng đổ nhẹ */
@@ -12,17 +16,23 @@ body {
   max-width: 800px;
   margin: 0 auto;
   background-color: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(25, 118, 210, 0.08);
+  width: 100%;
+  position: relative;
 }
 
 /* 🎯 Tiêu đề được thiết kế hiện đại */
 h1 {
   text-align: center;
-  font-size: 24px;
+  font-size: 2.5em;
   margin-bottom: 20px;
-  color: #222;
+  font-weight: 700;
+  background: linear-gradient(90deg, #1976d2, #ff9800);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* 🌟 Ô chọn file */
@@ -106,32 +116,39 @@ h1 {
 }
 
 .logo-container {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 10px;
+  text-align: center;
 }
 
 .logo {
-  max-width: 120px; /* Giới hạn kích thước logo */
+  max-width: 120px;
   height: auto;
   display: block;
   margin: 0 auto;
 }
 
 /* 🎯 Nút ghép file PDF */
-#merge-btn {
+#merge-btn, button {
   display: block;
   width: 100%;
-  padding: 12px;
-  background-color: #007bff;
+  padding: 15px 40px;
+  background-color: #ff9800;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  font-size: 18px;
+  border-radius: 12px;
+  font-size: 1.2em;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 10px;
 }
 
-#merge-btn:hover {
-  background-color: #0056b3;
+#merge-btn:hover, button:hover {
+  background-color: #1976d2;
   transform: translateY(-2px);
 }

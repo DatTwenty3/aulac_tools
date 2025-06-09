@@ -1,15 +1,34 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    text-align: center;
-    background-color: #f8f9fa;
+    background: #e3f2fd;
     color: #333;
     margin: 0;
     padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(25, 118, 210, 0.08);
+    padding: 40px;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
 }
 
 h1 {
-    color: #333;
-    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #1976d2, #ff9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 input[type="file"] {
@@ -19,26 +38,34 @@ input[type="file"] {
 }
 
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
+    padding: 15px 40px;
+    background: #ff9800;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 10px;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background: #1976d2;
 }
 
 .logo-container {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .logo {
-    max-width: 120px; /* Giới hạn kích thước logo */
+    max-width: 120px;
     height: auto;
     display: block;
     margin: 0 auto;

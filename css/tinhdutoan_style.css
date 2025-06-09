@@ -1,44 +1,54 @@
 /* 🌟 Thiết lập nền sáng nhưng sang trọng */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f8f9fa;
+    background: #e3f2fd;
     color: #333;
     margin: 0;
     padding: 20px;
-  }
-  
-  /* Container chính với hiệu ứng bóng đổ nhẹ */
-  .container {
-    max-width: 600px;       /* thu hẹp lại cho vừa hơn */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container chính với hiệu ứng bóng đổ nhẹ */
+.container {
+    max-width: 800px;
     margin: 0 auto;
     background-color: #ffffff;
-    padding: 20px 30px;     /* tăng padding ngang */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* 🎯 Tiêu đề được thiết kế hiện đại */
-  h1 {
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(25, 118, 210, 0.08);
+    width: 100%;
+    position: relative;
+}
+
+/* 🎯 Tiêu đề được thiết kế hiện đại */
+h1 {
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 30px;    /* tăng khoảng cách xuống dưới */
-    color: #222;
-  }
-  
-  /* Form nhóm: label trên, control dưới */
-  .form-group {
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #1976d2, #ff9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Form nhóm: label trên, control dưới */
+.form-group {
     margin-bottom: 20px;
-  }
-  
-  .form-group label {
+}
+
+.form-group label {
     display: block;
     font-size: 16px;
     margin-bottom: 8px;
     color: #444;
-  }
-  
-  .form-group input,
-  .form-group select {
+}
+
+.form-group input,
+.form-group select {
     display: block;
     width: 100%;
     padding: 10px;
@@ -47,83 +57,93 @@ body {
     border: 1px solid #ccc;
     border-radius: 6px;
     transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  
-  .form-group input:focus,
-  .form-group select:focus {
+}
+
+.form-group input:focus,
+.form-group select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-  }
-  
-  /* 🎯 Nút tính toán */
-  #calcBtn {
+}
+
+/* 🎯 Nút tính toán */
+#calcBtn, button {
     display: block;
     width: 100%;
-    padding: 12px;
-    background-color: #007bff;
+    padding: 15px 40px;
+    background-color: #ff9800;
     color: #fff;
     border: none;
-    border-radius: 6px;
-    font-size: 18px;
-    font-family: inherit;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
     margin-top: 10px;
-  }
-  
-  #calcBtn:hover {
-    background-color: #0056b3;
-    transform: translateY(-1px);
-  }
-  
-  /* Kết quả */
-  #results h2 {
+}
+
+#calcBtn:hover, button:hover {
+    background-color: #1976d2;
+    transform: translateY(-2px);
+}
+
+/* Kết quả */
+#results h2 {
     font-size: 20px;
     margin-top: 25px;
     color: #222;
-  }
-  
-  #results p {
+}
+
+#results p {
     font-size: 16px;
     margin: 8px 0;
-  }
+}
 
-  /* 🔴 Tô màu đỏ cho kết quả định mức */
+/* 🔴 Tô màu đỏ cho kết quả định mức */
 .highlight {
-  color: #d93025; /* đỏ sang trọng, không quá gắt */
-  font-weight: bold;
+    color: #d93025; /* đỏ sang trọng, không quá gắt */
+    font-weight: bold;
 }
 
 .result-box {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #e6f9e6;
-  border-left: 4px solid #66bb6a;
-  border-radius: 4px;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #e6f9e6;
+    border-left: 4px solid #66bb6a;
+    border-radius: 4px;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    text-align: center;
 }
 
 .logo {
-  max-width: 120px; /* Giới hạn kích thước logo */
-  height: auto;
-  display: block;
-  margin: 0 auto;
+    max-width: 120px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 .note {
-  font-size: 0.95rem;
-  margin: 0.5rem 0;
-  font-style: italic;
-  color: #555;
+    font-size: 0.95rem;
+    margin: 0.5rem 0;
+    font-style: italic;
+    color: #555;
 }
 
 .note-above {
-  color: #d9534f; /* màu đỏ đẹp nhẹ */
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+    color: #d9534f; /* màu đỏ đẹp nhẹ */
+    margin-bottom: 0.5rem;
+    font-weight: bold;
 }
 
 .note-below {
-  color: #555; /* giữ màu xám nhạt cho phần dưới */
-  margin-top: 0.5rem;
+    color: #555; /* giữ màu xám nhạt cho phần dưới */
+    margin-top: 0.5rem;
 }
