@@ -1,0 +1,62 @@
+/* phongthi.css - style tương tự tracnghiem.css */
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap');
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #e3f2fd;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(25, 118, 210, 0.08);
+    padding: 40px;
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+}
+
+.title {
+    color: #1976d2;
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    background: linear-gradient(90deg, #1976d2, #ff9800);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.subtitle {
+    color: #666;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.btn-phongthi {
+    display: inline-block;
+    background: linear-gradient(90deg, #1976d2 60%, #ff9800 100%);
+    color: #fff;
+    font-weight: 600;
+    padding: 14px 36px;
+    border-radius: 14px;
+    font-size: 1.1em;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+    transition: background 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 24px;
+}
+.btn-phongthi:hover {
+    background: linear-gradient(90deg, #ff9800 60%, #1976d2 100%);
+    color: #fff;
+} 
