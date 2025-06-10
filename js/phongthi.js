@@ -82,14 +82,79 @@ document.addEventListener('DOMContentLoaded', function() {
             Papa.parse(file, {
                 download: true,
                 header: true,
+                skipEmptyLines: true,
+                transformHeader: header => header.trim(),
+                transform: value => value.trim(),
                 complete: function(results) {
-                    resolve(results.data);
+                    if (results.errors && results.errors.length > 0) {
+                        console.error('CSV parsing errors:', results.errors);
+                        reject(new Error('Lỗi khi đọc file CSV: ' + results.errors[0].message));
+                        return;
+                    }
+                    
+                    // Kiểm tra dữ liệu
+                    const validData = results.data.filter(row => {
+                        return row.stt && row.question && row.answer;
+                    });
+                    
+                    if (validData.length === 0) {
+                        reject(new Error('Không tìm thấy dữ liệu hợp lệ trong file CSV'));
+                        return;
+                    }
+                    
+                    resolve(validData);
                 },
                 error: function(error) {
-                    reject(error);
+                    console.error('CSV download error:', error);
+                    reject(new Error('Không thể tải file CSV: ' + error.message));
                 }
             });
         });
+    }
+
+    // Hàm tải dữ liệu câu hỏi
+    async function loadQuestions(subjectId) {
+        try {
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) {
+                throw new Error('Không tìm thấy môn thi');
+            }
+
+            let allQuestions = [];
+            
+            // Tải câu hỏi pháp luật
+            for (const file of subject.files.law) {
+                try {
+                    const questions = await readCSVFile(file);
+                    questions.forEach(q => q.type = 'law');
+                    allQuestions = allQuestions.concat(questions);
+                } catch (error) {
+                    console.error(`Lỗi khi tải file ${file}:`, error);
+                    throw new Error(`Không thể tải câu hỏi pháp luật: ${error.message}`);
+                }
+            }
+
+            // Tải câu hỏi chuyên môn
+            for (const file of subject.files.specialized) {
+                try {
+                    const questions = await readCSVFile(file);
+                    questions.forEach(q => q.type = 'specialized');
+                    allQuestions = allQuestions.concat(questions);
+                } catch (error) {
+                    console.error(`Lỗi khi tải file ${file}:`, error);
+                    throw new Error(`Không thể tải câu hỏi chuyên môn: ${error.message}`);
+                }
+            }
+
+            if (allQuestions.length === 0) {
+                throw new Error('Không tìm thấy câu hỏi nào');
+            }
+
+            return allQuestions;
+        } catch (error) {
+            console.error('Lỗi khi tải câu hỏi:', error);
+            throw error;
+        }
     }
 
     // Hàm chọn ngẫu nhiên câu hỏi
@@ -100,22 +165,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Hàm định dạng lại câu hỏi và đáp án từ 1 chuỗi (copy từ tracnghiem.js)
     function formatQuestionText(raw) {
+        if (!raw || typeof raw !== 'string') {
+            console.error('Invalid question text:', raw);
+            return 'Câu hỏi không hợp lệ';
+        }
+
         // Chuẩn hóa xuống dòng thành 1 dòng
-        let text = raw.replace(/\r\n|\r|\n/g, ' ');
+        let text = raw.replace(/\r\n|\r|\n/g, ' ').trim();
+        
+        // Kiểm tra nếu text rỗng
+        if (!text) {
+            console.error('Empty question text');
+            return 'Câu hỏi không hợp lệ';
+        }
 
         // Tìm vị trí bắt đầu đáp án a.
         let match = text.match(/([aA][\.|\)]\s)/);
-        if (!match) return text.trim();
+        if (!match) {
+            console.warn('No answer options found in:', text);
+            return text;
+        }
 
         let idx = text.indexOf(match[0]);
         let question = text.slice(0, idx).trim();
         let answers = text.slice(idx);
 
-        // Tách đáp án, chỉ lấy đúng 4 đáp án a, b, c, d (không lặp, không trùng)
+        // Tách đáp án, chỉ lấy đúng 4 đáp án a, b, c, d
         let answerArr = [];
         let usedLabels = {};
         let regex = /([a-dA-D][\.|\)])\s(.*?)(?= [a-dA-D][\.|\)]|$)/g;
         let m;
+        
         while ((m = regex.exec(answers)) !== null) {
             let label = m[1].toLowerCase();
             if (!usedLabels[label] && answerArr.length < 4) {
@@ -124,12 +204,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Nếu không đủ 4 đáp án, fallback về tách cũ
+        // Nếu không đủ 4 đáp án, thử tách theo cách khác
         if (answerArr.length < 4) {
-            return text.replace(/([a-d]\.)/gi, '<br><b>$1</b>').replace(/^<br>/, '').trim();
+            answerArr = [];
+            let parts = answers.split(/([a-dA-D][\.|\)])/);
+            for (let i = 1; i < parts.length; i += 2) {
+                if (i + 1 < parts.length) {
+                    let label = parts[i].toLowerCase();
+                    if (!usedLabels[label] && answerArr.length < 4) {
+                        answerArr.push(`<b>${label}</b> ${parts[i + 1].trim()}`);
+                        usedLabels[label] = true;
+                    }
+                }
+            }
         }
 
-        return `<div style="margin-bottom:10px;">${question}</div>` + answerArr.map(a => `<div style="margin-bottom:4px;">${a}</div>`).join('');
+        // Nếu vẫn không đủ 4 đáp án, trả về định dạng đơn giản
+        if (answerArr.length < 4) {
+            return `<div style="margin-bottom:10px;">${question}</div>` + 
+                   `<div style="margin-bottom:4px;">${answers.replace(/([a-d]\.)/gi, '<br><b>$1</b>').replace(/^<br>/, '')}</div>`;
+        }
+
+        return `<div style="margin-bottom:10px;">${question}</div>` + 
+               answerArr.map(a => `<div style="margin-bottom:4px;">${a}</div>`).join('');
     }
 
     // Hàm tạo câu hỏi
@@ -189,41 +286,50 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Hàm nộp bài
-    function submitExam() {
+    async function submitExam() {
         clearInterval(timerInterval);
         
         // Tính điểm
         let lawScore = 0;
         let specializedScore = 0;
+        let totalQuestions = questions.length;
+        let lawQuestions = questions.filter(q => q.type === 'law').length;
+        let specializedQuestions = questions.filter(q => q.type === 'specialized').length;
         
         questions.forEach((question, index) => {
             const selectedAnswer = selectedAnswers[index];
-            if (selectedAnswer === question.answer) {
+            if (selectedAnswer && question.answer && selectedAnswer.toUpperCase() === question.answer.toUpperCase()) {
                 if (question.type === 'law') {
                     lawScore++;
-                } else {
+                } else if (question.type === 'specialized') {
                     specializedScore++;
                 }
             }
         });
 
-        const totalScore = lawScore + specializedScore;
+        // Tính điểm theo tỷ lệ
+        const lawPercentage = lawQuestions > 0 ? (lawScore / lawQuestions) * 10 : 0;
+        const specializedPercentage = specializedQuestions > 0 ? (specializedScore / specializedQuestions) * 20 : 0;
+        const totalScore = Math.round(lawPercentage + specializedPercentage);
 
         // Hiển thị kết quả
         document.getElementById('totalScore').textContent = `${totalScore}/30`;
-        document.getElementById('lawScore').textContent = `${lawScore}/10`;
-        document.getElementById('specializedScore').textContent = `${specializedScore}/20`;
+        document.getElementById('lawScore').textContent = `${lawScore}/${lawQuestions}`;
+        document.getElementById('specializedScore').textContent = `${specializedScore}/${specializedQuestions}`;
 
         // Hiển thị đáp án đúng/sai
         questions.forEach((question, index) => {
             const questionCard = questionsContainer.children[index];
+            if (!questionCard) return;
+            
             const optionItems = questionCard.querySelectorAll('.option-item');
+            const selectedAnswer = selectedAnswers[index];
             
             optionItems.forEach(item => {
                 const option = item.dataset.option;
-                if (option === question.answer) {
+                if (option && question.answer && option.toUpperCase() === question.answer.toUpperCase()) {
                     item.classList.add('correct');
-                } else if (option === selectedAnswers[index] && option !== question.answer) {
+                } else if (selectedAnswer && option === selectedAnswer && option !== question.answer) {
                     item.classList.add('incorrect');
                 }
             });
@@ -249,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const timeUsedSec = totalTime - timeLeft - 1;
         const min = Math.floor(timeUsedSec / 60);
         const sec = timeUsedSec % 60;
-        document.getElementById('timeUsed').textContent = `${min} phút ${sec.toString().padStart(2, '0')} giây`;
+        document.getElementById('timeUsed').textContent = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
     }
 
     // Hàm hiển thị lại bài làm
@@ -301,32 +407,31 @@ document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
-    // Xử lý sự kiện khi click vào nút bắt đầu thi
+    // Cập nhật xử lý sự kiện nút bắt đầu
     startButton.addEventListener('click', async function() {
-        if (!startButton.classList.contains('enabled')) return;
-
-        const subjectId = startButton.dataset.subjectId;
-        const subject = subjects.find(s => s.id === subjectId);
+        const subjectId = this.dataset.subjectId;
+        if (!subjectId) {
+            alert('Vui lòng chọn môn thi');
+            return;
+        }
 
         try {
-            // Đọc câu hỏi pháp luật
-            let lawQuestions = [];
-            for (const file of subject.files.law) {
-                const data = await readCSVFile(file);
-                lawQuestions = lawQuestions.concat(data);
-            }
-            lawQuestions = getRandomQuestions(lawQuestions, 10);
+            // Hiển thị loading
+            startButton.disabled = true;
+            startButton.textContent = 'Đang tải...';
 
-            // Đọc câu hỏi chuyên môn
-            const specializedData = await readCSVFile(subject.files.specialized[0]);
-            const specializedQuestions = getRandomQuestions(specializedData, 20);
-
-            // Gộp câu hỏi
-            questions = [
-                ...lawQuestions.map(q => ({ ...q, type: 'law' })),
-                ...specializedQuestions.map(q => ({ ...q, type: 'specialized' }))
-            ];
-
+            // Tải câu hỏi
+            questions = await loadQuestions(subjectId);
+            
+            // Chọn ngẫu nhiên câu hỏi
+            const lawQuestions = questions.filter(q => q.type === 'law');
+            const specializedQuestions = questions.filter(q => q.type === 'specialized');
+            
+            const selectedLawQuestions = getRandomQuestions(lawQuestions, 10);
+            const selectedSpecializedQuestions = getRandomQuestions(specializedQuestions, 20);
+            
+            questions = [...selectedLawQuestions, ...selectedSpecializedQuestions];
+            
             // Tạo giao diện câu hỏi
             questionsContainer.innerHTML = '';
             questions.forEach((question, index) => {
@@ -338,14 +443,19 @@ document.addEventListener('DOMContentLoaded', function() {
             selectionSection.style.display = 'none';
             examSection.style.display = 'block';
 
-            // Bắt đầu đếm ngược
+            // Bắt đầu đếm thời gian
             timeLeft = 30 * 60;
+            totalTime = timeLeft;
             updateTimer();
             timerInterval = setInterval(updateTimer, 1000);
 
         } catch (error) {
-            console.error('Lỗi khi tải câu hỏi:', error);
-            alert('Có lỗi xảy ra khi tải câu hỏi. Vui lòng thử lại sau.');
+            alert('Có lỗi xảy ra: ' + error.message);
+            console.error('Lỗi khi bắt đầu thi:', error);
+        } finally {
+            // Reset trạng thái nút
+            startButton.disabled = false;
+            startButton.textContent = 'Bắt đầu thi';
         }
     });
 
