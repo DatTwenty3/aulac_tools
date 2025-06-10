@@ -37,24 +37,41 @@ const topics = [
         icon: "💰"
     },
     {
-        title: "Khảo sát định hình, Pháp luật chung", 
+        title: "Khảo sát địa hình, Pháp luật chung", 
         subtitle: "Khảo sát địa hình - Hạng II",
-        file: "Khaosat_PLC.csv",
+        file: "Khaosatdiahinh_PLC.csv",
         icon: "🔍"
     },
     {
-        title: "Khảo sát định hình, Pháp luật riêng", 
+        title: "Khảo sát địa hình, Pháp luật riêng", 
         subtitle: "Khảo sát địa hình - Hạng II",
-        file: "Khaosat_PLR.csv",
+        file: "Khaosatdiahinh_PLR.csv",
         icon: "🔍"
     },
     {
-        title: "Khảo sát định hình, Chuyên môn", 
+        title: "Khảo sát địa hình, Chuyên môn", 
         subtitle: "Khảo sát địa hình - Hạng II",
-        file: "Khaosat_CM.csv",
+        file: "Khaosatdiahinh_CM.csv",
         icon: "🔍"
     },
-    
+    {
+        title: "Khảo sát địa chất, Pháp luật chung", 
+        subtitle: "Khảo sát địa chất - Hạng III",
+        file: "Khaosatdiachat_PLC.csv",
+        icon: "💎"
+    },
+    {
+        title: "Khảo sát địa chất, Pháp luật riêng", 
+        subtitle: "Khảo sát địa chất - Hạng III",
+        file: "Khaosatdiachat_PLR.csv",
+        icon: "💎"
+    },
+    {
+        title: "Khảo sát địa chất, Chuyên môn", 
+        subtitle: "Khảo sát địa chất - Hạng III",
+        file: "Khaosatdiachat_CM.csv",
+        icon: "💎"
+    }    
 ];
 
 let questions = [];
