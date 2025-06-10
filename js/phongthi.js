@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 'hamcau',
             title: 'Thiết kế xây XDCT: CT Cầu - Hầm',
             subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Cầu - Hầm, Hạng II',
+            icon: '🌉',
             files: {
                 law: ['data/Hamcau_PLC.csv', 'data/Hamcau_PLR.csv'],
                 specialized: ['data/Hamcau_CM.csv']
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 'diahinh',
             title: 'Khảo sát địa hình',
             subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa hình, Hạng II',
+            icon: '🔍',
             files: {
                 law: ['data/Khaosatdiahinh_PLC.csv', 'data/Khaosatdiahinh_PLR.csv'],
                 specialized: ['data/Khaosatdiahinh_CM.csv']
@@ -35,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 'diachat',
             title: 'Khảo sát địa chất công trình',
             subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa chất công trình, Hạng III',
+            icon: '💎',
             files: {
                 law: ['data/Khaosatdiachat_PLC.csv', 'data/Khaosatdiachat_PLR.csv'],
                 specialized: ['data/Khaosatdiachat_CM.csv']
@@ -44,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 'dinhgia',
             title: 'Định giá xây dựng',
             subtitle: 'Thi chứng chỉ hành nghề Định giá xây dựng, Hạng II',
+            icon: '💰',
             files: {
                 law: ['data/Dinhgia_PLC.csv', 'data/Dinhgia_PLR.csv'],
                 specialized: ['data/Dinhgia_CM.csv']
@@ -56,14 +60,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const option = document.createElement('div');
         option.className = 'select-option';
         option.innerHTML = `
-            <div class="option-icon">📚</div>
-            <div class="option-content">
-                <div class="option-title">${subject.title}</div>
-                <div class="option-subtitle">${subject.subtitle}</div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="option-icon" style="font-size: 2em; display: flex; align-items: center;">${subject.icon || '📚'}</span>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight: 600; color: #222;">${subject.title}</span>
+                    <span style="font-size: 0.98em; color: #888; font-style: italic;">${subject.subtitle}</span>
+                </div>
             </div>
         `;
         option.addEventListener('click', () => {
-            selectPlaceholder.textContent = subject.title;
+            // Hiển thị icon, tên môn thi và subtitle đẹp hơn trong ô chọn, căn trái, không in nghiêng
+            selectPlaceholder.innerHTML = `
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <span class="option-icon" style="font-size: 2em; display: flex; align-items: flex-start; font-style: normal;">${subject.icon || '📚'}</span>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 600; color: #222; font-style: normal;">${subject.title}</span>
+                        <span style="font-size: 0.98em; color: #888; font-style: normal;">${subject.subtitle}</span>
+                    </div>
+                </div>
+            `;
             selectStyled.classList.remove('active');
             selectOptions.classList.remove('show');
             startButton.classList.add('enabled');
