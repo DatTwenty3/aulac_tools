@@ -1,6 +1,12 @@
 /* phongthi.css - style tương tự tracnghiem.css */
 @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;700&display=swap');
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #e3f2fd;
@@ -9,7 +15,6 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    margin: 0;
 }
 
 .container {
@@ -20,6 +25,27 @@ body {
     max-width: 800px;
     width: 100%;
     position: relative;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #1976d2, #ff9800);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    width: calc(100% - 0px);
+    box-sizing: border-box;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
 }
 
 .title {
@@ -39,6 +65,198 @@ body {
     color: #666;
     font-size: 1.1em;
     text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.upload-section {
+    text-align: center;
+    padding: 40px 30px;
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    background: #f8f9ff;
+}
+
+.section-title {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.section-subtitle {
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.dropdown-container {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.dropdown-label {
+    display: block;
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.custom-select {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.select-styled {
+    position: relative;
+    background: white;
+    border: 2px solid #1976d2;
+    border-radius: 12px;
+    padding: 16px 50px 16px 20px;
+    font-size: 1.1em;
+    color: #1976d2;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 60px;
+}
+
+.select-styled:hover {
+    border-color: #ff9800;
+    background: #f8f9ff;
+}
+
+.select-styled.active {
+    border-color: #ff9800;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+}
+
+.select-styled::after {
+    content: '▼';
+    position: absolute;
+    right: 20px;
+    color: #ff9800;
+    font-size: 0.9em;
+    transition: transform 0.3s ease;
+}
+
+.select-styled.active::after {
+    transform: rotate(180deg);
+}
+
+.select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #1976d2;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 25px rgba(25, 118, 210, 0.15);
+    z-index: 1000;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+    margin-top: 5px;
+}
+
+.select-options.show {
+    display: block;
+}
+
+.select-option {
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 70px;
+    background: white;
+    color: #1976d2;
+}
+
+.select-option:last-child {
+    border-bottom: none;
+}
+
+.select-option:hover {
+    background: #fff3e0;
+    color: #ff9800;
+}
+
+.option-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1976d2, #ff9800);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1em;
+    flex-shrink: 0;
+}
+
+.option-content {
+    flex: 1;
+    text-align: left;
+}
+
+.option-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.option-subtitle {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.select-placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+.start-button {
+    margin-top: 25px;
+    padding: 15px 40px;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.6;
+    pointer-events: none;
+    box-shadow: 0 4px 16px rgba(25, 118, 210, 0.08);
+}
+
+.start-button.enabled {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.start-button.enabled:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 152, 0, 0.18);
+    background: #1976d2;
 }
 
 .btn-phongthi {

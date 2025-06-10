@@ -14,6 +14,25 @@
         </div>
         <h1 class="title">PHÒNG THI TRỰC TUYẾN</h1>
         <div class="subtitle">Hãy sẵn sàng làm bài thi thử với trải nghiệm như thật!</div>
+        <div id="selectionSection" class="upload-section">
+            <div class="section-title">
+                <span>📚</span>
+                <span>Chọn nội dung thi</span>
+            </div>
+            <p class="section-subtitle">Vui lòng chọn chủ đề bạn muốn thi</p>
+            <div class="dropdown-container">
+                <label class="dropdown-label">Chủ đề:</label>
+                <div class="custom-select">
+                    <div class="select-styled" id="selectStyled">
+                        <span class="select-placeholder">-- Chọn chủ đề --</span>
+                    </div>
+                    <div class="select-options" id="selectOptions">
+                        <!-- Options sẽ được tạo bằng JavaScript -->
+                    </div>
+                </div>
+                <button class="start-button" id="startButton">Bắt đầu thi</button>
+            </div>
+        </div>
         <div style="display: flex; justify-content: center;">
             <a href="tracnghiem.html" class="btn-phongthi" style="margin-top: 36px;">← Quay lại trang ôn tập</a>
         </div>
@@ -27,5 +46,6 @@
             </a>
         </div>
     </div>
+    <script src="js/phongthi.js"></script>
 </body>
 </html> 
