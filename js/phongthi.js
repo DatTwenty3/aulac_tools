@@ -312,10 +312,37 @@ document.addEventListener('DOMContentLoaded', function() {
         const specializedPercentage = specializedQuestions > 0 ? (specializedScore / specializedQuestions) * 20 : 0;
         const totalScore = Math.round(lawPercentage + specializedPercentage);
 
+        // Kiểm tra điều kiện đạt/không đạt
+        const isPassed = lawScore >= 7 && totalScore >= 21;
+
         // Hiển thị kết quả
         document.getElementById('totalScore').textContent = `${totalScore}/30`;
         document.getElementById('lawScore').textContent = `${lawScore}/${lawQuestions}`;
         document.getElementById('specializedScore').textContent = `${specializedScore}/${specializedQuestions}`;
+
+        // Thêm thông báo kết quả
+        const resultHeader = document.querySelector('.result-header');
+        resultHeader.innerHTML = `
+            <h2>Kết quả bài thi</h2>
+            <div class="result-message ${isPassed ? 'passed' : 'failed'}">
+                ${isPassed ? 
+                    '<div class="message-icon">🎉</div>' : 
+                    '<div class="message-icon">😔</div>'
+                }
+                <div class="message-text">
+                    ${isPassed ? 
+                        'Chúc mừng bạn đã đạt yêu cầu!' : 
+                        'Rất tiếc, bạn chưa đạt yêu cầu.'
+                    }
+                </div>
+                <div class="message-detail">
+                    ${isPassed ? 
+                        'Bạn đã hoàn thành xuất sắc bài thi.' : 
+                        'Bạn cần đạt tối thiểu 7 điểm phần Pháp luật và tổng điểm từ 21 điểm trở lên.'
+                    }
+                </div>
+            </div>
+        `;
 
         // Hiển thị đáp án đúng/sai
         questions.forEach((question, index) => {

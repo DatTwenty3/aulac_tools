@@ -577,4 +577,59 @@ body {
     height: auto;
     display: block;
     margin: 0 auto;
+}
+
+.result-message {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.result-message.passed {
+    background: rgba(46, 213, 115, 0.1);
+    border: 1px solid rgba(46, 213, 115, 0.2);
+}
+
+.result-message.failed {
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.2);
+}
+
+.message-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.message-text {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #2d3436;
+}
+
+.result-message.passed .message-text {
+    color: #2ed573;
+}
+
+.result-message.failed .message-text {
+    color: #ff4757;
+}
+
+.message-detail {
+    font-size: 16px;
+    color: #636e72;
+    line-height: 1.5;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 } 
