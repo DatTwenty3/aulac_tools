@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjects = [
         { 
             id: 'hamcau',
-            title: 'Cầu - Hầm',
-            subtitle: 'Thi chứng chỉ hành nghề Cầu - Hầm',
+            title: 'Thiết kế xây XDCT: CT Cầu - Hầm',
+            subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Cầu - Hầm, Hạng II',
             files: {
                 law: ['data/Hamcau_PLC.csv', 'data/Hamcau_PLR.csv'],
                 specialized: ['data/Hamcau_CM.csv']
@@ -24,17 +24,26 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         { 
             id: 'diahinh',
-            title: 'Địa hình, địa chất công trình',
-            subtitle: 'Thi chứng chỉ hành nghề Địa hình, địa chất công trình',
+            title: 'Khảo sát địa hình',
+            subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa hình, Hạng II',
             files: {
-                law: ['data/Diahinh_PLC.csv', 'data/Diahinh_PLR.csv'],
-                specialized: ['data/Diahinh_CM.csv']
+                law: ['data/Khaosatdiahinh_PLC.csv', 'data/Khaosatdiahinh_PLR.csv'],
+                specialized: ['data/Khaosatdiahinh_CM.csv']
+            }
+        },
+        { 
+            id: 'diachat',
+            title: 'Khảo sát địa chất công trình',
+            subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa chất công trình, Hạng III',
+            files: {
+                law: ['data/Khaosatdiachat_PLC.csv', 'data/Khaosatdiachat_PLR.csv'],
+                specialized: ['data/Khaosatdiachat_CM.csv']
             }
         },
         { 
             id: 'dinhgia',
             title: 'Định giá xây dựng',
-            subtitle: 'Thi chứng chỉ hành nghề Định giá xây dựng',
+            subtitle: 'Thi chứng chỉ hành nghề Định giá xây dựng, Hạng II',
             files: {
                 law: ['data/Dinhgia_PLC.csv', 'data/Dinhgia_PLR.csv'],
                 specialized: ['data/Dinhgia_CM.csv']
