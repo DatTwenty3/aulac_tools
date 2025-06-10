@@ -168,12 +168,15 @@ body {
 }
 
 .select-option {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
     padding: 16px 20px;
     cursor: pointer;
     transition: all 0.2s ease;
     border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    align-items: center;
     gap: 12px;
     min-height: 70px;
     background: white;
@@ -198,12 +201,11 @@ body {
     font-size: 2em;
     margin-right: 8px;
     font-style: normal;
+    flex-shrink: 0;
 }
 
-.select-option .option-title,
-.select-option .option-subtitle {
-    font-style: normal !important;
-    text-align: left;
+.option-title, .option-subtitle {
+    text-align: left !important;
 }
 
 .option-title {

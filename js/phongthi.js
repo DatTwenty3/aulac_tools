@@ -480,9 +480,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const selectedLawQuestions = getRandomQuestions(lawQuestions, 10);
             const selectedSpecializedQuestions = getRandomQuestions(specializedQuestions, 20);
-            
+
             questions = [...selectedLawQuestions, ...selectedSpecializedQuestions];
-            
+
             // Tạo giao diện câu hỏi
             questionsContainer.innerHTML = '';
             questions.forEach((question, index) => {
