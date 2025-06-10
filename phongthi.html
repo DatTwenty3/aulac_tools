@@ -9,22 +9,27 @@
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: center; margin-bottom: 18px;">
-            <img src="logo/AULAC_CONS.png" alt="Logo Âu Lạc" style="height: 120px; display: block; margin: 0 auto;">
+        <div class="logo-container">
+            <img src="logo/AULAC_CONS.png" alt="Logo Âu Lạc" class="logo">
         </div>
-        <h1 class="title">PHÒNG THI TRỰC TUYẾN</h1>
-        <div class="subtitle">Hãy sẵn sàng làm bài thi thử với trải nghiệm như thật!</div>
+
+        <div class="header">
+            <h1 class="title">PHÒNG THI TRỰC TUYẾN</h1>
+            <p class="subtitle">Chứng chỉ hành nghề xây dựng</p>
+        </div>
+
         <div id="selectionSection" class="upload-section">
             <div class="section-title">
                 <span>📚</span>
-                <span>Chọn nội dung thi</span>
+                <span>Chọn môn thi</span>
             </div>
-            <p class="section-subtitle">Vui lòng chọn chủ đề bạn muốn thi</p>
+            <p class="section-subtitle">Vui lòng chọn môn thi bạn muốn thực hiện</p>
+            
             <div class="dropdown-container">
-                <label class="dropdown-label">Chủ đề:</label>
+                <label class="dropdown-label">Môn thi:</label>
                 <div class="custom-select">
                     <div class="select-styled" id="selectStyled">
-                        <span class="select-placeholder">-- Chọn chủ đề --</span>
+                        <span class="select-placeholder">-- Chọn môn thi --</span>
                     </div>
                     <div class="select-options" id="selectOptions">
                         <!-- Options sẽ được tạo bằng JavaScript -->
@@ -33,10 +38,49 @@
                 <button class="start-button" id="startButton">Bắt đầu thi</button>
             </div>
         </div>
-        <div style="display: flex; justify-content: center;">
-            <a href="tracnghiem.html" class="btn-phongthi" style="margin-top: 36px;">← Quay lại trang ôn tập</a>
+
+        <div id="examSection" class="exam-section" style="display: none;">
+            <div class="exam-header">
+                <div class="timer">
+                    <span class="timer-label">Thời gian còn lại:</span>
+                    <span class="timer-value" id="timerValue">30:00</span>
+                </div>
+                <button class="submit-button" id="submitButton">Nộp bài</button>
+            </div>
+
+            <div class="questions-container" id="questionsContainer">
+                <!-- Câu hỏi sẽ được tạo bằng JavaScript -->
+            </div>
         </div>
-        <!-- Nội dung phòng thi sẽ bổ sung sau -->
+
+        <div id="resultSection" class="result-section" style="display: none;">
+            <div class="result-header">
+                <h2>Kết quả bài thi</h2>
+            </div>
+            <div class="result-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Tổng điểm</div>
+                    <div class="stat-value" id="totalScore">0/30</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Pháp luật</div>
+                    <div class="stat-value" id="lawScore">0/10</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Chuyên môn</div>
+                    <div class="stat-value" id="specializedScore">0/20</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Thời gian hoàn thành</div>
+                    <div class="stat-value" id="timeUsed">--:--</div>
+                </div>
+            </div>
+            <div class="result-actions">
+                <button class="btn-phongthi" onclick="location.href='phongthi.html'">Thi lại</button>
+                <button class="btn-phongthi" onclick="location.href='tracnghiem.html'">Về trang chủ</button>
+            </div>
+        </div>
+
         <div style="display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 32px; margin-bottom: 0;">
             <span style="font-size: 0.98em; color: #444; background: rgba(0,0,0,0.04); border-radius: 18px; padding: 4px 14px; font-weight: 500;">Được phát triển bởi LEDAT 😎</span>
             <span style="height: 24px; width: 1.5px; background: #e0e0e0; display: inline-block; border-radius: 2px;"></span>
@@ -46,6 +90,8 @@
             </a>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <script src="js/phongthi.js"></script>
 </body>
 </html> 

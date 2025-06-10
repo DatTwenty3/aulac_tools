@@ -260,21 +260,321 @@ body {
 }
 
 .btn-phongthi {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 170px;
+    min-height: 56px;
+    padding: 0 28px;
+    text-align: center;
+    white-space: normal;
+    font-size: 1.1em;
+    font-weight: 700;
     background: linear-gradient(90deg, #1976d2 60%, #ff9800 100%);
     color: #fff;
-    font-weight: 600;
-    padding: 14px 36px;
     border-radius: 14px;
-    font-size: 1.1em;
     text-decoration: none;
     box-shadow: 0 2px 8px rgba(25,118,210,0.08);
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.2s;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-top: 24px;
+    border: none;
+    margin: 0;
 }
 .btn-phongthi:hover {
     background: linear-gradient(90deg, #ff9800 60%, #1976d2 100%);
     color: #fff;
+    transform: translateY(-2px) scale(1.04);
+}
+
+/* Style cho phần thi */
+.exam-section {
+    margin-top: 30px;
+}
+
+.exam-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #f8f9ff;
+    border-radius: 15px;
+    border: 2px solid #e0e0e0;
+}
+
+.timer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.timer-label {
+    font-size: 1.1em;
+    color: #333;
+    font-weight: 600;
+}
+
+.timer-value {
+    font-size: 1.5em;
+    color: #1976d2;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.submit-button {
+    padding: 12px 30px;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.submit-button:hover {
+    background: #1976d2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.2);
+}
+
+.questions-container {
+    display: grid;
+    gap: 20px;
+}
+
+.question-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.question-card:hover {
+    border-color: #1976d2;
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.1);
+}
+
+.question-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.question-number {
+    font-size: 1.1em;
+    color: #1976d2;
+    font-weight: 600;
+}
+
+.question-type {
+    font-size: 0.9em;
+    color: #666;
+    background: #f8f9ff;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+.question-text {
+    font-size: 1.2em;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.options-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.option-item:hover {
+    border-color: #1976d2;
+    background: #f8f9ff;
+}
+
+.option-item.selected {
+    border-color: #1976d2;
+    background: #e3f0fd;
+    color: #1976d2;
+    box-shadow: 0 0 0 2px #1976d233;
+    font-weight: 600;
+}
+
+.option-item.selected .option-label {
+    background: #1976d2;
+    color: #fff;
+}
+
+.option-item.correct {
+    border-color: #28a745;
+    background: #e8f5e9;
+}
+
+.option-item.incorrect {
+    border-color: #dc3545;
+    background: #ffebee;
+}
+
+.option-item.correct-full {
+    background: #28a745 !important;
+    color: #fff !important;
+    border-color: #28a745 !important;
+}
+.option-item.incorrect-full {
+    background: #dc3545 !important;
+    color: #fff !important;
+    border-color: #dc3545 !important;
+}
+
+.option-item.selected .option-label,
+.option-item.correct .option-label,
+.option-item.incorrect .option-label {
+    background: rgba(255,255,255,0.3);
+}
+
+.option-label {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #1976d2;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.option-item.selected .option-label,
+.option-item.correct .option-label,
+.option-item.incorrect .option-label {
+    background: rgba(255,255,255,0.3);
+}
+
+.option-text {
+    flex: 1;
+    font-size: 1.1em;
+    color: #333;
+}
+
+/* Style cho phần kết quả */
+.result-section {
+    text-align: center;
+    padding: 40px;
+    background: #f8f9ff;
+    border-radius: 20px;
+    margin-top: 30px;
+}
+
+.result-header {
+    margin-bottom: 30px;
+}
+
+.result-header h2 {
+    color: #1976d2;
+    font-size: 2em;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.result-stats {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 24px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    background: white;
+    padding: 28px 24px;
+    border-radius: 18px;
+    box-shadow: 0 4px 16px rgba(25, 118, 210, 0.10);
+    min-width: 140px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-label {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2em;
+    color: #1976d2;
+    font-weight: 700;
+    text-align: center;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 18px;
+}
+
+@media (max-width: 900px) {
+    .result-stats {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+    .stat-item {
+        min-width: 120px;
+        padding: 18px 10px;
+    }
+}
+@media (max-width: 600px) {
+    .result-stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    .stat-item {
+        min-width: 90vw;
+        padding: 14px 4vw;
+    }
+    .result-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.logo {
+    max-width: 120px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 } 
