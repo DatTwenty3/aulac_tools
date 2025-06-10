@@ -119,10 +119,12 @@ function initializeDropdown() {
         const optionDiv = document.createElement('div');
         optionDiv.className = 'select-option';
         optionDiv.innerHTML = `
-            <div class="option-icon">${topic.icon}</div>
-            <div class="option-content">
-                <div class="option-title">${topic.title}</div>
-                <div class="option-subtitle">${topic.subtitle}</div>
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <span class="option-icon" style="font-size: 2em; display: flex; align-items: flex-start; font-style: normal;">${topic.icon}</span>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight: 600; color: #222; font-style: normal;">${topic.title}</span>
+                    <span style="font-size: 0.98em; color: #888; font-style: normal;">${topic.subtitle}</span>
+                </div>
             </div>
         `;
         optionDiv.addEventListener('click', () => selectTopic(topic, index));
@@ -141,10 +143,12 @@ function selectTopic(topic, index) {
     
     // Cập nhật hiển thị dropdown
     selectStyled.innerHTML = `
-        <div class="option-icon">${topic.icon}</div>
-        <div class="option-content">
-            <div class="option-title">${topic.title}</div>
-            <div class="option-subtitle">${topic.subtitle}</div>
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <span class="option-icon" style="font-size: 2em; display: flex; align-items: flex-start; font-style: normal;">${topic.icon}</span>
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-weight: 600; color: #222; font-style: normal;">${topic.title}</span>
+                <span style="font-size: 0.98em; color: #888; font-style: normal;">${topic.subtitle}</span>
+            </div>
         </div>
     `;
     

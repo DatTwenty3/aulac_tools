@@ -190,20 +190,19 @@ body {
 }
 
 .option-icon {
-    width: 35px;
-    height: 35px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #1976d2, #ff9800);
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    font-size: 1.1em;
-    flex-shrink: 0;
+    font-size: 2em;
+    margin-right: 8px;
+    font-style: normal;
 }
 
-.option-content {
-    flex: 1;
+.select-option .option-title,
+.select-option .option-subtitle {
+    font-style: normal !important;
     text-align: left;
 }
 
