@@ -59,6 +59,16 @@ const mainTopics = [
             { label: "Pháp luật riêng", file: "Giamsat_PLR.csv" },
             { label: "Chuyên môn", file: "Giamsat_CM.csv" }
         ]
+    },
+    {
+        name: "Quản lý dự án đầu tư xây dựng",
+        subtitle: "Quản lý dự án đầu tư xây dựng - Hạng II",
+        icon: "🏢",
+        subTopics: [
+            { label: "Pháp luật chung", file: "Quanly_PLC.csv" },
+            { label: "Pháp luật riêng", file: "Quanly_PLR.csv" },
+            { label: "Chuyên môn", file: "Quanly_CM.csv" }
+        ]
     }
 ];
 

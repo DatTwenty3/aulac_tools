@@ -72,6 +72,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 law: ['data/Giamsat_PLC.csv', 'data/Giamsat_PLR.csv'],
                 specialized: ['data/Giamsat_CM.csv']
             }
+        },
+        { 
+            id: 'quanly',
+            title: 'Quản lý dự án đầu tư xây dựng',
+            subtitle: 'Thi chứng chỉ hành nghề Quản lý dự án đầu tư xây dựng, Hạng II',
+            icon: '🏢',
+            files: {
+                law: ['data/Quanly_PLC.csv', 'data/Quanly_PLR.csv'],
+                specialized: ['data/Quanly_CM.csv']
+            }
         }
     ];
 
