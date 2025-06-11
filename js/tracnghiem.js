@@ -1,83 +1,52 @@
-// Danh sách các chủ đề và file tương ứng
-const topics = [
+// Danh sách lĩnh vực chính và các chủ đề con
+const mainTopics = [
     {
-        title: "Cầu - Hầm, Pháp luật chung",
+        name: "Cầu - Hầm",
         subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
-        file: "Hamcau_PLC.csv",
-        icon: "🌉"
+        icon: "🌉",
+        subTopics: [
+            { label: "Pháp luật chung", file: "Hamcau_PLC.csv" },
+            { label: "Pháp luật riêng", file: "Hamcau_PLR.csv" },
+            { label: "Chuyên môn", file: "Hamcau_CM.csv" }
+        ]
     },
     {
-        title: "Cầu - Hầm, Pháp luật riêng", 
-        subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
-        file: "Hamcau_PLR.csv",
-        icon: "🌉"
-    },
-    {
-        title: "Cầu - Hầm, Chuyên môn", 
-        subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
-        file: "Hamcau_CM.csv",
-        icon: "🌉"
-    },
-    {
-        title: "Định giá, Pháp luật chung", 
+        name: "Định giá",
         subtitle: "Định giá xây dựng - Hạng II",
-        file: "Dinhgia_PLC.csv",
-        icon: "💰"
+        icon: "💰",
+        subTopics: [
+            { label: "Pháp luật chung", file: "Dinhgia_PLC.csv" },
+            { label: "Pháp luật riêng", file: "Dinhgia_PLR.csv" },
+            { label: "Chuyên môn", file: "Dinhgia_CM.csv" }
+        ]
     },
     {
-        title: "Định giá, Pháp luật riêng", 
-        subtitle: "Định giá xây dựng - Hạng II",
-        file: "Dinhgia_PLR.csv",
-        icon: "💰"
-    },
-    {
-        title: "Định giá, Chuyên môn", 
-        subtitle: "Định giá xây dựng - Hạng II",
-        file: "Dinhgia_CM.csv",
-        icon: "💰"
-    },
-    {
-        title: "Khảo sát địa hình, Pháp luật chung", 
+        name: "Khảo sát địa hình",
         subtitle: "Khảo sát địa hình - Hạng II",
-        file: "Khaosatdiahinh_PLC.csv",
-        icon: "🔍"
+        icon: "🔍",
+        subTopics: [
+            { label: "Pháp luật chung", file: "Khaosatdiahinh_PLC.csv" },
+            { label: "Pháp luật riêng", file: "Khaosatdiahinh_PLR.csv" },
+            { label: "Chuyên môn", file: "Khaosatdiahinh_CM.csv" }
+        ]
     },
     {
-        title: "Khảo sát địa hình, Pháp luật riêng", 
-        subtitle: "Khảo sát địa hình - Hạng II",
-        file: "Khaosatdiahinh_PLR.csv",
-        icon: "🔍"
-    },
-    {
-        title: "Khảo sát địa hình, Chuyên môn", 
-        subtitle: "Khảo sát địa hình - Hạng II",
-        file: "Khaosatdiahinh_CM.csv",
-        icon: "🔍"
-    },
-    {
-        title: "Khảo sát địa chất, Pháp luật chung", 
+        name: "Khảo sát địa chất",
         subtitle: "Khảo sát địa chất - Hạng III",
-        file: "Khaosatdiachat_PLC.csv",
-        icon: "💎"
-    },
-    {
-        title: "Khảo sát địa chất, Pháp luật riêng", 
-        subtitle: "Khảo sát địa chất - Hạng III",
-        file: "Khaosatdiachat_PLR.csv",
-        icon: "💎"
-    },
-    {
-        title: "Khảo sát địa chất, Chuyên môn", 
-        subtitle: "Khảo sát địa chất - Hạng III",
-        file: "Khaosatdiachat_CM.csv",
-        icon: "💎"
-    }    
+        icon: "💎",
+        subTopics: [
+            { label: "Pháp luật chung", file: "Khaosatdiachat_PLC.csv" },
+            { label: "Pháp luật riêng", file: "Khaosatdiachat_PLR.csv" },
+            { label: "Chuyên môn", file: "Khaosatdiachat_CM.csv" }
+        ]
+    }
 ];
 
 let questions = [];
 let currentQuestion = null;
 let selectedAnswer = null;
-let currentTopic = null;
+let selectedMainTopic = null;
+let selectedSubTopics = [];
 let stats = {
     total: 0,
     correct: 0,
@@ -113,118 +82,133 @@ document.addEventListener('click', function(e) {
 });
 
 function initializeDropdown() {
-    // Tạo options cho dropdown
+    // Tạo options cho dropdown lĩnh vực chính
     selectOptions.innerHTML = '';
-    topics.forEach((topic, index) => {
+    mainTopics.forEach((topic, index) => {
         const optionDiv = document.createElement('div');
         optionDiv.className = 'select-option';
         optionDiv.innerHTML = `
             <div style="display: flex; align-items: flex-start; gap: 12px;">
                 <span class="option-icon" style="font-size: 2em; display: flex; align-items: flex-start; font-style: normal;">${topic.icon}</span>
                 <div style="display: flex; flex-direction: column;">
-                    <span style="font-weight: 600; color: #222; font-style: normal;">${topic.title}</span>
+                    <span style="font-weight: 600; color: #222; font-style: normal;">${topic.name}</span>
                     <span style="font-size: 0.98em; color: #888; font-style: normal;">${topic.subtitle}</span>
                 </div>
             </div>
         `;
-        optionDiv.addEventListener('click', () => selectTopic(topic, index));
+        optionDiv.addEventListener('click', () => selectMainTopic(topic, index));
         selectOptions.appendChild(optionDiv);
     });
 
-    // Event cho dropdown toggle
     selectStyled.addEventListener('click', function() {
         selectOptions.classList.toggle('show');
         selectStyled.classList.toggle('active');
     });
+
+    // Di chuyển vùng hiển thị checkbox subtopic lên trên nút bắt đầu
+    let checkboxDiv = document.getElementById('subTopicCheckboxes');
+    if (!checkboxDiv) {
+        checkboxDiv = document.createElement('div');
+        checkboxDiv.id = 'subTopicCheckboxes';
+        checkboxDiv.style = 'margin-top: 18px; display: none;';
+        // Chèn vào đúng vị trí trước startButton
+        const dropdownContainer = document.querySelector('.dropdown-container');
+        dropdownContainer.insertBefore(checkboxDiv, startButton);
+    }
 }
 
-function selectTopic(topic, index) {
-    currentTopic = topic;
-    
+function selectMainTopic(topic, index) {
+    selectedMainTopic = topic;
+    selectedSubTopics = [];
     // Cập nhật hiển thị dropdown
     selectStyled.innerHTML = `
         <div style="display: flex; align-items: flex-start; gap: 12px;">
             <span class="option-icon" style="font-size: 2em; display: flex; align-items: flex-start; font-style: normal;">${topic.icon}</span>
             <div style="display: flex; flex-direction: column;">
-                <span style="font-weight: 600; color: #222; font-style: normal;">${topic.title}</span>
+                <span style="font-weight: 600; color: #222; font-style: normal;">${topic.name}</span>
                 <span style="font-size: 0.98em; color: #888; font-style: normal;">${topic.subtitle}</span>
             </div>
         </div>
     `;
-    
-    // Đóng dropdown
     selectOptions.classList.remove('show');
     selectStyled.classList.remove('active');
-    
-    // Enable nút start
-    startButton.classList.add('enabled');
+    // Hiển thị checkbox subtopic
+    const checkboxDiv = document.getElementById('subTopicCheckboxes');
+    checkboxDiv.innerHTML = '<div style="font-weight:600; margin-bottom:8px;">Chọn loại chủ đề:</div>' +
+        '<div class="subtopic-row">' +
+        topic.subTopics.map((sub, i) => `
+            <label style="margin-bottom:0;">
+                <input type="checkbox" class="subtopic-checkbox" value="${sub.file}" data-label="${sub.label}" style="width:18px;height:18px;">
+                <span>${sub.label}</span>
+            </label>
+        `).join('') + '</div>';
+    checkboxDiv.style.display = 'block';
+    // Lắng nghe sự kiện tick
+    checkboxDiv.querySelectorAll('.subtopic-checkbox').forEach(cb => {
+        cb.addEventListener('change', function() {
+            const file = this.value;
+            if (this.checked) {
+                if (!selectedSubTopics.includes(file)) selectedSubTopics.push(file);
+            } else {
+                selectedSubTopics = selectedSubTopics.filter(f => f !== file);
+            }
+            // Enable nút start nếu có ít nhất 1 loại được chọn
+            if (selectedSubTopics.length > 0) {
+                startButton.classList.add('enabled');
+            } else {
+                startButton.classList.remove('enabled');
+            }
+        });
+    });
+    // Disable nút start nếu chưa tick gì
+    startButton.classList.remove('enabled');
 }
 
 function startQuiz() {
-    if (!currentTopic) return;
-    
+    if (!selectedMainTopic || selectedSubTopics.length === 0) return;
     selectionSection.style.display = 'none';
     loadingSection.style.display = 'block';
     document.getElementById('loadingText').textContent = `Đang tải dữ liệu...`;
-    loadCSVFile(currentTopic.file);
+    loadMultipleCSVFiles(selectedSubTopics);
 }
 
-async function loadCSVFile(filename) {
+async function loadMultipleCSVFiles(fileList) {
     try {
-        // Hiệu ứng loading
         updateLoadingBar(20);
-        
-        const response = await fetch(`data/${filename}`);
-        if (!response.ok) {
-            throw new Error(`Không thể tải file ${filename} (${response.status})`);
+        let allQuestions = [];
+        for (let i = 0; i < fileList.length; i++) {
+            updateLoadingBar(20 + Math.floor(60 * i / fileList.length));
+            const response = await fetch(`data/${fileList[i]}`);
+            if (!response.ok) throw new Error(`Không thể tải file ${fileList[i]} (${response.status})`);
+            const csvData = await response.text();
+            await new Promise(resolve => {
+                Papa.parse(csvData, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        if (results.errors.length > 0) {
+                            throw new Error('Có lỗi khi đọc file CSV: ' + results.errors[0].message);
+                        }
+                        const valid = results.data.filter(row => row.question && row.question.trim() && row.answer && row.answer.trim());
+                        allQuestions = allQuestions.concat(valid);
+                        resolve();
+                    }
+                });
+            });
         }
-        
-        updateLoadingBar(50);
-        
-        const csvData = await response.text();
-        updateLoadingBar(70);
-        
-        Papa.parse(csvData, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                updateLoadingBar(90);
-                
-                if (results.errors.length > 0) {
-                    throw new Error('Có lỗi khi đọc file CSV: ' + results.errors[0].message);
-                }
-                
-                questions = results.data.filter(row => 
-                    row.question && row.question.trim() && 
-                    row.answer && row.answer.trim()
-                );
-                
-                if (questions.length === 0) {
-                    throw new Error('Không tìm thấy câu hỏi hợp lệ trong file CSV');
-                }
-
-                updateLoadingBar(100);
-                
-                // Reset thống kê
-                stats = { total: 0, correct: 0, wrong: 0 };
-                
-                // Cập nhật thống kê
-                document.getElementById('totalQuestions').textContent = questions.length;
-                updateStats();
-                
-                // Khởi tạo mảng câu hỏi chưa làm
-                remainingQuestions = [...questions];
-                
-                // Hiển thị quiz sau một chút delay
-                setTimeout(() => {
-                    loadingSection.style.display = 'none';
-                    quizContainer.style.display = 'block';
-                    loadRandomQuestion();
-                }, 500);
-            }
-        });
+        updateLoadingBar(100);
+        if (allQuestions.length === 0) throw new Error('Không tìm thấy câu hỏi hợp lệ trong các file đã chọn');
+        questions = allQuestions;
+        stats = { total: 0, correct: 0, wrong: 0 };
+        document.getElementById('totalQuestions').textContent = questions.length;
+        updateStats();
+        remainingQuestions = [...questions];
+        setTimeout(() => {
+            loadingSection.style.display = 'none';
+            quizContainer.style.display = 'block';
+            loadRandomQuestion();
+        }, 500);
     } catch (error) {
-        // Hiển thị lỗi
         loadingSection.innerHTML = `
             <div class="section-title">
                 <span>❌</span>
@@ -233,7 +217,7 @@ async function loadCSVFile(filename) {
             <p style="color: #dc3545; margin: 15px 0; font-size: 1.1em;">${error.message}</p>
             <p style="color: #666; font-size: 0.9em; line-height: 1.5;">
                 Vui lòng kiểm tra:<br>
-                • File ${filename} có tồn tại trong thư mục data/<br>
+                • File có tồn tại trong thư mục data/<br>
                 • File có đúng định dạng với 3 cột: stt, question, answer<br>
                 • Đường dẫn file chính xác
             </p>
@@ -268,7 +252,7 @@ function backToSelection() {
 }
 
 function retryLoad() {
-    if (currentTopic) {
+    if (selectedMainTopic) {
         backToSelection();
         setTimeout(() => startQuiz(), 100);
     }
