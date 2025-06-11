@@ -52,6 +52,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 law: ['data/Dinhgia_PLC.csv', 'data/Dinhgia_PLR.csv'],
                 specialized: ['data/Dinhgia_CM.csv']
             }
+        },
+        { 
+            id: 'duongbo',
+            title: 'Đường bộ',
+            subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Đường bộ, Hạng II',
+            icon: '🚗',
+            files: {
+                law: ['data/Duongbo_PLC.csv', 'data/Duongbo_PLR.csv'],
+                specialized: ['data/Duongbo_CM.csv']
+            }
+        },
+        { 
+            id: 'giamsat',
+            title: 'Giám sát công tác xây dựng công trình',
+            subtitle: 'Thi chứng chỉ hành nghề Giám sát công tác xây dựng công trình, Hạng II',
+            icon: '👷',
+            files: {
+                law: ['data/Giamsat_PLC.csv', 'data/Giamsat_PLR.csv'],
+                specialized: ['data/Giamsat_CM.csv']
+            }
         }
     ];
 

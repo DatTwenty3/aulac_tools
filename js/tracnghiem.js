@@ -39,6 +39,26 @@ const mainTopics = [
             { label: "Pháp luật riêng", file: "Khaosatdiachat_PLR.csv" },
             { label: "Chuyên môn", file: "Khaosatdiachat_CM.csv" }
         ]
+    },
+    {
+        name: "Đường bộ",
+        subtitle: "Đường bộ - Hạng II",
+        icon: "🚗",
+        subTopics: [
+            { label: "Pháp luật chung", file: "Duongbo_PLC.csv" },
+            { label: "Pháp luật riêng", file: "Duongbo_PLR.csv" },
+            { label: "Chuyên môn", file: "Duongbo_CM.csv" }
+        ]
+    },
+    {
+        name: "Giám sát công tác xây dựng công trình",
+        subtitle: "Giám sát công tác xây dựng công trình - Hạng II",
+        icon: "👷",
+        subTopics: [
+            { label: "Pháp luật chung", file: "Giamsat_PLC.csv" },
+            { label: "Pháp luật riêng", file: "Giamsat_PLR.csv" },
+            { label: "Chuyên môn", file: "Giamsat_CM.csv" }
+        ]
     }
 ];
 
