@@ -418,10 +418,10 @@ body {
 
 .option-item.selected {
     border-color: #1976d2;
-    background: #e3f0fd;
-    color: #1976d2;
-    box-shadow: 0 0 0 2px #1976d233;
+    background: #1976d2;
+    color: #fff;
     font-weight: 600;
+    box-shadow: 0 0 0 2px #1976d2;
 }
 
 .option-item.selected .option-label {
@@ -431,12 +431,24 @@ body {
 
 .option-item.correct {
     border-color: #28a745;
-    background: #e8f5e9;
+    background: #28a745;
+    color: #fff;
+}
+
+.option-item.correct .option-label {
+    background: #28a745;
+    color: #fff;
 }
 
 .option-item.incorrect {
     border-color: #dc3545;
-    background: #ffebee;
+    background: #dc3545;
+    color: #fff;
+}
+
+.option-item.incorrect .option-label {
+    background: #dc3545;
+    color: #fff;
 }
 
 .option-item.correct-full {
