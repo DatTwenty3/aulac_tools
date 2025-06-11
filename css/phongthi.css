@@ -596,6 +596,9 @@ body {
         padding: 0;
         box-sizing: border-box;
     }
+    .result-stats .stat-item:last-child {
+        margin-bottom: 18px !important;
+    }
     .stat-item {
         width: 100vw;
         min-width: 0;
