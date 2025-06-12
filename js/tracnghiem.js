@@ -1,76 +1,16 @@
+import subjectsConfig from './config.js';
+
 // Danh sách lĩnh vực chính và các chủ đề con
-const mainTopics = [
-    {
-        name: "Cầu - Hầm",
-        subtitle: "Thiết kế xây dựng công trình - Công trình Cầu - Hầm - Hạng II",
-        icon: "🌉",
-        subTopics: [
-            { label: "Pháp luật chung", file: "Hamcau_PLC.csv" },
-            { label: "Pháp luật riêng", file: "Hamcau_PLR.csv" },
-            { label: "Chuyên môn", file: "Hamcau_CM.csv" }
-        ]
-    },
-    {
-        name: "Định giá",
-        subtitle: "Định giá xây dựng - Hạng II",
-        icon: "💰",
-        subTopics: [
-            { label: "Pháp luật chung", file: "Dinhgia_PLC.csv" },
-            { label: "Pháp luật riêng", file: "Dinhgia_PLR.csv" },
-            { label: "Chuyên môn", file: "Dinhgia_CM.csv" }
-        ]
-    },
-    {
-        name: "Khảo sát địa hình",
-        subtitle: "Khảo sát địa hình - Hạng II",
-        icon: "🔍",
-        subTopics: [
-            { label: "Pháp luật chung", file: "Khaosatdiahinh_PLC.csv" },
-            { label: "Pháp luật riêng", file: "Khaosatdiahinh_PLR.csv" },
-            { label: "Chuyên môn", file: "Khaosatdiahinh_CM.csv" }
-        ]
-    },
-    {
-        name: "Khảo sát địa chất",
-        subtitle: "Khảo sát địa chất - Hạng III",
-        icon: "💎",
-        subTopics: [
-            { label: "Pháp luật chung", file: "Khaosatdiachat_PLC.csv" },
-            { label: "Pháp luật riêng", file: "Khaosatdiachat_PLR.csv" },
-            { label: "Chuyên môn", file: "Khaosatdiachat_CM.csv" }
-        ]
-    },
-    {
-        name: "Đường bộ",
-        subtitle: "Đường bộ - Hạng II",
-        icon: "🚗",
-        subTopics: [
-            { label: "Pháp luật chung", file: "Duongbo_PLC.csv" },
-            { label: "Pháp luật riêng", file: "Duongbo_PLR.csv" },
-            { label: "Chuyên môn", file: "Duongbo_CM.csv" }
-        ]
-    },
-    {
-        name: "Giám sát công tác xây dựng công trình",
-        subtitle: "Giám sát công tác xây dựng công trình - Hạng II",
-        icon: "👷",
-        subTopics: [
-            { label: "Pháp luật chung", file: "Giamsat_PLC.csv" },
-            { label: "Pháp luật riêng", file: "Giamsat_PLR.csv" },
-            { label: "Chuyên môn", file: "Giamsat_CM.csv" }
-        ]
-    },
-    {
-        name: "Quản lý dự án đầu tư xây dựng",
-        subtitle: "Quản lý dự án đầu tư xây dựng - Hạng II",
-        icon: "🏢",
-        subTopics: [
-            { label: "Pháp luật chung", file: "Quanly_PLC.csv" },
-            { label: "Pháp luật riêng", file: "Quanly_PLR.csv" },
-            { label: "Chuyên môn", file: "Quanly_CM.csv" }
-        ]
-    }
-];
+const mainTopics = subjectsConfig.map(subject => ({
+    name: subject.name,
+    subtitle: subject.subtitle,
+    icon: subject.icon,
+    subTopics: [
+        { label: "Pháp luật chung", file: subject.files.law[0] },
+        { label: "Pháp luật riêng", file: subject.files.law[1] },
+        { label: "Chuyên môn", file: subject.files.specialized[0] }
+    ]
+}));
 
 let questions = [];
 let currentQuestion = null;
@@ -96,12 +36,14 @@ const result = document.getElementById('result');
 const selectStyled = document.getElementById('selectStyled');
 const selectOptions = document.getElementById('selectOptions');
 const startButton = document.getElementById('startButton');
+const backButton = document.getElementById('backButton');
 
 // Khởi tạo dropdown và events
 window.addEventListener('load', initializeDropdown);
 submitBtn.addEventListener('click', submitAnswer);
 nextBtn.addEventListener('click', nextQuestion);
 startButton.addEventListener('click', startQuiz);
+backButton.addEventListener('click', backToSelection);
 
 // Đóng dropdown khi click bên ngoài
 document.addEventListener('click', function(e) {
@@ -264,21 +206,13 @@ async function loadMultipleCSVFiles(fileList) {
 }
 
 function backToSelection() {
-    loadingSection.style.display = 'none';
     quizContainer.style.display = 'none';
     selectionSection.style.display = 'block';
-    
-    // Reset loading section
-    loadingSection.innerHTML = `
-        <div class="section-title">
-            <span>⏳</span>
-            <span>Đang tải dữ liệu...</span>
-        </div>
-        <p class="loading-text" id="loadingText">Đang đọc dữ liệu...</p>
-        <div class="loading-bar-container">
-            <div class="loading-bar" id="loadingBar"></div>
-        </div>
-    `;
+    // Reset các giá trị
+    currentQuestion = null;
+    selectedAnswer = null;
+    stats = { total: 0, correct: 0, wrong: 0 };
+    updateStats();
 }
 
 function retryLoad() {

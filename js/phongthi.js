@@ -1,4 +1,6 @@
 // phongthi.js - Xử lý logic thi trực tuyến
+import subjectsConfig from './config.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const selectStyled = document.getElementById('selectStyled');
     const selectOptions = document.getElementById('selectOptions');
@@ -12,78 +14,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitButton = document.getElementById('submitButton');
 
     // Danh sách các môn thi
-    const subjects = [
-        { 
-            id: 'hamcau',
-            title: 'Thiết kế xây XDCT: CT Cầu - Hầm',
-            subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Cầu - Hầm, Hạng II',
-            icon: '🌉',
-            files: {
-                law: ['data/Hamcau_PLC.csv', 'data/Hamcau_PLR.csv'],
-                specialized: ['data/Hamcau_CM.csv']
-            }
-        },
-        { 
-            id: 'diahinh',
-            title: 'Khảo sát địa hình',
-            subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa hình, Hạng II',
-            icon: '🔍',
-            files: {
-                law: ['data/Khaosatdiahinh_PLC.csv', 'data/Khaosatdiahinh_PLR.csv'],
-                specialized: ['data/Khaosatdiahinh_CM.csv']
-            }
-        },
-        { 
-            id: 'diachat',
-            title: 'Khảo sát địa chất công trình',
-            subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa chất công trình, Hạng III',
-            icon: '💎',
-            files: {
-                law: ['data/Khaosatdiachat_PLC.csv', 'data/Khaosatdiachat_PLR.csv'],
-                specialized: ['data/Khaosatdiachat_CM.csv']
-            }
-        },
-        { 
-            id: 'dinhgia',
-            title: 'Định giá xây dựng',
-            subtitle: 'Thi chứng chỉ hành nghề Định giá xây dựng, Hạng II',
-            icon: '💰',
-            files: {
-                law: ['data/Dinhgia_PLC.csv', 'data/Dinhgia_PLR.csv'],
-                specialized: ['data/Dinhgia_CM.csv']
-            }
-        },
-        { 
-            id: 'duongbo',
-            title: 'Đường bộ',
-            subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Đường bộ, Hạng II',
-            icon: '🚗',
-            files: {
-                law: ['data/Duongbo_PLC.csv', 'data/Duongbo_PLR.csv'],
-                specialized: ['data/Duongbo_CM.csv']
-            }
-        },
-        { 
-            id: 'giamsat',
-            title: 'Giám sát công tác xây dựng công trình',
-            subtitle: 'Thi chứng chỉ hành nghề Giám sát công tác xây dựng công trình, Hạng II',
-            icon: '👷',
-            files: {
-                law: ['data/Giamsat_PLC.csv', 'data/Giamsat_PLR.csv'],
-                specialized: ['data/Giamsat_CM.csv']
-            }
-        },
-        { 
-            id: 'quanly',
-            title: 'Quản lý dự án đầu tư xây dựng',
-            subtitle: 'Thi chứng chỉ hành nghề Quản lý dự án đầu tư xây dựng, Hạng II',
-            icon: '🏢',
-            files: {
-                law: ['data/Quanly_PLC.csv', 'data/Quanly_PLR.csv'],
-                specialized: ['data/Quanly_CM.csv']
-            }
+    const subjects = subjectsConfig.map(subject => ({
+        id: subject.id,
+        title: subject.title,
+        subtitle: subject.subtitle,
+        icon: subject.icon,
+        files: {
+            law: subject.files.law.map(file => `data/${file}`),
+            specialized: subject.files.specialized.map(file => `data/${file}`)
         }
-    ];
+    }));
 
     // Tạo danh sách chọn môn thi
     subjects.forEach(subject => {
