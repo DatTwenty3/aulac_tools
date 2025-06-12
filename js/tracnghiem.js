@@ -1,4 +1,4 @@
-import subjectsConfig from './config.js';
+import subjectsConfig from './subjects_config.js';
 
 // Danh sách lĩnh vực chính và các chủ đề con
 const mainTopics = subjectsConfig.map(subject => ({

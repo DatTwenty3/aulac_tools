@@ -1,5 +1,5 @@
 // phongthi.js - Xử lý logic thi trực tuyến
-import subjectsConfig from './config.js';
+import subjectsConfig from './subjects_config.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     const selectStyled = document.getElementById('selectStyled');
