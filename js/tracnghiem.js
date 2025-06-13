@@ -104,20 +104,29 @@ function selectMainTopic(topic, index) {
     `;
     selectOptions.classList.remove('show');
     selectStyled.classList.remove('active');
-    // Hiển thị checkbox subtopic
+    // Mô tả ngắn cho từng loại
+    const subDesc = [
+        'Các quy định chung về xây dựng',
+        'Các quy định riêng cho từng lĩnh vực',
+        'Kiến thức chuyên môn nghiệp vụ'
+    ];
+    // Hiển thị checkbox subtopic với icon, tooltip, ripple
+    const icons = ['📚', '⚖️', '🛠️'];
     const checkboxDiv = document.getElementById('subTopicCheckboxes');
     checkboxDiv.innerHTML = '<div style="font-weight:600; margin-bottom:8px;">Chọn loại chủ đề:</div>' +
         '<div class="subtopic-row">' +
         topic.subTopics.map((sub, i) => `
-            <label style="margin-bottom:0;">
-                <input type="checkbox" class="subtopic-checkbox" value="${sub.file}" data-label="${sub.label}" style="width:18px;height:18px;">
+            <label>
+                <input type="checkbox" class="subtopic-checkbox" value="${sub.file}" data-label="${sub.label}">
+                <span class="topic-icon">${icons[i] || '📚'}</span>
                 <span>${sub.label}</span>
+                <span class="tooltip">${subDesc[i] || ''}</span>
             </label>
         `).join('') + '</div>';
     checkboxDiv.style.display = 'block';
-    // Lắng nghe sự kiện tick
+    // Lắng nghe sự kiện tick + hiệu ứng ripple
     checkboxDiv.querySelectorAll('.subtopic-checkbox').forEach(cb => {
-        cb.addEventListener('change', function() {
+        cb.addEventListener('change', function(e) {
             const file = this.value;
             if (this.checked) {
                 if (!selectedSubTopics.includes(file)) selectedSubTopics.push(file);
@@ -130,6 +139,14 @@ function selectMainTopic(topic, index) {
             } else {
                 startButton.classList.remove('enabled');
             }
+            // Hiệu ứng ripple
+            const label = this.parentElement;
+            let ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            ripple.style.left = (e.offsetX || 20) + 'px';
+            ripple.style.top = (e.offsetY || 20) + 'px';
+            label.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
         });
     });
     // Disable nút start nếu chưa tick gì

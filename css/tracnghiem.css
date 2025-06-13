@@ -540,38 +540,98 @@ body {
 #subTopicCheckboxes {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     margin-bottom: 18px;
     align-items: flex-start;
 }
 #subTopicCheckboxes .subtopic-row {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     align-items: flex-start;
 }
 #subTopicCheckboxes label {
     display: flex;
     align-items: center;
-    gap: 6px;
-    background: #f8f9ff;
-    border-radius: 8px;
-    padding: 6px 14px;
+    gap: 8px;
+    background: linear-gradient(90deg, #f8f9ff 60%, #e3f2fd 100%);
+    border-radius: 12px;
+    padding: 7px 14px;
     cursor: pointer;
     border: 1.5px solid #e0e0e0;
-    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.3s, color 0.2s, transform 0.15s;
     font-weight: 500;
+    font-size: 1em;
     margin-bottom: 0;
+    box-shadow: 0 2px 10px rgba(25,118,210,0.07);
+    position: relative;
+    overflow: hidden;
 }
-#subTopicCheckboxes label:hover, #subTopicCheckboxes input:checked + span {
+#subTopicCheckboxes label:hover {
     border-color: #1976d2;
-    box-shadow: 0 2px 8px rgba(25,118,210,0.08);
-    background: #e3f2fd;
+    background: linear-gradient(90deg, #e3f2fd 60%, #fff3e0 100%);
     color: #1976d2;
 }
 #subTopicCheckboxes input[type='checkbox'] {
     accent-color: #1976d2;
     width: 18px;
     height: 18px;
-    border-radius: 4px;
+    border-radius: 5px;
+    margin-right: 4px;
+    transition: box-shadow 0.2s;
+    position: relative;
+    z-index: 2;
+}
+#subTopicCheckboxes input[type='checkbox']:checked + span {
+    font-weight: 600;
+    color: #1976d2;
+    transform: scale(1.06);
+}
+#subTopicCheckboxes label:active {
+    transform: scale(0.98);
+}
+#subTopicCheckboxes label .topic-icon {
+    font-size: 1.1em;
+    margin-right: 3px;
+    transition: color 0.2s, transform 0.2s;
+}
+#subTopicCheckboxes input[type='checkbox']:checked ~ .topic-icon {
+    color: #ff9800;
+    transform: scale(1.15) rotate(-8deg);
+}
+#subTopicCheckboxes label .tooltip {
+    visibility: hidden;
+    opacity: 0;
+    background: #222;
+    color: #fff;
+    border-radius: 6px;
+    padding: 4px 10px;
+    position: absolute;
+    left: 110%;
+    top: 50%;
+    transform: translateY(-50%);
+    white-space: nowrap;
+    font-size: 0.92em;
+    z-index: 10;
+    transition: opacity 0.2s, visibility 0.2s;
+    pointer-events: none;
+}
+#subTopicCheckboxes label:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+#subTopicCheckboxes label .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple-effect 0.5s linear;
+    background: rgba(25, 118, 210, 0.18);
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes ripple-effect {
+    to {
+        transform: scale(2.5);
+        opacity: 0;
+    }
 } 
