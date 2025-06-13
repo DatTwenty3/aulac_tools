@@ -2,7 +2,7 @@ import subjectsConfig from './subjects_config.js';
 
 // Danh sách lĩnh vực chính và các chủ đề con
 const mainTopics = subjectsConfig.map(subject => ({
-    name: subject.name,
+    name: subject.title,
     subtitle: subject.subtitle,
     icon: subject.icon,
     subTopics: [
