@@ -1,4 +1,3 @@
-// phongthi.js - Xử lý logic thi trực tuyến
 import subjectsConfig from './subjects_config.js';
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const timerValue = document.getElementById('timerValue');
     const submitButton = document.getElementById('submitButton');
 
-    // Danh sách các môn thi
     const subjects = subjectsConfig.map(subject => ({
         id: subject.id,
         title: subject.title,
@@ -25,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }));
 
-    // Tạo danh sách chọn môn thi
     subjects.forEach(subject => {
         const option = document.createElement('div');
         option.className = 'select-option';
@@ -39,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         option.addEventListener('click', () => {
-            // Hiển thị icon, tên môn thi và subtitle đẹp hơn trong ô chọn, căn trái, không in nghiêng
             selectPlaceholder.innerHTML = `
                 <div style="display: flex; align-items: flex-start; gap: 12px;">
                     <span class="option-icon" style="font-size: 2em; display: flex; align-items: flex-start; font-style: normal;">${subject.icon || '📚'}</span>
@@ -57,7 +53,6 @@ document.addEventListener('DOMContentLoaded', function() {
         selectOptions.appendChild(option);
     });
 
-    // Xử lý sự kiện khi click vào select-styled
     selectStyled.addEventListener('click', function() {
         selectStyled.classList.toggle('active');
         selectOptions.classList.toggle('show');

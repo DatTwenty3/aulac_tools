@@ -130,7 +130,6 @@ const csvConfigs = [
     noteAbove: "*Theo thông tư 27/2023/TT-BTC",
     noteBelow: "",
   },
-  // Config mới cho "Chi phí thiết kế kỹ thuật/bản vẽ thi công"
   {
     label: "Chi phí thiết kế kỹ thuật/bản vẽ thi công",
     file: "data/dinh_muc_cap_cong_trinh.csv",

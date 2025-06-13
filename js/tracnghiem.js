@@ -1,6 +1,5 @@
 import subjectsConfig from './subjects_config.js';
 
-// Danh sách lĩnh vực chính và các chủ đề con
 const mainTopics = subjectsConfig.map(subject => ({
     name: subject.title,
     subtitle: subject.subtitle,
@@ -38,14 +37,12 @@ const selectOptions = document.getElementById('selectOptions');
 const startButton = document.getElementById('startButton');
 const backButton = document.getElementById('backButton');
 
-// Khởi tạo dropdown và events
 window.addEventListener('load', initializeDropdown);
 submitBtn.addEventListener('click', submitAnswer);
 nextBtn.addEventListener('click', nextQuestion);
 startButton.addEventListener('click', startQuiz);
 backButton.addEventListener('click', backToSelection);
 
-// Đóng dropdown khi click bên ngoài
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.custom-select')) {
         selectOptions.classList.remove('show');
@@ -54,7 +51,6 @@ document.addEventListener('click', function(e) {
 });
 
 function initializeDropdown() {
-    // Tạo options cho dropdown lĩnh vực chính
     selectOptions.innerHTML = '';
     mainTopics.forEach((topic, index) => {
         const optionDiv = document.createElement('div');
@@ -77,13 +73,11 @@ function initializeDropdown() {
         selectStyled.classList.toggle('active');
     });
 
-    // Di chuyển vùng hiển thị checkbox subtopic lên trên nút bắt đầu
     let checkboxDiv = document.getElementById('subTopicCheckboxes');
     if (!checkboxDiv) {
         checkboxDiv = document.createElement('div');
         checkboxDiv.id = 'subTopicCheckboxes';
         checkboxDiv.style = 'margin-top: 18px; display: none;';
-        // Chèn vào đúng vị trí trước startButton
         const dropdownContainer = document.querySelector('.dropdown-container');
         dropdownContainer.insertBefore(checkboxDiv, startButton);
     }
@@ -92,7 +86,6 @@ function initializeDropdown() {
 function selectMainTopic(topic, index) {
     selectedMainTopic = topic;
     selectedSubTopics = [];
-    // Cập nhật hiển thị dropdown
     selectStyled.innerHTML = `
         <div style="display: flex; align-items: flex-start; gap: 12px;">
             <span class="option-icon" style="font-size: 2em; display: flex; align-items: flex-start; font-style: normal;">${topic.icon}</span>
@@ -104,8 +97,6 @@ function selectMainTopic(topic, index) {
     `;
     selectOptions.classList.remove('show');
     selectStyled.classList.remove('active');
-    // Hiển thị checkbox subtopic
-    const checkboxDiv = document.getElementById('subTopicCheckboxes');
     checkboxDiv.innerHTML = '<div style="font-weight:600; margin-bottom:8px;">Chọn loại chủ đề:</div>' +
         '<div class="subtopic-row">' +
         topic.subTopics.map((sub, i) => `
@@ -115,7 +106,6 @@ function selectMainTopic(topic, index) {
             </label>
         `).join('') + '</div>';
     checkboxDiv.style.display = 'block';
-    // Lắng nghe sự kiện tick
     checkboxDiv.querySelectorAll('.subtopic-checkbox').forEach(cb => {
         cb.addEventListener('change', function() {
             const file = this.value;
@@ -124,7 +114,6 @@ function selectMainTopic(topic, index) {
             } else {
                 selectedSubTopics = selectedSubTopics.filter(f => f !== file);
             }
-            // Enable nút start nếu có ít nhất 1 loại được chọn
             if (selectedSubTopics.length > 0) {
                 startButton.classList.add('enabled');
             } else {
@@ -132,7 +121,6 @@ function selectMainTopic(topic, index) {
             }
         });
     });
-    // Disable nút start nếu chưa tick gì
     startButton.classList.remove('enabled');
 }
 
@@ -208,7 +196,6 @@ async function loadMultipleCSVFiles(fileList) {
 function backToSelection() {
     quizContainer.style.display = 'none';
     selectionSection.style.display = 'block';
-    // Reset các giá trị
     currentQuestion = null;
     selectedAnswer = null;
     stats = { total: 0, correct: 0, wrong: 0 };
@@ -230,10 +217,8 @@ function updateLoadingBar(percentage) {
 }
 
 function formatQuestionText(raw) {
-    // Chuẩn hóa xuống dòng thành 1 dòng
     let text = raw.replace(/\r\n|\r|\n/g, ' ');
 
-    // Tìm vị trí bắt đầu đáp án a.
     let match = text.match(/([aA][\.|\)]\s)/);
     if (!match) return text.trim();
 
@@ -241,7 +226,6 @@ function formatQuestionText(raw) {
     let question = text.slice(0, idx).trim();
     let answers = text.slice(idx);
 
-    // Tách đáp án, chỉ lấy đúng 4 đáp án a, b, c, d (không lặp, không trùng)
     let answerArr = [];
     let usedLabels = {};
     let regex = /([a-dA-D][\.|\)])\s(.*?)(?= [a-dA-D][\.|\)]|$)/g;
@@ -254,7 +238,6 @@ function formatQuestionText(raw) {
         }
     }
 
-    // Nếu không đủ 4 đáp án, fallback về tách cũ
     if (answerArr.length < 4) {
         return text.replace(/([a-d]\.)/gi, '<br><b>$1</b>').replace(/^<br>/, '').trim();
     }
@@ -263,7 +246,6 @@ function formatQuestionText(raw) {
 }
 
 function loadRandomQuestion() {
-    // Nếu hết câu hỏi thì chúc mừng
     if (remainingQuestions.length === 0) {
         quizContainer.innerHTML = `
             <div class="result correct" style="font-size:1.5em; padding: 40px;">
@@ -280,25 +262,19 @@ function loadRandomQuestion() {
         return;
     }
 
-    // Luôn reset lại nút xác nhận đáp án
     submitBtn.style.display = 'inline-block';
     submitBtn.disabled = true;
     nextBtn.style.display = 'none';
 
-    // Chọn câu hỏi ngẫu nhiên từ remainingQuestions
     const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
     currentQuestion = remainingQuestions[randomIndex];
-    // Xóa câu hỏi này khỏi mảng để không lặp lại
     remainingQuestions.splice(randomIndex, 1);
     
-    // Hiển thị số thứ tự từ cột stt
     const questionNumber = currentQuestion.stt || '?';
     document.getElementById('questionNumber').textContent = `Câu hỏi #${questionNumber}`;
     
-    // Hiển thị câu hỏi với định dạng đẹp
     questionText.innerHTML = formatQuestionText(currentQuestion.question);
     
-    // Tạo 4 lựa chọn A, B, C, D
     const options = ['A', 'B', 'C', 'D'];
     optionsContainer.innerHTML = '';
     
@@ -313,23 +289,19 @@ function loadRandomQuestion() {
         optionsContainer.appendChild(optionDiv);
     });
     
-    // Reset trạng thái
     selectedAnswer = null;
     result.style.display = 'none';
     
-    // Xóa các class highlight
     document.querySelectorAll('.option').forEach(opt => {
         opt.classList.remove('selected', 'correct', 'incorrect');
     });
 }
 
 function selectOption(option, optionElement) {
-    // Xóa selection cũ
     document.querySelectorAll('.option').forEach(opt => {
         opt.classList.remove('selected');
     });
     
-    // Chọn option mới
     optionElement.classList.add('selected');
     selectedAnswer = option;
     submitBtn.disabled = false;
@@ -341,7 +313,6 @@ function submitAnswer() {
     const correctAnswer = currentQuestion.answer.trim().toUpperCase();
     const isCorrect = selectedAnswer === correctAnswer;
     
-    // Cập nhật thống kê
     stats.total++;
     if (isCorrect) {
         stats.correct++;
@@ -350,7 +321,6 @@ function submitAnswer() {
     }
     updateStats();
     
-    // Hiển thị kết quả
     document.querySelectorAll('.option').forEach(opt => {
         const optionLabel = opt.querySelector('.option-label').textContent;
         if (optionLabel === correctAnswer) {
@@ -361,7 +331,6 @@ function submitAnswer() {
         opt.style.pointerEvents = 'none';
     });
     
-    // Hiển thị thông báo kết quả
     result.style.display = 'block';
     if (isCorrect) {
         result.className = 'result correct';
@@ -371,7 +340,6 @@ function submitAnswer() {
         result.innerHTML = '❌ Sai rồi! Đáp án đúng là: ' + correctAnswer;
     }
     
-    // Kiểm tra nếu hết câu hỏi thì hiển thị chúc mừng và tổng kết
     if (remainingQuestions.length === 0) {
         setTimeout(() => {
             const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
@@ -391,14 +359,13 @@ function submitAnswer() {
         submitBtn.style.display = 'none';
         nextBtn.style.display = 'none';
     } else {
-        // Hiển thị nút next
         submitBtn.style.display = 'none';
         nextBtn.style.display = 'inline-block';
     }
 }
 
 function nextQuestion() {
-    if (remainingQuestions.length === 0) return; // Đã hết câu hỏi, không làm gì nữa
+    if (remainingQuestions.length === 0) return;
     loadRandomQuestion();
     submitBtn.style.display = 'inline-block';
     document.querySelectorAll('.option').forEach(opt => {
