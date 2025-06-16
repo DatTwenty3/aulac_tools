@@ -56,13 +56,13 @@ function updateOldUnitSelect(province) {
   document.getElementById('find-btn').disabled = true;
 }
 
-// Hàm tìm phường/xã mới dựa trên đơn vị cũ (so sánh theo tên)
-function findNewWardForOldUnit(oldUnit) {
-  // So sánh dựa trên tên (name)
+// Hàm tìm phường/xã mới dựa trên đơn vị cũ (so sánh theo tên và tỉnh)
+function findNewWardForOldUnit(oldUnit, province) {
+  // So sánh dựa trên tên (name) và tỉnh/thành phố
   for (const ward in newDataGlobal) {
     const units = newDataGlobal[ward];
     for (const item of units) {
-      if (item.oldUnit === oldUnit.name) {
+      if (item.oldUnit === oldUnit.name && item.oldProvince === province) {
         return ward;
       }
     }
@@ -92,12 +92,14 @@ function updateMapDisplay(oldUnit) {
 // Xử lý khi nhấn nút tìm kết quả
 function handleFindResult() {
   const oldUnitSelect = document.getElementById('old-unit-select');
+  const provinceSelect = document.getElementById('province-select');
   const selectedValue = oldUnitSelect.value;
+  const selectedProvince = provinceSelect.value;
   const resultDisplay = document.getElementById('result-display');
 
   if (selectedValue) {
     const oldUnit = JSON.parse(selectedValue); // Chuyển chuỗi JSON thành object có { name, mapApi }
-    const newWard = findNewWardForOldUnit(oldUnit);
+    const newWard = findNewWardForOldUnit(oldUnit, selectedProvince);
     if (newWard) {
       resultDisplay.innerHTML = `
         <p><strong>Xã/Phường cũ:</strong> ${oldUnit.name}</p>

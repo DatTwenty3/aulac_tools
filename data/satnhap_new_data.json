@@ -171,5 +171,689 @@
   "xã Ngũ Lạc": [
     {"oldProvince": "Trà Vinh", "oldUnit": "xã Ngũ Lạc"},
     {"oldProvince": "Trà Vinh", "oldUnit": "xã Thạnh Hoà Sơn"}
+  ],
+  "phường An Hội": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "phường An Hội"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ Thạnh An"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Nhuận"
+    }
+  ],
+  "phường Phú Khương": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "phường Phú Khương"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "phường 8"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Hưng"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Nhơn Thạnh"
+    }
+  ],
+  "phường Bến Tre": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "phường 7"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bình Phú"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thanh Tân"
+    }
+  ],
+  "phường Sơn Đông": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "phường 6, "
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Sơn Đông"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tam Phước"
+    }
+  ],
+  "phường Phú Tân": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "phường Phú Tân"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hữu Định"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phước Thạnh"
+    }
+  ],
+  "xã Phú Túc": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Túc"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Thạch"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tường Đa"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Châu Thành"
+    }
+  ],
+  "xã Giao Long": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Giao Long"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Phước"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Quới Sơn"
+    }
+  ],
+  "xã Tiên Thủy": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Tiên Thủy"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thành Triệu"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Quới Thành"
+    }
+  ],
+  "xã Tân Phú": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Phú"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Đức"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tiên Long"
+    }
+  ],
+  "xã Phú Phụng": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Phụng"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Vĩnh Bình"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Sơn Định"
+    }
+  ],
+  "xã Chợ Lách": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Chợ Lách"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hòa Nghĩa"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Long Thới"
+    }
+  ],
+  "xã Vĩnh Thành": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Vĩnh Thành"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Thiềng"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Sơn"
+    }
+  ],
+  " xã Hưng Khánh Trung": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hưng Khánh Trung A"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hưng Khánh Trung B"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Vĩnh Hòa"
+    }
+  ],
+  "xã Phước Mỹ Trung": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Phước Mỹ Trung"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Mỹ"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thạnh Ngãi"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Phú Tây"
+    }
+  ],
+  "xã Tân Thành Bình": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": " xã Tân Thành Bình"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hòa Lộc"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Bình"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thành An"
+    }
+  ],
+  "xã Nhuận Phú Tân": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Nhuận Phú Tân"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Thanh Tây"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Khánh Thạnh Tân"
+    }
+  ],
+  "xã Đồng Khởi": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Định Thủy"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phước Hiệp"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bình Khánh"
+    }
+  ],
+  "xã Mỏ Cày": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Mỏ Cày"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Hội"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Đa Phước Hội"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Thạnh"
+    }
+  ],
+  "xã Thành Thới": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thành Thới A"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thành Thới B"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Thới"
+    }
+  ],
+  "xã An Định": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Định"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Trung"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Minh Đức"
+    }
+  ],
+  "xã Hương Mỹ": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hương Mỹ"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Cẩm Sơn"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Ngãi Đăng"
+    }
+  ],
+  "xã Đại Điền": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Đại Điền"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Khánh"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Phong"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thới Thạnh"
+    }
+  ],
+  "xã Quới Điền": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": " xã Quới Điền"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ Hưng"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hòa Lợi"
+    }
+  ],
+  "xã Thạnh Phú ": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Thạnh Phú"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bình Thạnh"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ An"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Thạnh"
+    }
+  ],
+  "xã An Qui": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Qui"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Nhơn"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Thuận"
+    }
+  ],
+  "xã Thạnh Hải": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thạnh Hải"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Điền"
+    }
+  ],
+  "xã Thạnh Phong": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thạnh Phong"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Giao Thạnh"
+    }
+  ],
+  "xã Tân Thủy": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Thủy"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Hòa Tây"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Tiệm Tôm"
+    }
+  ],
+  "xã Bảo Thạnh": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bảo Thạnh"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bảo Thuận"
+    }
+  ],
+  "xã Ba Tri": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Ba Tri"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Vĩnh Hòa"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Đức"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Vĩnh An"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Bình Tây"
+    }
+  ],
+  "xã Tân Xuân": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Xuân"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phước Ngãi"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Lễ"
+    }
+  ],
+  "xã Mỹ Chánh Hòa": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ Chánh"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ Nhơn"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ Hòa"
+    }
+  ],
+  "xã An Ngãi Trung": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Ngãi Trung"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Phú Trung"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ Thạnh"
+    }
+  ],
+  "xã An Hiệp": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Hiệp"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã An Ngãi Tây"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Hưng"
+    }
+  ],
+  "xã Hưng Nhượng": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hưng Nhượng"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Thanh"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hưng Lễ"
+    }
+  ],
+  "xã Giồng Trôm": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Giồng Trôm"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bình Hòa"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bình Thành"
+    }
+  ],
+  "xã Tân Hào": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Hào"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tân Lợi Thạnh"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thạnh Phú Đông"
+    }
+  ],
+  "xã Phước Long": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phước Long"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Long Mỹ"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Hưng Phong"
+    }
+  ],
+  "xã Lương Phú": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Lương Phú"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thuận Điền"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Mỹ Thạnh"
+    }
+  ],
+  "xã Châu Hòa": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Châu Hòa"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Châu Bình"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Lương Quới"
+    }
+  ],
+  "xã Lương Hòa": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Lương Hòa"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phong Nẫm"
+    }
+  ],
+  "xã Thới Thuận": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thới Thuận"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thừa Đức"
+    }
+  ],
+  "xã Thạnh Phước": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thạnh Phước"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Đại Hòa Lộc"
+    }
+  ],
+  "xã Bình Đại": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "thị trấn Bình Đại"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bình Thới"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Bình Thắng"
+    }
+  ],
+  "xã Thạnh Trị": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thạnh Trị"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Định Trung"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Long"
+    }
+  ],
+  "xã Lộc Thuận": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Lộc Thuận"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Vang Quới Đông"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Vang Quới Tây"
+    }
+  ],
+  "xã Châu Hưng": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Châu Hưng"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Thới Lai"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Long Hòa"
+    }
+  ],
+  "xã Phú Thuận": [
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Phú Thuận"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Long Định"
+    },
+    {
+      "oldProvince": "Bến Tre",
+      "oldUnit": "xã Tam Hiệp"
+    }
   ]
 }
