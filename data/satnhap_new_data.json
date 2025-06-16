@@ -855,5 +855,523 @@
       "oldProvince": "Bến Tre",
       "oldUnit": "xã Tam Hiệp"
     }
+  ],
+  "Xã Cái Nhum": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thị trấn Cái Nhum"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "An Phước"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Chánh An"
+    }
+  ],
+  "Xã Tân Long Hội": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân An Hội"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Long"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Long Hội"
+    }
+  ],
+  "Xã Trà Côn": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Nhơn Bình"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trà Côn"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Mỹ"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Nhơn Bình"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trà Côn"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Mỹ"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Ấp Nhà Thờ (Thị trấn Tam Bình)"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tường Trí (Thị trấn Tam Bình)"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tường Trí B (Thị trấn Tam Bình)"
+    }
+  ],
+  "Xã Nhơn Phú": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Mỹ Phước"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Nhơn Phú"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Mỹ An"
+    }
+  ],
+  "Xã Bình Phước": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Bình Phước"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hòa Tịnh"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Long Mỹ"
+    }
+  ],
+  "Xã An Bình": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "An Bình"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Bình Hòa Phước"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Đồng Phú"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hòa Ninh"
+    }
+  ],
+  "Xã Long Hồ": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thị trấn Long Hồ"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Long An"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Long Phước"
+    }
+  ],
+  "Xã Phú Quới": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Lộc Hòa"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hòa Phú"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phú Quới"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thạnh Quới"
+    }
+  ],
+  "Phường Thanh Đức": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường 5"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thanh Đức (Huyện Long Hồ)"
+    }
+  ],
+  "Phường Long Châu": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường 1"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường 9"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trường An"
+    }
+  ],
+  "Phường Phước Hậu": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường 3"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường 4"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phước Hậu (Huyện Long Hồ)"
+    }
+  ],
+  "Phường Tân Hạnh": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường 8"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Hạnh (Huyện Long Hồ)"
+    }
+  ],
+  "Phường Tân Ngãi": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Ngãi"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Hòa"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Hội"
+    }
+  ],
+  "Xã Quới Thiện": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Quới Thiện"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thanh Bình"
+    }
+  ],
+  "Xã Trung Thành": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thị trấn Vũng Liêm"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Thành"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Hiếu"
+    }
+  ],
+  "Xã Trung Ngãi": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Thành Đông"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Ngãi"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Nghĩa"
+    }
+  ],
+  "Xã Quới An": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Thành Tây"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Quới An"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Quới Trung"
+    }
+  ],
+  "Xã Trung Hiệp": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Chánh"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung Hiệp"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân An Luông"
+    }
+  ],
+  "Xã Hiếu Phụng": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hiếu Phụng"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Trung An"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hiếu Thuận"
+    }
+  ],
+  "Xã Hiếu Thành": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hiếu Nhơn"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hiếu Thành"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hiếu Nghĩa"
+    }
+  ],
+  "Xã Lục Sỹ Thành": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phú Thành"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Lục Sỹ Thành"
+    }
+  ],
+  "Xã Trà Ôn": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thị trấn Trà Ôn"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tích Thiện"
+    }
+  ],
+  "Xã Vĩnh Xuân": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Vĩnh Xuân"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thuận Thới"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hựu Thành"
+    }
+  ],
+  "Xã Hòa Bình": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Xuân Hiệp"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hòa Bình"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thới Hòa"
+    }
+  ],
+  "Xã Hòa Hiệp": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hòa Thạnh"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hòa Hiệp"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hòa Lộc"
+    }
+  ],
+  "Xã Tam Bình": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phần còn lại của Thị trấn Tam Bình"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Mỹ Thạnh Trung"
+    }
+  ],
+  "Xã Ngãi Tứ": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Loan Mỹ"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Bình Ninh"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phần còn lại của Ngãi Tứ"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Khu 6 (Thị trấn Trà Ôn)"
+    }
+  ],
+  "Xã Song Phú": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Long Phú"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Phú"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Song Phú"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phú Thịnh"
+    }
+  ],
+  "Xã Cái Ngang": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Mỹ Lộc"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Lộc"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Hậu Lộc"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phú Lộc"
+    }
+  ],
+  "Xã Tân Quới": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thị trấn Tân Quới"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Bình"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thành Lợi"
+    }
+  ],
+  "Xã Tân Lược": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân An Thạnh"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Lược"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Tân Thành"
+    }
+  ],
+  "Xã Mỹ Thuận": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thành Trung"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Mỹ Thuận"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Nguyễn Văn Thảnh"
+    }
+  ],
+  "Phường Bình Minh": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường Thành Phước"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Thuận An"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Khóm 5 (Phường Cái Vồn)"
+    }
+  ],
+  "Phường Cái Vồn": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường Cái Vồn"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Mỹ Hòa"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Cồn Sừng (Xã Ngãi Tứ, Huyện Tam Bình)"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Khóm 3 (Phường Thành Phước)"
+    }
+  ],
+  "Phường Đông Thành": [
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Phường Đông Thuận"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Đông Bình"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Đông Thành"
+    },
+    {
+      "oldProvince": "Vĩnh Long",
+      "oldUnit": "Đông Thạnh"
+    }
   ]
 }
