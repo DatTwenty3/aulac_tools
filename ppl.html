@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Document JSON Key Replacer</title>
+    <link rel="stylesheet" href="css/ppl.css">
+    <link rel="icon" type="image/png" href="logo/AULAC_CONS.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo-container">
+            <img src="logo/AULAC_CONS.png" alt="Logo" class="logo">
+        </div>
+        <h1>Hệ thống lập Phương pháp luận tự động</h1>
+        
+        <div class="upload-section">
+            <h3>🤖 Prompt cho AI</h3>
+            <div id="promptStatus" class="status"></div>
+            <button id="getPromptButton" class="file-input-button">
+                📋 Lấy prompt cho NotebookLM
+            </button>
+        </div>
+
+        <div class="upload-section">
+            <h3>📄 Dữ liệu JSON thay thế</h3>
+            <div class="json-input-options">
+                <button class="option-button active" onclick="showJsonOption('paste')">
+                    📝 Dán JSON
+                </button>
+                <button class="option-button" onclick="showJsonOption('file')">
+                    📁 Chọn file JSON
+                </button>
+            </div>
+            
+            <div id="jsonPasteOption" class="json-option active">
+                <textarea id="jsonTextarea" placeholder="Dán nội dung JSON vào đây..." rows="8"></textarea>
+            </div>
+            
+            <div id="jsonFileOption" class="json-option">
+                <div class="file-input-wrapper">
+                    <input type="file" id="jsonFile" class="file-input" accept=".json">
+                    <button class="file-input-button" onclick="document.getElementById('jsonFile').click()">
+                        📁 Chọn file JSON
+                    </button>
+                </div>
+                <div id="jsonFileInfo" class="file-info"></div>
+            </div>
+        </div>
+
+        <div class="upload-section">
+            <h3>📝 Chọn Template Word</h3>
+            <div class="template-input-options">
+                <button class="option-button active" onclick="showTemplateOption('predefined')">
+                    📋 Template có sẵn
+                </button>
+                <button class="option-button" onclick="showTemplateOption('upload')">
+                    📁 Upload file Word
+                </button>
+            </div>
+            
+            <div id="templatePredefinedOption" class="template-option active">
+                <select id="templateSelect" class="template-select">
+                    <option value="">-- Chọn template --</option>
+                    <option value="template_3_1_1">Template mục 3.1.1</option>
+                    <option value="template_3_1_2">Template mục 3.1.2</option>
+                </select>
+                <div id="templateInfo" class="template-info"></div>
+            </div>
+            
+            <div id="templateUploadOption" class="template-option">
+                <div class="file-input-wrapper">
+                    <input type="file" id="wordFile" class="file-input" accept=".docx">
+                    <button class="file-input-button" onclick="document.getElementById('wordFile').click()">
+                        📁 Chọn file Word (.docx)
+                    </button>
+                </div>
+                <div id="wordFileInfo" class="file-info"></div>
+            </div>
+        </div>
+
+        <button id="processButton" class="process-button" disabled>
+            🚀 Xử lý và Thay thế
+        </button>
+
+        <div id="status" class="status"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Đang xử lý file...</p>
+        </div>
+
+        <div id="downloadSection" class="download-section">
+            <button id="downloadButton" class="download-button">
+                💾 Tải về file Word đã xử lý
+            </button>
+        </div>
+    </div>
+
+    <script src="js/ppl.js"></script>
+</body>
+</html>

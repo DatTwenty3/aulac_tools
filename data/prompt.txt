@@ -1,0 +1,27 @@
+Tìm kiếm nội dung sau và chuyển đổi thành định dạng JSON, chú ý định dạng JSON sử dụng cấu trúc key-value 1 cấp, không tạo nested objects:
+Tên gói thầu
+Tên dự án
+Chủ đầu tư
+Nguồn vốn đầu tư
+Địa điểm thực hiện dự án
+Thời gian thực hiện gói thầu
+Các VB pháp lý gói thầu phê duyệt chủ trương đầu tư
+Các VB pháp lý gói thầu phê duyệt dự án
+Các VB pháp lý gói thầu phê duyệt BC nghiên cứu khả thi
+Các VB pháp lý gói thầu phê duyệt KH lựa chọn nhà thầu
+Các VB pháp lý gói thầu phê duyệt nhiệm vụ khảo sát
+Các VB pháp lý gói thầu phê duyệt nhiệm vụ thiết kế
+Công việc chính, KL khảo sát địa hình
+Công việc chính, KL khảo sát địa chất
+Mã TBMT
+Mã gói thầu
+Thời gian thực hiện dự án
+Bên mời thầu
+Giá gói thầu
+Hình thức lựa chọn nhà thầu
+Phương thức lựa chọn nhà thầu
+Thời gian tổ chức lựa chọn nhà thầu
+Thời gian bắt đầu tổ chức lựa chọn nhà thầu
+Loại hợp đồng
+Thời điểm đóng thầu
+Thời điểm mở thầu
