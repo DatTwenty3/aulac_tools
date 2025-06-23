@@ -6,15 +6,15 @@ const KEY_MAPPING = {
     "Nguồn vốn đầu tư": "FUND_SRC",
     "Địa điểm thực hiện dự án": "LOC",
     "Thời gian thực hiện gói thầu": "PKG_TIME",
-    'Các VB pháp lý gói thầu phê duyệt chủ trương đầu tư': "LEGAL_INVEST",
-    'Các VB pháp lý gói thầu phê duyệt dự án': "LEGAL_PROJ",
-    'Các VB pháp lý gói thầu phê duyệt BC nghiên cứu khả thi': "LEGAL_FS",
-    'Các VB pháp lý gói thầu phê duyệt KH lựa chọn nhà thầu': "LEGAL_PLAN",
-    'Các VB pháp lý gói thầu phê duyệt nhiệm vụ khảo sát': "LEGAL_SURVEY",
-    'Các VB pháp lý gói thầu phê duyệt nhiệm vụ thiết kế': "LEGAL_DESIGN",
-    "Công việc chính, KL khảo sát địa hình": "TOPO_JOB",
-    "Công việc chính, KL khảo sát địa chất": "GEO_JOB",
-    "Mã TBMT": "TBMT_CODE",
+    "Các văn bản pháp lý gói thầu phê duyệt chủ trương đầu tư": "LEGAL_INVEST",
+    "Các văn bản pháp lý gói thầu phê duyệt dự án": "LEGAL_PROJ",
+    "Các văn bản pháp lý gói thầu phê duyệt báo cáo nghiên cứu khả thi": "LEGAL_FS",
+    "Các văn bản pháp lý gói thầu phê duyệt kế hoạch lựa chọn nhà thầu": "LEGAL_PLAN",
+    "Các văn bản pháp lý gói thầu phê duyệt nhiệm vụ khảo sát": "LEGAL_SURVEY",
+    "Các văn bản pháp lý gói thầu phê duyệt nhiệm vụ thiết kế": "LEGAL_DESIGN",
+    "Công việc chính, khối lượng khảo sát địa hình": "TOPO_JOB",
+    "Công việc chính, khối lượng khảo sát địa chất": "GEO_JOB",
+    "Mã thông báo mời thầu": "TBMT_CODE",
     "Mã gói thầu": "PKG_CODE",
     "Thời gian thực hiện dự án": "PRJ_TIME",
     "Bên mời thầu": "INVITER",
@@ -348,8 +348,8 @@ async function processFiles() {
         processedWordContent = await docx.generateAsync({type: 'blob'});
 
         showLoading(false);
-        showStatus('success', '✅ Hoàn thành chuyển đổi!');
-        document.getElementById('downloadSection').style.display = 'block';
+        showStatus('success', '✅ Hoàn thành chuyển đổi, ĐÃ TẢI VỀ FILE WORD!');
+        downloadFile();
 
     } catch (error) {
         showLoading(false);
