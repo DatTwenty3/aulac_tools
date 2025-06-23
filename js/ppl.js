@@ -168,7 +168,6 @@ document.getElementById('wordFile').addEventListener('change', function(e) {
 
 // Xử lý button
 document.getElementById('processButton').addEventListener('click', processFiles);
-document.getElementById('downloadButton').addEventListener('click', downloadFile);
 document.getElementById('getPromptButton').addEventListener('click', getNotebookLMPrompt);
 
 function showPromptStatus(type, message) {
@@ -348,7 +347,7 @@ async function processFiles() {
         processedWordContent = await docx.generateAsync({type: 'blob'});
 
         showLoading(false);
-        showStatus('success', '✅ Hoàn thành chuyển đổi, ĐÃ TẢI VỀ FILE WORD!');
+        showStatus('success', '✅ Hoàn thành chuyển đổi!');
         downloadFile();
 
     } catch (error) {
