@@ -41,7 +41,8 @@ const state = {
     processedWordContent: null,
     convertedData: null,
     currentJsonOption: 'paste',
-    currentTemplateOption: 'predefined'
+    currentTemplateOption: 'predefined',
+    showInputCheckModal: false
 };
 
 // ==== 3. HÀM XỬ LÝ DỮ LIỆU ====
@@ -102,6 +103,12 @@ async function processFiles() {
         showStatus('error', 'Vui lòng chọn file Word!');
         return;
     }
+    
+    // Hiển thị popup kiểm tra thông tin đầu vào
+    showInputCheckModal();
+}
+
+async function executeProcessing() {
     showLoading(true);
     document.getElementById('status').style.display = 'none';
     try {
@@ -168,6 +175,52 @@ function showPromptStatus(type, message) {
     setTimeout(() => {
         promptStatus.style.display = 'none';
     }, 3000);
+}
+
+function showInputCheckModal() {
+    if (!state.convertedData) return;
+    
+    // Hiển thị thông tin dự án
+    const projectInfo = document.getElementById('projectInfo');
+    const projectData = state.convertedData.data;
+    let projectHtml = '';
+    
+    // Hiển thị toàn bộ thông tin từ JSON với tên tiếng Việt chưa ánh xạ
+    state.convertedData.mapping.forEach(item => {
+        if (item.value) {
+            projectHtml += `<div><strong>${item.vietnamese}:</strong> ${item.value}</div>`;
+        }
+    });
+    
+    projectInfo.innerHTML = projectHtml || '<em>Không có thông tin dự án</em>';
+    
+    // Hiển thị thông tin ánh xạ
+    const mappingInfo = document.getElementById('mappingInfo');
+    let mappingHtml = '';
+    let mappedCount = 0;
+    let unmappedCount = 0;
+    
+    state.convertedData.mapping.forEach(item => {
+        if (item.status === 'mapped') {
+            mappedCount++;
+            mappingHtml += `<div style="color: #4caf50;">✅ ${item.vietnamese}</div>`;
+        } else {
+            unmappedCount++;
+            mappingHtml += `<div style="color: #f44336;">❌ ${item.vietnamese} (chưa ánh xạ)</div>`;
+        }
+    });
+    
+    mappingHtml = `<div style="margin-bottom: 10px;"><strong>Tổng cộng:</strong> ${mappedCount} đã ánh xạ, ${unmappedCount} chưa ánh xạ</div>` + mappingHtml;
+    mappingInfo.innerHTML = mappingHtml;
+    
+    // Hiển thị modal
+    document.getElementById('inputCheckModal').style.display = 'block';
+    state.showInputCheckModal = true;
+}
+
+function hideInputCheckModal() {
+    document.getElementById('inputCheckModal').style.display = 'none';
+    state.showInputCheckModal = false;
 }
 
 function showFileInfo(elementId, fileName, fileSize) {
@@ -313,6 +366,28 @@ function initEventListeners() {
     // Xử lý button
     document.getElementById('processButton').addEventListener('click', processFiles);
     document.getElementById('getPromptButton').addEventListener('click', getNotebookLMPrompt);
+    
+    // Xử lý modal
+    document.getElementById('closeModal').addEventListener('click', hideInputCheckModal);
+    document.getElementById('cancelProcess').addEventListener('click', hideInputCheckModal);
+    document.getElementById('confirmProcess').addEventListener('click', function() {
+        hideInputCheckModal();
+        executeProcessing();
+    });
+    
+    // Đóng modal khi click bên ngoài
+    document.getElementById('inputCheckModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideInputCheckModal();
+        }
+    });
+    
+    // Đóng modal bằng phím ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && state.showInputCheckModal) {
+            hideInputCheckModal();
+        }
+    });
 }
 
 function getNotebookLMPrompt() {
