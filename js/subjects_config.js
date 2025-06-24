@@ -88,6 +88,16 @@ const subjectsConfig = [
             law: ['cauhamhang3_PLC.csv', 'cauhamhang3_PLR.csv'],
             specialized: ['cauhamhang3_CM.csv']
         }
+    },
+    {
+        id: 'duongbo3',
+        title: 'Đường bộ',
+        subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Đường bộ, Hạng III',
+        icon: '🚗',
+        files: {
+            law: ['duongbohang3_PLC.csv', 'duongbohang3_PLR.csv'],
+            specialized: ['duongbohang3_CM.csv']
+        }
     }
 ];
 
