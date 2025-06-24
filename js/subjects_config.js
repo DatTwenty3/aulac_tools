@@ -20,16 +20,6 @@ const subjectsConfig = [
         }
     },
     {
-        id: 'diachat',
-        title: 'Khảo sát địa chất công trình',
-        subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa chất công trình, Hạng III',
-        icon: '💎',
-        files: {
-            law: ['Khaosatdiachat_PLC.csv', 'Khaosatdiachat_PLR.csv'],
-            specialized: ['Khaosatdiachat_CM.csv']
-        }
-    },
-    {
         id: 'dinhgia',
         title: 'Định giá xây dựng',
         subtitle: 'Thi chứng chỉ hành nghề Định giá xây dựng, Hạng II',
@@ -67,6 +57,16 @@ const subjectsConfig = [
         files: {
             law: ['Quanly_PLC.csv', 'Quanly_PLR.csv'],
             specialized: ['Quanly_CM.csv']
+        }
+    },
+    {
+        id: 'diachat',
+        title: 'Khảo sát địa chất công trình',
+        subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa chất công trình, Hạng III',
+        icon: '💎',
+        files: {
+            law: ['Khaosatdiachat_PLC.csv', 'Khaosatdiachat_PLR.csv'],
+            specialized: ['Khaosatdiachat_CM.csv']
         }
     }
 ];
