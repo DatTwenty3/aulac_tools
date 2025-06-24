@@ -68,6 +68,16 @@ const subjectsConfig = [
             law: ['Khaosatdiachat_PLC.csv', 'Khaosatdiachat_PLR.csv'],
             specialized: ['Khaosatdiachat_CM.csv']
         }
+    },
+    {
+        id: 'giamsat3',
+        title: 'Giám sát công tác xây dựng công trình',
+        subtitle: 'Thi chứng chỉ hành nghề Giám sát công tác xây dựng công trình, Hạng III',
+        icon: '👷',
+        files: {
+            law: ['giamsathang3_PLC.csv', 'giamsathang3_PLR.csv'],
+            specialized: ['giamsathang3_CM.csv']
+        }
     }
 ];
 
