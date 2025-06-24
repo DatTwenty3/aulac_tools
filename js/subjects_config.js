@@ -1,7 +1,7 @@
 const subjectsConfig = [
     {
         id: 'hamcau',
-        title: 'Thiết kế xây XDCT: CT Cầu - Hầm',
+        title: 'Thiết kế xây XDCT: CT Cầu - Hầm, Hạng II',
         subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Cầu - Hầm, Hạng II',
         icon: '🌉',
         files: {
@@ -11,7 +11,7 @@ const subjectsConfig = [
     },
     {
         id: 'diahinh',
-        title: 'Khảo sát địa hình',
+        title: 'Khảo sát địa hình, Hạng II',
         subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa hình, Hạng II',
         icon: '🔍',
         files: {
@@ -21,7 +21,7 @@ const subjectsConfig = [
     },
     {
         id: 'dinhgia',
-        title: 'Định giá xây dựng',
+        title: 'Định giá xây dựng, Hạng II',
         subtitle: 'Thi chứng chỉ hành nghề Định giá xây dựng, Hạng II',
         icon: '💰',
         files: {
@@ -31,7 +31,7 @@ const subjectsConfig = [
     },
     {
         id: 'duongbo',
-        title: 'Đường bộ',
+        title: 'Đường bộ, Hạng II',
         subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Đường bộ, Hạng II',
         icon: '🚗',
         files: {
@@ -41,7 +41,7 @@ const subjectsConfig = [
     },
     {
         id: 'giamsat',
-        title: 'Giám sát công tác xây dựng công trình',
+        title: 'Giám sát công tác xây dựng công trình, Hạng II',
         subtitle: 'Thi chứng chỉ hành nghề Giám sát công tác xây dựng công trình, Hạng II',
         icon: '👷',
         files: {
@@ -51,7 +51,7 @@ const subjectsConfig = [
     },
     {
         id: 'quanly',
-        title: 'Quản lý dự án đầu tư xây dựng',
+        title: 'Quản lý dự án đầu tư xây dựng, Hạng II',
         subtitle: 'Thi chứng chỉ hành nghề Quản lý dự án đầu tư xây dựng, Hạng II',
         icon: '🏢',
         files: {
@@ -61,7 +61,7 @@ const subjectsConfig = [
     },
     {
         id: 'diachat',
-        title: 'Khảo sát địa chất công trình',
+        title: 'Khảo sát địa chất công trình, Hạng III',
         subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa chất công trình, Hạng III',
         icon: '💎',
         files: {
@@ -71,7 +71,7 @@ const subjectsConfig = [
     },
     {
         id: 'giamsat3',
-        title: 'Giám sát công tác xây dựng công trình',
+        title: 'Giám sát công tác xây dựng công trình, Hạng III',
         subtitle: 'Thi chứng chỉ hành nghề Giám sát công tác xây dựng công trình, Hạng III',
         icon: '👷',
         files: {
@@ -81,8 +81,8 @@ const subjectsConfig = [
     },
     {
         id: 'hamcau33',
-        title: 'Thiết kế xây XDCT: CT Cầu - Hầm',
-        subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Cầu - Hầm, Hạng IIII',
+        title: 'Thiết kế xây XDCT: CT Cầu - Hầm, Hạng III',
+        subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Cầu - Hầm, Hạng III',
         icon: '🌉',
         files: {
             law: ['cauhamhang3_PLC.csv', 'cauhamhang3_PLR.csv'],
@@ -91,7 +91,7 @@ const subjectsConfig = [
     },
     {
         id: 'duongbo3',
-        title: 'Đường bộ',
+        title: 'Đường bộ, Hạng III',
         subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Đường bộ, Hạng III',
         icon: '🚗',
         files: {
