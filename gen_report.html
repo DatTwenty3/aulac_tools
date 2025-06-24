@@ -547,44 +547,53 @@
 
         // Tạo document Word
         async function createWordDocument(content) {
-            // Tạo nội dung HTML từ content
-            let htmlContent = '';
-            
+            // Sử dụng thư viện docx để tạo file docx chuẩn
+            const { Document, Packer, Paragraph, HeadingLevel, TextRun, PageBreak } = window.docx;
+            const docChildren = [];
+
             content.forEach(item => {
                 switch(item.type) {
                     case 'title':
-                        htmlContent += `<h${item.level}>${item.text}</h${item.level}>`;
+                        docChildren.push(
+                            new Paragraph({
+                                text: item.text,
+                                heading: HeadingLevel.HEADING_1,
+                                spacing: { after: 300 },
+                            })
+                        );
                         break;
                     case 'section':
-                        htmlContent += `<h2>${item.title}</h2>`;
-                        htmlContent += `<p>${item.content.replace(/\n/g, '</p><p>')}</p>`;
+                        docChildren.push(
+                            new Paragraph({
+                                text: item.title,
+                                heading: HeadingLevel.HEADING_2,
+                                spacing: { after: 200 },
+                            })
+                        );
+                        // Tách từng dòng thành đoạn văn riêng biệt
+                        item.content.split('\n').forEach(line => {
+                            if (line.trim() !== "") {
+                                docChildren.push(new Paragraph(line));
+                            }
+                        });
                         break;
                     case 'pageBreak':
-                        htmlContent += '<div style="page-break-before: always;"></div>';
+                        docChildren.push(new Paragraph({ children: [new PageBreak()] }));
                         break;
                 }
             });
 
-            // Tạo blob HTML
-            const htmlBlob = new Blob([`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <style>
-                        body { font-family: Arial, sans-serif; line-height: 1.6; }
-                        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
-                        h2 { color: #34495e; margin-top: 30px; }
-                        p { margin: 10px 0; text-align: justify; }
-                    </style>
-                </head>
-                <body>
-                    ${htmlContent}
-                </body>
-                </html>
-            `], { type: 'application/msword' });
+            const doc = new Document({
+                sections: [
+                    {
+                        properties: {},
+                        children: docChildren
+                    }
+                ]
+            });
 
-            return htmlBlob;
+            // Xuất file docx
+            return await Packer.toBlob(doc);
         }
 
         // Tải file
