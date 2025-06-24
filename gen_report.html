@@ -4,36 +4,340 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trình Tạo Báo Cáo Công Trình</title>
-    <link rel="stylesheet" href="css/landing_page.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.7/pizzip.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #e3f2fd;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(25, 118, 210, 0.08);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(90deg, #1976d2 60%, #ff9800 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.13);
+            color: #fff;
+            background: none;
+            -webkit-background-clip: initial;
+            -webkit-text-fill-color: initial;
+            background-clip: initial;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            color: #fff;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .projects-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #1976d2;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #1976d2;
+            display: inline-block;
+        }
+
+        .project-container {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #e3f2fd;
+            transition: all 0.3s ease;
+        }
+
+        .project-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(25, 118, 210, 0.08);
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .project-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .project-input:focus {
+            outline: none;
+            border-color: #1976d2;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.13);
+        }
+
+        .remove-project {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .remove-project:hover {
+            background: #ff3742;
+            transform: scale(1.05);
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .category-item {
+            background: #fff;
+            border: 2px solid #e3f2fd;
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .category-item:hover {
+            border-color: #1976d2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25, 118, 210, 0.08);
+        }
+
+        .category-item.selected {
+            border-color: #ff9800;
+            background: linear-gradient(90deg, #1976d2 60%, #ff9800 100%);
+            color: white;
+        }
+
+        .category-checkbox {
+            display: none;
+        }
+
+        .category-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .category-item.selected .checkbox-custom {
+            background: #fff;
+            border-color: #fff;
+        }
+
+        .checkbox-custom::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #1976d2;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .category-item.selected .checkbox-custom::after {
+            opacity: 1;
+            color: #fff;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #e3f2fd;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.13);
+        }
+
+        .btn-primary:hover {
+            background: #ff9800;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 152, 0, 0.18);
+        }
+
+        .btn-secondary {
+            background: #ff9800;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #1976d2;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(25, 118, 210, 0.13);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status.success {
+            background: #e6f9e6;
+            color: #1976d2;
+            border: 1px solid #66bb6a;
+        }
+
+        .status.error {
+            background: #fff3e0;
+            color: #ff9800;
+            border: 1px solid #ff9800;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #1976d2;
+        }
+
+        @media (max-width: 768px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .project-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid #1976d2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <div class="landing-page">
-        <div class="logo-container">
-            <img src="logo/AULAC_CONS.png" alt="AULAC Logo" class="logo">
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Trình Tạo Báo Cáo Công Trình</h1>
+            <p>Chọn hạng mục và tạo báo cáo tổng hợp từ các file Word</p>
         </div>
-        <h1>🏗️ Trình Tạo Báo Cáo Công Trình</h1>
-        <p>Chọn hạng mục và tạo báo cáo tổng hợp từ các file Word</p>
+
         <div class="main-content">
             <div class="projects-section">
                 <h2 class="section-title">📋 Danh Sách Công Trình</h2>
                 <div id="projectsContainer"></div>
                 <div class="controls">
-                    <button class="button" onclick="addProject()">+ Thêm Công Trình</button>
+                    <button class="btn btn-secondary" onclick="addProject()">+ Thêm Công Trình</button>
                 </div>
             </div>
+
             <div class="controls">
-                <button class="button" style="background:linear-gradient(90deg,#1976d2 60%,#ff9800 100%)" onclick="generateReport()">📄 Tạo Báo Cáo</button>
+                <button class="btn btn-primary" onclick="generateReport()">📄 Tạo Báo Cáo</button>
             </div>
+
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p>Đang xử lý và tạo báo cáo...</p>
             </div>
+
             <div class="status" id="status"></div>
         </div>
     </div>
+
     <script>
         // Danh sách các hạng mục công trình
         const categories = [
