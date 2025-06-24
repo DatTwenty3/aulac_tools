@@ -78,6 +78,16 @@ const subjectsConfig = [
             law: ['giamsathang3_PLC.csv', 'giamsathang3_PLR.csv'],
             specialized: ['giamsathang3_CM.csv']
         }
+    },
+    {
+        id: 'hamcau33',
+        title: 'Thiết kế xây XDCT: CT Cầu - Hầm',
+        subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Cầu - Hầm, Hạng IIII',
+        icon: '🌉',
+        files: {
+            law: ['cauhamhang3_PLC.csv', 'cauhamhang3_PLR.csv'],
+            specialized: ['cauhamhang3_CM.csv']
+        }
     }
 ];
 
