@@ -4,16 +4,10 @@ let availableFiles = {};
 const constructionItems = [
     { key: 'cau', name: '🌉 Cầu', file: 'data/cau.pdf' },
     { key: 'duong', name: '🛣️ Đường', file: 'data/duong.pdf' },
-    { key: 'cong', name: '🕳️ Cống', file: 'data/cong.pdf' },
-    { key: 'tuong', name: '🧱 Tường', file: 'data/tuong.pdf' },
-    { key: 'nha', name: '🏠 Nhà', file: 'data/nha.pdf' },
-    { key: 'san', name: '🏟️ Sân', file: 'data/san.pdf' },
-    { key: 'hang_rao', name: '🚧 Hàng rào', file: 'data/hang_rao.pdf' },
-    { key: 'thap', name: '🗼 Tháp', file: 'data/thap.pdf' },
-    { key: 'be_tong', name: '🏗️ Bê tông', file: 'data/be_tong.pdf' },
-    { key: 'cap_dien', name: '⚡ Cáp điện', file: 'data/cap_dien.pdf' },
-    { key: 'nuoc', name: '💧 Hệ thống nước', file: 'data/nuoc.pdf' },
-    { key: 'cat_dat', name: '⛏️ Cát đất', file: 'data/cat_dat.pdf' }
+    { key: 'conghop', name: '🕳️ Cống hộp ngang đường', file: 'data/cong_hop_ngang_duong.pdf' },
+    { key: 'congtron', name: '🕳️ Cống tròn ngang đường', file: 'data/cong_tron_ngang_duong.pdf' },
+    { key: 'dien_nuoc', name: '⚡💧 Điện nước', file: 'data/dien_nuoc.pdf' },
+    { key: 'httn_doc', name: '💧 Hệ thống thoát nước dọc', file: 'data/httn_doc.pdf' }
 ];
 
 // Initialize and check available files
