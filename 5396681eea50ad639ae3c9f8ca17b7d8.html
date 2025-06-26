@@ -133,6 +133,46 @@
         </div>
     </div>
 
+    <div id="securityModal" class="modal" style="display: flex; align-items: center; justify-content: center; position: fixed; z-index: 9999; background: rgba(0,0,0,0.18); top: 0; left: 0; width: 100vw; height: 100vh;">
+        <div class="modal-content" style="max-width: 350px; margin: auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.18); padding: 28px 24px 20px 24px; text-align: center;">
+            <h3 style="margin-bottom: 18px; color: #1976d2;">🔒 Xác thực truy cập</h3>
+            <div style="margin-bottom: 12px; font-size: 1.1em;">Số gợi ý của bạn là: <b id="suggestNumber"></b></div>
+            <input id="securityAnswer" type="number" placeholder="Nhập kết quả..." style="width: 100%; padding: 8px; font-size: 1em; border-radius: 6px; border: 1px solid #bbb; margin-bottom: 10px;">
+            <div id="securityError" style="color: #d32f2f; min-height: 22px; font-size: 0.98em; margin-bottom: 10px;"></div>
+            <button id="securitySubmit" style="background: #1976d2; color: #fff; border: none; border-radius: 6px; padding: 8px 18px; font-size: 1em; cursor: pointer;">Xác nhận</button>
+        </div>
+    </div>
+
     <script src="js/ppl.js"></script>
+    <script>
+    // ==== BẢO MẬT ĐẦU TRANG ====
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = document.getElementById('securityModal');
+        var suggestNumber = Math.floor(Math.random() * 99) + 1; // 1-99
+        document.getElementById('suggestNumber').textContent = suggestNumber;
+        var input = document.getElementById('securityAnswer');
+        var error = document.getElementById('securityError');
+        var btn = document.getElementById('securitySubmit');
+        function disablePage(disabled) {
+            document.body.style.overflow = disabled ? 'hidden' : '';
+        }
+        disablePage(true);
+        btn.onclick = function() {
+            var val = parseInt(input.value);
+            if (val === suggestNumber * 99) {
+                modal.style.display = 'none';
+                disablePage(false);
+            } else {
+                error.textContent = 'Sai đáp án! Vui lòng thử lại.';
+                input.value = '';
+                input.focus();
+            }
+        };
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') btn.click();
+        });
+        setTimeout(function() { input.focus(); }, 300);
+    });
+    </script>
 </body>
 </html>
