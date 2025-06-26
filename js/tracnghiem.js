@@ -297,9 +297,8 @@ function loadRandomQuestion() {
         return;
     }
 
-    // Luôn reset lại nút xác nhận đáp án
-    submitBtn.style.display = 'inline-block';
-    submitBtn.disabled = true;
+    // Ẩn nút submit và next
+    submitBtn.style.display = 'none';
     nextBtn.style.display = 'none';
 
     // Chọn câu hỏi ngẫu nhiên từ remainingQuestions
@@ -337,6 +336,7 @@ function loadRandomQuestion() {
     // Xóa các class highlight
     document.querySelectorAll('.option').forEach(opt => {
         opt.classList.remove('selected', 'correct', 'incorrect');
+        opt.style.pointerEvents = 'auto';
     });
 }
 
@@ -349,12 +349,12 @@ function selectOption(option, optionElement) {
     // Chọn option mới
     optionElement.classList.add('selected');
     selectedAnswer = option;
-    submitBtn.disabled = false;
+    
+    // Hiển thị kết quả ngay lập tức
+    showResult();
 }
 
-function submitAnswer() {
-    if (!selectedAnswer) return;
-    
+function showResult() {
     const correctAnswer = currentQuestion.answer.trim().toUpperCase();
     const isCorrect = selectedAnswer === correctAnswer;
     
@@ -405,22 +405,22 @@ function submitAnswer() {
                 </div>
             `;
         }, 1200);
-        submitBtn.style.display = 'none';
         nextBtn.style.display = 'none';
     } else {
         // Hiển thị nút next
-        submitBtn.style.display = 'none';
         nextBtn.style.display = 'inline-block';
     }
+}
+
+function submitAnswer() {
+    // Hàm này không còn cần thiết, nhưng giữ lại để tránh lỗi
+    if (!selectedAnswer) return;
+    showResult();
 }
 
 function nextQuestion() {
     if (remainingQuestions.length === 0) return; // Đã hết câu hỏi, không làm gì nữa
     loadRandomQuestion();
-    submitBtn.style.display = 'inline-block';
-    document.querySelectorAll('.option').forEach(opt => {
-        opt.style.pointerEvents = 'auto';
-    });
 }
 
 function updateStats() {
