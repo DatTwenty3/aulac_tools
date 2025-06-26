@@ -1,728 +1,1025 @@
 {
   "Trà Vinh": {
     "THÀNH PHỐ TRÀ VINH": [
-      { "name": "phường 1", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a010ae6abc4599%3A0xb4a5f1d4c43e4c0c!2zcGjGsOG7nW5nIDEsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601107324!5m2!1svi!2s"},
-      { "name": "phường 3", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2527.882174258228!2d106.34066373083424!3d9.935050691222811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a017542c072299%3A0x5484423f8eece31c!2zcGjGsOG7nW5nIDMsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601175265!5m2!1svi!2s"},
-      { "name": "phường 4", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.024787975133!2d106.33629435631704!3d9.951739241761008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01a081c27be4d%3A0x594a22d4279ca4c8!2zcGjGsOG7nW5nIDQsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601209398!5m2!1svi!2s"},
-      { "name": "phường 5", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20223.1800803268!2d106.33794925631399!3d9.933066042045919!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a019fdb8a5a1d9%3A0x57bc3f2bb4f54a3a!2zcGjGsOG7nW5nIDUsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601240085!5m2!1svi!2s"},
-      { "name": "phường 7", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20223.477322340303!2d106.3174062063132!3d9.928256042119315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a017466ee8a6fd%3A0xe467fb858cac050c!2zUGjGsOG7nW5nIDcsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601270815!5m2!1svi!2s"},
-      { "name": "phường 8", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20224.360441433873!2d106.3029760063108!3d9.913951692337628!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01710c7f276bb%3A0x2219964afe3394b0!2zcGjGsOG7nW5nIDgsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601299271!5m2!1svi!2s"},
-      { "name": "phường 9", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20224.840411037512!2d106.33305430630958!3d9.906168792456427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0177ce1cce7d9%3A0x780d9b41f0ccd7d7!2zcGjGsOG7nW5nIDksIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601354516!5m2!1svi!2s"},
-      { "name": "xã Long Đức", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40440.46229920668!2d106.32565110566046!3d9.98066161527279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a010802a67a083%3A0xc3a2bb2992e24dd7!2zTG9uZyDEkOG7qWMsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601383800!5m2!1svi!2s"}
-  ],
+      {
+        "name": "phường 1",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a010ae6abc4599%3A0xb4a5f1d4c43e4c0c!2zcGjGsOG7nW5nIDEsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601107324!5m2!1svi!2s"
+      },
+      {
+        "name": "phường 3",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2527.882174258228!2d106.34066373083424!3d9.935050691222811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a017542c072299%3A0x5484423f8eece31c!2zcGjGsOG7nW5nIDMsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601175265!5m2!1svi!2s"
+      },
+      {
+        "name": "phường 4",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.024787975133!2d106.33629435631704!3d9.951739241761008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01a081c27be4d%3A0x594a22d4279ca4c8!2zcGjGsOG7nW5nIDQsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601209398!5m2!1svi!2s"
+      },
+      {
+        "name": "phường 5",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20223.1800803268!2d106.33794925631399!3d9.933066042045919!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a019fdb8a5a1d9%3A0x57bc3f2bb4f54a3a!2zcGjGsOG7nW5nIDUsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601240085!5m2!1svi!2s"
+      },
+      {
+        "name": "phường 7",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20223.477322340303!2d106.3174062063132!3d9.928256042119315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a017466ee8a6fd%3A0xe467fb858cac050c!2zUGjGsOG7nW5nIDcsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601270815!5m2!1svi!2s"
+      },
+      {
+        "name": "phường 8",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20224.360441433873!2d106.3029760063108!3d9.913951692337628!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01710c7f276bb%3A0x2219964afe3394b0!2zcGjGsOG7nW5nIDgsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601299271!5m2!1svi!2s"
+      },
+      {
+        "name": "phường 9",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20224.840411037512!2d106.33305430630958!3d9.906168792456427!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0177ce1cce7d9%3A0x780d9b41f0ccd7d7!2zcGjGsOG7nW5nIDksIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601354516!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Long Đức",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40440.46229920668!2d106.32565110566046!3d9.98066161527279!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a010802a67a083%3A0xc3a2bb2992e24dd7!2zTG9uZyDEkOG7qWMsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744601383800!5m2!1svi!2s"
+      }
+    ],
     "HUYỆN CÀNG LONG": [
-      { "name": "xã Hoà Thuận", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40444.06245346908!2d106.34716250564115!3d9.951635267043766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01a179092e707%3A0xbdc6e4005249bbac!2zSMOyYSBUaHXhuq1uLCBUcC4gVHLDoCBWaW5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681068544!5m2!1svi!2s"},
-      { "name": "xã An Trường", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40443.67111951795!2d106.16118890564329!3d9.95479446685098!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a013675e36be29%3A0xa5607b8a484e886c!2zQW4gVHLGsOG7nW5nLCBDw6BuZyBMb25nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681106516!5m2!1svi!2s"},
-      { "name": "xã An Trường A", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40440.66167038574!2d106.13738155565935!3d9.97905636537072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06ccd2aa358ff%3A0x91cfda832f8df6d!2zQW4gVHLGsOG7nW5nIEEsIEPDoG5nIExvbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681125957!5m2!1svi!2s"},
-      { "name": "xã Tân Bình", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40445.96273243574!2d106.13533235563102!3d9.93628036798088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06b4d1b41caf7%3A0x6acf36317802a75f!2zVMOibiBCw6xuaCwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681139215!5m2!1svi!2s"},
-      { "name": "xã Tân An", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55191.139719635976!2d106.13475306433918!3d9.89005267080682!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06acc81c7794d%3A0x6a5c83b5572ddcf!2zVMOibiBBbiwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1745404956624!5m2!1svi!2s"},
-      { "name": "xã Huyền Hội", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55186.59672762627!2d106.19312326435215!3d9.917066669157327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0145babca1d5d%3A0x63b33b4e063c7a9!2zSHV54buBbiBI4buZaSwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1745405004177!5m2!1svi!2s"},
-      { "name": "thị trấn Càng Long", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27586.61390561368!2d106.20589597100394!3d9.996142991084236!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a012fe3c82bb95%3A0x501c872f365da2f6!2zdHQuIEPDoG5nIExvbmcsIEPDoG5nIExvbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1745405037539!5m2!1svi!2s"},
-      { "name": "xã Mỹ Cẩm", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27586.11614831067!2d106.15785242100465!3d10.002006640994852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a012d03c561f8f%3A0x964913914c4b8a24!2zTeG7uSBD4bqpbSwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1745405068770!5m2!1svi!2s"},
-      { "name": "xã Nhị Long Phú", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27583.640059822093!2d106.23807467100816!3d10.031124890550977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a012009cfcba23%3A0x2f13fe7f1dba4bd3!2zTmjhu4sgTG9uZyBQaMO6LCBDw6BuZyBMb25nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1745405106576!5m2!1svi!2s"},
-      { "name": "xã Đại Phước", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40436.6742019967!2d106.27085895568065!3d10.011113313415535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a011cc730cec15%3A0xd21b9b9e77bf8ece!2zxJDhuqFpIFBoxrDhu5tjLCBUcC4gVHLDoCBWaW5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681161956!5m2!1svi!2s"},
-      { "name": "xã Nhị Long", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40438.04243597119!2d106.22675275567332!3d10.000124964085646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01226137a44c1%3A0xca3f7c55e7659c4f!2zTmjhu4sgTG9uZywgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681180377!5m2!1svi!2s"},
-      { "name": "xã Đức Mỹ", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40431.45384080611!2d106.23580790570853!3d10.05292906086638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a00e74c99d3985%3A0x6de1a0488cbf3b5a!2zxJDhu6ljIE3hu7ksIEPDoG5nIExvbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681200017!5m2!1svi!2s"},
-      { "name": "xã Bình Phú", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40441.97990613755!2d106.2269029056523!3d9.968436066018622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a013de6896a609%3A0xbda0942cbc06912a!2zQsOsbmggUGjDuiwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681219032!5m2!1svi!2s"},
-      { "name": "xã Đại Phúc", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20220.739411154027!2d106.28255360632045!3d9.972474341444721!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0111b78fea49f%3A0xf7c3d825b5e96e9d!2zxJDhuqFpIFBow7pjLCBDw6BuZyBMb25nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681234834!5m2!1svi!2s"},
-      { "name": "xã Phương Thạnh", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40444.663138143!2d106.247427255638!3d9.946784067339822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0114c5ec865f9%3A0x39920e18fbfc6f6!2zUGjGsMahbmcgVGjhuqFuaCwgVHAuIFRyw6AgVmluaCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681250373!5m2!1svi!2s"}
-  ],
+      {
+        "name": "xã Hoà Thuận",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40444.06245346908!2d106.34716250564115!3d9.951635267043766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01a179092e707%3A0xbdc6e4005249bbac!2zSMOyYSBUaHXhuq1uLCBUcC4gVHLDoCBWaW5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681068544!5m2!1svi!2s"
+      },
+      {
+        "name": "xã An Trường",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40443.67111951795!2d106.16118890564329!3d9.95479446685098!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a013675e36be29%3A0xa5607b8a484e886c!2zQW4gVHLGsOG7nW5nLCBDw6BuZyBMb25nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681106516!5m2!1svi!2s"
+      },
+      {
+        "name": "xã An Trường A",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40440.66167038574!2d106.13738155565935!3d9.97905636537072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06ccd2aa358ff%3A0x91cfda832f8df6d!2zQW4gVHLGsOG7nW5nIEEsIEPDoG5nIExvbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681125957!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tân Bình",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40445.96273243574!2d106.13533235563102!3d9.93628036798088!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06b4d1b41caf7%3A0x6acf36317802a75f!2zVMOibiBCw6xuaCwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681139215!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tân An",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55191.139719635976!2d106.13475306433918!3d9.89005267080682!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06acc81c7794d%3A0x6a5c83b5572ddcf!2zVMOibiBBbiwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1745404956624!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Huyền Hội",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d55186.59672762627!2d106.19312326435215!3d9.917066669157327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0145babca1d5d%3A0x63b33b4e063c7a9!2zSHV54buBbiBI4buZaSwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1745405004177!5m2!1svi!2s"
+      },
+      {
+        "name": "thị trấn Càng Long",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27586.61390561368!2d106.20589597100394!3d9.996142991084236!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a012fe3c82bb95%3A0x501c872f365da2f6!2zdHQuIEPDoG5nIExvbmcsIEPDoG5nIExvbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1745405037539!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Mỹ Cẩm",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27586.11614831067!2d106.15785242100465!3d10.002006640994852!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a012d03c561f8f%3A0x964913914c4b8a24!2zTeG7uSBD4bqpbSwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1745405068770!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Nhị Long Phú",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27583.640059822093!2d106.23807467100816!3d10.031124890550977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a012009cfcba23%3A0x2f13fe7f1dba4bd3!2zTmjhu4sgTG9uZyBQaMO6LCBDw6BuZyBMb25nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1745405106576!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Đại Phước",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40436.6742019967!2d106.27085895568065!3d10.011113313415535!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a011cc730cec15%3A0xd21b9b9e77bf8ece!2zxJDhuqFpIFBoxrDhu5tjLCBUcC4gVHLDoCBWaW5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681161956!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Nhị Long",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40438.04243597119!2d106.22675275567332!3d10.000124964085646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01226137a44c1%3A0xca3f7c55e7659c4f!2zTmjhu4sgTG9uZywgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681180377!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Đức Mỹ",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40431.45384080611!2d106.23580790570853!3d10.05292906086638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a00e74c99d3985%3A0x6de1a0488cbf3b5a!2zxJDhu6ljIE3hu7ksIEPDoG5nIExvbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681200017!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Bình Phú",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40441.97990613755!2d106.2269029056523!3d9.968436066018622!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a013de6896a609%3A0xbda0942cbc06912a!2zQsOsbmggUGjDuiwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681219032!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Đại Phúc",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20220.739411154027!2d106.28255360632045!3d9.972474341444721!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0111b78fea49f%3A0xf7c3d825b5e96e9d!2zxJDhuqFpIFBow7pjLCBDw6BuZyBMb25nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681234834!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Phương Thạnh",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40444.663138143!2d106.247427255638!3d9.946784067339822!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0114c5ec865f9%3A0x39920e18fbfc6f6!2zUGjGsMahbmcgVGjhuqFuaCwgVHAuIFRyw6AgVmluaCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681250373!5m2!1svi!2s"
+      }
+    ],
     "HUYỆN CHÂU THÀNH": [
-      { "name": "xã Nguyệt Hoá", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40445.09186730512!2d106.28012865563566!3d9.943320167551216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01130d659c1cf%3A0x5f67d754abe8a6de!2zTmd1eeG7h3QgSMOzYSwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681545773!5m2!1svi!2s"},
-      { "name": "xã Lương Hoà", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40450.04834669314!2d106.24957719912942!3d9.903187409797741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a016f9c44ee6e7%3A0x6900ec7d4ed54dd9!2zTMawxqFuZyBIw7JhLCBDaMOidSBUaMOgbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681563364!5m2!1svi!2s"},
-      { "name": "xã Lương Hoà A", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40453.94164737394!2d106.2803701555884!3d9.871549971933355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a017cc9916a4d3%3A0x2a305c839f36dbf7!2zTMawxqFuZyBIw7JhIEEsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681580499!5m2!1svi!2s"},
-      { "name": "xã Song Lộc", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40453.94164737394!2d106.2803701555884!3d9.871549971933355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a015e062312685%3A0xa3c35c577dca2165!2zU29uZyBM4buZYywgQ2jDonUgVGjDoG5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681596179!5m2!1svi!2s"},
-      { "name": "xã Bình Chánh", "mapApi": "https://www.google.com/maps/embed?pb=...5"},
-      { "name": "xã Thanh Mỹ", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.63724110953!2d106.26324034878608!3d9.825085176764114!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03d085f69590d%3A0xd1797f4e8beaab4c!2zVGhhbmggTeG7uSwgQ2jDonUgVGjDoG5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681697722!5m2!1svi!2s"},
-      { "name": "xã Đa Lộc", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20227.074938554273!2d106.31441285630363!3d9.869855043010865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a022a13e29d037%3A0xf769906b544797dd!2zxJBhIEzhu5ljLCBUcC4gVHLDoCBWaW5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681716263!5m2!1svi!2s"},
-      { "name": "xã Phước Hảo", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40453.86835073072!2d106.37227749899266!3d9.872146516538857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0188ba05ab83b%3A0x96775909290ce81b!2zUGjGsOG7m2MgSOG6o28sIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681733440!5m2!1svi!2s"},
-      { "name": "xã Hưng Mỹ", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80893.32712932296!2d106.36621628202167!3d9.93061147325462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01981e630e469%3A0xdec676970c0009aa!2zSMawbmcgTeG7uSwgVHAuIFRyw6AgVmluaCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681750282!5m2!1svi!2s"},
-      { "name": "xã Hoà Lợi", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40449.44463725377!2d106.3561960556124!3d9.908084269702158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a019ead8d2dcc5%3A0x1bac632c97ccea98!2zSMOyYSBM4bujaSwgQ2jDonUgVGjDoG5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681768142!5m2!1svi!2s"}
-  ],
+      {
+        "name": "xã Nguyệt Hoá",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40445.09186730512!2d106.28012865563566!3d9.943320167551216!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01130d659c1cf%3A0x5f67d754abe8a6de!2zTmd1eeG7h3QgSMOzYSwgQ8OgbmcgTG9uZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681545773!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Lương Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40450.04834669314!2d106.24957719912942!3d9.903187409797741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a016f9c44ee6e7%3A0x6900ec7d4ed54dd9!2zTMawxqFuZyBIw7JhLCBDaMOidSBUaMOgbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681563364!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Lương Hoà A",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40453.94164737394!2d106.2803701555884!3d9.871549971933355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a017cc9916a4d3%3A0x2a305c839f36dbf7!2zTMawxqFuZyBIw7JhIEEsIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681580499!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Song Lộc",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40453.94164737394!2d106.2803701555884!3d9.871549971933355!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a015e062312685%3A0xa3c35c577dca2165!2zU29uZyBM4buZYywgQ2jDonUgVGjDoG5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681596179!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Bình Chánh",
+        "mapApi": "https://www.google.com/maps/embed?pb=...5"
+      },
+      {
+        "name": "xã Thanh Mỹ",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.63724110953!2d106.26324034878608!3d9.825085176764114!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03d085f69590d%3A0xd1797f4e8beaab4c!2zVGhhbmggTeG7uSwgQ2jDonUgVGjDoG5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681697722!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Đa Lộc",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20227.074938554273!2d106.31441285630363!3d9.869855043010865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a022a13e29d037%3A0xf769906b544797dd!2zxJBhIEzhu5ljLCBUcC4gVHLDoCBWaW5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681716263!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Phước Hảo",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40453.86835073072!2d106.37227749899266!3d9.872146516538857!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0188ba05ab83b%3A0x96775909290ce81b!2zUGjGsOG7m2MgSOG6o28sIFRwLiBUcsOgIFZpbmgsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681733440!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hưng Mỹ",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80893.32712932296!2d106.36621628202167!3d9.93061147325462!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a01981e630e469%3A0xdec676970c0009aa!2zSMawbmcgTeG7uSwgVHAuIFRyw6AgVmluaCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681750282!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hoà Lợi",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40449.44463725377!2d106.3561960556124!3d9.908084269702158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a019ead8d2dcc5%3A0x1bac632c97ccea98!2zSMOyYSBM4bujaSwgQ2jDonUgVGjDoG5oLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681768142!5m2!1svi!2s"
+      }
+    ],
     "HUYỆN CẦU KÈ": [
-      { "name": "thị trấn Cầu Kè", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20226.99439666083!2d106.05311745630385!3d9.871166242990835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a069fc3e634d97%3A0x1f134b55ac3176e0!2zdHQuIEPhuqd1IEvDqCwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681799160!5m2!1svi!2s"},
-      { "name": "xã Hòa Ân", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40451.162576726274!2d106.04880435560324!3d9.894143270553442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06a215349a439%3A0xd1c2d4898f0bfff!2zSMOyYSDDgm4sIEPhuqd1IEvDqCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681813649!5m2!1svi!2s"},
-      { "name": "xã Châu Điền", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40451.162576726274!2d106.04880435560324!3d9.894143270553442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a041ded87a1da3%3A0xe495f1bbd4852a1c!2zQ2jDonUgxJBp4buBbiwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681829227!5m2!1svi!2s"},
-      { "name": "xã Ninh Thới", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.62677205804!2d106.06133550553668!3d9.79240847677014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a041467499f7ff%3A0x505b49bb978193f9!2zTmluaCBUaOG7m2ksIEPhuqd1IEvDqCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681845578!5m2!1svi!2s"},
-      { "name": "xã Phong Phú", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.02676336844!2d106.07150650556125!3d9.830075874467495!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a041a396fbd8eb%3A0x4c6e5fdfb4b462a!2zUGhvbmcgUGjDuiwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681859044!5m2!1svi!2s"},
-      { "name": "xã Phong Thạnh", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40457.64527028119!2d106.11589165556867!3d9.841360423777864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a040438138c6ff%3A0x11ef10ff6b87c72b!2zUGhvbmcgVGjhuqFuaCwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681874153!5m2!1svi!2s"},
-      { "name": "xã Hoà Tân", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40457.180927375346!2d106.02394560557111!3d9.845150473546267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0423e41481ec5%3A0x84abebe203de2b83!2zSMOyYSBUw6JuLCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681889397!5m2!1svi!2s"},
-      { "name": "xã An Phú Tân", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40451.95765365959!2d105.976567105599!3d9.887684670947856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0683e90302781%3A0x4979a278b46365d4!2zQW4gUGjDuiBUw6JuLCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681905051!5m2!1svi!2s"},
-      { "name": "xã Tam Ngãi", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40449.90728453121!2d106.00669900560997!3d9.904331819931281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a069b4e2b3c669%3A0xfce2fa085ec6928a!2zVGFtIE5nw6NpLCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681920087!5m2!1svi!2s"},
-      { "name": "xã Thạnh Phú", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40449.90728453121!2d106.00669900560997!3d9.904331819931281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06b8ccb99d491%3A0x2ad6f87e152d94ee!2zVGjhuqFuaCBQaMO6LCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681934010!5m2!1svi!2s"},
-      { "name": "xã Thông Hoá", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40447.7897370624!2d106.06312190562129!3d9.921495368883381!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06bc63a21da4f%3A0xea3194fbdf352192!2zVGjDtG5nIEjDsmEsIEPhuqd1IEvDqCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681949641!5m2!1svi!2s"}
-  ],
+      {
+        "name": "thị trấn Cầu Kè",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20226.99439666083!2d106.05311745630385!3d9.871166242990835!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a069fc3e634d97%3A0x1f134b55ac3176e0!2zdHQuIEPhuqd1IEvDqCwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681799160!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hòa Ân",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40451.162576726274!2d106.04880435560324!3d9.894143270553442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06a215349a439%3A0xd1c2d4898f0bfff!2zSMOyYSDDgm4sIEPhuqd1IEvDqCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681813649!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Châu Điền",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40451.162576726274!2d106.04880435560324!3d9.894143270553442!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a041ded87a1da3%3A0xe495f1bbd4852a1c!2zQ2jDonUgxJBp4buBbiwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681829227!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Ninh Thới",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.62677205804!2d106.06133550553668!3d9.79240847677014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a041467499f7ff%3A0x505b49bb978193f9!2zTmluaCBUaOG7m2ksIEPhuqd1IEvDqCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681845578!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Phong Phú",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.02676336844!2d106.07150650556125!3d9.830075874467495!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a041a396fbd8eb%3A0x4c6e5fdfb4b462a!2zUGhvbmcgUGjDuiwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681859044!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Phong Thạnh",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40457.64527028119!2d106.11589165556867!3d9.841360423777864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a040438138c6ff%3A0x11ef10ff6b87c72b!2zUGhvbmcgVGjhuqFuaCwgQ-G6p3UgS8OoLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744681874153!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hoà Tân",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40457.180927375346!2d106.02394560557111!3d9.845150473546267!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0423e41481ec5%3A0x84abebe203de2b83!2zSMOyYSBUw6JuLCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681889397!5m2!1svi!2s"
+      },
+      {
+        "name": "xã An Phú Tân",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40451.95765365959!2d105.976567105599!3d9.887684670947856!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0683e90302781%3A0x4979a278b46365d4!2zQW4gUGjDuiBUw6JuLCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681905051!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tam Ngãi",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40449.90728453121!2d106.00669900560997!3d9.904331819931281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a069b4e2b3c669%3A0xfce2fa085ec6928a!2zVGFtIE5nw6NpLCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681920087!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Thạnh Phú",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40449.90728453121!2d106.00669900560997!3d9.904331819931281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06b8ccb99d491%3A0x2ad6f87e152d94ee!2zVGjhuqFuaCBQaMO6LCBD4bqndSBLw6gsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744681934010!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Thông Hoá",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40447.7897370624!2d106.06312190562129!3d9.921495368883381!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a06bc63a21da4f%3A0xea3194fbdf352192!2zVGjDtG5nIEjDsmEsIEPhuqd1IEvDqCwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744681949641!5m2!1svi!2s"
+      }
+    ],
     "HUYỆN TIỀU CẦN": [
-      { "name": "xã Tân Hoà", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40467.136055130955!2d106.13989220551795!3d9.763575778533466!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a038a7b1da3fd5%3A0x1cb7b875dc37b77a!2zVMOibiBIw7JhLCBUaeG7g3UgQ-G6p24sIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682024522!5m2!1svi!2s"},
-      { "name": "xã Long Thới", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.71954476642!2d106.11519435553619!3d9.791647326816687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a040b88d9ed9f9%3A0xd2f734f64c9d119a!2zTG9uZyBUaOG7m2ksIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682040035!5m2!1svi!2s"},
-      { "name": "thị trấn Cầu Quan", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20233.22921802596!2d106.1128289062873!3d9.769149744549757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0473178696301%3A0xd2f05087d2fea4f!2zQ-G6p3UgUXVhbiwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682055119!5m2!1svi!2s"},
-      { "name": "xã Hùng Hoà", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40467.600377723276!2d106.18517850551551!3d9.759754528767214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0392765933671%3A0x2101ea35cbfac5d9!2zSMO5bmcgSMOyYSwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682072478!5m2!1svi!2s"},
-      { "name": "xã Tân Hùng", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40464.63913345008!2d106.2018834055313!3d9.78409942727825!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03ecf558d3c3b%3A0x2f83404adb1c5688!2zVMOibiBIw7luZywgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682087845!5m2!1svi!2s"},
-      { "name": "xã Ngãi Hùng", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.44236944268!2d106.25283465553768!3d9.793921226677671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03c3fb79bd9f5%3A0x2a4f1074a8139714!2zTmfDo2kgSMO5bmcsIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682102195!5m2!1svi!2s"},
-      { "name": "xã Phú Cần", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.44236944268!2d106.25283465553768!3d9.793921226677671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03f73e55196cb%3A0xd59251abb17186e1!2zUGjDuiBD4bqnbiwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682116624!5m2!1svi!2s"},
-      { "name": "xã Hiếu Trung", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40455.53995530447!2d106.15116805557987!3d9.85853282272859!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03fe3116caead%3A0x514fb557f1b7f661!2zSGnhur91IFRydW5nLCBUaeG7g3UgQ-G6p24sIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682132304!5m2!1svi!2s"},
-      { "name": "thị trấn Tiểu Cần", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20230.715325066343!2d106.18763555629397!3d9.810409393919027!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03f0bda241c43%3A0x59f297573f7ffcac!2zdHQuIFRp4buDdSBD4bqnbiwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682149702!5m2!1svi!2s"},
-      { "name": "xã Tạp Ngãi", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40460.02093410898!2d106.22507900555597!3d9.821947174964311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03e7be7b2dffb%3A0x81ef65a4886aa8ae!2zVOG6rXAgTmfDo2ksIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682164968!5m2!1svi!2s"},
-      { "name": "xã Hiếu Tử", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40455.7241148553!2d106.19125100557889!3d9.857031872820285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03e2970f03257%3A0x1031397bf5f5bd15!2zSGnhur91IFThu60sIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682179195!5m2!1svi!2s"}
-  ],
+      {
+        "name": "xã Tân Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40467.136055130955!2d106.13989220551795!3d9.763575778533466!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a038a7b1da3fd5%3A0x1cb7b875dc37b77a!2zVMOibiBIw7JhLCBUaeG7g3UgQ-G6p24sIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682024522!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Long Thới",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.71954476642!2d106.11519435553619!3d9.791647326816687!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a040b88d9ed9f9%3A0xd2f734f64c9d119a!2zTG9uZyBUaOG7m2ksIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682040035!5m2!1svi!2s"
+      },
+      {
+        "name": "thị trấn Cầu Quan",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20233.22921802596!2d106.1128289062873!3d9.769149744549757!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0473178696301%3A0xd2f05087d2fea4f!2zQ-G6p3UgUXVhbiwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682055119!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hùng Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40467.600377723276!2d106.18517850551551!3d9.759754528767214!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0392765933671%3A0x2101ea35cbfac5d9!2zSMO5bmcgSMOyYSwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682072478!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tân Hùng",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40464.63913345008!2d106.2018834055313!3d9.78409942727825!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03ecf558d3c3b%3A0x2f83404adb1c5688!2zVMOibiBIw7luZywgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682087845!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Ngãi Hùng",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.44236944268!2d106.25283465553768!3d9.793921226677671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03c3fb79bd9f5%3A0x2a4f1074a8139714!2zTmfDo2kgSMO5bmcsIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682102195!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Phú Cần",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.44236944268!2d106.25283465553768!3d9.793921226677671!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03f73e55196cb%3A0xd59251abb17186e1!2zUGjDuiBD4bqnbiwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682116624!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hiếu Trung",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40455.53995530447!2d106.15116805557987!3d9.85853282272859!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03fe3116caead%3A0x514fb557f1b7f661!2zSGnhur91IFRydW5nLCBUaeG7g3UgQ-G6p24sIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682132304!5m2!1svi!2s"
+      },
+      {
+        "name": "thị trấn Tiểu Cần",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20230.715325066343!2d106.18763555629397!3d9.810409393919027!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03f0bda241c43%3A0x59f297573f7ffcac!2zdHQuIFRp4buDdSBD4bqnbiwgVGnhu4N1IEPhuqduLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682149702!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tạp Ngãi",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40460.02093410898!2d106.22507900555597!3d9.821947174964311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03e7be7b2dffb%3A0x81ef65a4886aa8ae!2zVOG6rXAgTmfDo2ksIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682164968!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hiếu Tử",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40455.7241148553!2d106.19125100557889!3d9.857031872820285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03e2970f03257%3A0x1031397bf5f5bd15!2zSGnhur91IFThu60sIFRp4buDdSBD4bqnbiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682179195!5m2!1svi!2s"
+      }
+    ],
     "HUYỆN CẦU NGANG": [
-      { "name": "thị trấn Mỹ Long", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20230.565213106755!2d106.50023105629437!3d9.812867693881456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0205d5279e073%3A0x1badd325f3087b3!2zTeG7uSBMb25nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682517616!5m2!1svi!2s"},
-      { "name": "xã Mỹ Long Bắc", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.94409523153!2d106.48139090555638!3d9.822575674925908!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a021adc80ee69d%3A0xcd29288357141bd2!2zTeG7uSBMb25nIELhuq9jLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682541364!5m2!1svi!2s"},
-      { "name": "xã Mỹ Long Nam", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.94409523153!2d106.48139090555638!3d9.822575674925908!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a020b6a1c82df7%3A0xe571df45e70f4bca!2zTeG7uSBMb25nIE5hbSwgQ-G6p3UgTmdhbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682560345!5m2!1svi!2s"},
-      { "name": "xã Vinh Kim", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40455.82404471216!2d106.43467750557836!3d9.856217322870064!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a022025a395523%3A0xd4bc20922ac2279b!2zVsSpbmggS2ltLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682574437!5m2!1svi!2s"},
-      { "name": "xã Kim Hoà", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40458.00510749054!2d106.38529755556672!3d9.8384223739574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0226f8d434471%3A0xaa674c5393b20dfe!2zS2ltIEhvw6AsIEPhuqd1IE5nYW5nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682589103!5m2!1svi!2s"},
-      { "name": "xã Mỹ Hoà", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40462.33094427806!2d106.43859365554361!3d9.803033926120486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0210a990a257f%3A0x99378059779e036b!2zTeG7uSBIw7JhLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682604730!5m2!1svi!2s"},
-      { "name": "xã Thuận Hoà", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40465.23714258547!2d106.43121350552813!3d9.779187927578603!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0215cb11833e5%3A0xa939f63ce61791e7!2zVGh14bqtbiBIb8OgLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682624934!5m2!1svi!2s"},
-      { "name": "thị trấn Cầu Ngang", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20231.401415805212!2d106.43990270629216!3d9.799165894090875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0217a3abc1a71%3A0xe827ecbac5d129b2!2zdHQuIEPhuqd1IE5nYW5nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oIDg3ODA2LCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682643423!5m2!1svi!2s"},
-      { "name": "xã Hiệp Hoà", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.66133336228!2d106.38012500553651!3d9.792124926787492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a023a40d3c9eb5%3A0xd6f591df3f70aa9b!2zSGnhu4dwIEhvw6AsIEPhuqd1IE5nYW5nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682659508!5m2!1svi!2s"},
-      { "name": "xã Nhị Trường", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.66133336228!2d106.38012500553651!3d9.792124926787492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0249b16f6183b%3A0xc957806b84c31905!2zTmjhu4sgVHLGsOG7nW5nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682674790!5m2!1svi!2s"},
-      { "name": "xã Trường Thọ", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40464.99845552867!2d106.33398210552936!3d9.781148577458708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02352f0e0b4dd%3A0xe26aad7d2bbe5b7f!2zVHLGsOG7nW5nIFRo4buNLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682689656!5m2!1svi!2s"},
-      { "name": "xã Hiệp Mỹ Đông", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40468.1533139463!2d106.46492225551249!3d9.755202079045691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a026d3c9ea5517%3A0x176e56d28d21da54!2zSGnhu4dwIE3hu7kgxJDDtG5nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682704207!5m2!1svi!2s"},
-      { "name": "xã Hiệp Mỹ Tây", "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40468.1533139463!2d106.46492225551249!3d9.755202079045691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a026fa02294dbb%3A0x227c7d8cb8a242b6!2zSGnhu4dwIE3hu7kgVMOieSwgQ-G6p3UgTmdhbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682718016!5m2!1svi!2s"},
-      { "name": "xã Long Sơn",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5058.582511820857!2d106.43949901159094!3d9.751027790301766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02745b3e0ce61%3A0x974c0b38c6ffc484!2zVUJORCBYw6MgTG9uZyBTxqFu!5e1!3m2!1svi!2s!4v1744682758374!5m2!1svi!2s"},
-      { "name":  "xã Thạnh Hoà Sơn", "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40474.4267968324!2d106.41527445547904!3d9.703402932215486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0259554f71f6f%3A0x8a997790d6247d26!2zVGjhuqFuaCBIw7JhIFPGoW4sIEPhuqd1IE5nYW5nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682779563!5m2!1svi!2s"}
-  ],
+      {
+        "name": "thị trấn Mỹ Long",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20230.565213106755!2d106.50023105629437!3d9.812867693881456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0205d5279e073%3A0x1badd325f3087b3!2zTeG7uSBMb25nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682517616!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Mỹ Long Bắc",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.94409523153!2d106.48139090555638!3d9.822575674925908!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a021adc80ee69d%3A0xcd29288357141bd2!2zTeG7uSBMb25nIELhuq9jLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682541364!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Mỹ Long Nam",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40459.94409523153!2d106.48139090555638!3d9.822575674925908!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a020b6a1c82df7%3A0xe571df45e70f4bca!2zTeG7uSBMb25nIE5hbSwgQ-G6p3UgTmdhbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682560345!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Vinh Kim",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40455.82404471216!2d106.43467750557836!3d9.856217322870064!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a022025a395523%3A0xd4bc20922ac2279b!2zVsSpbmggS2ltLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682574437!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Kim Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40458.00510749054!2d106.38529755556672!3d9.8384223739574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0226f8d434471%3A0xaa674c5393b20dfe!2zS2ltIEhvw6AsIEPhuqd1IE5nYW5nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682589103!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Mỹ Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40462.33094427806!2d106.43859365554361!3d9.803033926120486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0210a990a257f%3A0x99378059779e036b!2zTeG7uSBIw7JhLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682604730!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Thuận Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40465.23714258547!2d106.43121350552813!3d9.779187927578603!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0215cb11833e5%3A0xa939f63ce61791e7!2zVGh14bqtbiBIb8OgLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682624934!5m2!1svi!2s"
+      },
+      {
+        "name": "thị trấn Cầu Ngang",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20231.401415805212!2d106.43990270629216!3d9.799165894090875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0217a3abc1a71%3A0xe827ecbac5d129b2!2zdHQuIEPhuqd1IE5nYW5nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oIDg3ODA2LCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682643423!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hiệp Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.66133336228!2d106.38012500553651!3d9.792124926787492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a023a40d3c9eb5%3A0xd6f591df3f70aa9b!2zSGnhu4dwIEhvw6AsIEPhuqd1IE5nYW5nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682659508!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Nhị Trường",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40463.66133336228!2d106.38012500553651!3d9.792124926787492!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0249b16f6183b%3A0xc957806b84c31905!2zTmjhu4sgVHLGsOG7nW5nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682674790!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Trường Thọ",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40464.99845552867!2d106.33398210552936!3d9.781148577458708!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02352f0e0b4dd%3A0xe26aad7d2bbe5b7f!2zVHLGsOG7nW5nIFRo4buNLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682689656!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hiệp Mỹ Đông",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40468.1533139463!2d106.46492225551249!3d9.755202079045691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a026d3c9ea5517%3A0x176e56d28d21da54!2zSGnhu4dwIE3hu7kgxJDDtG5nLCBD4bqndSBOZ2FuZywgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682704207!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hiệp Mỹ Tây",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40468.1533139463!2d106.46492225551249!3d9.755202079045691!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a026fa02294dbb%3A0x227c7d8cb8a242b6!2zSGnhu4dwIE3hu7kgVMOieSwgQ-G6p3UgTmdhbmcsIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682718016!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Long Sơn",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5058.582511820857!2d106.43949901159094!3d9.751027790301766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02745b3e0ce61%3A0x974c0b38c6ffc484!2zVUJORCBYw6MgTG9uZyBTxqFu!5e1!3m2!1svi!2s!4v1744682758374!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Thạnh Hoà Sơn",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40474.4267968324!2d106.41527445547904!3d9.703402932215486!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0259554f71f6f%3A0x8a997790d6247d26!2zVGjhuqFuaCBIw7JhIFPGoW4sIEPhuqd1IE5nYW5nLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682779563!5m2!1svi!2s"
+      }
+    ],
     "HUYỆN TRÀ CÚ": [
-      { "name": "xã An Quảng Hữu",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40471.15155144347!2d106.1585869554965!3d9.730480180558263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0387687fa3d1d%3A0xd682eea82900a4c2!2zQW4gUXXhuqNuZyBI4buvdSwgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682799722!5m2!1svi!2s"},
-      { "name": "xã Lưu Nghiệp Anh",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40475.424012757896!2d106.17639160547371!3d9.695143832721072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03828fbe5265f%3A0xfd20c320718b6fd!2zTMawdSBOZ2hp4buHcCBBbmgsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682814806!5m2!1svi!2s"},
-      { "name": "Đại An",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20241.363273781073!2d106.2897912562657!3d9.634449396611132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a031a9f0929857%3A0xd0593f35f7b30b55!2zxJDhuqFpIEFuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682830495!5m2!1svi!2s"},
-      { "name": "xã Đại An",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20241.38474903054!2d106.29266015626567!3d9.634091296616626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a031a96fff0837%3A0x29ca31fe7199c2c!2zxJDhuqFpIEFuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682843699!5m2!1svi!2s"},
-      { "name": "thị trấn Định An",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20241.38474903054!2d106.29266015626567!3d9.634091296616626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03174797ebe01%3A0xa882e5a0962612bd!2zVGjhu4sgVHLhuqVuIMSQ4buLbmggQW4sIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682863667!5m2!1svi!2s"},
-      { "name": "xã Kim Sơn",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40478.290572200385!2d106.2062069554584!3d9.671363634177087!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03771676aeb0d%3A0x3e715755bca893e2!2zS2ltIFPGoW4sIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682881071!5m2!1svi!2s"},
-      { "name": "xã Hàm Tân",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80962.4433991598!2d106.17682326510655!3d9.646987761405661!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a030d37b8c16c1%3A0xa8a51c2dd5f09ead!2zSMOgbSBUw6JuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682907166!5m2!1svi!2s"},
-      { "name": "xã Hàm Giang",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80960.05303885324!2d106.23131193130038!3d9.656934490191475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a030c3cdac8c79%3A0x80850adc49f6caf0!2zSMOgbSBHaWFuZywgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682923743!5m2!1svi!2s"},
-      { "name": "xã Ngãi Xuyên",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40473.15636416499!2d106.25049570548582!3d9.713914781572065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a039f461095f37%3A0x8c9de520255b017c!2zTmfDo2kgWHV5w6puLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682939291!5m2!1svi!2s"},
-      { "name": "xã Thanh Sơn",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20238.413886513823!2d106.27721060627354!3d9.683505845860006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03082acd28057%3A0x15b64ffa94275bfc!2zVGhhbmggU8ahbiwgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682956680!5m2!1svi!2s"},
-      { "name": "thị trấn Trà Cú",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5059.54671701467!2d106.2563913615902!3d9.687271590362773!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03a073ae8a075%3A0x4d75331214d9636b!2zdHQuIFRyw6AgQ8O6LCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682970827!5m2!1svi!2s"},
-      { "name": "xã Long Hiệp",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40473.44212885652!2d106.33606885548424!3d9.711551281716709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a025306aac26a5%3A0x5f4175030d4e57cf!2zTG9uZyBIaeG7h3AsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682986778!5m2!1svi!2s"},
-      { "name": "xã Tân Hiệp",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40470.64423337482!2d106.30925745549925!3d9.734667630302035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03b1ad864381b%3A0x4bf4b4f624aee70c!2zVMOibiBIaeG7h3AsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683003376!5m2!1svi!2s"},
-      { "name": "xã Ngọc Biên",  "mapApi":  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40470.64423337482!2d106.30925745549925!3d9.734667630302035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0256abdb40737%3A0xd8318deb751a54eb!2zTmfhu41jIEJpw6puLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683017943!5m2!1svi!2s"},
-      { "name": "xã Tập Sơn",  "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40466.8231001478!2d106.28672155551963!3d9.766150478375978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03bc29dfd2e97%3A0xab1659c4fd77402d!2zVOG6rXAgU8ahbiwgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744683057669!5m2!1svi!2s"},
-      {"name": "xã Phước Hưng", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40466.8231001478!2d106.28672155551963!3d9.766150478375978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03b81435ad517%3A0x4fdee5ce48e50894!2zUGjGsOG7m2MgSMawbmcsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683037660!5m2!1svi!2s"},
-      {"name": "xã Tân Sơn", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40469.92966366706!2d106.20957585550305!3d9.74056272994132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0390d6c52e745%3A0x8a109c514fb8ac7a!2zVMOibiBTxqFuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683074233!5m2!1svi!2s"}
-  ],
+      {
+        "name": "xã An Quảng Hữu",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40471.15155144347!2d106.1585869554965!3d9.730480180558263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0387687fa3d1d%3A0xd682eea82900a4c2!2zQW4gUXXhuqNuZyBI4buvdSwgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682799722!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Lưu Nghiệp Anh",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40475.424012757896!2d106.17639160547371!3d9.695143832721072!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03828fbe5265f%3A0xfd20c320718b6fd!2zTMawdSBOZ2hp4buHcCBBbmgsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682814806!5m2!1svi!2s"
+      },
+      {
+        "name": "Đại An",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20241.363273781073!2d106.2897912562657!3d9.634449396611132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a031a9f0929857%3A0xd0593f35f7b30b55!2zxJDhuqFpIEFuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682830495!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Đại An",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20241.38474903054!2d106.29266015626567!3d9.634091296616626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a031a96fff0837%3A0x29ca31fe7199c2c!2zxJDhuqFpIEFuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682843699!5m2!1svi!2s"
+      },
+      {
+        "name": "thị trấn Định An",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20241.38474903054!2d106.29266015626567!3d9.634091296616626!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03174797ebe01%3A0xa882e5a0962612bd!2zVGjhu4sgVHLhuqVuIMSQ4buLbmggQW4sIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682863667!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Kim Sơn",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40478.290572200385!2d106.2062069554584!3d9.671363634177087!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03771676aeb0d%3A0x3e715755bca893e2!2zS2ltIFPGoW4sIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682881071!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hàm Tân",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80962.4433991598!2d106.17682326510655!3d9.646987761405661!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a030d37b8c16c1%3A0xa8a51c2dd5f09ead!2zSMOgbSBUw6JuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682907166!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hàm Giang",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80960.05303885324!2d106.23131193130038!3d9.656934490191475!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a030c3cdac8c79%3A0x80850adc49f6caf0!2zSMOgbSBHaWFuZywgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682923743!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Ngãi Xuyên",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40473.15636416499!2d106.25049570548582!3d9.713914781572065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a039f461095f37%3A0x8c9de520255b017c!2zTmfDo2kgWHV5w6puLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682939291!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Thanh Sơn",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20238.413886513823!2d106.27721060627354!3d9.683505845860006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03082acd28057%3A0x15b64ffa94275bfc!2zVGhhbmggU8ahbiwgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744682956680!5m2!1svi!2s"
+      },
+      {
+        "name": "thị trấn Trà Cú",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5059.54671701467!2d106.2563913615902!3d9.687271590362773!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03a073ae8a075%3A0x4d75331214d9636b!2zdHQuIFRyw6AgQ8O6LCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744682970827!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Long Hiệp",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40473.44212885652!2d106.33606885548424!3d9.711551281716709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a025306aac26a5%3A0x5f4175030d4e57cf!2zTG9uZyBIaeG7h3AsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744682986778!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tân Hiệp",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40470.64423337482!2d106.30925745549925!3d9.734667630302035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03b1ad864381b%3A0x4bf4b4f624aee70c!2zVMOibiBIaeG7h3AsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683003376!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Ngọc Biên",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40470.64423337482!2d106.30925745549925!3d9.734667630302035!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0256abdb40737%3A0xd8318deb751a54eb!2zTmfhu41jIEJpw6puLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683017943!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tập Sơn",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40466.8231001478!2d106.28672155551963!3d9.766150478375978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03bc29dfd2e97%3A0xab1659c4fd77402d!2zVOG6rXAgU8ahbiwgVHLDoCBDw7osIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744683057669!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Phước Hưng",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40466.8231001478!2d106.28672155551963!3d9.766150478375978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a03b81435ad517%3A0x4fdee5ce48e50894!2zUGjGsOG7m2MgSMawbmcsIFRyw6AgQ8O6LCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683037660!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Tân Sơn",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40469.92966366706!2d106.20957585550305!3d9.74056272994132!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0390d6c52e745%3A0x8a109c514fb8ac7a!2zVMOibiBTxqFuLCBUcsOgIEPDuiwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683074233!5m2!1svi!2s"
+      }
+    ],
     "THỊ XÃ DUYÊN HẢI": [
-      {"name": "phường 1 (DH)", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5060.332365368937!2d106.49006881158978!3d9.635013190412739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a029e8cfe1b949%3A0xe4db657dcae24509!2zVUJORCBQaMaw4budbmcgMQ!5e1!3m2!1svi!2s!4v1744683098714!5m2!1svi!2s"},
-      {"name": "phường 2 (DH)", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57244.848375791706!2d106.48408343510216!3d9.671945836251325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a027c2ede2ca1f%3A0x84328100160f43c5!2zVUJORCBQaMawxqHMgG5nIDI!5e1!3m2!1svi!2s!4v1744683122909!5m2!1svi!2s"},
-      {"name": "xã Long Toàn", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57244.848375791706!2d106.48408343510216!3d9.671945836251325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a028ed6555d455%3A0xee839e12af77287d!2zTG9uZyBUb8OgbiwgVGjhu4sgeMOjIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683140645!5m2!1svi!2s"},
-      {"name": "xã Dân Thành", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40487.36864456856!2d106.48459885540994!3d9.595669288814543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0298e7f24d573%3A0x86934600ba89117c!2zRMOibiBUaMOgbmgsIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683157962!5m2!1svi!2s"},
-      {"name": "xã Trường Long Hoà", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80963.7536524129!2d106.5099182812604!3d9.641531243965575!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x319f8791207eca17%3A0x9da874da4d3b4bf8!2zVHLGsOG7nW5nIExvbmcgSMOyYSwgVGjhu4sgeMOjIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683174313!5m2!1svi!2s"},
-      {"name": "xã Long Hữu", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40476.36257599966!2d106.47895540546868!3d9.687364133197374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a027c580c65e3d%3A0xa4485c38685c4014!2zTG9uZyBI4buvdSwgRHV5w6puIEjhuqNpLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683190864!5m2!1svi!2s"},
-      {"name": "xã Hiệp Thạnh", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80940.90520116796!2d106.51732118150736!3d9.736248920769107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x319f89954c630ee9%3A0xc76c0766ef5f1e66!2zSGnhu4dwIFRo4bqhbmgsIFRo4buLIHjDoyBEdXnDqm4gSOG6o2ksIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744683207393!5m2!1svi!2s"}
-  ],
+      {
+        "name": "phường 1 (DH)",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d5060.332365368937!2d106.49006881158978!3d9.635013190412739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a029e8cfe1b949%3A0xe4db657dcae24509!2zVUJORCBQaMaw4budbmcgMQ!5e1!3m2!1svi!2s!4v1744683098714!5m2!1svi!2s"
+      },
+      {
+        "name": "phường 2 (DH)",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57244.848375791706!2d106.48408343510216!3d9.671945836251325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a027c2ede2ca1f%3A0x84328100160f43c5!2zVUJORCBQaMawxqHMgG5nIDI!5e1!3m2!1svi!2s!4v1744683122909!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Long Toàn",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57244.848375791706!2d106.48408343510216!3d9.671945836251325!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a028ed6555d455%3A0xee839e12af77287d!2zTG9uZyBUb8OgbiwgVGjhu4sgeMOjIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683140645!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Dân Thành",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40487.36864456856!2d106.48459885540994!3d9.595669288814543!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0298e7f24d573%3A0x86934600ba89117c!2zRMOibiBUaMOgbmgsIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683157962!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Trường Long Hoà",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80963.7536524129!2d106.5099182812604!3d9.641531243965575!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x319f8791207eca17%3A0x9da874da4d3b4bf8!2zVHLGsOG7nW5nIExvbmcgSMOyYSwgVGjhu4sgeMOjIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683174313!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Long Hữu",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40476.36257599966!2d106.47895540546868!3d9.687364133197374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a027c580c65e3d%3A0xa4485c38685c4014!2zTG9uZyBI4buvdSwgRHV5w6puIEjhuqNpLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683190864!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Hiệp Thạnh",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d80940.90520116796!2d106.51732118150736!3d9.736248920769107!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x319f89954c630ee9%3A0xc76c0766ef5f1e66!2zSGnhu4dwIFRo4bqhbmgsIFRo4buLIHjDoyBEdXnDqm4gSOG6o2ksIFRyw6AgVmluaCwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1744683207393!5m2!1svi!2s"
+      }
+    ],
     "HUYỆN DUYÊN HẢI": [
-      {"name": "thị trấn Long Thành", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40487.08544462483!2d106.40861730541143!3d9.59803958866927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0294983c9f821%3A0xeb5f7749f6aa1bd6!2zVUJORCBUaOG7iyB0cuG6pW4gTG9uZyBUaMOgbmg!5e1!3m2!1svi!2s!4v1744683345092!5m2!1svi!2s"},
-      {"name": "xã Long Khánh", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40487.08544462483!2d106.40861730541143!3d9.59803958866927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02eaf66a25711%3A0xf1b250acfe4833fb!2zTG9uZyBLaMOhbmgsIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683364170!5m2!1svi!2s"},
-      {"name": "xã Đôn Châu", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40479.28316608523!2d106.35747305545304!3d9.663115834682188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02f96d2227e6f%3A0xa1d169fd4986cc41!2zxJDDtG4gQ2jDonUsIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683391287!5m2!1svi!2s"},
-      {"name": "xã Đôn Xuân", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40481.09388269223!2d106.32920230544343!3d9.648051985604841!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02fd77a67184b%3A0xc429f70731a8b444!2zxJDDtG4gWHXDom4sIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683411095!5m2!1svi!2s"},
-      {"name": "xã Ngũ Lạc", "mapApi":"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40479.105427831!2d106.41790845545403!3d9.664593234591699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02f4d6d21cd5b%3A0xa549329cd380eb90!2zTmfFqSBM4bqhYywgRHV5w6puIEjhuqNpLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683426101!5m2!1svi!2s"}
-  ]
+      {
+        "name": "thị trấn Long Thành",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40487.08544462483!2d106.40861730541143!3d9.59803958866927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0294983c9f821%3A0xeb5f7749f6aa1bd6!2zVUJORCBUaOG7iyB0cuG6pW4gTG9uZyBUaMOgbmg!5e1!3m2!1svi!2s!4v1744683345092!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Long Khánh",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40487.08544462483!2d106.40861730541143!3d9.59803958866927!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02eaf66a25711%3A0xf1b250acfe4833fb!2zTG9uZyBLaMOhbmgsIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683364170!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Đôn Châu",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40479.28316608523!2d106.35747305545304!3d9.663115834682188!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02f96d2227e6f%3A0xa1d169fd4986cc41!2zxJDDtG4gQ2jDonUsIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683391287!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Đôn Xuân",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40481.09388269223!2d106.32920230544343!3d9.648051985604841!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02fd77a67184b%3A0xc429f70731a8b444!2zxJDDtG4gWHXDom4sIER1ecOqbiBI4bqjaSwgVHLDoCBWaW5oLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1744683411095!5m2!1svi!2s"
+      },
+      {
+        "name": "xã Ngũ Lạc",
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d40479.105427831!2d106.41790845545403!3d9.664593234591699!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a02f4d6d21cd5b%3A0xa549329cd380eb90!2zTmfFqSBM4bqhYywgRHV5w6puIEjhuqNpLCBUcsOgIFZpbmgsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1744683426101!5m2!1svi!2s"
+      }
+    ]
   },
   "Bến Tre": {
     "THÀNH PHỐ BẾN TRE": [
       {
         "name": "phường An Hội",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sph%C6%B0%E1%BB%9Dng%20An%20H%E1%BB%99i%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4877.20874771202!2d106.37646267591148!3d10.23685248988098!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa8599c3fda2d%3A0xdefa4f4186fad2c1!2zVUJORCBwaMaw4budbmcgQW4gSOG7mWk!5e1!3m2!1svi!2s!4v1750926557284!5m2!1svi!2s"
       },
       {
         "name": "xã Mỹ Thạnh An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20Th%E1%BA%A1nh%20An%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19510.106323636475!2d106.36469891239487!3d10.21615653840785!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa83ec5945501%3A0xa374921f1c534340!2zTeG7uSBUaOG6oW5oIEFuLCBUcC4gQuG6v24gVHJlLCBC4bq_biBUcmUsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1750926581233!5m2!1svi!2s"
       },
       {
         "name": "xã Phú Nhuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20Nhu%E1%BA%ADn%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19510.61324686929!2d106.36879206239342!3d10.207892788532977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa82526877f61%3A0xcb0ca5f4768aaa0a!2zUGjDuiBOaHXhuq1uLCBUcC4gQuG6v24gVHJlLCBC4bq_biBUcmUsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1750926606450!5m2!1svi!2s"
       },
       {
         "name": "phường Phú Khương",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sph%C6%B0%E1%BB%9Dng%20Ph%C3%BA%20Kh%C6%B0%C6%A1ng%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9754.026640883707!2d106.37293339495218!3d10.249557359475782!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa8f1a86f637d%3A0xd0cae490a72a5d09!2zUGjDuiBLaMawxqFuZywgVHAuIELhur9uIFRyZSwgQuG6v24gVHJlLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1750926635256!5m2!1svi!2s"
       },
       {
         "name": "phường 8",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sph%C6%B0%E1%BB%9Dng%208%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19508.354236199826!2d106.37859276239985!3d10.244667887976243!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa8fec055a9d3%3A0x87a903aa09aa066e!2zUGjGsOG7nW5nIDgsIFRwLiBC4bq_biBUcmUsIELhur9uIFRyZSwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1750926652194!5m2!1svi!2s"
       },
       {
         "name": "xã Phú Hưng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20H%C6%B0ng%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d39016.42594149666!2d106.38356536463216!3d10.246963251759006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa9059389657f%3A0xbc8bf0e5a0ee5547!2zUGjDuiBIxrBuZywgVHAuIELhur9uIFRyZSwgQuG6v24gVHJlLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1750926671952!5m2!1svi!2s"
       },
       {
         "name": "xã Nhơn Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Nh%C6%A1n%20Th%E1%BA%A1nh%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d39020.67226639044!2d106.3782171646079!3d10.212411053851287!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa9cc1b27658b%3A0xd755259af61b6c3e!2zTmjGoW4gVGjhuqFuaCwgVHAuIELhur9uIFRyZSwgQuG6v24gVHJlLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1750926691754!5m2!1svi!2s"
       },
       {
         "name": "phường 7",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sph%C6%B0%E1%BB%9Dng%207%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19509.27505875596!2d106.34547821239723!3d10.229693338202903!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa8705af71fdd%3A0xb9b4ae2092166ac0!2zUGjGsOG7nW5nIDcsIFRwLiBC4bq_biBUcmUsIELhur9uIFRyZSwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1750926710873!5m2!1svi!2s"
       },
       {
         "name": "xã Bình Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%C3%ACnh%20Ph%C3%BA%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19508.66669058308!2d106.33501761239897!3d10.23958913805311!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa7d590a865c9%3A0x5f6a106deb7c6f1e!2zQsOsbmggUGjDuiwgVHAuIELhur9uIFRyZSwgQuG6v24gVHJlLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1750926739467!5m2!1svi!2s"
       },
       {
         "name": "xã Thanh Tân",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Thanh%20T%C3%A2n%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d39018.52830148847!2d106.2889478646202!3d10.229870852793889!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa7a495500593%3A0xa5906b204c419fa1!2zVGhhbmggVMOibiwgVHAuIELhur9uIFRyZSwgQuG6v24gVHJlLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1750926759076!5m2!1svi!2s"
       },
       {
         "name": "phường 6",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sph%C6%B0%E1%BB%9Dng%206%2C%20%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d9754.173049816305!2d106.357108394952!3d10.244800109493786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa889a0a43489%3A0xdb7dd7d82a383cb6!2zUGjGsOG7nW5nIDYsIFRwLiBC4bq_biBUcmUsIELhur9uIFRyZSwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1750926780601!5m2!1svi!2s"
       },
       {
         "name": "xã Sơn Đông",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20S%C6%A1n%20%C4%90%C3%B4ng%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19507.056064378427!2d106.33066171240353!3d10.26574223765731!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa61f4ef57aef%3A0xb0e5cbd3e9c5fe2b!2zU8ahbiDEkMO0bmcsIFRwLiBC4bq_biBUcmUsIELhur9uIFRyZSwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1750926801145!5m2!1svi!2s"
       },
       {
         "name": "xã Tam Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Tam%20Ph%C6%B0%E1%BB%9Bc%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19505.598553737054!2d106.33293621240767!3d10.289352387300115!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa5fefefe46d5%3A0x7d11334d24fc38e6!2zVGFtIFBoxrDhu5tjLCBUcC4gQuG6v24gVHJlLCBC4bq_biBUcmUsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1750926819836!5m2!1svi!2s"
       },
       {
         "name": "phường Phú Tân",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sph%C6%B0%E1%BB%9Dng%20Ph%C3%BA%20T%C3%A2n%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d19507.462061432838!2d106.35994611240237!3d10.259155937756972!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa8eb4a32bd3f%3A0xb05948d657f6bebb!2zUGjDuiBUw6JuLCBUcC4gQuG6v24gVHJlLCBC4bq_biBUcmUsIFZp4buHdCBOYW0!5e1!3m2!1svi!2s!4v1750926844651!5m2!1svi!2s"
       },
       {
         "name": "xã Hữu Định",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%E1%BB%AFu%20%C4%90%E1%BB%8Bnh%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d39014.22350279051!2d106.3753471646447!3d10.264839100676905!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa920f89439a9%3A0x43c603199581293e!2zSOG7r3UgxJDhu4tuaCwgVHAuIELhur9uIFRyZSwgQuG6v24gVHJlLCBWaeG7h3QgTmFt!5e1!3m2!1svi!2s!4v1750926864959!5m2!1svi!2s"
       },
       {
         "name": "xã Phước Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C6%B0%E1%BB%9Bc%20Th%E1%BA%A1nh%2C%20TH%C3%80NH%20PH%E1%BB%90%20B%E1%BA%BEN%20TRE%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d39012.65513907695!2d106.38061501465361!3d10.277549799907632!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x310aa92e9bd51a0b%3A0x96c2ef1ff9192dc3!2zUGjGsOG7m2MgVGhhbmgsIFRwLiBC4bq_biBUcmUsIELhur9uIFRyZSwgVmnhu4d0IE5hbQ!5e1!3m2!1svi!2s!4v1750926886948!5m2!1svi!2s"
       }
     ],
     "HUYỆN CHÂU THÀNH": [
       {
         "name": "xã Phú Túc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20T%C3%BAc%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Thạch",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Th%E1%BA%A1ch%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tường Đa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C6%B0%E1%BB%9Dng%20%C4%90a%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Châu Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Ch%C3%A2u%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Giao Long",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Giao%20Long%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Ph%C6%B0%E1%BB%9Bc%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Quới Sơn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Qu%E1%BB%9Bi%20S%C6%A1n%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Tiên Thủy",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Ti%C3%AAn%20Th%E1%BB%A7y%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thành Triệu",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%C3%A0nh%20Tri%E1%BB%87u%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Quới Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Qu%E1%BB%9Bi%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phú Đức",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20%C4%90%E1%BB%A9c%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tiên Long",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ti%C3%AAn%20Long%2C%20HUY%E1%BB%86N%20CH%C3%82U%20TH%C3%80NH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ],
     "HUYỆN CHỢ LÁCH": [
       {
         "name": "xã Phú Phụng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20Ph%E1%BB%A5ng%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Vĩnh Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20V%C4%A9nh%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Sơn Định",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20S%C6%A1n%20%C4%90%E1%BB%8Bnh%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Chợ Lách",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Ch%E1%BB%A3%20L%C3%A1ch%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hòa Nghĩa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C3%B2a%20Ngh%C4%A9a%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Long Thới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Long%20Th%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Vĩnh Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20V%C4%A9nh%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Thiềng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Thi%E1%BB%81ng%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phú Sơn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20S%C6%A1n%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hưng Khánh Trung A",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C6%B0ng%20Kh%C3%A1nh%20Trung%20A%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hưng Khánh Trung B",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C6%B0ng%20Kh%C3%A1nh%20Trung%20B%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Vĩnh Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20V%C4%A9nh%20H%C3%B2a%2C%20HUY%E1%BB%86N%20CH%E1%BB%A2%20L%C3%81CH%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ],
     "HUYỆN MỎ CÀY BẮC": [
       {
         "name": "thị trấn Phước Mỹ Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Ph%C6%B0%E1%BB%9Bc%20M%E1%BB%B9%20Trung%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phú Mỹ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20M%E1%BB%B9%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thạnh Ngãi",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BA%A1nh%20Ng%C3%A3i%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Phú Tây",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Ph%C3%BA%20T%C3%A2y%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Thành Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s%C2%A0x%C3%A3%20T%C3%A2n%20Th%C3%A0nh%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hòa Lộc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C3%B2a%20L%E1%BB%99c%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thành An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%C3%A0nh%20An%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Nhuận Phú Tân",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Nhu%E1%BA%ADn%20Ph%C3%BA%20T%C3%A2n%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Thanh Tây",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Thanh%20T%C3%A2y%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Khánh Thạnh Tân",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Kh%C3%A1nh%20Th%E1%BA%A1nh%20T%C3%A2n%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20B%E1%BA%AEC%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ],
     "HUYỆN MỎ CÀY NAM": [
       {
         "name": "xã Định Thủy",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20%C4%90%E1%BB%8Bnh%20Th%E1%BB%A7y%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phước Hiệp",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C6%B0%E1%BB%9Bc%20Hi%E1%BB%87p%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bình Khánh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%C3%ACnh%20Kh%C3%A1nh%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Mỏ Cày",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20M%E1%BB%8F%20C%C3%A0y%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Hội",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20H%E1%BB%99i%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Đa Phước Hội",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20%C4%90a%20Ph%C6%B0%E1%BB%9Bc%20H%E1%BB%99i%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thành Thới A",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%C3%A0nh%20Th%E1%BB%9Bi%20A%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thành Thới B",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%C3%A0nh%20Th%E1%BB%9Bi%20B%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Thới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Th%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Định",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20%C4%90%E1%BB%8Bnh%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Trung%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Minh Đức",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Minh%20%C4%90%E1%BB%A9c%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hương Mỹ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C6%B0%C6%A1ng%20M%E1%BB%B9%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Cẩm Sơn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20C%E1%BA%A9m%20S%C6%A1n%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Ngãi Đăng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ng%C3%A3i%20%C4%90%C4%83ng%2C%20HUY%E1%BB%86N%20M%E1%BB%8E%20C%C3%80Y%20NAM%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ],
     "HUYỆN THẠNH PHÚ": [
       {
         "name": "xã Đại Điền",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20%C4%90%E1%BA%A1i%20%C4%90i%E1%BB%81n%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phú Khánh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20Kh%C3%A1nh%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Phong",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Phong%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thới Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BB%9Bi%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Quới Điền",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s%C2%A0x%C3%A3%20Qu%E1%BB%9Bi%20%C4%90i%E1%BB%81n%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Mỹ Hưng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20H%C6%B0ng%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hòa Lợi",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C3%B2a%20L%E1%BB%A3i%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Thạnh Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Th%E1%BA%A1nh%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bình Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%C3%ACnh%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Mỹ An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20An%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Qui",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Qui%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Nhơn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Nh%C6%A1n%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Thu%E1%BA%ADn%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thạnh Hải",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BA%A1nh%20H%E1%BA%A3i%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Điền",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20%C4%90i%E1%BB%81n%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thạnh Phong",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BA%A1nh%20Phong%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Giao Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Giao%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20TH%E1%BA%A0NH%20PH%C3%9A%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ],
     "HUYỆN BA TRI": [
       {
         "name": "xã Tân Thủy",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Th%E1%BB%A7y%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Hòa Tây",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20H%C3%B2a%20T%C3%A2y%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Tiệm Tôm",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Ti%E1%BB%87m%20T%C3%B4m%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bảo Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%E1%BA%A3o%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bảo Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%E1%BA%A3o%20Thu%E1%BA%ADn%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Ba Tri",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Ba%20Tri%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Vĩnh Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20V%C4%A9nh%20H%C3%B2a%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Đức",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20%C4%90%E1%BB%A9c%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Vĩnh An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20V%C4%A9nh%20An%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Bình Tây",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20B%C3%ACnh%20T%C3%A2y%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Xuân",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Xu%C3%A2n%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phước Ngãi",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C6%B0%E1%BB%9Bc%20Ng%C3%A3i%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phú Lễ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20L%E1%BB%85%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Mỹ Chánh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20Ch%C3%A1nh%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Mỹ Nhơn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20Nh%C6%A1n%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Mỹ Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20H%C3%B2a%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Ngãi Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Ng%C3%A3i%20Trung%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Phú Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Ph%C3%BA%20Trung%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Mỹ Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Hiệp",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Hi%E1%BB%87p%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã An Ngãi Tây",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20An%20Ng%C3%A3i%20T%C3%A2y%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Hưng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20H%C6%B0ng%2C%20HUY%E1%BB%86N%20BA%20TRI%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ],
     "HUYỆN GIỒNG TRÔM": [
       {
         "name": "xã Hưng Nhượng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C6%B0ng%20Nh%C6%B0%E1%BB%A3ng%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Thanh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20Thanh%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hưng Lễ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C6%B0ng%20L%E1%BB%85%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Giồng Trôm",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20Gi%E1%BB%93ng%20Tr%C3%B4m%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bình Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%C3%ACnh%20H%C3%B2a%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bình Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%C3%ACnh%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Hào",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20H%C3%A0o%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tân Lợi Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20T%C3%A2n%20L%E1%BB%A3i%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thạnh Phú Đông",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BA%A1nh%20Ph%C3%BA%20%C4%90%C3%B4ng%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phước Long",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C6%B0%E1%BB%9Bc%20Long%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Long Mỹ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Long%20M%E1%BB%B9%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Hưng Phong",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20H%C6%B0ng%20Phong%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Lương Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20L%C6%B0%C6%A1ng%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thuận Điền",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Thu%E1%BA%ADn%20%C4%90i%E1%BB%81n%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Mỹ Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20M%E1%BB%B9%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Châu Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ch%C3%A2u%20H%C3%B2a%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Châu Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ch%C3%A2u%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Lương Quới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20L%C6%B0%C6%A1ng%20Qu%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Lương Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20L%C6%B0%C6%A1ng%20H%C3%B2a%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phong Nẫm",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Phong%20N%E1%BA%ABm%2C%20HUY%E1%BB%86N%20GI%E1%BB%92NG%20TR%C3%94M%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ],
     "HUYỆN BÌNH ĐẠI": [
       {
         "name": "xã Thới Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BB%9Bi%20Thu%E1%BA%ADn%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thừa Đức",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BB%ABa%20%C4%90%E1%BB%A9c%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thạnh Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BA%A1nh%20Ph%C6%B0%E1%BB%9Bc%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Đại Hòa Lộc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20%C4%90%E1%BA%A1i%20H%C3%B2a%20L%E1%BB%99c%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "thị trấn Bình Đại",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sth%E1%BB%8B%20tr%E1%BA%A5n%20B%C3%ACnh%20%C4%90%E1%BA%A1i%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bình Thới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%C3%ACnh%20Th%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Bình Thắng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20B%C3%ACnh%20Th%E1%BA%AFng%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thạnh Trị",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BA%A1nh%20Tr%E1%BB%8B%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Định Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20%C4%90%E1%BB%8Bnh%20Trung%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phú Long",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20Long%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Lộc Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20L%E1%BB%99c%20Thu%E1%BA%ADn%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Vang Quới Đông",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Vang%20Qu%E1%BB%9Bi%20%C4%90%C3%B4ng%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Vang Quới Tây",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Vang%20Qu%E1%BB%9Bi%20T%C3%A2y%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Châu Hưng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ch%C3%A2u%20H%C6%B0ng%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Thới Lai",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Th%E1%BB%9Bi%20Lai%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Long Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Long%20H%C3%B2a%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Phú Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Ph%C3%BA%20Thu%E1%BA%ADn%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Long Định",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Long%20%C4%90%E1%BB%8Bnh%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       },
       {
         "name": "xã Tam Hiệp",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sx%C3%A3%20Tam%20Hi%E1%BB%87p%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20%C4%90%E1%BA%A0I%2C%20B%E1%BA%BFn%20Tre"
+        "mapApi": ""
       }
     ]
   },
@@ -730,465 +1027,465 @@
     "HUYỆN MANG THÍT": [
       {
         "name": "Thị trấn Cái Nhum",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%E1%BB%8B%20tr%E1%BA%A5n%20C%C3%A1i%20Nhum%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "An Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sAn%20Ph%C6%B0%E1%BB%9Bc%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Chánh An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sCh%C3%A1nh%20An%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân An Hội",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20An%20H%E1%BB%99i%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Long",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20Long%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Long Hội",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20Long%20H%E1%BB%99i%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Nhơn Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sNh%C6%A1n%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trà Côn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTr%C3%A0%20C%C3%B4n%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Mỹ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20M%E1%BB%B9%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Mỹ Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%E1%BB%B9%20Ph%C6%B0%E1%BB%9Bc%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Nhơn Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sNh%C6%A1n%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Mỹ An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%E1%BB%B9%20An%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Bình Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sB%C3%ACnh%20Ph%C6%B0%E1%BB%9Bc%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hòa Tịnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%C3%B2a%20T%E1%BB%8Bnh%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Long Mỹ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sLong%20M%E1%BB%B9%2C%20HUY%E1%BB%86N%20MANG%20TH%C3%8DT%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ],
     "HUYỆN LONG HỒ": [
       {
         "name": "An Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sAn%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Bình Hòa Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sB%C3%ACnh%20H%C3%B2a%20Ph%C6%B0%E1%BB%9Bc%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Đồng Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s%C4%90%E1%BB%93ng%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hòa Ninh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%C3%B2a%20Ninh%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thị trấn Long Hồ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%E1%BB%8B%20tr%E1%BA%A5n%20Long%20H%E1%BB%93%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Long An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sLong%20An%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Long Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sLong%20Ph%C6%B0%E1%BB%9Bc%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Lộc Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sL%E1%BB%99c%20H%C3%B2a%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hòa Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%C3%B2a%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phú Quới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C3%BA%20Qu%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thạnh Quới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%E1%BA%A1nh%20Qu%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20LONG%20H%E1%BB%92%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ],
     "THÀNH PHỐ VĨNH LONG": [
       {
         "name": "Phường 5",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%205%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thanh Đức (Huyện Long Hồ)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sThanh%20%C4%90%E1%BB%A9c%20%28Huy%E1%BB%87n%20Long%20H%E1%BB%93%29%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phường 1",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%201%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phường 9",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%209%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trường An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTr%C6%B0%E1%BB%9Dng%20An%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phường 3",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%203%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phường 4",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%204%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phước Hậu (Huyện Long Hồ)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Bc%20H%E1%BA%ADu%20%28Huy%E1%BB%87n%20Long%20H%E1%BB%93%29%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phường 8",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%208%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Hạnh (Huyện Long Hồ)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20H%E1%BA%A1nh%20%28Huy%E1%BB%87n%20Long%20H%E1%BB%93%29%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Ngãi",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20Ng%C3%A3i%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20H%C3%B2a%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Hội",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20H%E1%BB%99i%2C%20TH%C3%80NH%20PH%E1%BB%90%20V%C4%A8NH%20LONG%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ],
     "HUYỆN VŨNG LIÊM": [
       {
         "name": "Quới Thiện",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sQu%E1%BB%9Bi%20Thi%E1%BB%87n%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thanh Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sThanh%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thị trấn Vũng Liêm",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%E1%BB%8B%20tr%E1%BA%A5n%20V%C5%A9ng%20Li%C3%AAm%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Hiếu",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Hi%E1%BA%BFu%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Thành Đông",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Th%C3%A0nh%20%C4%90%C3%B4ng%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Ngãi",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Ng%C3%A3i%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Nghĩa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Ngh%C4%A9a%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Thành Tây",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Th%C3%A0nh%20T%C3%A2y%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Quới An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sQu%E1%BB%9Bi%20An%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Quới Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20Qu%E1%BB%9Bi%20Trung%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Chánh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Ch%C3%A1nh%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung Hiệp",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20Hi%E1%BB%87p%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân An Luông",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20An%20Lu%C3%B4ng%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hiếu Phụng",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sHi%E1%BA%BFu%20Ph%E1%BB%A5ng%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trung An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTrung%20An%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hiếu Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sHi%E1%BA%BFu%20Thu%E1%BA%ADn%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hiếu Nhơn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sHi%E1%BA%BFu%20Nh%C6%A1n%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hiếu Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sHi%E1%BA%BFu%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hiếu Nghĩa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sHi%E1%BA%BFu%20Ngh%C4%A9a%2C%20HUY%E1%BB%86N%20V%C5%A8NG%20LI%C3%8AM%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ],
     "HUYỆN TRÀ ÔN": [
       {
         "name": "Phú Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C3%BA%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Lục Sỹ Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sL%E1%BB%A5c%20S%E1%BB%B9%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thị trấn Trà Ôn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%E1%BB%8B%20tr%E1%BA%A5n%20Tr%C3%A0%20%C3%94n%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tích Thiện",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%ADch%20Thi%E1%BB%87n%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Nhơn Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sNh%C6%A1n%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Trà Côn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTr%C3%A0%20C%C3%B4n%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Mỹ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20M%E1%BB%B9%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Ấp Nhà Thờ (Thị trấn Tam Bình)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s%E1%BA%A4p%20Nh%C3%A0%20Th%E1%BB%9D%20%28Th%E1%BB%8B%20tr%E1%BA%A5n%20Tam%20B%C3%ACnh%29%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tường Trí (Thị trấn Tam Bình)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C6%B0%E1%BB%9Dng%20Tr%C3%AD%20%28Th%E1%BB%8B%20tr%E1%BA%A5n%20Tam%20B%C3%ACnh%29%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tường Trí B (Thị trấn Tam Bình)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C6%B0%E1%BB%9Dng%20Tr%C3%AD%20B%20%28Th%E1%BB%8B%20tr%E1%BA%A5n%20Tam%20B%C3%ACnh%29%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Vĩnh Xuân",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sV%C4%A9nh%20Xu%C3%A2n%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thuận Thới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sThu%E1%BA%ADn%20Th%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hựu Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%E1%BB%B1u%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Xuân Hiệp",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sXu%C3%A2n%20Hi%E1%BB%87p%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hòa Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%C3%B2a%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thới Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%E1%BB%9Bi%20H%C3%B2a%2C%20HUY%E1%BB%86N%20TR%C3%80%20%C3%94N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ],
     "HUYỆN TAM BÌNH": [
       {
         "name": "Hòa Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%C3%B2a%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hòa Hiệp",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%C3%B2a%20Hi%E1%BB%87p%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hòa Lộc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%C3%B2a%20L%E1%BB%99c%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phần còn lại của Thị trấn Tam Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%E1%BA%A7n%20c%C3%B2n%20l%E1%BA%A1i%20c%E1%BB%A7a%20Th%E1%BB%8B%20tr%E1%BA%A5n%20Tam%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Mỹ Thạnh Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%E1%BB%B9%20Th%E1%BA%A1nh%20Trung%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Loan Mỹ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sLoan%20M%E1%BB%B9%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Bình Ninh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sB%C3%ACnh%20Ninh%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phần còn lại của Ngãi Tứ",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%E1%BA%A7n%20c%C3%B2n%20l%E1%BA%A1i%20c%E1%BB%A7a%20Ng%C3%A3i%20T%E1%BB%A9%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Khu 6 (Thị trấn Trà Ôn)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sKhu%206%20%28Th%E1%BB%8B%20tr%E1%BA%A5n%20Tr%C3%A0%20%C3%94n%29%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Long Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sLong%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Song Phú",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sSong%20Ph%C3%BA%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phú Thịnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C3%BA%20Th%E1%BB%8Bnh%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Mỹ Lộc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%E1%BB%B9%20L%E1%BB%99c%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Lộc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20L%E1%BB%99c%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Hậu Lộc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sH%E1%BA%ADu%20L%E1%BB%99c%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phú Lộc",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C3%BA%20L%E1%BB%99c%2C%20HUY%E1%BB%86N%20TAM%20B%C3%8CNH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ],
     "HUYỆN BÌNH TÂN": [
       {
         "name": "Thị trấn Tân Quới",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%E1%BB%8B%20tr%E1%BA%A5n%20T%C3%A2n%20Qu%E1%BB%9Bi%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20B%C3%ACnh%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thành Lợi",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%C3%A0nh%20L%E1%BB%A3i%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân An Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20An%20Th%E1%BA%A1nh%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Lược",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20L%C6%B0%E1%BB%A3c%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Tân Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sT%C3%A2n%20Th%C3%A0nh%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thành Trung",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sTh%C3%A0nh%20Trung%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Mỹ Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%E1%BB%B9%20Thu%E1%BA%ADn%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Nguyễn Văn Thảnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sNguy%E1%BB%85n%20V%C4%83n%20Th%E1%BA%A3nh%2C%20HUY%E1%BB%86N%20B%C3%8CNH%20T%C3%82N%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ],
     "THỊ XÃ BÌNH MINH": [
       {
         "name": "Phường Thành Phước",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%20Th%C3%A0nh%20Ph%C6%B0%E1%BB%9Bc%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Thuận An",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sThu%E1%BA%ADn%20An%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Khóm 5 (Phường Cái Vồn)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sKh%C3%B3m%205%20%28Ph%C6%B0%E1%BB%9Dng%20C%C3%A1i%20V%E1%BB%93n%29%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phường Cái Vồn",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%20C%C3%A1i%20V%E1%BB%93n%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Mỹ Hòa",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sM%E1%BB%B9%20H%C3%B2a%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Cồn Sừng (Xã Ngãi Tứ, Huyện Tam Bình)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sC%E1%BB%93n%20S%E1%BB%ABng%20%28X%C3%A3%20Ng%C3%A3i%20T%E1%BB%A9%2C%20Huy%E1%BB%87n%20Tam%20B%C3%ACnh%29%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Khóm 3 (Phường Thành Phước)",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sKh%C3%B3m%203%20%28Ph%C6%B0%E1%BB%9Dng%20Th%C3%A0nh%20Ph%C6%B0%E1%BB%9Bc%29%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Phường Đông Thuận",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1sPh%C6%B0%E1%BB%9Dng%20%C4%90%C3%B4ng%20Thu%E1%BA%ADn%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Đông Bình",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s%C4%90%C3%B4ng%20B%C3%ACnh%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Đông Thành",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s%C4%90%C3%B4ng%20Th%C3%A0nh%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       },
       {
         "name": "Đông Thạnh",
-        "mapApi": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d20222.3091424937!2d106.31669248337892!3d9.947146387584764!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s%C4%90%C3%B4ng%20Th%E1%BA%A1nh%2C%20TH%E1%BB%8A%20X%C3%83%20B%C3%8CNH%20MINH%2C%20V%C4%A9nh%20Long"
+        "mapApi": ""
       }
     ]
   }
