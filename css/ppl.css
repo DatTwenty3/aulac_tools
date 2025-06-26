@@ -442,4 +442,16 @@ h1 {
     .confirm-button, .cancel-button {
         width: 100%;
     }
+}
+
+/* Ẩn spinner cho input type=number trên Chrome, Safari, Edge */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Ẩn spinner cho input type=number trên Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 } 
