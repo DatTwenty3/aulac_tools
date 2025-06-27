@@ -178,7 +178,8 @@ async function loadMultipleCSVFiles(fileList) {
                         if (results.errors.length > 0) {
                             throw new Error('Có lỗi khi đọc file CSV: ' + results.errors[0].message);
                         }
-                        const valid = results.data.filter(row => row.question && row.question.trim() && row.answer && row.answer.trim());
+                        // Gắn thêm thuộc tính file để biết nguồn chủ đề
+                        const valid = results.data.filter(row => row.question && row.question.trim() && row.answer && row.answer.trim()).map(row => ({...row, file: fileList[i]}));
                         allQuestions = allQuestions.concat(valid);
                         resolve();
                     }
@@ -246,37 +247,48 @@ function updateLoadingBar(percentage) {
     }
 }
 
-function formatQuestionText(raw) {
-    // Chuẩn hóa xuống dòng thành 1 dòng
-    let text = raw.replace(/\r\n|\r|\n/g, ' ');
-
+function parseQuestionAndAnswers(raw) {
+    // Chuẩn hóa xuống dòng thành \n để nhận diện đáp án nhiều dòng
+    let text = raw.replace(/\r\n|\r/g, '\n');
     // Tìm vị trí bắt đầu đáp án a.
-    let match = text.match(/([aA][\.|\)]\s)/);
-    if (!match) return text.trim();
-
+    let match = text.match(/([aA][\.|\)])\s?/);
+    if (!match) return { question: text.trim(), answers: [] };
     let idx = text.indexOf(match[0]);
     let question = text.slice(0, idx).trim();
     let answers = text.slice(idx);
-
-    // Tách đáp án, chỉ lấy đúng 4 đáp án a, b, c, d (không lặp, không trùng)
+    // Regex 1: nhận diện đáp án ở đầu dòng hoặc sau dấu xuống dòng
     let answerArr = [];
     let usedLabels = {};
-    let regex = /([a-dA-D][\.|\)])\s(.*?)(?= [a-dA-D][\.|\)]|$)/g;
+    let regex1 = /(^|\n)([a-dA-D][\.|\)])\s*((?:.|\n)*?)(?=(?:\n[a-dA-D][\.|\)])|$)/g;
     let m;
-    while ((m = regex.exec(answers)) !== null) {
-        let label = m[1].toLowerCase();
+    while ((m = regex1.exec(answers)) !== null) {
+        let label = m[2].toUpperCase();
         if (!usedLabels[label] && answerArr.length < 4) {
-            answerArr.push(`<b>${m[1].toLowerCase()}</b> ${m[2].trim()}`);
+            answerArr.push(m[3].trim().replace(/\s+/g, ' '));
             usedLabels[label] = true;
         }
     }
-
-    // Nếu không đủ 4 đáp án, fallback về tách cũ
+    // Nếu không đủ 4 đáp án, thử lại với regex tách liền nhau trên một dòng
     if (answerArr.length < 4) {
-        return text.replace(/([a-d]\.)/gi, '<br><b>$1</b>').replace(/^<br>/, '').trim();
+        answerArr = [];
+        usedLabels = {};
+        let regex2 = /([a-dA-D][\.|\)])\s*([^a-dA-D]*)/g;
+        let m2;
+        while ((m2 = regex2.exec(answers)) !== null && answerArr.length < 4) {
+            let label = m2[1].toUpperCase();
+            if (!usedLabels[label]) {
+                let value = m2[2].replace(/\s+/g, ' ').trim();
+                // Loại bỏ nhãn đáp án tiếp theo nếu bị dính vào
+                value = value.replace(/([a-dA-D][\.|\)]).*/, '').trim();
+                answerArr.push(value);
+                usedLabels[label] = true;
+            }
+        }
     }
-
-    return `<div style="margin-bottom:10px;">${question}</div>` + answerArr.map(a => `<div style="margin-bottom:4px;">${a}</div>`).join('');
+    if (answerArr.length < 4) {
+        return { question: text.trim(), answers: [] };
+    }
+    return { question, answers: answerArr };
 }
 
 function loadRandomQuestion() {
@@ -309,21 +321,29 @@ function loadRandomQuestion() {
     
     // Hiển thị số thứ tự từ cột stt
     const questionNumber = currentQuestion.stt || '?';
-    document.getElementById('questionNumber').textContent = `Câu hỏi #${questionNumber}`;
+    // Xác định loại chủ đề
+    let subLabel = '';
+    for (const topic of mainTopics) {
+        for (const sub of topic.subTopics) {
+            if (sub.file === currentQuestion.file) subLabel = sub.label;
+        }
+    }
+    document.getElementById('questionNumber').textContent = `Câu hỏi #${questionNumber} – ${subLabel}`;
     
-    // Hiển thị câu hỏi với định dạng đẹp
-    questionText.innerHTML = formatQuestionText(currentQuestion.question);
+    // Phân tích câu hỏi và đáp án
+    const parsed = parseQuestionAndAnswers(currentQuestion.question);
+    questionText.innerHTML = parsed.question.replace(/\s+/g, ' ').trim();
     
-    // Tạo 4 lựa chọn A, B, C, D
+    // Tạo 4 lựa chọn A, B, C, D với nội dung thực tế
     const options = ['A', 'B', 'C', 'D'];
     optionsContainer.innerHTML = '';
     
-    options.forEach(option => {
+    options.forEach((option, idx) => {
         const optionDiv = document.createElement('div');
         optionDiv.className = 'option';
         optionDiv.innerHTML = `
             <div class="option-label">${option}</div>
-            <div>Lựa chọn ${option}</div>
+            <div>${parsed.answers[idx] ? parsed.answers[idx] : ''}</div>
         `;
         optionDiv.addEventListener('click', () => selectOption(option, optionDiv));
         optionsContainer.appendChild(optionDiv);

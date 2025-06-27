@@ -85,17 +85,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         reject(new Error('Lỗi khi đọc file CSV: ' + results.errors[0].message));
                         return;
                     }
-                    
-                    // Kiểm tra dữ liệu
+                    // Gắn subLabel dựa vào tên file
+                    let subLabel = '';
+                    if (file.includes('PLR')) subLabel = 'Pháp luật riêng';
+                    else if (file.includes('PLC')) subLabel = 'Pháp luật chung';
+                    else if (file.includes('CM')) subLabel = 'Chuyên môn';
+                    else subLabel = '';
                     const validData = results.data.filter(row => {
                         return row.stt && row.question && row.answer;
-                    });
-                    
+                    }).map(row => ({...row, subLabel}));
                     if (validData.length === 0) {
                         reject(new Error('Không tìm thấy dữ liệu hợp lệ trong file CSV'));
                         return;
                     }
-                    
                     resolve(validData);
                 },
                 error: function(error) {
@@ -158,101 +160,96 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Hàm định dạng lại câu hỏi và đáp án từ 1 chuỗi (copy từ tracnghiem.js)
-    function formatQuestionText(raw) {
+    function parseQuestionAndAnswers(raw) {
         if (!raw || typeof raw !== 'string') {
             console.error('Invalid question text:', raw);
-            return 'Câu hỏi không hợp lệ';
+            return { question: 'Câu hỏi không hợp lệ', answers: [] };
         }
-
-        // Chuẩn hóa xuống dòng thành 1 dòng
-        let text = raw.replace(/\r\n|\r|\n/g, ' ').trim();
-        
-        // Kiểm tra nếu text rỗng
+        // Chuẩn hóa xuống dòng thành \n để nhận diện đáp án nhiều dòng
+        let text = raw.replace(/\r\n|\r/g, '\n');
         if (!text) {
             console.error('Empty question text');
-            return 'Câu hỏi không hợp lệ';
+            return { question: 'Câu hỏi không hợp lệ', answers: [] };
         }
-
         // Tìm vị trí bắt đầu đáp án a.
-        let match = text.match(/([aA][\.|\)]\s)/);
+        let match = text.match(/([aA][\.|\)])\s?/);
         if (!match) {
             console.warn('No answer options found in:', text);
-            return text;
+            return { question: text, answers: [] };
         }
-
         let idx = text.indexOf(match[0]);
         let question = text.slice(0, idx).trim();
         let answers = text.slice(idx);
-
-        // Tách đáp án, chỉ lấy đúng 4 đáp án a, b, c, d
+        // Regex 1: nhận diện đáp án ở đầu dòng hoặc sau dấu xuống dòng
         let answerArr = [];
         let usedLabels = {};
-        let regex = /([a-dA-D][\.|\)])\s(.*?)(?= [a-dA-D][\.|\)]|$)/g;
+        let regex1 = /(^|\n)([a-dA-D][\.|\)])\s*((?:.|\n)*?)(?=(?:\n[a-dA-D][\.|\)])|$)/g;
         let m;
-        
-        while ((m = regex.exec(answers)) !== null) {
-            let label = m[1].toLowerCase();
+        while ((m = regex1.exec(answers)) !== null) {
+            let label = m[2].toUpperCase();
             if (!usedLabels[label] && answerArr.length < 4) {
-                answerArr.push(`<b>${m[1].toLowerCase()}</b> ${m[2].trim()}`);
+                answerArr.push(m[3].trim().replace(/\s+/g, ' '));
                 usedLabels[label] = true;
             }
         }
-
-        // Nếu không đủ 4 đáp án, thử tách theo cách khác
+        // Nếu không đủ 4 đáp án, thử lại với regex tách liền nhau trên một dòng
         if (answerArr.length < 4) {
             answerArr = [];
-            let parts = answers.split(/([a-dA-D][\.|\)])/);
-            for (let i = 1; i < parts.length; i += 2) {
-                if (i + 1 < parts.length) {
-                    let label = parts[i].toLowerCase();
-                    if (!usedLabels[label] && answerArr.length < 4) {
-                        answerArr.push(`<b>${label}</b> ${parts[i + 1].trim()}`);
-                        usedLabels[label] = true;
-                    }
+            usedLabels = {};
+            let regex2 = /([a-dA-D][\.|\)])\s*([^a-dA-D]*)/g;
+            let m2;
+            while ((m2 = regex2.exec(answers)) !== null && answerArr.length < 4) {
+                let label = m2[1].toUpperCase();
+                if (!usedLabels[label]) {
+                    let value = m2[2].replace(/\s+/g, ' ').trim();
+                    // Loại bỏ nhãn đáp án tiếp theo nếu bị dính vào
+                    value = value.replace(/([a-dA-D][\.|\)]).*/, '').trim();
+                    answerArr.push(value);
+                    usedLabels[label] = true;
                 }
             }
         }
-
-        // Nếu vẫn không đủ 4 đáp án, trả về định dạng đơn giản
         if (answerArr.length < 4) {
-            return `<div style="margin-bottom:10px;">${question}</div>` + 
-                   `<div style="margin-bottom:4px;">${answers.replace(/([a-d]\.)/gi, '<br><b>$1</b>').replace(/^<br>/, '')}</div>`;
+            return { question: text, answers: [] };
         }
-
-        return `<div style="margin-bottom:10px;">${question}</div>` + 
-               answerArr.map(a => `<div style="margin-bottom:4px;">${a}</div>`).join('');
+        return { question, answers: answerArr };
     }
 
     // Hàm tạo câu hỏi
     function createQuestionElement(question, index) {
         const questionCard = document.createElement('div');
         questionCard.className = 'question-card';
+        // Phân tích câu hỏi và đáp án
+        const parsed = parseQuestionAndAnswers(question.question);
+        // Lấy subLabel từ dữ liệu câu hỏi
+        let subLabel = question.subLabel || (question.type === 'law' ? 'Pháp luật' : (question.type === 'specialized' ? 'Chuyên môn' : ''));
+        let stt = question.stt || (index + 1);
+        // Hiển thị nguồn gốc ở góc phải trên
         questionCard.innerHTML = `
             <div class="question-header">
                 <div class="question-number">Câu ${index + 1}</div>
-                <div class="question-type">${question.type === 'law' ? 'Pháp luật' : 'Chuyên môn'}</div>
+                <div class="question-type" style="font-size:0.98em; color:#888; font-style:italic;">Được lấy từ câu ${stt} - ${subLabel}</div>
             </div>
-            <div class="question-text">${formatQuestionText(question.question)}</div>
+            <div class="question-text">${parsed.question.replace(/\s+/g, ' ').trim()}</div>
             <div class="options-grid">
                 <div class="option-item" data-option="A">
                     <div class="option-label">A</div>
-                    <div class="option-desc">Lựa chọn A</div>
+                    <div class="option-desc">${parsed.answers[0] ? parsed.answers[0] : ''}</div>
                 </div>
                 <div class="option-item" data-option="B">
                     <div class="option-label">B</div>
-                    <div class="option-desc">Lựa chọn B</div>
+                    <div class="option-desc">${parsed.answers[1] ? parsed.answers[1] : ''}</div>
                 </div>
                 <div class="option-item" data-option="C">
                     <div class="option-label">C</div>
-                    <div class="option-desc">Lựa chọn C</div>
+                    <div class="option-desc">${parsed.answers[2] ? parsed.answers[2] : ''}</div>
                 </div>
                 <div class="option-item" data-option="D">
                     <div class="option-label">D</div>
-                    <div class="option-desc">Lựa chọn D</div>
+                    <div class="option-desc">${parsed.answers[3] ? parsed.answers[3] : ''}</div>
                 </div>
             </div>
         `;
-
         // Xử lý sự kiện chọn đáp án
         const optionItems = questionCard.querySelectorAll('.option-item');
         optionItems.forEach(item => {
@@ -262,7 +259,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 selectedAnswers[index] = item.dataset.option;
             });
         });
-
         return questionCard;
     }
 
@@ -428,6 +424,32 @@ document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo({top: 0, behavior: 'smooth'});
     }
 
+    // Hàm chọn ngẫu nhiên câu hỏi Pháp luật chung và riêng, đảm bảo mỗi loại có ít nhất 1 câu
+    function getRandomLawQuestions(lawQuestions) {
+        // Tách riêng PLC và PLR
+        const lawChung = lawQuestions.filter(q => (q.subLabel || '').includes('Pháp luật chung'));
+        const lawRieng = lawQuestions.filter(q => (q.subLabel || '').includes('Pháp luật riêng'));
+        // Nếu chỉ có 1 nhóm, lấy đủ 10 câu từ nhóm đó
+        if (lawChung.length === 0) {
+            return getRandomQuestions(lawRieng, 10);
+        }
+        if (lawRieng.length === 0) {
+            return getRandomQuestions(lawChung, 10);
+        }
+        // Đảm bảo mỗi nhóm có ít nhất 1 câu
+        const selected = [];
+        // Lấy 1 câu ngẫu nhiên từ mỗi nhóm
+        selected.push(getRandomQuestions(lawChung, 1)[0]);
+        selected.push(getRandomQuestions(lawRieng, 1)[0]);
+        // Số còn lại là 8 câu, chia ngẫu nhiên cho 2 nhóm
+        const remainingChung = lawChung.filter(q => q !== selected[0]);
+        const remainingRieng = lawRieng.filter(q => q !== selected[1]);
+        // Gộp lại và xáo trộn
+        const remaining = [...remainingChung, ...remainingRieng];
+        const more = getRandomQuestions(remaining, 8);
+        return getRandomQuestions([...selected, ...more], 10); // Xáo trộn lại lần nữa cho đều
+    }
+
     // Cập nhật xử lý sự kiện nút bắt đầu
     startButton.addEventListener('click', async function() {
         const subjectId = this.dataset.subjectId;
@@ -448,7 +470,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const lawQuestions = questions.filter(q => q.type === 'law');
             const specializedQuestions = questions.filter(q => q.type === 'specialized');
             
-            const selectedLawQuestions = getRandomQuestions(lawQuestions, 10);
+            // SỬA ĐOẠN NÀY: chọn 10 câu pháp luật theo tỷ lệ ngẫu nhiên nhưng phải có ít nhất 1 câu PLC và 1 câu PLR
+            const selectedLawQuestions = getRandomLawQuestions(lawQuestions);
             const selectedSpecializedQuestions = getRandomQuestions(specializedQuestions, 20);
 
             questions = [...selectedLawQuestions, ...selectedSpecializedQuestions];
