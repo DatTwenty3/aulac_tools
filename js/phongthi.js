@@ -382,19 +382,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Render lại các câu hỏi với trạng thái đáp án đã chọn
         questions.forEach((question, index) => {
             const questionCard = questionsContainer.children[index];
+            if (!questionCard) return;
+
             const optionItems = questionCard.querySelectorAll('.option-item');
+            const selected = (selectedAnswers[index] || '').trim().toUpperCase();
+            const answer = (question.answer || '').trim().toUpperCase();
+
             optionItems.forEach(item => {
-                item.classList.remove('selected', 'correct', 'incorrect', 'correct-full', 'incorrect-full');
+                // Reset các class cũ
+                item.classList.remove('selected', 'correct', 'incorrect', 'correct-full', 'incorrect-full', 'user-selected-answer');
+                
                 const option = (item.dataset.option || '').trim().toUpperCase();
-                const answer = (question.answer || '').trim().toUpperCase();
-                const selected = (selectedAnswers[index] || '').trim().toUpperCase();
+                
                 // Luôn tô xanh lá đáp án đúng
                 if (option === answer) {
                     item.classList.add('correct-full');
                 }
+                
                 // Nếu chọn sai thì tô đỏ đáp án đã chọn
-                if (selected !== answer && option === selected) {
+                if (selected && selected !== answer && option === selected) {
                     item.classList.add('incorrect-full');
+                }
+                
+                // Thêm class animation cho đáp án người dùng đã chọn (dù đúng hay sai)
+                if (selected && option === selected) {
+                    item.classList.add('user-selected-answer');
                 }
             });
         });

@@ -468,6 +468,24 @@ body {
     background: rgba(255,255,255,0.3);
 }
 
+.option-item.correct-full .option-label,
+.option-item.incorrect-full .option-label {
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.30);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 8px;
+    box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+    font-size: 1.1em;
+    transition: all 0.2s;
+}
+
 .option-label {
     width: 30px;
     height: 30px;
@@ -809,4 +827,22 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
   .dropdown-container, .upload-section {
     padding: 10px 4px !important;
   }
+}
+
+/* Animation for user's selected answer in review */
+@keyframes pulse-animation {
+    0% {
+        box-shadow: 0 0 0 0px rgba(25, 118, 210, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 16px rgba(25, 118, 210, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0px rgba(25, 118, 210, 0);
+    }
+}
+
+.option-item.user-selected-answer {
+    animation: pulse-animation 2.2s infinite;
+    border-radius: 12px;
 } 
