@@ -447,6 +447,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Cuộn lên đầu
         window.scrollTo({top: 0, behavior: 'smooth'});
 
+        // Vô hiệu hóa sự kiện click khi xem lại bài làm
+        questions.forEach((question, index) => {
+            const questionCard = questionsContainer.children[index];
+            if (!questionCard) return;
+            const optionItems = questionCard.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                const newItem = item.cloneNode(true);
+                item.parentNode.replaceChild(newItem, item);
+            });
+        });
+
         // Kích hoạt nút sau khi xem review
         toggleScrollToTopButton(true);
     }
