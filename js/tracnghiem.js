@@ -351,7 +351,7 @@ function loadRandomQuestion() {
     
     // Reset trạng thái
     selectedAnswer = null;
-    result.style.display = 'none';
+    result.style.display = 'block';
     
     // Xóa các class highlight
     document.querySelectorAll('.option').forEach(opt => {
@@ -400,13 +400,7 @@ function showResult() {
     
     // Hiển thị thông báo kết quả
     result.style.display = 'block';
-    if (isCorrect) {
-        result.className = 'result correct';
-        result.innerHTML = '🎉 Chính xác! Đáp án đúng là: ' + correctAnswer;
-    } else {
-        result.className = 'result incorrect';
-        result.innerHTML = '❌ Sai rồi! Đáp án đúng là: ' + correctAnswer;
-    }
+    result.innerHTML = '';
     
     // Kiểm tra nếu hết câu hỏi thì hiển thị chúc mừng và tổng kết
     if (remainingQuestions.length === 0) {
