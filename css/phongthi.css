@@ -845,4 +845,76 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
 .option-item.user-selected-answer {
     animation: pulse-animation 2.2s infinite;
     border-radius: 12px;
+}
+
+/* Scroll to top button */
+#scrollToTopBtn {
+    display: none; /* Ẩn ban đầu */
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1000;
+    border: none;
+    outline: none;
+    background-color: #1976D2; /* Màu xanh nổi bật */
+    color: white;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 50px; /* Bo tròn */
+    font-size: 1em;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease-in-out;
+    animation: bounce-in 0.5s forwards, pulse-subtle 2.5s infinite 1s;
+}
+
+#scrollToTopBtn:hover {
+    background-color: #1565C0;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+#scrollToTopBtn .timer-in-btn {
+    margin-left: 10px;
+    background-color: rgba(255, 255, 255, 0.15); /* Nền sáng hơn một chút */
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.4); /* Viền mỏng để nổi bật */
+    font-size: 1em; /* To hơn một chút */
+    font-weight: bold; /* Chữ đậm */
+    font-family: 'Courier New', Courier, monospace;
+    min-width: 60px;
+    text-align: center;
+    color: #fff;
+    /* text-shadow: 0 0 4px rgba(255, 255, 255, 0.6); Đã bỏ */
+    transition: all 0.3s;
+}
+
+@keyframes bounce-in {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    60% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes pulse-subtle {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
 } 

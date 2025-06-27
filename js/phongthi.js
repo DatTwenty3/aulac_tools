@@ -266,7 +266,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateTimer() {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
-        timerValue.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Cập nhật ở thanh công cụ chính
+        timerValue.textContent = timeString;
+
+        // Cập nhật ở nút cuộn lên đầu trang
+        const scrollToTopTimer = document.getElementById('scrollToTopTimer');
+        if (scrollToTopTimer) {
+            scrollToTopTimer.textContent = timeString;
+        }
         
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
@@ -373,6 +382,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const min = Math.floor(timeUsedSec / 60);
         const sec = timeUsedSec % 60;
         document.getElementById('timeUsed').textContent = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+        // Kích hoạt nút sau khi bài thi hiển thị
+        toggleScrollToTopButton(true);
     }
 
     // Hàm hiển thị lại bài làm
@@ -434,6 +446,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         // Cuộn lên đầu
         window.scrollTo({top: 0, behavior: 'smooth'});
+
+        // Kích hoạt nút sau khi xem review
+        toggleScrollToTopButton(true);
     }
 
     // Hàm chọn ngẫu nhiên câu hỏi Pháp luật chung và riêng, đảm bảo mỗi loại có ít nhất 1 câu
@@ -513,8 +528,39 @@ document.addEventListener('DOMContentLoaded', function() {
             startButton.disabled = false;
             startButton.textContent = 'Bắt đầu thi';
         }
+
+        // Kích hoạt nút sau khi bài thi hiển thị
+        toggleScrollToTopButton(true);
     });
 
     // Xử lý sự kiện khi click vào nút nộp bài
     submitButton.addEventListener('click', submitExam);
+
+    // --- Logic cho nút cuộn lên đầu trang ---
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    if (scrollToTopBtn) {
+        // Mặc định ẩn nút đi
+        scrollToTopBtn.style.display = 'none';
+
+        // Logic ẩn/hiện nút dựa trên scroll và chỉ khi đang ở màn hình thi
+        window.addEventListener('scroll', () => {
+            // Điều kiện 1: Phải ở màn hình thi
+            const isExamVisible = examSection.style.display === 'block';
+            // Điều kiện 2: Phải cuộn đủ xa
+            const isScrolledDown = document.body.scrollTop > 150 || document.documentElement.scrollTop > 150;
+            // Điều kiện 3: Không phải đang xem lại (nút Nộp bài chính phải đang hiển thị)
+            const isReviewing = submitButton.style.display === 'none';
+
+            if (isExamVisible && isScrolledDown && !isReviewing) {
+                scrollToTopBtn.style.display = 'flex';
+            } else {
+                scrollToTopBtn.style.display = 'none';
+            }
+        });
+
+        // Logic click để cuộn lên
+        scrollToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 }); 
