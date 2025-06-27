@@ -490,6 +490,24 @@ document.addEventListener('DOMContentLoaded', function() {
             startButton.disabled = true;
             startButton.textContent = 'Đang tải...';
 
+            // Tìm thông tin môn thi đã chọn
+            const subject = subjects.find(s => s.id === subjectId);
+            if (!subject) {
+                throw new Error('Không tìm thấy thông tin môn thi.');
+            }
+
+            // Hiển thị thông tin môn thi
+            const examSubjectInfoContainer = document.getElementById('examSubjectInfo');
+            if (examSubjectInfoContainer) {
+                examSubjectInfoContainer.innerHTML = `
+                    <div class="icon">${subject.icon || '📚'}</div>
+                    <div class="details">
+                        <div class="title">${subject.title}</div>
+                        <div class="subtitle">${subject.subtitle}</div>
+                    </div>
+                `;
+            }
+
             // Tải câu hỏi
             questions = await loadQuestions(subjectId);
             

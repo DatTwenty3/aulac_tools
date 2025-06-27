@@ -917,4 +917,39 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
     100% {
         transform: scale(1);
     }
+}
+
+/* Exam Subject Info */
+.exam-subject-info {
+    background-color: #f0f4f8;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #dde4eb;
+}
+
+.exam-subject-info .icon {
+    font-size: 2.8em;
+    color: #1976D2;
+}
+
+.exam-subject-info .details {
+    display: flex;
+    flex-direction: column;
+}
+
+.exam-subject-info .title {
+    font-weight: 600;
+    font-size: 1.3em;
+    color: #2c3e50;
+    margin-bottom: 2px;
+}
+
+.exam-subject-info .subtitle {
+    font-size: 1em;
+    color: #546e7a;
+    font-style: italic;
 } 

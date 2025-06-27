@@ -158,6 +158,20 @@ function startQuiz() {
     selectionSection.style.display = 'none';
     loadingSection.style.display = 'block';
     document.getElementById('loadingText').textContent = `Đang tải dữ liệu...`;
+    
+    // Hiển thị thông tin chủ đề đã chọn
+    const quizSubjectInfoContainer = document.getElementById('quizSubjectInfo');
+    if (quizSubjectInfoContainer && selectedMainTopic) {
+        quizSubjectInfoContainer.innerHTML = `
+            <div class="icon">${selectedMainTopic.icon || '📚'}</div>
+            <div class="details">
+                <div class="title">${selectedMainTopic.name}</div>
+                <div class="subtitle">${selectedMainTopic.subtitle}</div>
+            </div>
+        `;
+        quizSubjectInfoContainer.style.display = 'flex';
+    }
+
     loadMultipleCSVFiles(selectedSubTopics);
 }
 

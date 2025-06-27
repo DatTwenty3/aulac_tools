@@ -263,7 +263,7 @@ body {
 }
 
 .question-card {
-    background: #f8f9ff;
+    background: #fff;
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
@@ -434,10 +434,8 @@ body {
 }
 
 .stat-label {
-    color: #666;
-    font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 0.8em;
+    color: #6c757d;
 }
 
 .loading-section {
@@ -731,4 +729,69 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
     .dropdown-container, .upload-section {
         padding: 10px 4px !important;
     }
+}
+
+/* Quiz Subject Info */
+.quiz-subject-info {
+    background-color: #f0f4f8;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: none; /* Ẩn ban đầu, JS sẽ hiện ra */
+    align-items: center;
+    gap: 20px;
+    border: 1px solid #dde4eb;
+}
+
+.quiz-subject-info .icon {
+    font-size: 2.8em;
+    color: #1976D2;
+}
+
+.quiz-subject-info .details {
+    display: flex;
+    flex-direction: column;
+}
+
+.quiz-subject-info .title {
+    font-weight: 600;
+    font-size: 1.3em;
+    color: #2c3e50;
+    margin-bottom: 2px;
+}
+
+.quiz-subject-info .subtitle {
+    font-size: 1em;
+    color: #546e7a;
+    font-style: italic;
+}
+
+#nextBtn, #backButton {
+    border-radius: 8px;
+    padding: 16px 36px;
+    font-size: 1.15em;
+    font-weight: 600;
+    font-family: inherit;
+    box-shadow: 0 2px 8px rgba(25,118,210,0.06);
+    border: none;
+    outline: none;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
+    cursor: pointer;
+    margin-left: 8px;
+    margin-right: 8px;
+    animation: pulse-btn 1.2s;
+}
+#nextBtn:hover, #backButton:hover {
+    filter: brightness(1.08) contrast(1.1);
+    box-shadow: 0 6px 24px rgba(25,118,210,0.18);
+    transform: scale(1.06);
+}
+#nextBtn:active, #backButton:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 8px rgba(25,118,210,0.10);
+}
+@keyframes pulse-btn {
+    0% { transform: scale(0.92); box-shadow: 0 0 0 0 rgba(25,118,210,0.12); }
+    60% { transform: scale(1.08); box-shadow: 0 0 0 12px rgba(25,118,210,0.08); }
+    100% { transform: scale(1); box-shadow: 0 2px 8px rgba(25,118,210,0.06); }
 } 
