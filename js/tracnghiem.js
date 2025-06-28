@@ -24,6 +24,8 @@ let stats = {
 };
 
 let remainingQuestions = [];
+let isAllQuestionsMode = false; // Biến theo dõi chế độ hiển thị
+let allQuestionsAnswers = {}; // Lưu trữ đáp án đã chọn cho từng câu hỏi
 
 const selectionSection = document.getElementById('selectionSection');
 const loadingSection = document.getElementById('loadingSection');
@@ -38,12 +40,20 @@ const selectOptions = document.getElementById('selectOptions');
 const startButton = document.getElementById('startButton');
 const backButton = document.getElementById('backButton');
 
+// Các biến cho chế độ chuyển đổi
+const modeSwitchBtn = document.getElementById('modeSwitchBtn');
+const singleQuestionMode = document.getElementById('singleQuestionMode');
+const allQuestionsMode = document.getElementById('allQuestionsMode');
+const allQuestionsList = document.getElementById('allQuestionsList');
+const allQuestionsSearchInput = document.getElementById('allQuestionsSearchInput');
+
 // Khởi tạo dropdown và events
 window.addEventListener('load', initializeDropdown);
 submitBtn.addEventListener('click', submitAnswer);
 nextBtn.addEventListener('click', nextQuestion);
 startButton.addEventListener('click', startQuiz);
 backButton.addEventListener('click', backToSelection);
+modeSwitchBtn.addEventListener('click', toggleDisplayMode);
 
 // Đóng dropdown khi click bên ngoài
 document.addEventListener('click', function(e) {
@@ -204,12 +214,18 @@ async function loadMultipleCSVFiles(fileList) {
         if (allQuestions.length === 0) throw new Error('Không tìm thấy câu hỏi hợp lệ trong các file đã chọn');
         questions = allQuestions;
         stats = { total: 0, correct: 0, wrong: 0 };
+        isAllQuestionsMode = false;
+        allQuestionsAnswers = {};
         document.getElementById('totalQuestions').textContent = questions.length;
         updateStats();
         remainingQuestions = [...questions];
         setTimeout(() => {
             loadingSection.style.display = 'none';
             quizContainer.style.display = 'block';
+            // Reset về chế độ từng câu
+            singleQuestionMode.style.display = 'block';
+            allQuestionsMode.style.display = 'none';
+            modeSwitchBtn.innerHTML = '<span class="mode-icon">📝</span><span class="mode-text">Chế độ từng câu</span>';
             loadRandomQuestion();
         }, 500);
     } catch (error) {
@@ -244,7 +260,14 @@ function backToSelection() {
     currentQuestion = null;
     selectedAnswer = null;
     stats = { total: 0, correct: 0, wrong: 0 };
+    isAllQuestionsMode = false;
+    allQuestionsAnswers = {};
     updateStats();
+    
+    // Reset về chế độ từng câu
+    singleQuestionMode.style.display = 'block';
+    allQuestionsMode.style.display = 'none';
+    modeSwitchBtn.innerHTML = '<span class="mode-icon">📝</span><span class="mode-text">Chế độ từng câu</span>';
 }
 
 function retryLoad() {
@@ -333,6 +356,9 @@ function loadRandomQuestion() {
     // Xóa câu hỏi này khỏi mảng để không lặp lại
     remainingQuestions.splice(randomIndex, 1);
     
+    // Reset trạng thái answered cho câu hỏi mới
+    currentQuestion.answered = false;
+    
     // Hiển thị số thứ tự từ cột stt
     const questionNumber = currentQuestion.stt || '?';
     // Xác định loại chủ đề
@@ -392,14 +418,17 @@ function showResult() {
     const correctAnswer = currentQuestion.answer.trim().toUpperCase();
     const isCorrect = selectedAnswer === correctAnswer;
     
-    // Cập nhật thống kê
-    stats.total++;
-    if (isCorrect) {
-        stats.correct++;
-    } else {
-        stats.wrong++;
+    // Cập nhật thống kê chỉ nếu câu hỏi chưa được trả lời
+    if (!currentQuestion.answered) {
+        stats.total++;
+        if (isCorrect) {
+            stats.correct++;
+        } else {
+            stats.wrong++;
+        }
+        currentQuestion.answered = true;
+        updateStats();
     }
-    updateStats();
     
     // Hiển thị kết quả
     document.querySelectorAll('.option').forEach(opt => {
@@ -457,4 +486,152 @@ function updateStats() {
     
     const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
     document.getElementById('accuracy').textContent = accuracy + '%';
+}
+
+function toggleDisplayMode() {
+    isAllQuestionsMode = !isAllQuestionsMode;
+    
+    if (isAllQuestionsMode) {
+        // Chuyển sang chế độ phép thuật
+        singleQuestionMode.style.display = 'none';
+        allQuestionsMode.style.display = 'block';
+        modeSwitchBtn.innerHTML = '<span class="mode-icon">📝</span><span class="mode-text">Chuyển sang chế độ ÔN TẬP</span>';
+        renderAllQuestions();
+    } else {
+        // Chuyển về chế độ từng câu
+        allQuestionsMode.style.display = 'none';
+        singleQuestionMode.style.display = 'block';
+        modeSwitchBtn.innerHTML = '<span class="mode-icon">🧙</span><span class="mode-text">Chuyển sang chế độ PHÁP SƯ</span>';
+        // Tải lại câu hỏi hiện tại nếu có
+        if (currentQuestion) {
+            loadRandomQuestion();
+        }
+    }
+}
+
+function renderAllQuestions(filterText = '') {
+    if (!questions || questions.length === 0) return;
+    
+    // Reset trạng thái answered cho tất cả câu hỏi
+    questions.forEach(q => q.answered = false);
+    
+    allQuestionsList.innerHTML = '';
+    
+    // Lọc câu hỏi theo nội dung nếu có filterText
+    let filteredQuestions = questions;
+    if (filterText && filterText.trim() !== '') {
+        const keyword = filterText.trim().toLowerCase();
+        filteredQuestions = questions.filter(q => {
+            const parsed = parseQuestionAndAnswers(q.question);
+            return parsed.question.toLowerCase().includes(keyword);
+        });
+    }
+    
+    filteredQuestions.forEach((question, index) => {
+        const parsed = parseQuestionAndAnswers(question.question);
+        const questionNumber = question.stt || (index + 1);
+        
+        // Xác định loại chủ đề
+        let subLabel = '';
+        for (const topic of mainTopics) {
+            for (const sub of topic.subTopics) {
+                if (sub.file === question.file) subLabel = sub.label;
+            }
+        }
+        
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question-item';
+        questionDiv.innerHTML = `
+            <div class="question-item-header">
+                <span class="question-item-number">Câu hỏi #${questionNumber}</span>
+                <span class="question-item-subject">${subLabel}</span>
+            </div>
+            <div class="question-item-text">${parsed.question.replace(/\s+/g, ' ').trim()}</div>
+            <div class="question-item-options">
+                ${['A', 'B', 'C', 'D'].map((option, idx) => `
+                    <div class="question-item-option" data-question="${index}" data-option="${option}">
+                        <span class="question-item-option-label">${option}</span>
+                        <span>${parsed.answers[idx] ? parsed.answers[idx] : ''}</span>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="question-item-result" id="result-${index}"></div>
+        `;
+        
+        allQuestionsList.appendChild(questionDiv);
+        
+        // Thêm event listeners cho các option
+        const options = questionDiv.querySelectorAll('.question-item-option');
+        options.forEach(option => {
+            option.addEventListener('click', () => selectAllQuestionsOption(option, question, index));
+        });
+        
+        // Hiển thị đáp án đã chọn trước đó nếu có
+        if (allQuestionsAnswers[index]) {
+            const selectedOption = questionDiv.querySelector(`[data-option="${allQuestionsAnswers[index]}"]`);
+            if (selectedOption) {
+                showAllQuestionsResult(selectedOption, question, index);
+            }
+        }
+    });
+}
+
+function selectAllQuestionsOption(optionElement, question, questionIndex) {
+    const selectedOption = optionElement.getAttribute('data-option');
+    const questionDiv = optionElement.closest('.question-item');
+    
+    // Xóa selection cũ trong câu hỏi này
+    questionDiv.querySelectorAll('.question-item-option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    
+    // Chọn option mới
+    optionElement.classList.add('selected');
+    
+    // Lưu đáp án đã chọn
+    allQuestionsAnswers[questionIndex] = selectedOption;
+    
+    // Hiển thị kết quả ngay lập tức
+    showAllQuestionsResult(optionElement, question, questionIndex);
+}
+
+function showAllQuestionsResult(optionElement, question, questionIndex) {
+    const correctAnswer = question.answer.trim().toUpperCase();
+    const selectedAnswer = optionElement.getAttribute('data-option');
+    const isCorrect = selectedAnswer === correctAnswer;
+    
+    // Cập nhật thống kê nếu chưa được tính
+    if (!question.answered) {
+        stats.total++;
+        if (isCorrect) {
+            stats.correct++;
+        } else {
+            stats.wrong++;
+        }
+        question.answered = true;
+        updateStats();
+    }
+    
+    // Hiển thị kết quả cho tất cả options trong câu hỏi này
+    const questionDiv = optionElement.closest('.question-item');
+    questionDiv.querySelectorAll('.question-item-option').forEach(opt => {
+        const optionLabel = opt.getAttribute('data-option');
+        opt.style.pointerEvents = 'none';
+        
+        if (optionLabel === correctAnswer) {
+            opt.classList.add('correct');
+        } else if (optionLabel === selectedAnswer && !isCorrect) {
+            opt.classList.add('incorrect');
+        }
+    });
+    
+    // Không hiển thị thông báo kết quả
+    const resultDiv = questionDiv.querySelector('.question-item-result');
+    resultDiv.style.display = 'none';
+}
+
+if (allQuestionsSearchInput) {
+    allQuestionsSearchInput.addEventListener('input', function() {
+        renderAllQuestions(this.value);
+    });
 } 
