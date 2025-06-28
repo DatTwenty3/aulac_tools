@@ -426,14 +426,14 @@ function showResult() {
     
     // Cập nhật thống kê chỉ nếu câu hỏi chưa được trả lời
     if (!currentQuestion.answered) {
-        stats.total++;
-        if (isCorrect) {
-            stats.correct++;
-        } else {
-            stats.wrong++;
-        }
+    stats.total++;
+    if (isCorrect) {
+        stats.correct++;
+    } else {
+        stats.wrong++;
+    }
         currentQuestion.answered = true;
-        updateStats();
+    updateStats();
     }
     
     // Hiển thị kết quả
