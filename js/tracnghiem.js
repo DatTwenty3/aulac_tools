@@ -47,6 +47,7 @@ const allQuestionsMode = document.getElementById('allQuestionsMode');
 const allQuestionsList = document.getElementById('allQuestionsList');
 const allQuestionsSearchInput = document.getElementById('allQuestionsSearchInput');
 const showAllAnswersBtn = document.getElementById('showAllAnswersBtn');
+const backToSelectionBtn = document.getElementById('backToSelectionBtn');
 let isShowAllAnswers = false;
 
 const onlineExamBtn = document.getElementById('onlineExamBtn');
@@ -677,6 +678,9 @@ if (showAllAnswersBtn) {
         showAllAnswersBtn.textContent = isShowAllAnswers ? 'Ẩn đáp án đúng' : 'Hiển thị đáp án đúng';
         renderAllQuestions(allQuestionsSearchInput ? allQuestionsSearchInput.value : '');
     });
+}
+if (backToSelectionBtn) {
+    backToSelectionBtn.addEventListener('click', backToSelection);
 }
 
 // Logic cho nút cuộn lên đầu trang

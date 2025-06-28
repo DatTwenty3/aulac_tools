@@ -1026,6 +1026,8 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
 .all-questions-searchbar {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 18px;
 }
 
@@ -1073,7 +1075,7 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
     z-index: 1000;
     border: none;
     outline: none;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-color: #1976D2; /* Màu xanh giống phongthi */
     color: white;
     cursor: pointer;
     padding: 12px 16px;
@@ -1089,7 +1091,7 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
 }
 
 #scrollToTopBtn:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    background-color: #1565C0;
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.35);
 }
@@ -1118,4 +1120,31 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
     100% {
         transform: scale(1);
     }
+}
+
+.back-to-selection-btn {
+    padding: 12px 18px;
+    border-radius: 24px;
+    border: none;
+    background: linear-gradient(90deg, #6c757d 0%, #495057 100%);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(108,117,125,0.15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.back-to-selection-btn:hover {
+    background: linear-gradient(90deg, #495057 0%, #343a40 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(108,117,125,0.25);
+}
+
+.back-icon {
+    font-size: 1.1em;
+    font-weight: bold;
 } 
