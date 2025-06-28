@@ -409,16 +409,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Luôn tô xanh lá đáp án đúng
                 if (option === answer) {
                     item.classList.add('correct-full');
+                    // Thêm hiệu ứng nhấp nháy cho đáp án đúng
+                    item.classList.add('user-selected-answer');
                 }
                 
                 // Nếu chọn sai thì tô đỏ đáp án đã chọn
                 if (selected && selected !== answer && option === selected) {
                     item.classList.add('incorrect-full');
-                }
-                
-                // Thêm class animation cho đáp án người dùng đã chọn (dù đúng hay sai)
-                if (selected && option === selected) {
-                    item.classList.add('user-selected-answer');
                 }
             });
         });

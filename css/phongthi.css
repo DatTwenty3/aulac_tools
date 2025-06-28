@@ -829,16 +829,16 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
   }
 }
 
-/* Animation for user's selected answer in review */
+/* Animation for correct answer in review */
 @keyframes pulse-animation {
     0% {
-        box-shadow: 0 0 0 0px rgba(25, 118, 210, 0.7);
+        box-shadow: 0 0 0 0px rgba(76, 175, 80, 0.7);
     }
     70% {
-        box-shadow: 0 0 0 16px rgba(25, 118, 210, 0);
+        box-shadow: 0 0 0 16px rgba(76, 175, 80, 0);
     }
     100% {
-        box-shadow: 0 0 0 0px rgba(25, 118, 210, 0);
+        box-shadow: 0 0 0 0px rgba(76, 175, 80, 0);
     }
 }
 
