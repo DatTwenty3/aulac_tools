@@ -75,6 +75,9 @@
                 </div>
             </div>
 
+            <!-- Khu vực hiển thị thông tin môn thi -->
+            <div id="quizSubjectInfo" class="quiz-subject-info"></div>
+
             <!-- Nút chuyển đổi chế độ hiển thị -->
             <div class="mode-switch-container">
                 <button id="modeSwitchBtn" class="mode-switch-btn">
@@ -82,9 +85,6 @@
                     <span class="mode-text">Chế độ từng câu</span>
                 </button>
             </div>
-
-            <!-- Khu vực hiển thị thông tin môn thi -->
-            <div id="quizSubjectInfo" class="quiz-subject-info"></div>
 
             <!-- Chế độ hiển thị từng câu -->
             <div id="singleQuestionMode" class="question-card">
@@ -105,6 +105,7 @@
             <div id="allQuestionsMode" class="all-questions-container" style="display: none;">
                 <div class="all-questions-searchbar">
                     <input type="text" id="allQuestionsSearchInput" placeholder="Tìm kiếm nội dung câu hỏi..." autocomplete="off" />
+                    <button id="showAllAnswersBtn" class="show-answers-btn" type="button">Hiển thị đáp án đúng</button>
                 </div>
                 <div id="allQuestionsList" class="all-questions-list">
                     <!-- Danh sách câu hỏi sẽ được tạo bằng JavaScript -->

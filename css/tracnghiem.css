@@ -1045,4 +1045,22 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
 #allQuestionsSearchInput:focus {
     border-color: #1976d2;
     background: #f3f8fd;
+}
+
+.show-answers-btn {
+    margin-left: 12px;
+    padding: 12px 18px;
+    border-radius: 24px;
+    border: none;
+    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    color: #222;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(56,249,215,0.08);
+}
+.show-answers-btn.active {
+    background: linear-gradient(90deg, #ff512f 0%, #dd2476 100%);
+    color: #fff;
 } 

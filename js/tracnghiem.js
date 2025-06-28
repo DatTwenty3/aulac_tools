@@ -46,6 +46,8 @@ const singleQuestionMode = document.getElementById('singleQuestionMode');
 const allQuestionsMode = document.getElementById('allQuestionsMode');
 const allQuestionsList = document.getElementById('allQuestionsList');
 const allQuestionsSearchInput = document.getElementById('allQuestionsSearchInput');
+const showAllAnswersBtn = document.getElementById('showAllAnswersBtn');
+let isShowAllAnswers = false;
 
 // Khởi tạo dropdown và events
 window.addEventListener('load', initializeDropdown);
@@ -580,6 +582,14 @@ function renderAllQuestions(filterText = '') {
                 showAllQuestionsResult(selectedOption, question, index);
             }
         }
+        // Nếu bật chế độ hiển thị đáp án đúng, luôn highlight đáp án đúng
+        if (isShowAllAnswers) {
+            const correctAnswer = question.answer.trim().toUpperCase();
+            const correctOption = questionDiv.querySelector(`[data-option="${correctAnswer}"]`);
+            if (correctOption) {
+                correctOption.classList.add('correct');
+            }
+        }
     });
 }
 
@@ -640,5 +650,13 @@ function showAllQuestionsResult(optionElement, question, questionIndex) {
 if (allQuestionsSearchInput) {
     allQuestionsSearchInput.addEventListener('input', function() {
         renderAllQuestions(this.value);
+    });
+}
+if (showAllAnswersBtn) {
+    showAllAnswersBtn.addEventListener('click', function() {
+        isShowAllAnswers = !isShowAllAnswers;
+        showAllAnswersBtn.classList.toggle('active', isShowAllAnswers);
+        showAllAnswersBtn.textContent = isShowAllAnswers ? 'Ẩn đáp án đúng' : 'Hiển thị đáp án đúng';
+        renderAllQuestions(allQuestionsSearchInput ? allQuestionsSearchInput.value : '');
     });
 } 
