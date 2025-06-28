@@ -49,6 +49,9 @@ const allQuestionsSearchInput = document.getElementById('allQuestionsSearchInput
 const showAllAnswersBtn = document.getElementById('showAllAnswersBtn');
 let isShowAllAnswers = false;
 
+const onlineExamBtn = document.getElementById('onlineExamBtn');
+const statsDiv = document.querySelector('.stats');
+
 // Khởi tạo dropdown và events
 window.addEventListener('load', initializeDropdown);
 submitBtn.addEventListener('click', submitAnswer);
@@ -503,17 +506,22 @@ function toggleDisplayMode() {
         questions.forEach(q => q.answered = false);
     }
 
+    // Ẩn/hiện nút vào phòng thi và khu vực thống kê
     if (isAllQuestionsMode) {
+        if (onlineExamBtn) onlineExamBtn.style.display = 'none';
+        if (statsDiv) statsDiv.style.display = 'none';
         // Chuyển sang chế độ phép thuật
         singleQuestionMode.style.display = 'none';
         allQuestionsMode.style.display = 'block';
         modeSwitchBtn.innerHTML = '<span class="mode-icon">📝</span><span class="mode-text">Chuyển sang chế độ ÔN TẬP</span>';
         renderAllQuestions();
     } else {
+        if (onlineExamBtn) onlineExamBtn.style.display = '';
+        if (statsDiv) statsDiv.style.display = '';
         // Chuyển về chế độ từng câu
         allQuestionsMode.style.display = 'none';
         singleQuestionMode.style.display = 'block';
-        modeSwitchBtn.innerHTML = '<span class="mode-icon">🧙</span><span class="mode-text">Chuyển sang chế độ PHÁP SƯ</span>';
+        modeSwitchBtn.innerHTML = '<span class="mode-icon">🧙</span><span class="mode-text">Chuyển sang chế độ pháp sư</span>';
         // Reset lại trạng thái ôn tập
         remainingQuestions = [...questions];
         currentQuestion = null;
@@ -582,13 +590,23 @@ function renderAllQuestions(filterText = '') {
                 showAllQuestionsResult(selectedOption, question, index);
             }
         }
-        // Nếu bật chế độ hiển thị đáp án đúng, luôn highlight đáp án đúng
+        // Nếu bật chế độ hiển thị đáp án đúng, luôn highlight đáp án đúng và disable chọn đáp án
         if (isShowAllAnswers) {
             const correctAnswer = question.answer.trim().toUpperCase();
             const correctOption = questionDiv.querySelector(`[data-option="${correctAnswer}"]`);
             if (correctOption) {
                 correctOption.classList.add('correct');
             }
+            // Disable chọn đáp án cho tất cả option
+            questionDiv.querySelectorAll('.question-item-option').forEach(opt => {
+                opt.style.pointerEvents = 'none';
+            });
+        } else {
+            // Cho phép chọn lại đáp án khi tắt chế độ hiển thị đáp án đúng
+            questionDiv.querySelectorAll('.question-item-option').forEach(opt => {
+                opt.style.pointerEvents = '';
+                opt.style.opacity = '';
+            });
         }
     });
 }
