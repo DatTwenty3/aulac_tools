@@ -225,7 +225,7 @@ async function loadMultipleCSVFiles(fileList) {
             // Reset về chế độ từng câu
             singleQuestionMode.style.display = 'block';
             allQuestionsMode.style.display = 'none';
-            modeSwitchBtn.innerHTML = '<span class="mode-icon">📝</span><span class="mode-text">Chế độ từng câu</span>';
+            modeSwitchBtn.innerHTML = '<span class="mode-icon">🧙</span><span class="mode-text">Chuyển sang chế độ PHÁP SƯ</span>';
             loadRandomQuestion();
         }, 500);
     } catch (error) {
@@ -490,7 +490,17 @@ function updateStats() {
 
 function toggleDisplayMode() {
     isAllQuestionsMode = !isAllQuestionsMode;
-    
+
+    // Reset bộ đếm khi chuyển chế độ
+    stats = { total: 0, correct: 0, wrong: 0 };
+    updateStats();
+
+    // Reset đáp án đã chọn và trạng thái đúng/sai
+    allQuestionsAnswers = {};
+    if (questions && questions.length > 0) {
+        questions.forEach(q => q.answered = false);
+    }
+
     if (isAllQuestionsMode) {
         // Chuyển sang chế độ phép thuật
         singleQuestionMode.style.display = 'none';
@@ -502,18 +512,15 @@ function toggleDisplayMode() {
         allQuestionsMode.style.display = 'none';
         singleQuestionMode.style.display = 'block';
         modeSwitchBtn.innerHTML = '<span class="mode-icon">🧙</span><span class="mode-text">Chuyển sang chế độ PHÁP SƯ</span>';
-        // Tải lại câu hỏi hiện tại nếu có
-        if (currentQuestion) {
-            loadRandomQuestion();
-        }
+        // Reset lại trạng thái ôn tập
+        remainingQuestions = [...questions];
+        currentQuestion = null;
+        loadRandomQuestion();
     }
 }
 
 function renderAllQuestions(filterText = '') {
     if (!questions || questions.length === 0) return;
-    
-    // Reset trạng thái answered cho tất cả câu hỏi
-    questions.forEach(q => q.answered = false);
     
     allQuestionsList.innerHTML = '';
     
@@ -567,8 +574,8 @@ function renderAllQuestions(filterText = '') {
         });
         
         // Hiển thị đáp án đã chọn trước đó nếu có
-        if (allQuestionsAnswers[index]) {
-            const selectedOption = questionDiv.querySelector(`[data-option="${allQuestionsAnswers[index]}"]`);
+        if (allQuestionsAnswers[question.stt]) {
+            const selectedOption = questionDiv.querySelector(`[data-option="${allQuestionsAnswers[question.stt]}"]`);
             if (selectedOption) {
                 showAllQuestionsResult(selectedOption, question, index);
             }
@@ -588,8 +595,8 @@ function selectAllQuestionsOption(optionElement, question, questionIndex) {
     // Chọn option mới
     optionElement.classList.add('selected');
     
-    // Lưu đáp án đã chọn
-    allQuestionsAnswers[questionIndex] = selectedOption;
+    // Lưu đáp án đã chọn theo stt (duy nhất cho mỗi câu)
+    allQuestionsAnswers[question.stt] = selectedOption;
     
     // Hiển thị kết quả ngay lập tức
     showAllQuestionsResult(optionElement, question, questionIndex);
@@ -600,7 +607,7 @@ function showAllQuestionsResult(optionElement, question, questionIndex) {
     const selectedAnswer = optionElement.getAttribute('data-option');
     const isCorrect = selectedAnswer === correctAnswer;
     
-    // Cập nhật thống kê nếu chưa được tính
+    // Chỉ cập nhật bộ đếm nếu chưa từng trả lời câu này
     if (!question.answered) {
         stats.total++;
         if (isCorrect) {
