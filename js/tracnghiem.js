@@ -274,7 +274,7 @@ function backToSelection() {
     isShowAllAnswers = false;
     if (showAllAnswersBtn) {
         showAllAnswersBtn.classList.remove('active');
-        showAllAnswersBtn.textContent = 'Hiển thị đáp án đúng';
+        showAllAnswersBtn.textContent = 'Hiện đáp án';
     }
     
     // Reset về chế độ từng câu
@@ -682,7 +682,7 @@ if (showAllAnswersBtn) {
     showAllAnswersBtn.addEventListener('click', function() {
         isShowAllAnswers = !isShowAllAnswers;
         showAllAnswersBtn.classList.toggle('active', isShowAllAnswers);
-        showAllAnswersBtn.textContent = isShowAllAnswers ? 'Ẩn đáp án đúng' : 'Hiển thị đáp án đúng';
+        showAllAnswersBtn.textContent = isShowAllAnswers ? 'Ẩn đáp án' : 'Hiện đáp án';
         renderAllQuestions(allQuestionsSearchInput ? allQuestionsSearchInput.value : '');
     });
 }
