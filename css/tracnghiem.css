@@ -729,20 +729,6 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
     .dropdown-container, .upload-section {
         padding: 10px 4px !important;
     }
-    .all-questions-searchbar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-    .all-questions-searchbar input[type="text"] {
-        max-width: 100%;
-        width: 100%;
-    }
-    .show-answers-btn,
-    .back-to-selection-btn {
-        width: 100%;
-        justify-content: center;
-    }
 }
 
 /* Quiz Subject Info */
@@ -1162,21 +1148,4 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
 .back-icon {
     font-size: 1.1em;
     font-weight: bold;
-}
-
-@media (max-width: 800px) {
-    .all-questions-searchbar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-    }
-    .all-questions-searchbar input[type="text"] {
-        max-width: 100%;
-        width: 100%;
-    }
-    .show-answers-btn,
-    .back-to-selection-btn {
-        width: 100%;
-        justify-content: center;
-    }
 } 
