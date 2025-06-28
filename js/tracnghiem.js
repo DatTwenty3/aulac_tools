@@ -521,7 +521,7 @@ function toggleDisplayMode() {
         // Chuyển về chế độ từng câu
         allQuestionsMode.style.display = 'none';
         singleQuestionMode.style.display = 'block';
-        modeSwitchBtn.innerHTML = '<span class="mode-icon">🧙</span><span class="mode-text">Chuyển sang chế độ pháp sư</span>';
+        modeSwitchBtn.innerHTML = '<span class="mode-icon">🧙</span><span class="mode-text">Chuyển sang chế độ PHÁP SƯ</span>';
         // Reset lại trạng thái ôn tập
         remainingQuestions = [...questions];
         currentQuestion = null;
@@ -676,5 +676,33 @@ if (showAllAnswersBtn) {
         showAllAnswersBtn.classList.toggle('active', isShowAllAnswers);
         showAllAnswersBtn.textContent = isShowAllAnswers ? 'Ẩn đáp án đúng' : 'Hiển thị đáp án đúng';
         renderAllQuestions(allQuestionsSearchInput ? allQuestionsSearchInput.value : '');
+    });
+}
+
+// Logic cho nút cuộn lên đầu trang
+const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+if (scrollToTopBtn) {
+    // Mặc định ẩn nút
+    scrollToTopBtn.style.display = 'none';
+
+    // Logic ẩn/hiện nút dựa trên scroll và chỉ khi đang ở màn hình quiz
+    window.addEventListener('scroll', () => {
+        // Điều kiện 1: Phải ở màn hình quiz (không phải selection)
+        const isQuizVisible = quizContainer.style.display === 'block';
+        // Điều kiện 2: Phải ở chế độ pháp sư (toàn bộ câu hỏi)
+        const isAllQuestionsModeActive = isAllQuestionsMode;
+        // Điều kiện 3: Phải cuộn đủ xa
+        const isScrolledDown = document.body.scrollTop > 150 || document.documentElement.scrollTop > 150;
+
+        if (isQuizVisible && isAllQuestionsModeActive && isScrolledDown) {
+            scrollToTopBtn.style.display = 'flex';
+        } else {
+            scrollToTopBtn.style.display = 'none';
+        }
+    });
+
+    // Logic click để cuộn lên
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 } 
