@@ -1031,9 +1031,10 @@ label:hover .tooltip, .has-tooltip:hover .tooltip {
     margin-bottom: 18px;
 }
 
-#allQuestionsSearchInput {
-    width: 100%;
-    max-width: 420px;
+.all-questions-searchbar input[type="text"] {
+    flex: 1 1 0%;
+    min-width: 220px;
+    max-width: 600px;
     padding: 12px 18px;
     border: 2px solid #d1d5db;
     border-radius: 24px;

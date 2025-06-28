@@ -270,6 +270,13 @@ function backToSelection() {
     allQuestionsAnswers = {};
     updateStats();
     
+    // Reset trạng thái nút hiển thị đáp án đúng
+    isShowAllAnswers = false;
+    if (showAllAnswersBtn) {
+        showAllAnswersBtn.classList.remove('active');
+        showAllAnswersBtn.textContent = 'Hiển thị đáp án đúng';
+    }
+    
     // Reset về chế độ từng câu
     singleQuestionMode.style.display = 'block';
     allQuestionsMode.style.display = 'none';
