@@ -108,6 +108,16 @@ const subjectsConfig = [
             law: ['quyhoach_hang3_PLC.csv', 'quyhoach_hang3_PLR.csv'],
             specialized: ['quyhoach_hang3_CM.csv']
         }
+    },
+    {
+        id: 'quanly3',
+        title: 'Quản lý dự án đầu tư xây dựng, Hạng III',
+        subtitle: 'Thi chứng chỉ hành nghề Quản lý dự án đầu tư xây dựng, Hạng III',
+        icon: '🏢',
+        files: {
+            law: ['quanlyhang3_PLC.csv', 'quanlyhang3_PLR.csv'],
+            specialized: ['quanlyhang3_CM.csv']
+        }
     }
 ];
 
