@@ -15,6 +15,7 @@ let cachedGeojsonFiles = [];
 // Thêm biến lưu các layer geojson để quản lý bật/tắt
 let geojsonLayers = [];
 let geojsonVisible = true;
+let currentOverlayOpacity = 0.4;
 
 // ====== HÀM TIỆN ÍCH ======
 function removeVietnameseTones(str) {
@@ -103,7 +104,7 @@ function addGeojsonToMap(map, data) {
         color: '#3388ff',
         weight: 2,
         fillColor: randomColor,
-        fillOpacity: 0.4
+        fillOpacity: currentOverlayOpacity
       };
     },
     onEachFeature: function (feature, layer) {
@@ -124,7 +125,7 @@ function addGeojsonToMap(map, data) {
         layer.setStyle({fillOpacity: 0.5, color: '#ff7800'});
       });
       layer.on('mouseout', function() {
-        layer.setStyle({fillOpacity: 0.2, color: '#3388ff'});
+        layer.setStyle({fillOpacity: currentOverlayOpacity, color: '#3388ff'});
       });
     }
   }).addTo(map);
@@ -239,9 +240,66 @@ function setupToggleOverlayBtn(map) {
   map._toggleOverlayControl = control;
 }
 
+function setupOpacitySliderControl(map) {
+  if (map._opacitySliderControl) return;
+  const OpacitySliderControl = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd: function() {
+      const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+      container.style.background = 'rgba(255,255,255,0.95)';
+      container.style.padding = '6px 10px 2px 10px';
+      container.style.borderRadius = '8px';
+      container.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+      container.style.display = 'flex';
+      container.style.flexDirection = 'column';
+      container.style.alignItems = 'center';
+      // Label
+      const label = L.DomUtil.create('label', '', container);
+      label.innerText = 'Độ trong suốt';
+      label.style.fontSize = '12px';
+      label.style.color = '#333';
+      label.style.marginBottom = '2px';
+      // Slider
+      const slider = L.DomUtil.create('input', '', container);
+      slider.type = 'range';
+      slider.min = '0';
+      slider.max = '1';
+      slider.step = '0.05';
+      slider.value = '0.4';
+      slider.title = 'Điều chỉnh độ trong suốt lớp ranh giới';
+      slider.style.width = '70px';
+      slider.style.margin = '0 0 2px 0';
+      slider.style.cursor = 'pointer';
+      // Giá trị
+      const valueSpan = L.DomUtil.create('span', '', container);
+      valueSpan.innerText = '0.40';
+      valueSpan.style.fontSize = '11px';
+      valueSpan.style.color = '#1976d2';
+      valueSpan.style.marginTop = '0px';
+      // Ngăn sự kiện ảnh hưởng map
+      L.DomEvent.disableClickPropagation(container);
+      L.DomEvent.disableScrollPropagation(container);
+      // Sự kiện thay đổi opacity
+      slider.addEventListener('input', function() {
+        const val = parseFloat(slider.value);
+        valueSpan.innerText = val.toFixed(2);
+        currentOverlayOpacity = val;
+        geojsonLayers.forEach(layer => {
+          layer.setStyle({ fillOpacity: currentOverlayOpacity });
+        });
+      });
+      return container;
+    }
+  });
+  const control = new OpacitySliderControl();
+  map.addControl(control);
+  map._opacitySliderControl = control;
+}
+
 // ====== MAIN ======
 (function main() {
   const map = initMap();
   setupLocateButton(map);
   loadAllGeojsons(map);
+  setupOpacitySliderControl(map);
 })(); 
