@@ -6,6 +6,38 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
+// Thêm nút xác định vị trí hiện tại
+const locateBtnDom = document.getElementById('locate-btn');
+if (locateBtnDom) {
+  locateBtnDom.onclick = function() {
+    if (!navigator.geolocation) {
+      alert('Trình duyệt không hỗ trợ xác định vị trí!');
+      return;
+    }
+    locateBtnDom.disabled = true;
+    locateBtnDom.innerText = 'Đang xác định vị trí...';
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      const marker = L.marker([lat, lng], {
+        icon: L.icon({
+          iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+        })
+      }).addTo(map).bindPopup('Vị trí của bạn').openPopup();
+      map.setView([lat, lng], 15);
+      locateBtnDom.disabled = false;
+      locateBtnDom.innerText = '📍 Xác định vị trí của bạn';
+    }, function(err) {
+      alert('Không thể xác định vị trí: ' + err.message);
+      locateBtnDom.disabled = false;
+      locateBtnDom.innerText = '📍 Xác định vị trí của bạn';
+    });
+  };
+}
+
 // Danh sách tên file geojson (tự động sinh từ thư mục geo-json)
 const geojsonFiles = [
   "An Bình.geojson","An Định.geojson","An Hiệp.geojson","An Hội.geojson","An Phú Tân.geojson","An Qui.geojson","An Trường.geojson","Ba Tri.geojson","Bảo Thạnh.geojson","Bến Tre.geojson","Bình Đại.geojson","Bình Minh.geojson","Bình Phú.geojson","Bình Phước.geojson","Cái Ngang.geojson","Cái Nhum.geojson","Cái Vồn.geojson","Càng Long.geojson","Cầu Kè.geojson","Cầu Ngang.geojson","Châu Hòa.geojson","Châu Hưng.geojson","Châu Thành.geojson","Chợ Lách.geojson","Đại An.geojson","Đại Điền.geojson","Đôn Châu.geojson","Đông Hải.geojson","Đồng Khởi.geojson","Đông Thành.geojson","Duyên Hải.geojson","Giao Long.geojson","Giồng Trôm.geojson","Hàm Giang.geojson","Hiệp Mỹ.geojson","Hiếu Phụng.geojson","Hiếu Thành.geojson","Hòa Bình.geojson","Hòa Hiệp.geojson","Hòa Minh.geojson","Hòa Thuận.geojson","Hùng Hòa.geojson","Hưng Khánh Trung.geojson","Hưng Mỹ.geojson","Hưng Nhượng.geojson","Hương Mỹ.geojson","Lộc Thuận.geojson","Long Châu.geojson","Long Đức.geojson","Long Hiệp.geojson","Long Hồ.geojson","Long Hòa.geojson","Long Hữu.geojson","Long Thành.geojson","Long Vĩnh.geojson","Lục Sỹ Thành.geojson","Lương Hòa.geojson","Lương Phú.geojson","Lưu Nghiệp Anh.geojson","Mỏ Cày.geojson","Mỹ Chánh Hòa.geojson","Mỹ Long.geojson","Mỹ Thuận.geojson","Ngãi Tứ.geojson","Ngũ Lạc.geojson","Nguyệt Hóa.geojson","Nhị Long.geojson","Nhị Trường.geojson","Nhơn Phú.geojson","Nhuận Phú Tân.geojson","Phong Thạnh.geojson","Phú Khương.geojson","Phú Phụng.geojson","Phú Quới.geojson","Phú Tân.geojson","Phú Thuận.geojson","Phú Túc.geojson","Phước Hậu.geojson","Phước Long.geojson","Phước Mỹ Trung.geojson","Quới An.geojson","Quới Điền.geojson","Quới Thiện.geojson","Sơn Đông.geojson","Song Lộc.geojson","Song Phú.geojson","Tam Bình.geojson","Tam Ngãi.geojson","Tân An.geojson","Tân Hạnh.geojson","Tân Hào.geojson","Tân Hòa.geojson","Tân Long Hội.geojson","Tân Lược.geojson","Tân Ngãi.geojson","Tân Phú.geojson","Tân Quới.geojson","Tân Thành Bình.geojson","Tân Thủy.geojson","Tân Xuân.geojson","Tập Ngãi.geojson","Tập Sơn.geojson","Thanh Đức.geojson","Thạnh Hải.geojson","Thạnh Phong.geojson","Thành Thới.geojson"

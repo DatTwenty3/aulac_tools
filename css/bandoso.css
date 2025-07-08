@@ -160,6 +160,33 @@ footer {
     cursor: pointer;
 }
 
+.locate-btn-custom {
+    background: linear-gradient(90deg, #1976d2 0%, #ff9800 100%);
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1.1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 24px;
+    padding: 12px 32px;
+    box-shadow: 0 4px 16px rgba(25,118,210,0.13);
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    outline: none;
+    margin-bottom: 0;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+.locate-btn-custom:hover, .locate-btn-custom:focus {
+    background: linear-gradient(90deg, #ff9800 0%, #1976d2 100%);
+    box-shadow: 0 8px 24px rgba(25,118,210,0.18);
+    transform: translateY(-2px) scale(1.04);
+}
+.locate-btn-custom:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
 @media (max-width: 900px) {
     .container {
         padding: 0 0 10px 0;
