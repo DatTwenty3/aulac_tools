@@ -322,3 +322,12 @@ footer {
     margin-top: 16px !important;
   }
 } 
+
+.leaflet-container :focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+.leaflet-interactive:focus {
+  outline: none !important;
+  box-shadow: none !important;
+} 

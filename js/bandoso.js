@@ -1,10 +1,24 @@
-// Khởi tạo bản đồ tại vị trí trung tâm tỉnh Vĩnh Long
-const map = L.map('map').setView([10.2536, 105.9722], 10);
-
-// Thêm layer bản đồ nền
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+// Khởi tạo 2 lớp nền
+const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+});
+const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  attribution: 'Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+});
+
+// Khởi tạo bản đồ với OSM là mặc định
+const map = L.map('map', {
+  center: [10.2536, 105.9722],
+  zoom: 10,
+  layers: [osmLayer]
+});
+
+// Control chọn lớp nền
+const baseLayers = {
+  "Bản đồ OSM": osmLayer,
+  "Vệ tinh (Satellite)": satelliteLayer
+};
+L.control.layers(baseLayers, null, {position: 'topright', collapsed: false}).addTo(map);
 
 // Thêm nút xác định vị trí hiện tại
 const locateBtnDom = document.getElementById('locate-btn');
@@ -97,8 +111,14 @@ fetch('geo-json/list.json')
                 layer.bindTooltip(feature.properties.ten, {direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip'});
               }
               // Popup chi tiết khi click
-              layer.on('click', function() {
+              layer.on('click', function(e) {
+                // Đổi viền khi chọn
+                layer.setStyle({color: '#2ecc40', weight: 3});
                 layer.bindPopup(popupContent).openPopup();
+              });
+              // Reset style khi popup đóng
+              layer.on('popupclose', function() {
+                layer.setStyle({color: '#3388ff', weight: 2});
               });
               layer.on('mouseover', function() {
                 layer.setStyle({fillOpacity: 0.5, color: '#ff7800'});
