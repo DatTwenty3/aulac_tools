@@ -92,6 +92,11 @@ fetch('geo-json/list.json')
                 popupContent += 'Không có thông tin.';
               }
               popupContent += '</div>';
+              // Tooltip tên xã/phường
+              if (feature.properties && feature.properties.ten) {
+                layer.bindTooltip(feature.properties.ten, {direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip'});
+              }
+              // Popup chi tiết khi click
               layer.on('click', function() {
                 layer.bindPopup(popupContent).openPopup();
               });
