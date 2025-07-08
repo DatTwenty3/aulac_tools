@@ -41,133 +41,16 @@ if (locateBtnDom) {
   };
 }
 
-// Danh sách tên file geojson (tự động sinh từ thư mục geo-json)
-// const geojsonFiles = [
-//   "An Bình.geojson",
-//   "An Định.geojson",
-//   "An Hiệp.geojson",
-//   "An Hội.geojson",
-//   "An Phú Tân.geojson",
-//   "An Qui.geojson",
-//   "An Trường.geojson",
-//   "Ba Tri.geojson",
-//   "Bảo Thạnh.geojson",
-//   "Bến Tre.geojson",
-//   "Bình Đại.geojson",
-//   "Bình Minh.geojson",
-//   "Bình Phú.geojson",
-//   "Bình Phước.geojson",
-//   "Cái Ngang.geojson",
-//   "Cái Nhum.geojson",
-//   "Cái Vồn.geojson",
-//   "Càng Long.geojson",
-//   "Cầu Kè.geojson",
-//   "Cầu Ngang.geojson",
-//   "Châu Hòa.geojson",
-//   "Châu Hưng.geojson",
-//   "Châu Thành.geojson",
-//   "Chợ Lách.geojson",
-//   "Đại An.geojson",
-//   "Đại Điền.geojson",
-//   "Đôn Châu.geojson",
-//   "Đông Hải.geojson",
-//   "Đông Thành.geojson",
-//   "Đồng Khởi.geojson",
-//   "Duyên Hải.geojson",
-//   "Giao Long.geojson",
-//   "Giồng Trôm.geojson",
-//   "Hàm Giang.geojson",
-//   "Hiệp Mỹ.geojson",
-//   "Hiếu Phụng.geojson",
-//   "Hiếu Thành.geojson",
-//   "Hòa Bình.geojson",
-//   "Hòa Hiệp.geojson",
-//   "Hòa Minh.geojson",
-//   "Hòa Thuận.geojson",
-//   "Hùng Hòa.geojson",
-//   "Hưng Khánh Trung.geojson",
-//   "Hưng Mỹ.geojson",
-//   "Hưng Nhượng.geojson",
-//   "Hương Mỹ.geojson",
-//   "Long Châu.geojson",
-//   "Long Đức.geojson",
-//   "Long Hiệp.geojson",
-//   "Long Hồ.geojson",
-//   "Long Hòa.geojson",
-//   "Long Hữu.geojson",
-//   "Long Thành.geojson",
-//   "Long Vĩnh.geojson",
-//   "Lộc Thuận.geojson",
-//   "Lục Sỹ Thành.geojson",
-//   "Lương Hòa.geojson",
-//   "Lương Phú.geojson",
-//   "Lưu Nghiệp Anh.geojson",
-//   "Mỏ Cày.geojson",
-//   "Mỹ Chánh Hòa.geojson",
-//   "Mỹ Long.geojson",
-//   "Mỹ Thuận.geojson",
-//   "Ngãi Tứ.geojson",
-//   "Ngũ Lạc.geojson",
-//   "Nguyệt Hóa.geojson",
-//   "Nhị Long.geojson",
-//   "Nhị Trường.geojson",
-//   "Nhơn Phú.geojson",
-//   "Nhuận Phú Tân.geojson",
-//   "Phong Thạnh.geojson",
-//   "Phú Khương.geojson",
-//   "Phú Phụng.geojson",
-//   "Phú Quới.geojson",
-//   "Phú Tân.geojson",
-//   "Phú Thuận.geojson",
-//   "Phú Túc.geojson",
-//   "Phước Hậu.geojson",
-//   "Phước Long.geojson",
-//   "Phước Mỹ Trung.geojson",
-//   "Quới An.geojson",
-//   "Quới Điền.geojson",
-//   "Quới Thiện.geojson",
-//   "Sơn Đông.geojson",
-//   "Song Lộc.geojson",
-//   "Song Phú.geojson",
-//   "Tam Bình.geojson",
-//   "Tam Ngãi.geojson",
-//   "Tân An.geojson",
-//   "Tân Hạnh.geojson",
-//   "Tân Hào.geojson",
-//   "Tân Hòa.geojson",
-//   "Tân Long Hội.geojson",
-//   "Tân Lược.geojson",
-//   "Tân Ngãi.geojson",
-//   "Tân Phú.geojson",
-//   "Tân Quới.geojson",
-//   "Tân Thành Bình.geojson",
-//   "Tân Thủy.geojson",
-//   "Tân Xuân.geojson",
-//   "Tập Ngãi.geojson",
-//   "Tập Sơn.geojson",
-//   "Thanh Đức.geojson",
-//   "Thạnh Hải.geojson",
-//   "Thạnh Phong.geojson",
-//   "Thạnh Phú.geojson",
-//   "Thạnh Phước.geojson",
-//   "Thạnh Trị.geojson",
-//   "Thành Thới.geojson",
-//   "Thới Thuận.geojson",
-//   "Tiên Thủy.geojson",
-//   "Trà Cú.geojson",
-//   "Trà Côn.geojson",
-//   "Trà Ôn.geojson",
-//   "Trà Vinh.geojson",
-//   "Trường Long Hòa.geojson",
-//   "Trung Hiệp.geojson",
-//   "Trung Ngãi.geojson",
-//   "Trung Thành.geojson",
-//   "Vĩnh Thành.geojson"
-// ];
+// === Tìm kiếm xã/phường thông minh ===
+function removeVietnameseTones(str) {
+  return str.normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
 
+let cachedGeojsonFiles = [];
 fetch('geo-json/list.json')
   .then(res => res.json())
   .then(geojsonFiles => {
+    cachedGeojsonFiles = geojsonFiles;
     geojsonFiles.forEach(filename => {
       fetch('geo-json/' + encodeURIComponent(filename))
         .then(res => res.json())
@@ -225,9 +108,67 @@ fetch('geo-json/list.json')
           console.error('Lỗi tải file', filename, err);
         });
     });
+
+    // Gắn sự kiện tìm kiếm
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+    if (searchBtn && searchInput) {
+      searchBtn.onclick = function() {
+        const keyword = removeVietnameseTones(searchInput.value.trim().toLowerCase());
+        if (!keyword) {
+          alert('Vui lòng nhập tên xã/phường!');
+          return;
+        }
+        // Tìm file phù hợp (không dấu, không phân biệt hoa thường, chỉ cần chứa từ khoá)
+        const foundFile = cachedGeojsonFiles.find(f => {
+          const name = removeVietnameseTones(f.replace('.geojson','').toLowerCase());
+          return name.includes(keyword);
+        });
+        if (!foundFile) {
+          alert('Không tìm thấy xã/phường phù hợp!');
+          return;
+        }
+        // Tải geojson và zoom đến
+        fetch('geo-json/' + encodeURIComponent(foundFile))
+          .then(res => res.json())
+          .then(data => {
+            let bounds = L.geoJSON(data).getBounds();
+            let center = bounds.getCenter();
+            map.setView(center, 12);
+            let feature = data.features && data.features[0];
+            if (feature && feature.properties) {
+              const fieldMap = {
+                ma: 'Mã xã/phường',
+                ten: 'Tên xã/phường',
+                sap_nhap: 'Sáp nhập',
+                loai: 'Loại',
+                cap: 'Cấp hành chính',
+                stt: 'Số thứ tự',
+                dien_tich_km2: 'Diện tích (km²)',
+                dan_so: 'Dân số',
+                mat_do_km2: 'Mật độ (người/km²)'
+              };
+              let popupContent = '<div class="popup-info">';
+              popupContent += '<div class="popup-title">Thông tin xã/phường</div>';
+              popupContent += '<table class="popup-table">';
+              for (const key in fieldMap) {
+                if (feature.properties[key] !== undefined) {
+                  popupContent += `<tr><td class='popup-label'>${fieldMap[key]}</td><td>${feature.properties[key]}</td></tr>`;
+                }
+              }
+              popupContent += '</table></div>';
+              const popup = L.popup()
+                .setLatLng(center)
+                .setContent(popupContent);
+              map.openPopup(popup);
+            }
+          })
+          .catch(() => {
+            alert('Lỗi khi tải dữ liệu xã/phường!');
+          });
+      };
+    }
   })
   .catch(err => {
     console.error('Không thể tải danh sách geojson:', err);
-  });
-
-// --- Đã xoá logic tìm kiếm xã/phường ở đây --- 
+  }); 

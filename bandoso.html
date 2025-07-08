@@ -15,7 +15,13 @@
       <h1>Bản đồ số Âu Lạc</h1>
       <p class="subtitle">Tương tác để xem thông tin từng xã/phường</p>
     </header>
-    <!-- Đã xoá ô tìm kiếm ở đây -->
+    <div class="search-bar-modern" style="display: flex; justify-content: center; align-items: center; margin-bottom: 18px; margin-top: 8px; gap: 8px;">
+      <input id="search-input" class="search-input-modern" type="text" placeholder="Nhập tên xã/phường...">
+      <button id="search-btn" class="search-btn-modern">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="vertical-align: middle; margin-right: 4px;"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/><line x1="14.4142" y1="14" x2="18" y2="17.5858" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span>Tìm kiếm</span>
+      </button>
+    </div>
     <div id="map"></div>
     <div style="display: flex; justify-content: center; margin: 24px 0 0 0;">
       <button id="locate-btn" class="locate-btn-custom">📍 Xác định vị trí của bạn</button>
