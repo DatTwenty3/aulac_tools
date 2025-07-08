@@ -31,7 +31,10 @@ if (locateBtnDom) {
       locateBtnDom.disabled = false;
       locateBtnDom.innerText = '📍 Xác định vị trí của bạn';
     }, function(err) {
-      alert('Không thể xác định vị trí: ' + err.message);
+      // Nếu bị từ chối quyền truy cập vị trí thì không hiện alert
+      if (err.code !== 1) {
+        alert('Không thể xác định vị trí: ' + err.message);
+      }
       locateBtnDom.disabled = false;
       locateBtnDom.innerText = '📍 Xác định vị trí của bạn';
     });
