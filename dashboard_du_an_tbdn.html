@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Dự án | Đường trục Tây Bắc – Đông Nam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --light-primary: #1976d2;
+            --light-secondary: #0d47a1;
+            --light-accent: #ffa000;
+            --light-bg: #f5f7fa;
+            --light-card-bg: #ffffff;
+            --light-text: #212529;
+            --light-text-muted: #6c757d;
+            --light-border: #dee2e6;
+
+            --dark-primary: #42a5f5;
+            --dark-secondary: #90caf9;
+            --dark-accent: #ffc947;
+            --dark-bg: #121212;
+            --dark-card-bg: #1e1e1e;
+            --dark-text: #e0e0e0;
+            --dark-text-muted: #a0a0a0;
+            --dark-border: #424242;
+
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --border-radius: 20px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        /* THEME STYLES */
+        body {
+            background-color: var(--light-bg);
+            color: var(--light-text);
+        }
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+        .info-card, .structure-card {
+            background-color: var(--light-card-bg);
+            transition: background-color 0.3s;
+        }
+        body.dark-mode .info-card, body.dark-mode .structure-card {
+            background-color: var(--dark-card-bg);
+        }
+        header {
+            background: linear-gradient(90deg, #1976d2 0%, #ff9800 100%);
+        }
+        body.dark-mode header {
+             background: linear-gradient(135deg, #1e1e1e, #000);
+        }
+        h2 { color: var(--light-secondary); }
+        body.dark-mode h2 { color: var(--dark-secondary); }
+        h3 { color: var(--light-primary); }
+        body.dark-mode h3 { color: var(--dark-primary); }
+        h2::after { background-color: var(--light-accent); }
+        body.dark-mode h2::after { background-color: var(--dark-accent); }
+        
+        /* General Layout */
+        .container {
+            width: 95%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+        header {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #fff;
+        }
+        header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+        }
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            border-radius: 50px;
+            width: fit-content;
+            margin: -40px auto 20px auto;
+            padding: 8px;
+        }
+        body.dark-mode nav {
+            background-color: rgba(30, 30, 30, 0.8);
+        }
+        nav a {
+            padding: 10px 25px;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.4s ease;
+            color: var(--light-text-muted);
+        }
+        body.dark-mode nav a { color: var(--dark-text-muted); }
+        nav a.active {
+            background-color: var(--light-primary);
+            color: #fff;
+        }
+        body.dark-mode nav a.active {
+            background-color: var(--dark-primary);
+            color: var(--dark-bg);
+        }
+        section { padding: 40px 0; }
+        h2 {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 5px;
+            border-radius: 3px;
+        }
+
+        /* Cards and Grids */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .info-card {
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: left;
+        }
+        .info-card h3 {
+            margin: 0 0 10px 0;
+            color: var(--light-text-muted);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        body.dark-mode .info-card h3 { color: var(--dark-text-muted); }
+        .info-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        /* CARD LAYOUT FOR STRUCTURES */
+        .structure-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+        }
+        .structure-card {
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+        }
+        .structure-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--light-accent);
+            padding-bottom: 10px;
+        }
+        body.dark-mode .structure-card h3 {
+            border-bottom-color: var(--dark-accent);
+        }
+        
+        ul { list-style-type: none; padding-left: 0; }
+        ul li { display: flex; align-items: flex-start; margin-bottom: 10px; }
+        ul li .icon { margin-right: 12px; color: var(--light-accent); margin-top: 4px; }
+        body.dark-mode ul li .icon { color: var(--dark-accent); }
+
+        /* Dark Mode Toggle */
+        .theme-switch-wrapper { display: flex; align-items: center; margin-left: 20px; }
+        .theme-switch { display: inline-block; height: 24px; position: relative; width: 48px; }
+        .theme-switch input { display:none; }
+        .slider { background-color: #ccc; bottom: 0; cursor: pointer; left: 0; position: absolute; right: 0; top: 0; transition: .4s; border-radius: 34px; }
+        .slider:before { background-color: #fff; bottom: 4px; content: ""; height: 16px; left: 4px; position: absolute; transition: .4s; width: 16px; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--dark-primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        /* Animation & Responsive */
+        .animate-on-scroll { opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s ease-out; transform: translateY(30px); }
+        .animate-on-scroll.is-visible { opacity: 1; transform: translateY(0); }
+        @media (max-width: 1024px) {
+            .structure-grid { grid-template-columns: 1fr; }
+            nav { flex-wrap: wrap; width: 90%; border-radius: 20px;}
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="logo/AULAC.png" alt="Logo AULAC" style="height:120px; display:block; margin:0 auto 18px auto;">
+        <h1>Dashboard Tổng quan Dự án</h1>
+        <p>Đường trục Tây Bắc – Đông Nam, Tỉnh Trà Vinh</p>
+        <div style="font-size:0.98em; color:#e0e0e0; margin-bottom:8px; letter-spacing:0.2px; font-weight:400; text-align:center;">© Công ty Cổ phần Tư vấn Xây dựng Âu Lạc</div>
+    </header>
+
+    <nav>
+        <a href="#tong-quan" class="active">Tổng quan</a>
+        <a href="#tuyen-chinh">Tuyến chính</a>
+        <a href="#tuyen-nhanh">Tuyến nhánh</a>
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="checkbox">
+                <input type="checkbox" id="checkbox" />
+                <div class="slider"></div>
+            </label>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="tong-quan">
+            <h2><br>Tổng quan Dự án</h2>
+            <div class="info-grid">
+                <div class="info-card animate-on-scroll">
+                    <h3>💰 Tổng Mức Đầu Tư</h3>
+                    <div class="value">389,1</div>
+                    <span>tỷ đồng</span>
+                </div>
+                <div class="info-card animate-on-scroll" style="transition-delay: 0.1s;">
+                    <h3>📏 Tổng Chiều Dài</h3>
+                    <div class="value">7,438</div>
+                    <span>km (Tuyến chính + nhánh)</span>
+                </div>
+                <div class="info-card animate-on-scroll" style="transition-delay: 0.2s;">
+                    <h3>🌉 Tổng số cầu</h3>
+                    <div class="value">6</div>
+                    <span>4 cầu tuyến chính, 2 cầu tuyến nhánh</span>
+                </div>
+                <div class="info-card animate-on-scroll" style="transition-delay: 0.3s;">
+                    <h3>🗓️ Tiến độ</h3>
+                    <div class="value" style="font-size: 2rem;">2025-2028</div>
+                    <span>Hoàn thành trong 4 năm</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="tuyen-chinh">
+            <h2><br>Công trình Tuyến Chính</h2>
+            <div class="structure-grid">
+                <div class="structure-card animate-on-scroll">
+                    <h3>🌉 Cầu số 1 (Km 1+580)</h3>
+                    <ul>
+                        <li><span class="icon">📏</span><strong>Dài/Rộng:</strong> 82.88m / 12m</li>
+                        <li><span class="icon">🏗️</span><strong>Kết cấu:</strong> 3 nhịp dầm I (BTCT DƯL)</li>
+                        <li><span class="icon">🏛️</span><strong>Móng:</strong> Cọc BTCT M350 (40x40cm), 23-29 cọc/mố,trụ</li>
+                        <li><span class="icon">💡</span><strong>Tiện ích:</strong> Chiếu sáng năng lượng mặt trời</li>
+                    </ul>
+                </div>
+                <div class="structure-card animate-on-scroll">
+                    <h3>🌉 Cầu số 2 (Km 3+13)</h3>
+                    <ul>
+                        <li><span class="icon">📏</span><strong>Dài/Rộng:</strong> 149.18m / 12m</li>
+                        <li><span class="icon">🏗️</span><strong>Kết cấu:</strong> 5 nhịp dầm I (BTCT DƯL)</li>
+                        <li><span class="icon">🏛️</span><strong>Móng:</strong> Cọc BTCT M350 (45x45cm), 23-32 cọc/mố,trụ</li>
+                        <li><span class="icon">⚓</span><strong>Thông thuyền:</strong> Ngang 25m, đứng 3,96m</li>
+                    </ul>
+                </div>
+                <div class="structure-card animate-on-scroll">
+                    <h3>🌉 Cầu số 3 (Km 4+489)</h3>
+                    <ul>
+                        <li><span class="icon">📏</span><strong>Dài/Rộng:</strong> 62.54m / 12m</li>
+                        <li><span class="icon">🏗️</span><strong>Kết cấu:</strong> 3 nhịp dầm I (BTCT DƯL)</li>
+                        <li><span class="icon">🏛️</span><strong>Móng:</strong> Cọc BTCT M350 (40x40cm), 23-27 cọc/mố,trụ</li>
+                        <li><span class="icon">⚓</span><strong>Thông thuyền:</strong> Ngang 15m, đứng 2,5m</li>
+                    </ul>
+                </div>
+                <div class="structure-card animate-on-scroll">
+                    <h3>🌉 Cầu số 4 (Km 5+824)</h3>
+                    <ul>
+                        <li><span class="icon">📏</span><strong>Dài/Rộng:</strong> 62.54m / 12m</li>
+                        <li><span class="icon">🏗️</span><strong>Kết cấu:</strong> 3 nhịp dầm I (BTCT DƯL)</li>
+                        <li><span class="icon">🏛️</span><strong>Móng:</strong> Cọc BTCT M350 (40x40cm), 21-30 cọc/mố,trụ</li>
+                        <li><span class="icon">⚓</span><strong>Thông thuyền:</strong> Ngang 15m, đứng 2,92m</li>
+                    </ul>
+                </div>
+                <div class="structure-card animate-on-scroll">
+                    <h3>🌊 Hệ thống Thoát nước</h3>
+                     <ul>
+                        <li><span class="icon">🔢</span><strong>Tổng số:</strong> 12 cống ngang đường</li>
+                        <li><span class="icon">💧</span><strong>Cống tròn thủy lợi:</strong> 9 vị trí, BTCT D100-150cm</li>
+                        <li><span class="icon">📦</span><strong>Cống hộp BTCT:</strong> 1 vị trí (3x3m)</li>
+                        <li><span class="icon">🔩</span><strong>Cống tròn BTLT:</strong> 2 vị trí (D100cm) chịu lực</li>
+                    </ul>
+                </div>
+                <div class="structure-card animate-on-scroll">
+                    <h3>🔀 Hệ thống Giao cắt</h3>
+                    <ul>
+                        <li><span class="icon">🔢</span><strong>Tổng số:</strong> 4 nút giao đồng mức</li>
+                        <li><span class="icon">🔄</span><strong>Nút giao QL60:</strong> Dạng vòng xuyến R=6m</li>
+                        <li><span class="icon">🌳</span><strong>Nút giao ĐH.26:</strong> Dạng ngã ba/tư, có công viên cây xanh</li>
+                        <li><span class="icon">↔️</span><strong>Giao nhánh 1 & 2:</strong> Dạng ngã ba/tư đơn giản</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="tuyen-nhanh">
+            <h2><br>Công trình Tuyến Nhánh</h2>
+            <div class="structure-grid">
+                <div class="structure-card animate-on-scroll">
+                    <h3>🛤️ Tuyến Nhánh 1</h3>
+                    <ul>
+                        <li><span class="icon">📏</span><strong>Dài:</strong> 316.7 m</li>
+                        <li><span class="icon">↔️</span><strong>Nền đường:</strong> 6,5 m (Mặt đường 5,5 m)</li>
+                        <li><span class="icon">🌉</span><strong>Cầu trên tuyến:</strong> Dài 18,6m, kết cấu 1 nhịp dầm I.</li>
+                        <li><span class="icon">🏛️</span><strong>Móng cầu:</strong> 18 cọc/mố, cọc BTCT 35x35cm.</li>
+                    </ul>
+                </div>
+                 <div class="structure-card animate-on-scroll">
+                    <h3>🛤️ Tuyến Nhánh 2</h3>
+                    <ul>
+                        <li><span class="icon">📏</span><strong>Dài:</strong> 947.1 m (gồm đường dẫn)</li>
+                        <li><span class="icon">↔️</span><strong>Nền đường:</strong> 6,5 m (Mặt đường 5,5 m)</li>
+                        <li><span class="icon">🌉</span><strong>Cầu trên tuyến:</strong> Dài 44,4m, kết cấu 3 nhịp dầm I.</li>
+                        <li><span class="icon">🏛️</span><strong>Móng cầu:</strong> 18 cọc/mố, 21 cọc/trụ.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer style="text-align:center; font-size:0.98em; color:#888; margin:32px 0 12px 0; letter-spacing:0.2px;">
+        © Công ty Cổ phần Tư vấn Xây dựng Âu Lạc
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- THEME SWITCHER ---
+            const themeSwitch = document.getElementById('checkbox');
+            const currentTheme = localStorage.getItem('theme');
+
+            if (currentTheme) {
+                document.body.classList.add(currentTheme);
+                if (currentTheme === 'dark-mode') {
+                    themeSwitch.checked = true;
+                }
+            }
+
+            themeSwitch.addEventListener('change', function(event) {
+                if (event.target.checked) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('theme', 'dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('theme', 'light-mode');
+                }
+            });
+
+            // --- ANIMATE ON SCROLL ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+            // --- ACTIVE NAV LINK ON SCROLL ---
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('nav a');
+            window.addEventListener('scroll', () => {
+                let current = 'tong-quan';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                navLinks.forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href').substring(1) === current) {
+                        a.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
