@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Data Processor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #F5D042 0%, #fff8d1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(10, 23, 78, 0.15);
+            padding: 40px;
+            border: 1px solid rgba(10, 23, 78, 0.1);
+        }
+        
+        h1 {
+            color: #0A174E;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(10, 23, 78, 0.1);
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        h3 {
+            color: #0A174E;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid rgba(10, 23, 78, 0.2);
+            border-radius: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #0A174E;
+            box-shadow: 0 0 15px rgba(10, 23, 78, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #0A174E, #1a2a6b);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(10, 23, 78, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(10, 23, 78, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .output-section {
+            margin-top: 30px;
+        }
+        
+        .table-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(10, 23, 78, 0.1);
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+        
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(245, 208, 66, 0.1);
+            border-radius: 10px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #0A174E, #1a2a6b);
+            border-radius: 10px;
+        }
+        
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #1a2a6b, #0A174E);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            overflow: hidden;
+            border-radius: 10px;
+            min-width: 1200px;
+        }
+        
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(10, 23, 78, 0.1);
+            white-space: nowrap;
+            min-width: 100px;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #0A174E, #1a2a6b);
+            color: white;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+        }
+        
+        td {
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s ease;
+        }
+        
+        tr:hover td {
+            background: rgba(10, 23, 78, 0.05);
+        }
+        
+        .changed-row td {
+            background: rgba(245, 208, 66, 0.2);
+            border-left: 3px solid #F5D042;
+            font-weight: 500;
+        }
+        
+        .instruction {
+            background: rgba(245, 208, 66, 0.15);
+            border: 1px solid rgba(245, 208, 66, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            color: #333;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .container {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 LEDAT - XỬ LÝ DỮ LIỆU VẼ TRẮC DỌC CỐNG</h1>
+        
+        <div class="instruction">
+            <p>💡 Dán dữ liệu Excel của bạn vào ô bên dưới, nhập mốc ban đầu và bề rộng lòng cống, nhấn "Xử lý dữ liệu" để điền các cột trống, chuyển đổi định dạng Þ và tính toán lý trình, sau đó "Sao chép kết quả" để lấy dữ liệu đã xử lý.</p>
+        </div>
+
+        <div class="input-section">
+            <h3>⚙️ Thông số tính toán:</h3>
+            <div style="display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;">
+                <div>
+                    <label for="mocBanDau" style="display: block; margin-bottom: 5px; font-weight: 500; color: #0A174E;">Mốc ban đầu (m):</label>
+                    <input type="number" id="mocBanDau" placeholder="Ví dụ: 0 hoặc 1234" value="0" style="padding: 8px 12px; border: 2px solid rgba(10, 23, 78, 0.2); border-radius: 8px; font-size: 14px; width: 150px;">
+                </div>
+                <div>
+                    <label for="beRongLong" style="display: block; margin-bottom: 5px; font-weight: 500; color: #0A174E;">Bề rộng lòng cống (m):</label>
+                    <input type="number" id="beRongLong" placeholder="Ví dụ: 2.0" value="2.0" step="0.1" style="padding: 8px 12px; border: 2px solid rgba(10, 23, 78, 0.2); border-radius: 8px; font-size: 14px; width: 150px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <h3>📝 Dữ liệu đầu vào:</h3>
+            <textarea id="inputData" placeholder="Dán dữ liệu Excel của bạn vào đây..."></textarea>
+        </div>
+
+        <div class="button-group">
+            <button onclick="processData()">🚀 Xử lý dữ liệu</button>
+            <button onclick="copyResult()">📋 Sao chép kết quả</button>
+            <button onclick="clearData()">🗑️ Xóa dữ liệu</button>
+        </div>
+
+        <div class="output-section">
+            <h3>📈 Kết quả:</h3>
+            <div class="table-container">
+                <div id="result"></div>
+            </div>
+            <textarea id="outputData" style="display:none;"></textarea>
+        </div>
+    </div>
+
+    <script>
+        let processedData = [];
+
+        function processData() {
+            const input = document.getElementById('inputData').value.trim();
+            if (!input) {
+                alert('⚠️ Vui lòng nhập dữ liệu');
+                return;
+            }
+
+            const mocBanDau = parseFloat(document.getElementById('mocBanDau').value) || 0;
+            const beRongLong = parseFloat(document.getElementById('beRongLong').value) || 2.0;
+
+            const lines = input.split('\n');
+            processedData = [];
+            let lastCol1 = '', lastCol2 = '', lastCol3 = '';
+
+            // Add header row
+            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
+            processedData.push({
+                cells: headers,
+                isChanged: false,
+                originalIndex: -1,
+                isHeader: true
+            });
+
+            // First pass: Fill missing data and format conversion
+            lines.forEach((line, index) => {
+                if (line.trim() === '') return;
+
+                // Split by tab or multiple spaces
+                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
+                
+                // Ensure we have enough cells to match headers
+                while (cells.length < headers.length) {
+                    cells.push('');
+                }
+
+                let isChanged = false;
+
+                // Check if column 4 (index 3) has value and column 1 (index 0) is empty
+                if (cells[3] && cells[3] !== '' && (!cells[0] || cells[0] === '')) {
+                    cells[0] = lastCol1;
+                    cells[1] = lastCol2;
+                    cells[2] = lastCol3;
+                    isChanged = true;
+                }
+
+                // Format conversion: Þ60 -> 600, Þ80 -> 800, etc.
+                cells.forEach((cell, cellIndex) => {
+                    if (cell && cell.match(/^Þ\d+$/)) {
+                        const number = cell.substring(1); // Remove Þ
+                        cells[cellIndex] = number + '0'; // Add 0 at the end
+                    }
+                });
+
+                // Update last values if current row has values in columns 1, 2, 3
+                if (cells[0] && cells[0] !== '') lastCol1 = cells[0];
+                if (cells[1] && cells[1] !== '') lastCol2 = cells[1];
+                if (cells[2] && cells[2] !== '') lastCol3 = cells[2];
+
+                processedData.push({
+                    cells: cells,
+                    isChanged: isChanged,
+                    originalIndex: index,
+                    isHeader: false
+                });
+            });
+
+            // Second pass: Handle the special case for last ten_gt
+            for (let i = processedData.length - 1; i >= 1; i--) { // Start from end, skip header
+                const currentRow = processedData[i];
+                if (currentRow.isHeader) continue;
+
+                // If ten_gt is not empty but loai_cong and chieu_dai_cong_m are empty
+                if (currentRow.cells[0] && currentRow.cells[0] !== '' && 
+                    (!currentRow.cells[1] || currentRow.cells[1] === '') && 
+                    (!currentRow.cells[2] || currentRow.cells[2] === '')) {
+                    
+                    // Find the previous row with data in these columns
+                    for (let j = i - 1; j >= 1; j--) {
+                        const prevRow = processedData[j];
+                        if (prevRow.isHeader) continue;
+                        
+                        if (prevRow.cells[1] && prevRow.cells[1] !== '' && 
+                            prevRow.cells[2] && prevRow.cells[2] !== '') {
+                            currentRow.cells[1] = prevRow.cells[1];
+                            currentRow.cells[2] = prevRow.cells[2];
+                            currentRow.isChanged = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // Third pass: Calculate ly_trinh with new logic
+            calculateLyTrinh(mocBanDau, beRongLong);
+
+            displayResult();
+        }
+
+        function calculateLyTrinh(mocBanDau, beRongLong) {
+        let currentLyTrinh = mocBanDau;
+        let previousTenGt = null;
+        let previousChieuDaiCong = 0; // Lưu chiều dài cống của hàng trong nhóm trước đó
+
+        // Lặp qua dữ liệu đã xử lý (bỏ qua hàng tiêu đề)
+        for (let i = 1; i < processedData.length; i++) {
+            const currentRow = processedData[i];
+            if (currentRow.isHeader) continue;
+
+            const currentTenGt = currentRow.cells[0] || '';
+            const chieuDaiCong = parseFloat(currentRow.cells[2]) || 0;
+
+            // Lấy ten_gt của hàng tiếp theo để so sánh
+            const nextRow = (i + 1 < processedData.length) ? processedData[i + 1] : null;
+            const nextTenGt = nextRow ? (nextRow.cells[0] || '') : null;
+
+            if (currentTenGt && currentTenGt !== '') {
+                // A. Nếu đây là một nhóm ten_gt mới
+                if (currentTenGt !== previousTenGt) {
+                    // Tính toán lý trình mới nếu đây không phải nhóm đầu tiên
+                    if (previousTenGt !== null) {
+                        currentLyTrinh += previousChieuDaiCong + beRongLong;
+                    }
+
+                    // KIỂM TRA: Nếu ten_gt hiện tại giống với ten_gt của hàng tiếp theo
+                    // (nghĩa là nhóm này có ít nhất 2 hàng)
+                    if (currentTenGt === nextTenGt) {
+                        // Để trống hàng đầu tiên
+                        currentRow.cells[10] = '';
+                    } else {
+                        // Nếu nhóm này chỉ có 1 hàng (hoặc là hàng cuối cùng của dữ liệu)
+                        // thì điền luôn vào hàng này.
+                        const km = Math.floor(currentLyTrinh / 1000);
+                        const m = Math.round(currentLyTrinh % 1000);
+                        currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
+                    }
+                } 
+                // B. Nếu vẫn trong cùng một nhóm ten_gt (đây là hàng thứ 2)
+                else {
+                    // Điền giá trị ly_trinh đã tính ở bước trước vào hàng thứ hai này
+                    const km = Math.floor(currentLyTrinh / 1000);
+                    const m = Math.round(currentLyTrinh % 1000);
+                    currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
+                }
+
+                // Cập nhật các biến cho vòng lặp tiếp theo
+                previousTenGt = currentTenGt;
+                previousChieuDaiCong = chieuDaiCong;
+
+            } else {
+                currentRow.cells[10] = '';
+            }
+        }
+    }
+
+        function displayResult() {
+            const resultDiv = document.getElementById('result');
+            const outputTextarea = document.getElementById('outputData');
+
+            let tableHTML = '<table><thead><tr>';
+            
+            // Use custom headers for table display only
+            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
+
+            let outputText = '';
+
+            processedData.forEach((row, index) => {
+                // Add header to output text but not display in table
+                if (row.isHeader) {
+                    const rowData = [];
+                    row.cells.forEach(cell => {
+                        rowData.push(cell);
+                    });
+                    outputText += rowData.join('\t') + '\n';
+                    return; // Skip displaying header row in table
+                }
+
+                const rowClass = row.isChanged ? 'changed-row' : '';
+                tableHTML += `<tr class="${rowClass}">`;
+                
+                const rowData = [];
+                row.cells.forEach((cell, cellIndex) => {
+                    tableHTML += `<td>${cell}</td>`;
+                    rowData.push(cell);
+                });
+                
+                tableHTML += '</tr>';
+                outputText += rowData.join('\t') + '\n';
+            });
+
+            tableHTML += '</tbody></table>';
+            resultDiv.innerHTML = tableHTML;
+            outputTextarea.value = outputText.trim();
+        }
+
+        function copyResult() {
+            const outputTextarea = document.getElementById('outputData');
+            if (outputTextarea.value === '') {
+                alert('⚠️ Chưa có dữ liệu để sao chép. Vui lòng xử lý dữ liệu trước.');
+                return;
+            }
+
+            outputTextarea.style.display = 'block';
+            outputTextarea.select();
+            document.execCommand('copy');
+            outputTextarea.style.display = 'none';
+            
+            alert('✅ Đã sao chép dữ liệu vào clipboard!');
+        }
+
+        function clearData() {
+            document.getElementById('inputData').value = '';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('outputData').value = '';
+            processedData = [];
+        }
+    </script>
+</body>
+</html>
