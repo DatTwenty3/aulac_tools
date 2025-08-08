@@ -1,182 +1,180 @@
-<!DOCTYPE html> 
-<html lang="vi"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>LEDAT - Excel Data Processor</title> 
-    <style> 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEDAT - Excel Data Processor</title>
+    <style>
         /* General Styling */
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-        } 
-        
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: #E9DDBE; /* NEW COLOR */
-            min-height: 100vh; 
-            padding: 20px; 
-            color: #1D2536; /* NEW COLOR */
-        } 
-        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #E9DDBE;
+            min-height: 100vh;
+            padding: 20px;
+            color: #1D2536;
+        }
+
         /* Main Container */
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            background: #FFFFFF; 
-            border-radius: 20px; 
-            box-shadow: 0 20px 40px rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
-            padding: 40px; 
-            border: 1px solid rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
-            animation: fadeIn 0.8s ease-out;
-        } 
-        
-        /* Typography */
-        h1 { 
-            color: #1D2536; /* NEW COLOR */
-            text-align: center; 
-            margin-bottom: 30px; 
-            font-size: 2.2rem; 
-            font-weight: 600; 
-            text-shadow: 0 2px 4px rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
-        } 
-        
-        h3 { 
-            color: #1D2536; /* NEW COLOR */
-            margin-bottom: 15px; 
-            font-size: 1.2rem; 
-            font-weight: 500; 
-        } 
-        
-        /* Input & Textarea */
-        .input-section { 
-            margin-bottom: 30px; 
-        } 
-        
-        textarea { 
-            width: 100%; 
-            height: 200px; 
-            padding: 15px; 
-            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
-            border-radius: 10px; 
-            font-family: 'Consolas', 'Monaco', monospace; 
-            font-size: 13px; 
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             background: #FFFFFF;
-            color: #1D2536; /* NEW COLOR */
-            transition: all 0.3s ease; 
-            resize: vertical; 
-        } 
-        
-        textarea:focus { 
-            outline: none; 
-            border-color: #D84F34; /* NEW COLOR */
-            box-shadow: 0 0 15px rgba(216, 79, 52, 0.2); /* NEW COLOR from #D84F34 */
-        } 
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(29, 37, 54, 0.1);
+            padding: 40px;
+            border: 1px solid rgba(29, 37, 54, 0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Typography */
+        h1 {
+            color: #1D2536;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(29, 37, 54, 0.1);
+        }
+
+        h3 {
+            color: #1D2536;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* Input & Textarea */
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 15px;
+            border: 2px solid rgba(29, 37, 54, 0.2);
+            border-radius: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            background: #FFFFFF;
+            color: #1D2536;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #D84F34;
+            box-shadow: 0 0 15px rgba(216, 79, 52, 0.2);
+        }
 
         /* Custom Inputs */
         label {
-            display: block; 
-            margin-bottom: 5px; 
-            font-weight: 500; 
-            color: #1D2536; /* NEW COLOR */
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #1D2536;
         }
 
         input[type="number"] {
-            padding: 8px 12px; 
-            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
-            border-radius: 8px; 
-            font-size: 14px; 
+            padding: 8px 12px;
+            border: 2px solid rgba(29, 37, 54, 0.2);
+            border-radius: 8px;
+            font-size: 14px;
             width: 150px;
             background: #FFFFFF;
-            color: #1D2536; /* NEW COLOR */
+            color: #1D2536;
         }
-        
+
         /* Buttons */
-        .button-group { 
-            display: flex; 
-            gap: 15px; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            margin: 30px 0; 
-        } 
-        
-        button { 
-            color: #E9DDBE; /* NEW COLOR */
-            padding: 12px 25px; 
-            border: none; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 15px; 
-            font-weight: 500; 
-            transition: all 0.3s ease; 
-            box-shadow: 0 4px 12px rgba(29, 37, 54, 0.3); /* NEW COLOR from #1D2536 */
-        } 
-        
-        button:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 6px 20px rgba(29, 37, 54, 0.4); /* NEW COLOR from #1D2536 */
-        } 
-        
-        button:active { 
-            transform: translateY(0); 
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 30px 0;
         }
-        
-        /* Set specific button colors based on new palette */
+
+        button {
+            color: #E9DDBE;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(29, 37, 54, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(29, 37, 54, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
         button[onclick="processData()"] {
-            background: #D84F34; /* NEW COLOR */
+            background: #D84F34;
         }
-        
+
         button[onclick="copyResult()"],
         button[onclick="clearData()"],
-        button.csv-button,
-        button.lisp-button {
-            background: #1D2536; /* NEW COLOR */
+        .csv-button,
+        .lisp-button {
+            background: #1D2536;
         }
-        
-        /* Remove old specific hover styles */
+
         button.csv-button:hover,
         button.lisp-button:hover {
             background: #1D2536;
             filter: brightness(1.2);
         }
-        
+
         /* Chi tiết cống selection */
         .chi-tiet-section {
-            background: rgba(216, 79, 52, 0.05); /* NEW COLOR from #D84F34 */
-            border: 1px solid rgba(216, 79, 52, 0.2); /* NEW COLOR from #D84F34 */
+            background: rgba(216, 79, 52, 0.05);
+            border: 1px solid rgba(216, 79, 52, 0.2);
             padding: 20px;
             border-radius: 10px;
             margin: 25px 0;
         }
-        
+
         .chi-tiet-all-selector {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-bottom: 20px;
             padding: 15px;
-            background: rgba(29, 37, 54, 0.05); /* NEW COLOR from #1D2536 */
+            background: rgba(29, 37, 54, 0.05);
             border-radius: 8px;
         }
 
         .chi-tiet-all-selector select {
             padding: 8px 12px;
-            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
+            border: 2px solid rgba(29, 37, 54, 0.2);
             border-radius: 6px;
             background: #FFFFFF;
-            color: #1D2536; /* NEW COLOR */
+            color: #1D2536;
             font-size: 14px;
             cursor: pointer;
         }
-        
+
         .chi-tiet-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
-        
+
         .chi-tiet-item {
             display: flex;
             align-items: center;
@@ -184,168 +182,266 @@
             padding: 10px;
             background: #FFFFFF;
             border-radius: 8px;
-            border: 1px solid rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
+            border: 1px solid rgba(29, 37, 54, 0.1);
         }
-        
+
         .chi-tiet-item label {
             margin: 0;
             font-weight: 600;
-            color: #1D2536; /* NEW COLOR */
+            color: #1D2536;
             min-width: 120px;
         }
-        
+
         .chi-tiet-item select {
             padding: 8px 12px;
-            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
+            border: 2px solid rgba(29, 37, 54, 0.2);
             border-radius: 6px;
             background: #FFFFFF;
-            color: #1D2536; /* NEW COLOR */
+            color: #1D2536;
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        
+
         .chi-tiet-item select:focus {
             outline: none;
-            border-color: #D84F34; /* NEW COLOR */
-            box-shadow: 0 0 8px rgba(216, 79, 52, 0.2); /* NEW COLOR from #D84F34 */
+            border-color: #D84F34;
+            box-shadow: 0 0 8px rgba(216, 79, 52, 0.2);
         }
-        
+
         /* Output & Table */
-        .output-section { 
-            margin-top: 30px; 
-        } 
-        
-        .table-container { 
-            background: #FFFFFF; 
-            border-radius: 10px; 
-            padding: 15px; 
-            box-shadow: 0 8px 25px rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
-            overflow-x: auto; 
-            overflow-y: auto; 
-            max-height: 500px; 
-        } 
-        
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 13px; 
-            overflow: hidden; 
-            border-radius: 10px; 
-            min-width: 1200px; 
-        } 
-        
-        th, td { 
-            padding: 10px 12px; 
-            text-align: left; 
-            border-bottom: 1px solid rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
-            white-space: nowrap; 
-            min-width: 100px; 
-        } 
-        
-        th { 
-            background: #1D2536; /* NEW COLOR */
-            color: #E9DDBE; /* NEW COLOR */
-            font-weight: 500; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px; 
-            font-size: 12px; 
-        } 
-        
-        td { 
-            background: #FFFFFF; 
-            transition: all 0.2s ease; 
-        } 
-        
-        tr:hover td { 
-            background: rgba(29, 37, 54, 0.05); /* NEW COLOR from #1D2536 */
-        } 
-        
-        /* Highlight */
-        .changed-row td { 
-            background: rgba(216, 79, 52, 0.15); /* NEW COLOR from #D84F34 */
-            border-left: 3px solid #D84F34; /* NEW COLOR */
-            font-weight: 500; 
-        } 
+        .output-section {
+            margin-top: 30px;
+        }
+
+        .table-container {
+            background: #FFFFFF;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 8px 25px rgba(29, 37, 54, 0.1);
+            overflow-x: auto;
+            overflow-y: auto;
+            max-height: 500px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            overflow: hidden;
+            border-radius: 10px;
+            min-width: 1200px;
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(29, 37, 54, 0.1);
+            white-space: nowrap;
+            min-width: 100px;
+        }
+
+        th {
+            background: #1D2536;
+            color: #E9DDBE;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            background: #FFFFFF;
+            transition: all 0.2s ease;
+        }
+
+        tr:hover td {
+            background: rgba(29, 37, 54, 0.05);
+        }
+
+        .changed-row td {
+            background: rgba(216, 79, 52, 0.15);
+            border-left: 3px solid #D84F34;
+            font-weight: 500;
+        }
 
         /* Scrollbar */
-        .table-container::-webkit-scrollbar { 
-            height: 8px; 
-            width: 8px; 
-        } 
-        
-        .table-container::-webkit-scrollbar-track { 
-            background: rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
-        } 
-        
-        .table-container::-webkit-scrollbar-thumb { 
-            background: #D84F34; /* NEW COLOR */
-        } 
-        
-        .table-container::-webkit-scrollbar-thumb:hover { 
-            background: #1D2536; /* NEW COLOR */
-        } 
-        
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: rgba(29, 37, 54, 0.1);
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: #D84F34;
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: #1D2536;
+        }
+
         /* Animation */
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(20px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        } 
-        
-        /* Responsive Design */
-        @media (max-width: 768px) { 
-            .container { 
-                margin: 10px; 
-                padding: 20px; 
-            } 
-            
-            h1 { 
-                font-size: 2rem; 
-            } 
-            
-            .button-group { 
-                flex-direction: column; 
-                align-items: center; 
-            } 
-            
-            button { 
-                width: 100%; 
-                max-width: 300px; 
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
-            
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Modal Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(29, 37, 54, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: #FFFFFF;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            color: #D84F34;
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #1D2536;
+        }
+        
+        .modal-content p strong {
+            color: #D84F34;
+        }
+
+        .modal-input-group {
+            margin-bottom: 25px;
+        }
+
+        .modal-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .modal-input-group input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid rgba(29, 37, 54, 0.2);
+            font-size: 1rem;
+        }
+        
+        .modal-input-group input:focus {
+             outline: none;
+             border-color: #D84F34;
+        }
+
+        .modal-button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .modal-button-group button {
+            flex-grow: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        #modalUpdateBtn, #confirmYesBtn { background: #D84F34; color: #fff; }
+        #modalRemoveBtn { background: #1D2536; color: #E9DDBE; }
+        #modalCancelBtn, #alertOkBtn, #confirmNoBtn { background: #9ca3af; color: #fff; }
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            button {
+                width: 100%;
+                max-width: 300px;
+            }
+
             .chi-tiet-grid {
                 grid-template-columns: 1fr;
             }
-        } 
-    </style> 
-</head> 
-<body> 
-    <div class="container"> 
-        <h1>📊 LEDAT - XỬ LÝ DỮ LIỆU VẼ TRẮC DỌC CỐNG</h1> 
-        
-        <div class="input-section"> 
-            <h3>⚙️ Thông số tính toán:</h3> 
-            <div style="display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;"> 
-                <div> 
-                    <label for="mocBanDau">Mốc lý trình ban đầu (m):</label> 
-                    <input type="number" id="mocBanDau" placeholder="Ví dụ: 0 hoặc 1234" value="0"> 
-                </div> 
-                <div> 
-                    <label for="beRongLong">Bề rộng bên trong lòng cống (m):</label> 
-                    <input type="number" id="beRongLong" placeholder="Ví dụ: 1.0" value="1.0" step="0.1"> 
-                </div> 
-            </div> 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 LEDAT - XỬ LÝ DỮ LIỆU VẼ TRẮC DỌC CỐNG</h1>
+
+        <div class="input-section">
+            <h3>⚙️ Thông số tính toán:</h3>
+            <div style="display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;">
+                <div>
+                    <label for="mocBanDau">Mốc lý trình ban đầu (m):</label>
+                    <input type="number" id="mocBanDau" placeholder="Ví dụ: 0 hoặc 1234" value="0">
+                </div>
+                <div>
+                    <label for="beRongLong">Bề rộng bên trong lòng cống (m):</label>
+                    <input type="number" id="beRongLong" placeholder="Ví dụ: 1.0" value="1.0" step="0.1">
+                </div>
+            </div>
         </div>
 
-        <div class="input-section"> 
-            <h3>📝 Dữ liệu đầu vào:</h3> 
-            <textarea id="inputData" placeholder="Dán dữ liệu Excel của bạn vào đây..." oninput="updateChiTietOptions()"></textarea> 
-        </div> 
+        <div class="input-section">
+            <h3>📝 Dữ liệu đầu vào:</h3>
+            <textarea id="inputData" placeholder="Dán dữ liệu Excel của bạn vào đây..." oninput="updateChiTietOptions()"></textarea>
+        </div>
 
         <div class="chi-tiet-section" id="chiTietSection" style="display: none;">
-            <h3 id="chiTietTitle">🎯 Chi tiết cống cho từng ten_gt:</h3>
+            <h3 id="chiTietTitle">🎯 Chi tiết cống cho từng Giếng thu:</h3>
             <p style="margin-bottom: 15px; color: #1D2536;">Chọn loại chi tiết cống (VH, H10, H30) cho mỗi giếng thu. Giá trị này sẽ được kết hợp với kích thước cống để tạo chi tiết cống.</p>
-            
+
             <div class="chi-tiet-all-selector">
                 <label for="selectAllChiTiet"><strong>Chọn nhanh cho tất cả:</strong></label>
                 <select id="selectAllChiTiet" onchange="applyToAllChiTiet(this.value)">
@@ -360,35 +456,115 @@
             </div>
         </div>
 
-        <div class="button-group"> 
-            <button onclick="processData()">🚀 Xử lý dữ liệu</button> 
+        <div class="button-group">
+            <button onclick="processData()">🚀 Xử lý dữ liệu</button>
             <button onclick="copyResult()">📋 Sao chép kết quả</button>
-            <button onclick="clearData()">🗑️ Xóa dữ liệu</button> 
+            <button onclick="clearData()">🗑️ Xóa dữ liệu</button>
             <button class="csv-button" onclick="downloadCSV()">💾 Tải CSV</button>
-            <button class="lisp-button" onclick="downloadLisp()">📄 Tải file LISP mới nhất</button> 
-        </div> 
+            <button class="lisp-button" onclick="downloadLisp()">📄 Tải file LISP mới nhất</button>
+        </div>
 
-        <div class="output-section"> 
-            <h3>📈 Kết quả:</h3> 
-            <div class="table-container"> 
-                <div id="result"></div> 
-            </div> 
-            <textarea id="outputData" style="display:none;"></textarea> 
-        </div> 
-    </div> 
+        <div class="output-section">
+            <h3>📈 Kết quả:</h3>
+            <div class="table-container">
+                <div id="result"></div>
+            </div>
+            <textarea id="outputData" style="display:none;"></textarea>
+        </div>
+    </div>
 
-    <script> 
-        let processedData = []; 
-        let uniqueTenGts = []; 
-        let chiTietCongMap = {}; 
+    <!-- Modal for Validation -->
+    <div id="validationModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 id="modalTitle">⚠️ Cảnh báo dữ liệu</h3>
+            <p id="modalMessage">Phát hiện lỗi...</p>
+            <div class="modal-input-group">
+                <label for="newLengthValue">Nhập chiều dài cống mới (m):</label>
+                <input type="number" id="newLengthValue" placeholder="Ví dụ: 63.6">
+            </div>
+            <div class="modal-button-group">
+                <button id="modalUpdateBtn">Cập nhật</button>
+                <button id="modalRemoveBtn">Xóa Giếng thu này</button>
+                <button id="modalCancelBtn">Hủy bỏ</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Simple Alerts -->
+    <div id="alertModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+             <p id="alertMessage" style="margin-bottom: 25px;">Nội dung thông báo.</p>
+             <div class="modal-button-group">
+                <button id="alertOkBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Confirmation -->
+    <div id="confirmModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <p id="confirmMessage" style="margin-bottom: 25px;">Bạn có chắc chắn?</p>
+            <div class="modal-button-group">
+                <button id="confirmYesBtn">Có</button>
+                <button id="confirmNoBtn">Không</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let processedData = [];
+        let uniqueTenGts = [];
+        let chiTietCongMap = {};
         let pipeTypeMap = {};
         
+        // --- Modal and Validation State ---
+        let invalidEntriesQueue = [];
+        let currentInvalidEntry = null;
+
+        // --- Custom Alert Function ---
+        function showCustomAlert(message, type = 'info') {
+            const alertModal = document.getElementById('alertModal');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            let icon = '✅';
+            if (type === 'error') icon = '⚠️';
+            
+            alertMessage.innerHTML = `${icon} ${message}`;
+            alertModal.style.display = 'flex';
+            
+            document.getElementById('alertOkBtn').onclick = () => {
+                alertModal.style.display = 'none';
+            };
+        }
+
+        // --- NEW: Custom Confirm Function ---
+        function showCustomConfirm(message, onYes, onNo) {
+            const confirmModal = document.getElementById('confirmModal');
+            const confirmMessage = document.getElementById('confirmMessage');
+            const yesBtn = document.getElementById('confirmYesBtn');
+            const noBtn = document.getElementById('confirmNoBtn');
+
+            confirmMessage.innerHTML = message;
+            confirmModal.style.display = 'flex';
+
+            yesBtn.onclick = () => {
+                confirmModal.style.display = 'none';
+                if (onYes) onYes();
+            };
+
+            noBtn.onclick = () => {
+                confirmModal.style.display = 'none';
+                if (onNo) onNo();
+            };
+        }
+
         function updateChiTietOptions() {
-            const input = document.getElementById('inputData').value.trim(); 
+            const input = document.getElementById('inputData').value.trim();
             const chiTietSection = document.getElementById('chiTietSection');
             const chiTietGrid = document.getElementById('chiTietGrid');
             const chiTietTitle = document.getElementById('chiTietTitle');
-            
+
             document.getElementById('selectAllChiTiet').value = '';
 
             if (!input) {
@@ -396,9 +572,9 @@
                 return;
             }
 
-            const lines = input.split('\n'); 
+            const lines = input.split('\n');
             const tenGtSet = new Set();
-            const rawLoaiCongMap = {}; 
+            const rawLoaiCongMap = {};
 
             let dominantPipeType = null;
             for (const line of lines) {
@@ -415,19 +591,19 @@
                     }
                 }
             }
-            
+
             if (dominantPipeType === 'hop') {
                 chiTietTitle.innerHTML = '🎯 Chi tiết các loại cống hộp:';
             } else if (dominantPipeType === 'tron') {
                 chiTietTitle.innerHTML = '🎯 Chi tiết các loại cống tròn:';
             } else {
-                chiTietTitle.innerHTML = '🎯 Chi tiết cống cho từng ten_gt:';
+                chiTietTitle.innerHTML = '🎯 Chi tiết cống cho từng Giếng thu:';
             }
 
             lines.forEach(line => {
                 if (line.trim() === '') return;
                 const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
-                
+
                 const tenGt = cells[0];
                 const loaiCong = cells[1];
 
@@ -440,16 +616,16 @@
             });
 
             uniqueTenGts = Array.from(tenGtSet);
-            
+
             if (uniqueTenGts.length > 0) {
                 chiTietSection.style.display = 'block';
-                
+
                 let gridHTML = '';
                 uniqueTenGts.forEach(tenGt => {
                     const currentValue = chiTietCongMap[tenGt] || '';
-                    const loaiCongDisplay = rawLoaiCongMap[tenGt] || ''; 
+                    const loaiCongDisplay = rawLoaiCongMap[tenGt] || '';
                     const display = loaiCongDisplay ? ` (${loaiCongDisplay})` : '';
-                    
+
                     gridHTML += `
                         <div class="chi-tiet-item">
                             <label for="select-${tenGt}">${tenGt}${display}:</label>
@@ -523,7 +699,7 @@
 
                 const inheritedLoaiCong = prevGroup[prevGroup.length - 1].cells[1];
                 const originalLoaiCongs = currentGroup.map(row => row.cells[1]);
-                
+
                 for (let j = 0; j < currentGroup.length; j++) {
                     if (j === 0) {
                         currentGroup[j].cells[1] = inheritedLoaiCong;
@@ -542,20 +718,68 @@
             return finalData;
         }
 
+        // --- MODIFIED: processData now includes validation ---
+        function processData() {
+            const input = document.getElementById('inputData').value.trim();
+            if (!input) {
+                showCustomAlert('Vui lòng nhập dữ liệu', 'error');
+                return;
+            }
 
-        function processData() { 
-            const input = document.getElementById('inputData').value.trim(); 
-            if (!input) { 
-                alert('⚠️ Vui lòng nhập dữ liệu'); 
-                return; 
-            } 
+            // --- VALIDATION LOGIC ---
+            const lines = input.split('\n');
+            const invalidEntries = [];
+            let currentGroup = [];
+            let currentTenGt = null;
 
-            const mocBanDau = parseFloat(document.getElementById('mocBanDau').value) || 0; 
-            const beRongLong = parseFloat(document.getElementById('beRongLong').value) || 2.0; 
+            lines.forEach(line => {
+                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
+                const tenGt = cells[0];
 
-            const lines = input.split('\n'); 
-            processedData = []; 
-            let lastCol1 = '', lastCol2 = '', lastCol3 = ''; 
+                if (tenGt && tenGt !== '') { // Start of a new group
+                    if (currentGroup.length > 0) { // Finish previous group
+                        const firstRowCells = currentGroup[0].split(/\t|\s{2,}/).map(c => c.trim());
+                        // UPDATED: Only check for explicit '0' value, ignore empty or non-numeric
+                        if (parseFloat(firstRowCells[2]) === 0) {
+                            invalidEntries.push({ tenGt: currentTenGt, lines: currentGroup });
+                        }
+                    }
+                    // Start new group
+                    currentGroup = [line];
+                    currentTenGt = tenGt;
+                } else { // Continuation of a group
+                    if (currentGroup.length > 0) {
+                        currentGroup.push(line);
+                    }
+                }
+            });
+
+            if (currentGroup.length > 0) { // Finish the last group
+                const firstRowCells = currentGroup[0].split(/\t|\s{2,}/).map(c => c.trim());
+                if (parseFloat(firstRowCells[2]) === 0) {
+                    invalidEntries.push({ tenGt: currentTenGt, lines: currentGroup });
+                }
+            }
+
+            if (invalidEntries.length > 0) {
+                handleInvalidEntries(invalidEntries);
+                return; // Stop further processing until errors are fixed
+            }
+            // --- END VALIDATION ---
+
+            // If validation passes, continue with original logic
+            runProcessingLogic();
+        }
+        
+        // --- Main logic extracted to a separate function ---
+        function runProcessingLogic() {
+            const input = document.getElementById('inputData').value.trim();
+            const mocBanDau = parseFloat(document.getElementById('mocBanDau').value) || 0;
+            const beRongLong = parseFloat(document.getElementById('beRongLong').value) || 2.0;
+            const lines = input.split('\n');
+            
+            processedData = [];
+            let lastCol1 = '', lastCol2 = '', lastCol3 = '';
 
             pipeTypeMap = {};
             lines.forEach(line => {
@@ -572,34 +796,34 @@
                 }
             });
 
-            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong']; 
-            processedData.push({ 
-                cells: headers, 
-                isChanged: false, 
-                originalIndex: -1, 
-                isHeader: true 
-            }); 
+            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
+            processedData.push({
+                cells: headers,
+                isChanged: false,
+                originalIndex: -1,
+                isHeader: true
+            });
 
-            lines.forEach((line, index) => { 
-                if (line.trim() === '') return; 
+            lines.forEach((line, index) => {
+                if (line.trim() === '') return;
 
-                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim()); 
-                
-                while (cells.length < headers.length) { 
-                    cells.push(''); 
-                } 
+                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
 
-                let isChanged = false; 
+                while (cells.length < headers.length) {
+                    cells.push('');
+                }
 
-                if (cells[3] && cells[3] !== '' && (!cells[0] || cells[0] === '')) { 
-                    cells[0] = lastCol1; 
-                    cells[1] = lastCol2; 
-                    cells[2] = lastCol3; 
-                    isChanged = true; 
-                } 
+                let isChanged = false;
+
+                if (cells[3] && cells[3] !== '' && (!cells[0] || cells[0] === '')) {
+                    cells[0] = lastCol1;
+                    cells[1] = lastCol2;
+                    cells[2] = lastCol3;
+                    isChanged = true;
+                }
 
                 const loaiCongCell = cells[1];
-                if (loaiCongCell) { 
+                if (loaiCongCell) {
                     const hvPattern = /^HV\s*[\d,.]+\s*x\s*([\d,.]+)$/i;
                     let match = loaiCongCell.match(hvPattern);
                     if (match) {
@@ -619,108 +843,176 @@
                         }
                     }
                 }
-                
-                if (cells[0] && cells[0] !== '') lastCol1 = cells[0]; 
-                if (cells[1] && cells[1] !== '') lastCol2 = cells[1]; 
-                if (cells[2] && cells[2] !== '') lastCol3 = cells[2]; 
 
-                processedData.push({ 
-                    cells: cells, 
-                    isChanged: isChanged, 
-                    originalIndex: index, 
-                    isHeader: false 
-                }); 
-            }); 
+                if (cells[0] && cells[0] !== '') lastCol1 = cells[0];
+                if (cells[1] && cells[1] !== '') lastCol2 = cells[1];
+                if (cells[2] && cells[2] !== '') lastCol3 = cells[2];
 
-            for (let i = processedData.length - 1; i >= 1; i--) { 
-                const currentRow = processedData[i]; 
-                if (currentRow.isHeader) continue; 
+                processedData.push({
+                    cells: cells,
+                    isChanged: isChanged,
+                    originalIndex: index,
+                    isHeader: false
+                });
+            });
 
-                if (currentRow.cells[0] && currentRow.cells[0] !== '' &&  
-                    (!currentRow.cells[1] || currentRow.cells[1] === '') &&  
-                    (!currentRow.cells[2] || currentRow.cells[2] === '')) { 
-                    
-                    for (let j = i - 1; j >= 1; j--) { 
-                        const prevRow = processedData[j]; 
-                        if (prevRow.isHeader) continue; 
-                        
-                        if (prevRow.cells[1] && prevRow.cells[1] !== '' &&  
-                            prevRow.cells[2] && prevRow.cells[2] !== '') { 
-                            currentRow.cells[1] = prevRow.cells[1]; 
-                            currentRow.cells[2] = prevRow.cells[2]; 
-                            currentRow.isChanged = true; 
-                            break; 
-                        } 
-                    } 
-                } 
-            } 
+            for (let i = processedData.length - 1; i >= 1; i--) {
+                const currentRow = processedData[i];
+                if (currentRow.isHeader) continue;
+
+                if (currentRow.cells[0] && currentRow.cells[0] !== '' &&
+                    (!currentRow.cells[1] || currentRow.cells[1] === '') &&
+                    (!currentRow.cells[2] || currentRow.cells[2] === '')) {
+
+                    for (let j = i - 1; j >= 1; j--) {
+                        const prevRow = processedData[j];
+                        if (prevRow.isHeader) continue;
+
+                        if (prevRow.cells[1] && prevRow.cells[1] !== '' &&
+                            prevRow.cells[2] && prevRow.cells[2] !== '') {
+                            currentRow.cells[1] = prevRow.cells[1];
+                            currentRow.cells[2] = prevRow.cells[2];
+                            currentRow.isChanged = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
             processedData = applyLoaiCongShift(processedData);
+            calculateLyTrinhAndChiTiet(mocBanDau, beRongLong);
+            displayResult();
+        }
 
-            calculateLyTrinhAndChiTiet(mocBanDau, beRongLong); 
+        // --- Functions to handle validation modal ---
+        function handleInvalidEntries(entries) {
+            invalidEntriesQueue = [...entries]; // Copy the entries to a queue
+            showNextInvalidEntry();
+        }
 
-            displayResult(); 
-        } 
+        function showNextInvalidEntry() {
+            if (invalidEntriesQueue.length === 0) {
+                document.getElementById('validationModal').style.display = 'none';
+                showCustomAlert('Tất cả lỗi đã được sửa. Đang xử lý lại dữ liệu...');
+                processData(); // Re-run the main process
+                return;
+            }
 
-        function calculateLyTrinhAndChiTiet(mocBanDau, beRongLong) { 
-            let currentLyTrinh = mocBanDau; 
-            let previousTenGt = null; 
-            let previousChieuDaiCong = 0; 
+            currentInvalidEntry = invalidEntriesQueue.shift(); // Get the next issue
 
-            for (let i = 1; i < processedData.length; i++) { 
-                const currentRow = processedData[i]; 
-                if (currentRow.isHeader) continue; 
+            const modal = document.getElementById('validationModal');
+            const message = document.getElementById('modalMessage');
+            const input = document.getElementById('newLengthValue');
 
-                const currentTenGt = currentRow.cells[0] || ''; 
-                const chieuDaiCong = parseFloat(currentRow.cells[2]) || 0; 
-                const loaiCongValue = currentRow.cells[1]; 
+            message.innerHTML = `Cột <strong>chieu_dai_cong_m</strong> của Giếng thu <strong>${currentInvalidEntry.tenGt}</strong> có giá trị bằng 0. <br>Vui lòng cập nhật hoặc xóa bộ dữ liệu này.`;
+            input.value = '';
+            input.focus();
+            modal.style.display = 'flex';
+        }
+
+        document.getElementById('modalUpdateBtn').onclick = function() {
+            const newValue = document.getElementById('newLengthValue').value;
+            if (!newValue || parseFloat(newValue) <= 0) {
+                showCustomAlert('Vui lòng nhập một giá trị chiều dài hợp lệ (lớn hơn 0).', 'error');
+                return;
+            }
+
+            const inputDataEl = document.getElementById('inputData');
+            let lines = inputDataEl.value.split('\n');
+            const firstLineOfBlock = currentInvalidEntry.lines[0];
+            
+            const lineIndex = lines.findIndex(line => line === firstLineOfBlock);
+
+            if (lineIndex !== -1) {
+                let cells = lines[lineIndex].split(/\t|\s{2,}/);
+                cells[2] = newValue; // Update the length
+                lines[lineIndex] = cells.join('\t');
+                inputDataEl.value = lines.join('\n');
+            }
+            showNextInvalidEntry();
+        };
+
+        document.getElementById('modalRemoveBtn').onclick = function() {
+            const message = `Bạn có chắc chắn muốn xóa tất cả dữ liệu của Giếng thu <strong>${currentInvalidEntry.tenGt}</strong> không?`;
+            
+            showCustomConfirm(message, () => {
+                const inputDataEl = document.getElementById('inputData');
+                let allLines = inputDataEl.value.split('\n');
+                const linesToRemove = new Set(currentInvalidEntry.lines);
+
+                const newLines = allLines.filter(line => !linesToRemove.has(line));
+                inputDataEl.value = newLines.join('\n');
+                
+                updateChiTietOptions();
+                showNextInvalidEntry();
+            });
+        };
+
+        document.getElementById('modalCancelBtn').onclick = function() {
+            document.getElementById('validationModal').style.display = 'none';
+            invalidEntriesQueue = [];
+            currentInvalidEntry = null;
+            showCustomAlert('Quá trình xử lý đã được hủy bỏ.', 'error');
+        };
+        
+        function calculateLyTrinhAndChiTiet(mocBanDau, beRongLong) {
+            let currentLyTrinh = mocBanDau;
+            let previousTenGt = null;
+            let previousChieuDaiCong = 0;
+
+            for (let i = 1; i < processedData.length; i++) {
+                const currentRow = processedData[i];
+                if (currentRow.isHeader) continue;
+
+                const currentTenGt = currentRow.cells[0] || '';
+                const chieuDaiCong = parseFloat(currentRow.cells[2]) || 0;
+                const loaiCongValue = currentRow.cells[1];
                 const pipeType = pipeTypeMap[currentTenGt];
 
-                const nextRow = (i + 1 < processedData.length) ? processedData[i + 1] : null; 
-                const nextTenGt = nextRow ? (nextRow.cells[0] || '') : null; 
+                const nextRow = (i + 1 < processedData.length) ? processedData[i + 1] : null;
+                const nextTenGt = nextRow ? (nextRow.cells[0] || '') : null;
 
-                if (currentTenGt && currentTenGt !== '') { 
-                    if (currentTenGt !== previousTenGt) { 
-                        if (previousTenGt !== null) { 
-                            currentLyTrinh += previousChieuDaiCong + beRongLong; 
-                        } 
+                if (currentTenGt && currentTenGt !== '') {
+                    if (currentTenGt !== previousTenGt) {
+                        if (previousTenGt !== null) {
+                            currentLyTrinh += previousChieuDaiCong + beRongLong;
+                        }
 
-                        if (currentTenGt === nextTenGt) { 
-                            currentRow.cells[10] = ''; 
-                            currentRow.cells[11] = ''; 
-                        } else { 
-                            const km = Math.floor(currentLyTrinh / 1000); 
-                            const m = Math.round(currentLyTrinh % 1000); 
-                            currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`; 
-                            
+                        if (currentTenGt === nextTenGt) {
+                            currentRow.cells[10] = '';
+                            currentRow.cells[11] = '';
+                        } else {
+                            const km = Math.floor(currentLyTrinh / 1000);
+                            const m = Math.round(currentLyTrinh % 1000);
+                            currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
+
                             currentRow.cells[11] = generateChiTietCong(currentTenGt, pipeType, loaiCongValue);
-                        } 
-                    }  
-                    else { 
-                        const km = Math.floor(currentLyTrinh / 1000); 
-                        const m = Math.round(currentLyTrinh % 1000); 
-                        currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`; 
-                        
+                        }
+                    } else {
+                        const km = Math.floor(currentLyTrinh / 1000);
+                        const m = Math.round(currentLyTrinh % 1000);
+                        currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
+
                         currentRow.cells[11] = generateChiTietCong(currentTenGt, pipeType, loaiCongValue);
-                    } 
+                    }
 
-                    previousTenGt = currentTenGt; 
-                    previousChieuDaiCong = chieuDaiCong; 
+                    previousTenGt = currentTenGt;
+                    previousChieuDaiCong = chieuDaiCong;
 
-                } else { 
-                    currentRow.cells[10] = ''; 
-                    currentRow.cells[11] = ''; 
-                } 
-            } 
+                } else {
+                    currentRow.cells[10] = '';
+                    currentRow.cells[11] = '';
+                }
+            }
         }
 
         function generateChiTietCong(tenGt, pipeType, loaiCongValue) {
-            const chiTiet = chiTietCongMap[tenGt]; 
-            
+            const chiTiet = chiTietCongMap[tenGt];
+
             if (!chiTiet || !loaiCongValue || loaiCongValue.trim() === '' || !pipeType) {
                 return '';
             }
-            
+
             if (pipeType === 'hop') {
                 return `CH${loaiCongValue}-${chiTiet}`;
             } else { // 'tron'
@@ -728,52 +1020,48 @@
             }
         }
 
-        function displayResult() { 
-            const resultDiv = document.getElementById('result'); 
-            const outputTextarea = document.getElementById('outputData'); 
+        function displayResult() {
+            const resultDiv = document.getElementById('result');
+            const outputTextarea = document.getElementById('outputData');
 
-            let tableHTML = '<table><thead><tr>'; 
-            
-            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong']; 
-            headers.forEach(header => { 
-                tableHTML += `<th>${header}</th>`; 
-            }); 
-            tableHTML += '</tr></thead><tbody>'; 
+            let tableHTML = '<table><thead><tr>';
 
-            let outputText = ''; 
+            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
+            headers.forEach(header => {
+                tableHTML += `<th>${header}</th>`;
+            });
+            tableHTML += '</tr></thead><tbody>';
 
-            processedData.forEach((row, index) => { 
-                if (row.isHeader) { 
-                    const rowData = []; 
-                    row.cells.forEach(cell => { 
-                        rowData.push(cell); 
-                    }); 
-                    outputText += rowData.join('\t') + '\n'; 
-                    return; 
-                } 
+            let outputText = '';
 
-                const rowClass = row.isChanged ? 'changed-row' : ''; 
-                tableHTML += `<tr class="${rowClass}">`; 
-                
-                const rowData = []; 
-                row.cells.forEach((cell, cellIndex) => { 
-                    tableHTML += `<td>${cell}</td>`; 
-                    rowData.push(cell); 
-                }); 
-                
-                tableHTML += '</tr>'; 
-                outputText += rowData.join('\t') + '\n'; 
-            }); 
+            processedData.forEach((row, index) => {
+                if (row.isHeader) {
+                    outputText += row.cells.join('\t') + '\n';
+                    return;
+                }
 
-            tableHTML += '</tbody></table>'; 
-            resultDiv.innerHTML = tableHTML; 
-            outputTextarea.value = outputText.trim(); 
+                const rowClass = row.isChanged ? 'changed-row' : '';
+                tableHTML += `<tr class="${rowClass}">`;
+
+                const rowData = [];
+                row.cells.forEach((cell, cellIndex) => {
+                    tableHTML += `<td>${cell}</td>`;
+                    rowData.push(cell);
+                });
+
+                tableHTML += '</tr>';
+                outputText += rowData.join('\t') + '\n';
+            });
+
+            tableHTML += '</tbody></table>';
+            resultDiv.innerHTML = tableHTML;
+            outputTextarea.value = outputText.trim();
         }
 
         function downloadCSV() {
             const outputTextarea = document.getElementById('outputData');
             if (outputTextarea.value === '') {
-                alert('⚠️ Chưa có dữ liệu để tải. Vui lòng xử lý dữ liệu trước.');
+                showCustomAlert('Chưa có dữ liệu để tải. Vui lòng xử lý dữ liệu trước.', 'error');
                 return;
             }
 
@@ -790,7 +1078,7 @@
 
             const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
-            
+
             if (link.download !== undefined) {
                 const url = URL.createObjectURL(blob);
                 link.setAttribute('href', url);
@@ -800,42 +1088,42 @@
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
-                
-                alert(`✅ Đã tải file ${filename} thành công!`);
+
+                showCustomAlert(`Đã tải file ${filename} thành công!`);
             }
         }
 
-        function copyResult() { 
-            const outputTextarea = document.getElementById('outputData'); 
-            if (outputTextarea.value === '') { 
-                alert('⚠️ Chưa có dữ liệu để sao chép. Vui lòng xử lý dữ liệu trước.'); 
-                return; 
-            } 
+        function copyResult() {
+            const outputTextarea = document.getElementById('outputData');
+            if (outputTextarea.value === '') {
+                showCustomAlert('Chưa có dữ liệu để sao chép. Vui lòng xử lý dữ liệu trước.', 'error');
+                return;
+            }
 
-            outputTextarea.style.display = 'block'; 
-            outputTextarea.select(); 
-            document.execCommand('copy'); 
-            outputTextarea.style.display = 'none'; 
-            
-            alert('✅ Đã sao chép dữ liệu vào clipboard!'); 
-        } 
+            outputTextarea.style.display = 'block';
+            outputTextarea.select();
+            document.execCommand('copy');
+            outputTextarea.style.display = 'none';
 
-        function clearData() { 
-            document.getElementById('inputData').value = ''; 
-            document.getElementById('result').innerHTML = ''; 
-            document.getElementById('outputData').value = ''; 
+            showCustomAlert('Đã sao chép dữ liệu vào clipboard!');
+        }
+
+        function clearData() {
+            document.getElementById('inputData').value = '';
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('outputData').value = '';
             document.getElementById('chiTietSection').style.display = 'none';
-            processedData = []; 
+            processedData = [];
             uniqueTenGts = [];
             chiTietCongMap = {};
             pipeTypeMap = {};
-        } 
-        
+        }
+
         function downloadLisp() {
             const lispFileUrl = 'https://drive.google.com/drive/folders/146q8ahmOwP8Gzwq647zoGoKNbJ3c7y4d?usp=drive_link';
             window.open(lispFileUrl, '_blank');
-            alert('✅ Đã điều hướng đến file LISP mới nhất!');
+            showCustomAlert('Đã điều hướng đến thư mục chứa file LISP mới nhất!');
         }
-    </script> 
-</body> 
+    </script>
+</body>
 </html>
