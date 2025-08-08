@@ -1,481 +1,841 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEDAT - Xử lý dữ liệu vẽ trắc dọc cống</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<!DOCTYPE html> 
+<html lang="vi"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>LEDAT - Excel Data Processor</title> 
+    <style> 
+        /* General Styling */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        } 
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #F5D042 0%, #fff8d1 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #E9DDBE; /* NEW COLOR */
+            min-height: 100vh; 
+            padding: 20px; 
+            color: #1D2536; /* NEW COLOR */
+        } 
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(10, 23, 78, 0.15);
-            padding: 40px;
-            border: 1px solid rgba(10, 23, 78, 0.1);
-        }
-        
-        h1 {
-            color: #0A174E;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.2rem;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(10, 23, 78, 0.1);
-        }
-        
-        .input-section {
-            margin-bottom: 30px;
-        }
-        
-        h3 {
-            color: #0A174E;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            font-weight: 500;
-        }
-        
-        textarea {
-            width: 100%;
-            height: 200px;
-            padding: 15px;
-            border: 2px solid rgba(10, 23, 78, 0.2);
-            border-radius: 10px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 13px;
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.3s ease;
-            resize: vertical;
-        }
-        
-        textarea:focus {
-            outline: none;
-            border-color: #0A174E;
-            box-shadow: 0 0 15px rgba(10, 23, 78, 0.2);
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 30px 0;
-        }
-        
-        button {
-            background: linear-gradient(135deg, #0A174E, #1a2a6b);
-            color: white;
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(10, 23, 78, 0.3);
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(10, 23, 78, 0.4);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .output-section {
-            margin-top: 30px;
-        }
-        
-        .table-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 8px 25px rgba(10, 23, 78, 0.1);
-            overflow-x: auto;
-            overflow-y: auto;
-            max-height: 500px;
-        }
-        
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
-        }
-        
-        .table-container::-webkit-scrollbar-track {
-            background: rgba(245, 208, 66, 0.1);
-            border-radius: 10px;
-        }
-        
-        .table-container::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #0A174E, #1a2a6b);
-            border-radius: 10px;
-        }
-        
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #1a2a6b, #0A174E);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            overflow: hidden;
-            border-radius: 10px;
-            min-width: 1200px;
-        }
-        
-        th, td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(10, 23, 78, 0.1);
-            white-space: nowrap;
-            min-width: 100px;
-        }
-        
-        th {
-            background: linear-gradient(135deg, #0A174E, #1a2a6b);
-            color: white;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 12px;
-        }
-        
-        td {
-            background: rgba(255, 255, 255, 0.9);
-            transition: all 0.2s ease;
-        }
-        
-        tr:hover td {
-            background: rgba(10, 23, 78, 0.05);
-        }
-        
-        .changed-row td {
-            background: rgba(245, 208, 66, 0.2);
-            border-left: 3px solid #F5D042;
-            font-weight: 500;
-        }
-        
-        .instruction {
-            background: rgba(245, 208, 66, 0.15);
-            border: 1px solid rgba(245, 208, 66, 0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            color: #333;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .container {
+        /* Main Container */
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: #FFFFFF; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
+            padding: 40px; 
+            border: 1px solid rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
             animation: fadeIn 0.8s ease-out;
+        } 
+        
+        /* Typography */
+        h1 { 
+            color: #1D2536; /* NEW COLOR */
+            text-align: center; 
+            margin-bottom: 30px; 
+            font-size: 2.2rem; 
+            font-weight: 600; 
+            text-shadow: 0 2px 4px rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
+        } 
+        
+        h3 { 
+            color: #1D2536; /* NEW COLOR */
+            margin-bottom: 15px; 
+            font-size: 1.2rem; 
+            font-weight: 500; 
+        } 
+        
+        /* Input & Textarea */
+        .input-section { 
+            margin-bottom: 30px; 
+        } 
+        
+        textarea { 
+            width: 100%; 
+            height: 200px; 
+            padding: 15px; 
+            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
+            border-radius: 10px; 
+            font-family: 'Consolas', 'Monaco', monospace; 
+            font-size: 13px; 
+            background: #FFFFFF;
+            color: #1D2536; /* NEW COLOR */
+            transition: all 0.3s ease; 
+            resize: vertical; 
+        } 
+        
+        textarea:focus { 
+            outline: none; 
+            border-color: #D84F34; /* NEW COLOR */
+            box-shadow: 0 0 15px rgba(216, 79, 52, 0.2); /* NEW COLOR from #D84F34 */
+        } 
+
+        /* Custom Inputs */
+        label {
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: 500; 
+            color: #1D2536; /* NEW COLOR */
+        }
+
+        input[type="number"] {
+            padding: 8px 12px; 
+            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
+            border-radius: 8px; 
+            font-size: 14px; 
+            width: 150px;
+            background: #FFFFFF;
+            color: #1D2536; /* NEW COLOR */
         }
         
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .button-group {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            button {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>📊 LEDAT - XỬ LÝ DỮ LIỆU VẼ TRẮC DỌC CỐNG</h1>
+        /* Buttons */
+        .button-group { 
+            display: flex; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            margin: 30px 0; 
+        } 
         
-        <div class="instruction">
-            <p>💡 Dán dữ liệu Excel của bạn vào ô bên dưới, nhập mốc ban đầu và bề rộng lòng cống, nhấn "Xử lý dữ liệu" để điền các cột trống, chuyển đổi định dạng Þ và tính toán lý trình, sau đó "Sao chép kết quả" để lấy dữ liệu đã xử lý.</p>
+        button { 
+            color: #E9DDBE; /* NEW COLOR */
+            padding: 12px 25px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 15px; 
+            font-weight: 500; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 12px rgba(29, 37, 54, 0.3); /* NEW COLOR from #1D2536 */
+        } 
+        
+        button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(29, 37, 54, 0.4); /* NEW COLOR from #1D2536 */
+        } 
+        
+        button:active { 
+            transform: translateY(0); 
+        }
+        
+        /* Set specific button colors based on new palette */
+        button[onclick="processData()"] {
+            background: #D84F34; /* NEW COLOR */
+        }
+        
+        button[onclick="copyResult()"],
+        button[onclick="clearData()"],
+        button.csv-button,
+        button.lisp-button {
+            background: #1D2536; /* NEW COLOR */
+        }
+        
+        /* Remove old specific hover styles */
+        button.csv-button:hover,
+        button.lisp-button:hover {
+            background: #1D2536;
+            filter: brightness(1.2);
+        }
+        
+        /* Chi tiết cống selection */
+        .chi-tiet-section {
+            background: rgba(216, 79, 52, 0.05); /* NEW COLOR from #D84F34 */
+            border: 1px solid rgba(216, 79, 52, 0.2); /* NEW COLOR from #D84F34 */
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+        }
+        
+        .chi-tiet-all-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(29, 37, 54, 0.05); /* NEW COLOR from #1D2536 */
+            border-radius: 8px;
+        }
+
+        .chi-tiet-all-selector select {
+            padding: 8px 12px;
+            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
+            border-radius: 6px;
+            background: #FFFFFF;
+            color: #1D2536; /* NEW COLOR */
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .chi-tiet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .chi-tiet-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #FFFFFF;
+            border-radius: 8px;
+            border: 1px solid rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
+        }
+        
+        .chi-tiet-item label {
+            margin: 0;
+            font-weight: 600;
+            color: #1D2536; /* NEW COLOR */
+            min-width: 120px;
+        }
+        
+        .chi-tiet-item select {
+            padding: 8px 12px;
+            border: 2px solid rgba(29, 37, 54, 0.2); /* NEW COLOR from #1D2536 */
+            border-radius: 6px;
+            background: #FFFFFF;
+            color: #1D2536; /* NEW COLOR */
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .chi-tiet-item select:focus {
+            outline: none;
+            border-color: #D84F34; /* NEW COLOR */
+            box-shadow: 0 0 8px rgba(216, 79, 52, 0.2); /* NEW COLOR from #D84F34 */
+        }
+        
+        /* Output & Table */
+        .output-section { 
+            margin-top: 30px; 
+        } 
+        
+        .table-container { 
+            background: #FFFFFF; 
+            border-radius: 10px; 
+            padding: 15px; 
+            box-shadow: 0 8px 25px rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
+            overflow-x: auto; 
+            overflow-y: auto; 
+            max-height: 500px; 
+        } 
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 13px; 
+            overflow: hidden; 
+            border-radius: 10px; 
+            min-width: 1200px; 
+        } 
+        
+        th, td { 
+            padding: 10px 12px; 
+            text-align: left; 
+            border-bottom: 1px solid rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
+            white-space: nowrap; 
+            min-width: 100px; 
+        } 
+        
+        th { 
+            background: #1D2536; /* NEW COLOR */
+            color: #E9DDBE; /* NEW COLOR */
+            font-weight: 500; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            font-size: 12px; 
+        } 
+        
+        td { 
+            background: #FFFFFF; 
+            transition: all 0.2s ease; 
+        } 
+        
+        tr:hover td { 
+            background: rgba(29, 37, 54, 0.05); /* NEW COLOR from #1D2536 */
+        } 
+        
+        /* Highlight */
+        .changed-row td { 
+            background: rgba(216, 79, 52, 0.15); /* NEW COLOR from #D84F34 */
+            border-left: 3px solid #D84F34; /* NEW COLOR */
+            font-weight: 500; 
+        } 
+
+        /* Scrollbar */
+        .table-container::-webkit-scrollbar { 
+            height: 8px; 
+            width: 8px; 
+        } 
+        
+        .table-container::-webkit-scrollbar-track { 
+            background: rgba(29, 37, 54, 0.1); /* NEW COLOR from #1D2536 */
+        } 
+        
+        .table-container::-webkit-scrollbar-thumb { 
+            background: #D84F34; /* NEW COLOR */
+        } 
+        
+        .table-container::-webkit-scrollbar-thumb:hover { 
+            background: #1D2536; /* NEW COLOR */
+        } 
+        
+        /* Animation */
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        } 
+        
+        /* Responsive Design */
+        @media (max-width: 768px) { 
+            .container { 
+                margin: 10px; 
+                padding: 20px; 
+            } 
+            
+            h1 { 
+                font-size: 2rem; 
+            } 
+            
+            .button-group { 
+                flex-direction: column; 
+                align-items: center; 
+            } 
+            
+            button { 
+                width: 100%; 
+                max-width: 300px; 
+            }
+            
+            .chi-tiet-grid {
+                grid-template-columns: 1fr;
+            }
+        } 
+    </style> 
+</head> 
+<body> 
+    <div class="container"> 
+        <h1>📊 LEDAT - XỬ LÝ DỮ LIỆU VẼ TRẮC DỌC CỐNG</h1> 
+        
+        <div class="input-section"> 
+            <h3>⚙️ Thông số tính toán:</h3> 
+            <div style="display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;"> 
+                <div> 
+                    <label for="mocBanDau">Mốc lý trình ban đầu (m):</label> 
+                    <input type="number" id="mocBanDau" placeholder="Ví dụ: 0 hoặc 1234" value="0"> 
+                </div> 
+                <div> 
+                    <label for="beRongLong">Bề rộng bên trong lòng cống (m):</label> 
+                    <input type="number" id="beRongLong" placeholder="Ví dụ: 1.0" value="1.0" step="0.1"> 
+                </div> 
+            </div> 
         </div>
 
-        <div class="input-section">
-            <h3>⚙️ Thông số tính toán:</h3>
-            <div style="display: flex; gap: 20px; margin-bottom: 15px; flex-wrap: wrap;">
-                <div>
-                    <label for="mocBanDau" style="display: block; margin-bottom: 5px; font-weight: 500; color: #0A174E;">Mốc ban đầu (m):</label>
-                    <input type="number" id="mocBanDau" placeholder="Ví dụ: 0 hoặc 1234" value="0" style="padding: 8px 12px; border: 2px solid rgba(10, 23, 78, 0.2); border-radius: 8px; font-size: 14px; width: 150px;">
-                </div>
-                <div>
-                    <label for="beRongLong" style="display: block; margin-bottom: 5px; font-weight: 500; color: #0A174E;">Bề rộng lòng cống (m):</label>
-                    <input type="number" id="beRongLong" placeholder="Ví dụ: 2.0" value="2.0" step="0.1" style="padding: 8px 12px; border: 2px solid rgba(10, 23, 78, 0.2); border-radius: 8px; font-size: 14px; width: 150px;">
-                </div>
+        <div class="input-section"> 
+            <h3>📝 Dữ liệu đầu vào:</h3> 
+            <textarea id="inputData" placeholder="Dán dữ liệu Excel của bạn vào đây..." oninput="updateChiTietOptions()"></textarea> 
+        </div> 
+
+        <div class="chi-tiet-section" id="chiTietSection" style="display: none;">
+            <h3 id="chiTietTitle">🎯 Chi tiết cống cho từng ten_gt:</h3>
+            <p style="margin-bottom: 15px; color: #1D2536;">Chọn loại chi tiết cống (VH, H10, H30) cho mỗi giếng thu. Giá trị này sẽ được kết hợp với kích thước cống để tạo chi tiết cống.</p>
+            
+            <div class="chi-tiet-all-selector">
+                <label for="selectAllChiTiet"><strong>Chọn nhanh cho tất cả:</strong></label>
+                <select id="selectAllChiTiet" onchange="applyToAllChiTiet(this.value)">
+                    <option value="">-- Chọn --</option>
+                    <option value="VH">VH</option>
+                    <option value="H10">H10</option>
+                    <option value="H30">H30</option>
+                </select>
+            </div>
+
+            <div class="chi-tiet-grid" id="chiTietGrid">
             </div>
         </div>
 
-        <div class="input-section">
-            <h3>📝 Dữ liệu đầu vào:</h3>
-            <textarea id="inputData" placeholder="Dán dữ liệu Excel của bạn vào đây..."></textarea>
-        </div>
-
-        <div class="button-group">
-            <button onclick="processData()">🚀 Xử lý dữ liệu</button>
+        <div class="button-group"> 
+            <button onclick="processData()">🚀 Xử lý dữ liệu</button> 
             <button onclick="copyResult()">📋 Sao chép kết quả</button>
-            <button onclick="clearData()">🗑️ Xóa dữ liệu</button>
-        </div>
+            <button onclick="clearData()">🗑️ Xóa dữ liệu</button> 
+            <button class="csv-button" onclick="downloadCSV()">💾 Tải CSV</button>
+            <button class="lisp-button" onclick="downloadLisp()">📄 Tải file LISP mới nhất</button> 
+        </div> 
 
-        <div class="output-section">
-            <h3>📈 Kết quả:</h3>
-            <div class="table-container">
-                <div id="result"></div>
-            </div>
-            <textarea id="outputData" style="display:none;"></textarea>
-        </div>
-    </div>
+        <div class="output-section"> 
+            <h3>📈 Kết quả:</h3> 
+            <div class="table-container"> 
+                <div id="result"></div> 
+            </div> 
+            <textarea id="outputData" style="display:none;"></textarea> 
+        </div> 
+    </div> 
 
-    <script>
-        let processedData = [];
+    <script> 
+        let processedData = []; 
+        let uniqueTenGts = []; 
+        let chiTietCongMap = {}; 
+        let pipeTypeMap = {};
+        
+        function updateChiTietOptions() {
+            const input = document.getElementById('inputData').value.trim(); 
+            const chiTietSection = document.getElementById('chiTietSection');
+            const chiTietGrid = document.getElementById('chiTietGrid');
+            const chiTietTitle = document.getElementById('chiTietTitle');
+            
+            document.getElementById('selectAllChiTiet').value = '';
 
-        function processData() {
-            const input = document.getElementById('inputData').value.trim();
             if (!input) {
-                alert('⚠️ Vui lòng nhập dữ liệu');
+                chiTietSection.style.display = 'none';
                 return;
             }
 
-            const mocBanDau = parseFloat(document.getElementById('mocBanDau').value) || 0;
-            const beRongLong = parseFloat(document.getElementById('beRongLong').value) || 2.0;
+            const lines = input.split('\n'); 
+            const tenGtSet = new Set();
+            const rawLoaiCongMap = {}; 
 
-            const lines = input.split('\n');
-            processedData = [];
-            let lastCol1 = '', lastCol2 = '', lastCol3 = '';
+            let dominantPipeType = null;
+            for (const line of lines) {
+                if (line.trim() === '') continue;
+                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
+                const loaiCong = cells[1];
+                if (loaiCong) {
+                    if (loaiCong.trim().toUpperCase().startsWith('HV')) {
+                        dominantPipeType = 'hop';
+                        break;
+                    } else if (loaiCong.trim().startsWith('Þ')) {
+                        dominantPipeType = 'tron';
+                        break;
+                    }
+                }
+            }
+            
+            if (dominantPipeType === 'hop') {
+                chiTietTitle.innerHTML = '🎯 Chi tiết các loại cống hộp:';
+            } else if (dominantPipeType === 'tron') {
+                chiTietTitle.innerHTML = '🎯 Chi tiết các loại cống tròn:';
+            } else {
+                chiTietTitle.innerHTML = '🎯 Chi tiết cống cho từng ten_gt:';
+            }
 
-            // Add header row
-            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
-            processedData.push({
-                cells: headers,
-                isChanged: false,
-                originalIndex: -1,
-                isHeader: true
-            });
-
-            // First pass: Fill missing data and format conversion
-            lines.forEach((line, index) => {
+            lines.forEach(line => {
                 if (line.trim() === '') return;
-
-                // Split by tab or multiple spaces
                 const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
                 
-                // Ensure we have enough cells to match headers
-                while (cells.length < headers.length) {
-                    cells.push('');
-                }
+                const tenGt = cells[0];
+                const loaiCong = cells[1];
 
-                let isChanged = false;
-
-                // Check if column 4 (index 3) has value and column 1 (index 0) is empty
-                if (cells[3] && cells[3] !== '' && (!cells[0] || cells[0] === '')) {
-                    cells[0] = lastCol1;
-                    cells[1] = lastCol2;
-                    cells[2] = lastCol3;
-                    isChanged = true;
-                }
-
-                // Format conversion: Þ60 -> 600, Þ80 -> 800, etc.
-                cells.forEach((cell, cellIndex) => {
-                    if (cell && cell.match(/^Þ\d+$/)) {
-                        const number = cell.substring(1); // Remove Þ
-                        cells[cellIndex] = number + '0'; // Add 0 at the end
+                if (tenGt && tenGt !== '') {
+                    tenGtSet.add(tenGt);
+                    if (loaiCong && loaiCong !== '' && !rawLoaiCongMap[tenGt]) {
+                        rawLoaiCongMap[tenGt] = loaiCong;
                     }
-                });
-
-                // Update last values if current row has values in columns 1, 2, 3
-                if (cells[0] && cells[0] !== '') lastCol1 = cells[0];
-                if (cells[1] && cells[1] !== '') lastCol2 = cells[1];
-                if (cells[2] && cells[2] !== '') lastCol3 = cells[2];
-
-                processedData.push({
-                    cells: cells,
-                    isChanged: isChanged,
-                    originalIndex: index,
-                    isHeader: false
-                });
+                }
             });
 
-            // Second pass: Handle the special case for last ten_gt
-            for (let i = processedData.length - 1; i >= 1; i--) { // Start from end, skip header
-                const currentRow = processedData[i];
-                if (currentRow.isHeader) continue;
-
-                // If ten_gt is not empty but loai_cong and chieu_dai_cong_m are empty
-                if (currentRow.cells[0] && currentRow.cells[0] !== '' && 
-                    (!currentRow.cells[1] || currentRow.cells[1] === '') && 
-                    (!currentRow.cells[2] || currentRow.cells[2] === '')) {
+            uniqueTenGts = Array.from(tenGtSet);
+            
+            if (uniqueTenGts.length > 0) {
+                chiTietSection.style.display = 'block';
+                
+                let gridHTML = '';
+                uniqueTenGts.forEach(tenGt => {
+                    const currentValue = chiTietCongMap[tenGt] || '';
+                    const loaiCongDisplay = rawLoaiCongMap[tenGt] || ''; 
+                    const display = loaiCongDisplay ? ` (${loaiCongDisplay})` : '';
                     
-                    // Find the previous row with data in these columns
-                    for (let j = i - 1; j >= 1; j--) {
-                        const prevRow = processedData[j];
-                        if (prevRow.isHeader) continue;
-                        
-                        if (prevRow.cells[1] && prevRow.cells[1] !== '' && 
-                            prevRow.cells[2] && prevRow.cells[2] !== '') {
-                            currentRow.cells[1] = prevRow.cells[1];
-                            currentRow.cells[2] = prevRow.cells[2];
-                            currentRow.isChanged = true;
-                            break;
+                    gridHTML += `
+                        <div class="chi-tiet-item">
+                            <label for="select-${tenGt}">${tenGt}${display}:</label>
+                            <select id="select-${tenGt}" onchange="updateChiTietCong('${tenGt}', this.value)">
+                                <option value="">-- Chọn --</option>
+                                <option value="VH" ${currentValue === 'VH' ? 'selected' : ''}>VH</option>
+                                <option value="H10" ${currentValue === 'H10' ? 'selected' : ''}>H10</option>
+                                <option value="H30" ${currentValue === 'H30' ? 'selected' : ''}>H30</option>
+                            </select>
+                        </div>
+                    `;
+                });
+                chiTietGrid.innerHTML = gridHTML;
+            } else {
+                chiTietSection.style.display = 'none';
+            }
+        }
+
+        function updateChiTietCong(tenGt, value) {
+            if (value === '') {
+                delete chiTietCongMap[tenGt];
+            } else {
+                chiTietCongMap[tenGt] = value;
+            }
+            document.getElementById('selectAllChiTiet').value = '';
+        }
+
+        function applyToAllChiTiet(value) {
+            uniqueTenGts.forEach(tenGt => {
+                if (value === '') {
+                    delete chiTietCongMap[tenGt];
+                } else {
+                    chiTietCongMap[tenGt] = value;
+                }
+            });
+
+            uniqueTenGts.forEach(tenGt => {
+                const selectElement = document.getElementById(`select-${tenGt}`);
+                if (selectElement) {
+                    selectElement.value = value;
+                }
+            });
+        }
+
+        function applyLoaiCongShift(data) {
+            if (data.length <= 1) return data;
+
+            const groupedData = new Map();
+            let tenGtOrder = [];
+
+            data.forEach(row => {
+                if (row.isHeader) return;
+                const tenGt = row.cells[0];
+                if (!tenGt) return;
+
+                if (!groupedData.has(tenGt)) {
+                    groupedData.set(tenGt, []);
+                    tenGtOrder.push(tenGt);
+                }
+                groupedData.get(tenGt).push(row);
+            });
+
+            for (let i = 1; i < tenGtOrder.length; i++) {
+                const prevTenGt = tenGtOrder[i - 1];
+                const currentTenGt = tenGtOrder[i];
+
+                const prevGroup = groupedData.get(prevTenGt);
+                const currentGroup = groupedData.get(currentTenGt);
+
+                if (!prevGroup || prevGroup.length === 0 || !currentGroup) continue;
+
+                const inheritedLoaiCong = prevGroup[prevGroup.length - 1].cells[1];
+                const originalLoaiCongs = currentGroup.map(row => row.cells[1]);
+                
+                for (let j = 0; j < currentGroup.length; j++) {
+                    if (j === 0) {
+                        currentGroup[j].cells[1] = inheritedLoaiCong;
+                    } else {
+                        currentGroup[j].cells[1] = originalLoaiCongs[j - 1];
+                    }
+                    currentGroup[j].isChanged = true;
+                }
+            }
+
+            const finalData = [data[0]];
+            tenGtOrder.forEach(tenGt => {
+                finalData.push(...groupedData.get(tenGt));
+            });
+
+            return finalData;
+        }
+
+
+        function processData() { 
+            const input = document.getElementById('inputData').value.trim(); 
+            if (!input) { 
+                alert('⚠️ Vui lòng nhập dữ liệu'); 
+                return; 
+            } 
+
+            const mocBanDau = parseFloat(document.getElementById('mocBanDau').value) || 0; 
+            const beRongLong = parseFloat(document.getElementById('beRongLong').value) || 2.0; 
+
+            const lines = input.split('\n'); 
+            processedData = []; 
+            let lastCol1 = '', lastCol2 = '', lastCol3 = ''; 
+
+            pipeTypeMap = {};
+            lines.forEach(line => {
+                if (line.trim() === '') return;
+                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
+                const tenGt = cells[0];
+                const loaiCong = cells[1];
+                if (tenGt && loaiCong && !pipeTypeMap[tenGt]) {
+                    if (loaiCong.trim().toUpperCase().startsWith('HV')) {
+                        pipeTypeMap[tenGt] = 'hop';
+                    } else if (loaiCong.trim().startsWith('Þ')) {
+                        pipeTypeMap[tenGt] = 'tron';
+                    }
+                }
+            });
+
+            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong']; 
+            processedData.push({ 
+                cells: headers, 
+                isChanged: false, 
+                originalIndex: -1, 
+                isHeader: true 
+            }); 
+
+            lines.forEach((line, index) => { 
+                if (line.trim() === '') return; 
+
+                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim()); 
+                
+                while (cells.length < headers.length) { 
+                    cells.push(''); 
+                } 
+
+                let isChanged = false; 
+
+                if (cells[3] && cells[3] !== '' && (!cells[0] || cells[0] === '')) { 
+                    cells[0] = lastCol1; 
+                    cells[1] = lastCol2; 
+                    cells[2] = lastCol3; 
+                    isChanged = true; 
+                } 
+
+                const loaiCongCell = cells[1];
+                if (loaiCongCell) { 
+                    const hvPattern = /^HV\s*[\d,.]+\s*x\s*([\d,.]+)$/i;
+                    let match = loaiCongCell.match(hvPattern);
+                    if (match) {
+                        const heightStr = match[1].replace(',', '.');
+                        const height = parseFloat(heightStr);
+                        if (!isNaN(height)) {
+                            cells[1] = (height * 1000).toString();
+                            isChanged = true;
+                        }
+                    } else {
+                        const phiPattern = /^Þ(\d+)$/;
+                        match = loaiCongCell.match(phiPattern);
+                        if (match) {
+                            const number = match[1];
+                            cells[1] = number + '0';
+                            isChanged = true;
                         }
                     }
                 }
-            }
+                
+                if (cells[0] && cells[0] !== '') lastCol1 = cells[0]; 
+                if (cells[1] && cells[1] !== '') lastCol2 = cells[1]; 
+                if (cells[2] && cells[2] !== '') lastCol3 = cells[2]; 
 
-            // Third pass: Calculate ly_trinh with new logic
-            calculateLyTrinh(mocBanDau, beRongLong);
+                processedData.push({ 
+                    cells: cells, 
+                    isChanged: isChanged, 
+                    originalIndex: index, 
+                    isHeader: false 
+                }); 
+            }); 
 
-            displayResult();
-        }
+            for (let i = processedData.length - 1; i >= 1; i--) { 
+                const currentRow = processedData[i]; 
+                if (currentRow.isHeader) continue; 
 
-        function calculateLyTrinh(mocBanDau, beRongLong) {
-        let currentLyTrinh = mocBanDau;
-        let previousTenGt = null;
-        let previousChieuDaiCong = 0; // Lưu chiều dài cống của hàng trong nhóm trước đó
-
-        // Lặp qua dữ liệu đã xử lý (bỏ qua hàng tiêu đề)
-        for (let i = 1; i < processedData.length; i++) {
-            const currentRow = processedData[i];
-            if (currentRow.isHeader) continue;
-
-            const currentTenGt = currentRow.cells[0] || '';
-            const chieuDaiCong = parseFloat(currentRow.cells[2]) || 0;
-
-            // Lấy ten_gt của hàng tiếp theo để so sánh
-            const nextRow = (i + 1 < processedData.length) ? processedData[i + 1] : null;
-            const nextTenGt = nextRow ? (nextRow.cells[0] || '') : null;
-
-            if (currentTenGt && currentTenGt !== '') {
-                // A. Nếu đây là một nhóm ten_gt mới
-                if (currentTenGt !== previousTenGt) {
-                    // Tính toán lý trình mới nếu đây không phải nhóm đầu tiên
-                    if (previousTenGt !== null) {
-                        currentLyTrinh += previousChieuDaiCong + beRongLong;
-                    }
-
-                    // KIỂM TRA: Nếu ten_gt hiện tại giống với ten_gt của hàng tiếp theo
-                    // (nghĩa là nhóm này có ít nhất 2 hàng)
-                    if (currentTenGt === nextTenGt) {
-                        // Để trống hàng đầu tiên
-                        currentRow.cells[10] = '';
-                    } else {
-                        // Nếu nhóm này chỉ có 1 hàng (hoặc là hàng cuối cùng của dữ liệu)
-                        // thì điền luôn vào hàng này.
-                        const km = Math.floor(currentLyTrinh / 1000);
-                        const m = Math.round(currentLyTrinh % 1000);
-                        currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
-                    }
+                if (currentRow.cells[0] && currentRow.cells[0] !== '' &&  
+                    (!currentRow.cells[1] || currentRow.cells[1] === '') &&  
+                    (!currentRow.cells[2] || currentRow.cells[2] === '')) { 
+                    
+                    for (let j = i - 1; j >= 1; j--) { 
+                        const prevRow = processedData[j]; 
+                        if (prevRow.isHeader) continue; 
+                        
+                        if (prevRow.cells[1] && prevRow.cells[1] !== '' &&  
+                            prevRow.cells[2] && prevRow.cells[2] !== '') { 
+                            currentRow.cells[1] = prevRow.cells[1]; 
+                            currentRow.cells[2] = prevRow.cells[2]; 
+                            currentRow.isChanged = true; 
+                            break; 
+                        } 
+                    } 
                 } 
-                // B. Nếu vẫn trong cùng một nhóm ten_gt (đây là hàng thứ 2)
-                else {
-                    // Điền giá trị ly_trinh đã tính ở bước trước vào hàng thứ hai này
-                    const km = Math.floor(currentLyTrinh / 1000);
-                    const m = Math.round(currentLyTrinh % 1000);
-                    currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
-                }
+            } 
 
-                // Cập nhật các biến cho vòng lặp tiếp theo
-                previousTenGt = currentTenGt;
-                previousChieuDaiCong = chieuDaiCong;
+            processedData = applyLoaiCongShift(processedData);
 
-            } else {
-                currentRow.cells[10] = '';
+            calculateLyTrinhAndChiTiet(mocBanDau, beRongLong); 
+
+            displayResult(); 
+        } 
+
+        function calculateLyTrinhAndChiTiet(mocBanDau, beRongLong) { 
+            let currentLyTrinh = mocBanDau; 
+            let previousTenGt = null; 
+            let previousChieuDaiCong = 0; 
+
+            for (let i = 1; i < processedData.length; i++) { 
+                const currentRow = processedData[i]; 
+                if (currentRow.isHeader) continue; 
+
+                const currentTenGt = currentRow.cells[0] || ''; 
+                const chieuDaiCong = parseFloat(currentRow.cells[2]) || 0; 
+                const loaiCongValue = currentRow.cells[1]; 
+                const pipeType = pipeTypeMap[currentTenGt];
+
+                const nextRow = (i + 1 < processedData.length) ? processedData[i + 1] : null; 
+                const nextTenGt = nextRow ? (nextRow.cells[0] || '') : null; 
+
+                if (currentTenGt && currentTenGt !== '') { 
+                    if (currentTenGt !== previousTenGt) { 
+                        if (previousTenGt !== null) { 
+                            currentLyTrinh += previousChieuDaiCong + beRongLong; 
+                        } 
+
+                        if (currentTenGt === nextTenGt) { 
+                            currentRow.cells[10] = ''; 
+                            currentRow.cells[11] = ''; 
+                        } else { 
+                            const km = Math.floor(currentLyTrinh / 1000); 
+                            const m = Math.round(currentLyTrinh % 1000); 
+                            currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`; 
+                            
+                            currentRow.cells[11] = generateChiTietCong(currentTenGt, pipeType, loaiCongValue);
+                        } 
+                    }  
+                    else { 
+                        const km = Math.floor(currentLyTrinh / 1000); 
+                        const m = Math.round(currentLyTrinh % 1000); 
+                        currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`; 
+                        
+                        currentRow.cells[11] = generateChiTietCong(currentTenGt, pipeType, loaiCongValue);
+                    } 
+
+                    previousTenGt = currentTenGt; 
+                    previousChieuDaiCong = chieuDaiCong; 
+
+                } else { 
+                    currentRow.cells[10] = ''; 
+                    currentRow.cells[11] = ''; 
+                } 
+            } 
+        }
+
+        function generateChiTietCong(tenGt, pipeType, loaiCongValue) {
+            const chiTiet = chiTietCongMap[tenGt]; 
+            
+            if (!chiTiet || !loaiCongValue || loaiCongValue.trim() === '' || !pipeType) {
+                return '';
+            }
+            
+            if (pipeType === 'hop') {
+                return `CH${loaiCongValue}-${chiTiet}`;
+            } else { // 'tron'
+                return `D${loaiCongValue}-${chiTiet}`;
             }
         }
-    }
 
-        function displayResult() {
-            const resultDiv = document.getElementById('result');
-            const outputTextarea = document.getElementById('outputData');
+        function displayResult() { 
+            const resultDiv = document.getElementById('result'); 
+            const outputTextarea = document.getElementById('outputData'); 
 
-            let tableHTML = '<table><thead><tr>';
+            let tableHTML = '<table><thead><tr>'; 
             
-            // Use custom headers for table display only
-            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
-            headers.forEach(header => {
-                tableHTML += `<th>${header}</th>`;
-            });
-            tableHTML += '</tr></thead><tbody>';
+            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong']; 
+            headers.forEach(header => { 
+                tableHTML += `<th>${header}</th>`; 
+            }); 
+            tableHTML += '</tr></thead><tbody>'; 
 
-            let outputText = '';
+            let outputText = ''; 
 
-            processedData.forEach((row, index) => {
-                // Add header to output text but not display in table
-                if (row.isHeader) {
-                    const rowData = [];
-                    row.cells.forEach(cell => {
-                        rowData.push(cell);
-                    });
-                    outputText += rowData.join('\t') + '\n';
-                    return; // Skip displaying header row in table
-                }
+            processedData.forEach((row, index) => { 
+                if (row.isHeader) { 
+                    const rowData = []; 
+                    row.cells.forEach(cell => { 
+                        rowData.push(cell); 
+                    }); 
+                    outputText += rowData.join('\t') + '\n'; 
+                    return; 
+                } 
 
-                const rowClass = row.isChanged ? 'changed-row' : '';
-                tableHTML += `<tr class="${rowClass}">`;
+                const rowClass = row.isChanged ? 'changed-row' : ''; 
+                tableHTML += `<tr class="${rowClass}">`; 
                 
-                const rowData = [];
-                row.cells.forEach((cell, cellIndex) => {
-                    tableHTML += `<td>${cell}</td>`;
-                    rowData.push(cell);
-                });
+                const rowData = []; 
+                row.cells.forEach((cell, cellIndex) => { 
+                    tableHTML += `<td>${cell}</td>`; 
+                    rowData.push(cell); 
+                }); 
                 
-                tableHTML += '</tr>';
-                outputText += rowData.join('\t') + '\n';
-            });
+                tableHTML += '</tr>'; 
+                outputText += rowData.join('\t') + '\n'; 
+            }); 
 
-            tableHTML += '</tbody></table>';
-            resultDiv.innerHTML = tableHTML;
-            outputTextarea.value = outputText.trim();
+            tableHTML += '</tbody></table>'; 
+            resultDiv.innerHTML = tableHTML; 
+            outputTextarea.value = outputText.trim(); 
         }
 
-        function copyResult() {
+        function downloadCSV() {
             const outputTextarea = document.getElementById('outputData');
             if (outputTextarea.value === '') {
-                alert('⚠️ Chưa có dữ liệu để sao chép. Vui lòng xử lý dữ liệu trước.');
+                alert('⚠️ Chưa có dữ liệu để tải. Vui lòng xử lý dữ liệu trước.');
                 return;
             }
 
-            outputTextarea.style.display = 'block';
-            outputTextarea.select();
-            document.execCommand('copy');
-            outputTextarea.style.display = 'none';
+            const now = new Date();
+            const day = now.getDate().toString().padStart(2, '0');
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const year = now.getFullYear().toString();
+            const filename = `data-${day}${month}${year}.csv`;
+
+            const csvContent = outputTextarea.value
+                .split('\n')
+                .map(line => line.split('\t').join(','))
+                .join('\n');
+
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
             
-            alert('✅ Đã sao chép dữ liệu vào clipboard!');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                
+                alert(`✅ Đã tải file ${filename} thành công!`);
+            }
         }
 
-        function clearData() {
-            document.getElementById('inputData').value = '';
-            document.getElementById('result').innerHTML = '';
-            document.getElementById('outputData').value = '';
-            processedData = [];
+        function copyResult() { 
+            const outputTextarea = document.getElementById('outputData'); 
+            if (outputTextarea.value === '') { 
+                alert('⚠️ Chưa có dữ liệu để sao chép. Vui lòng xử lý dữ liệu trước.'); 
+                return; 
+            } 
+
+            outputTextarea.style.display = 'block'; 
+            outputTextarea.select(); 
+            document.execCommand('copy'); 
+            outputTextarea.style.display = 'none'; 
+            
+            alert('✅ Đã sao chép dữ liệu vào clipboard!'); 
+        } 
+
+        function clearData() { 
+            document.getElementById('inputData').value = ''; 
+            document.getElementById('result').innerHTML = ''; 
+            document.getElementById('outputData').value = ''; 
+            document.getElementById('chiTietSection').style.display = 'none';
+            processedData = []; 
+            uniqueTenGts = [];
+            chiTietCongMap = {};
+            pipeTypeMap = {};
+        } 
+        
+        function downloadLisp() {
+            const lispFileUrl = 'https://drive.google.com/drive/folders/146q8ahmOwP8Gzwq647zoGoKNbJ3c7y4d?usp=drive_link';
+            window.open(lispFileUrl, '_blank');
+            alert('✅ Đã điều hướng đến file LISP mới nhất!');
         }
-    </script>
-</body>
+    </script> 
+</body> 
 </html>
