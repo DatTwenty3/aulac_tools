@@ -322,7 +322,7 @@
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             text-align: center;
         }
 
@@ -383,9 +383,9 @@
             min-width: 120px;
         }
 
-        #modalUpdateBtn, #confirmYesBtn { background: #D84F34; color: #fff; }
+        #modalUpdateBtn, #confirmYesBtn, #insufficientDataContinueBtn { background: #D84F34; color: #fff; }
         #modalRemoveBtn { background: #1D2536; color: #E9DDBE; }
-        #modalCancelBtn, #alertOkBtn, #confirmNoBtn { background: #9ca3af; color: #fff; }
+        #modalCancelBtn, #alertOkBtn, #confirmNoBtn, #insufficientDataEditBtn { background: #9ca3af; color: #fff; }
 
 
         /* Responsive Design */
@@ -473,8 +473,8 @@
         </div>
     </div>
 
-    <!-- Modal for Validation -->
-    <div id="validationModal" class="modal-overlay" style="display: none;">
+    <!-- Modal for Zero Length Validation -->
+    <div id="zeroLengthModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h3 id="modalTitle">⚠️ Cảnh báo dữ liệu</h3>
             <p id="modalMessage">Phát hiện lỗi...</p>
@@ -490,13 +490,26 @@
         </div>
     </div>
     
+    <!-- Modal for Insufficient Data -->
+    <div id="insufficientDataModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>⚠️ Cảnh báo dữ liệu không đầy đủ</h3>
+            <p id="insufficientDataMessage" style="text-align: left; line-height: 1.6;"></p>
+            <p style="margin-top: 15px;">Bạn có muốn tiếp tục xử lý và để trống các ô bị thiếu, hay dừng lại để sửa dữ liệu thô?</p>
+            <div class="modal-button-group">
+                <button id="insufficientDataContinueBtn">Tiếp tục xử lý</button>
+                <button id="insufficientDataEditBtn">Dừng lại để sửa</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal for Simple Alerts -->
     <div id="alertModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
              <p id="alertMessage" style="margin-bottom: 25px;">Nội dung thông báo.</p>
              <div class="modal-button-group">
-                <button id="alertOkBtn">OK</button>
-            </div>
+                 <button id="alertOkBtn">OK</button>
+             </div>
         </div>
     </div>
 
@@ -513,16 +526,17 @@
 
 
     <script>
+        // --- GLOBAL STATE ---
         let processedData = [];
         let uniqueTenGts = [];
         let chiTietCongMap = {};
         let pipeTypeMap = {};
         
-        // --- Modal and Validation State ---
-        let invalidEntriesQueue = [];
+        // --- MODAL AND VALIDATION STATE ---
+        let zeroLengthEntriesQueue = [];
         let currentInvalidEntry = null;
 
-        // --- Custom Alert Function ---
+        // --- CUSTOM UI FUNCTIONS ---
         function showCustomAlert(message, type = 'info') {
             const alertModal = document.getElementById('alertModal');
             const alertMessage = document.getElementById('alertMessage');
@@ -538,7 +552,6 @@
             };
         }
 
-        // --- NEW: Custom Confirm Function ---
         function showCustomConfirm(message, onYes, onNo) {
             const confirmModal = document.getElementById('confirmModal');
             const confirmMessage = document.getElementById('confirmMessage');
@@ -559,12 +572,73 @@
             };
         }
 
+        // --- DATA PARSING & PREPARATION ---
+
+        function parseInputIntoBlocks(lines) {
+            const blocks = [];
+            let currentBlock = null;
+
+            lines.forEach(line => {
+                if (line.trim() === '') return;
+                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
+                const potentialTenGt = cells[0];
+
+                if (potentialTenGt && /^[A-Z0-9-]+$/.test(potentialTenGt)) {
+                    if (currentBlock) {
+                        blocks.push(currentBlock);
+                    }
+                    currentBlock = {
+                        tenGt: potentialTenGt,
+                        dataLines: [line],
+                        infoLine: null,
+                        allLinesInBlock: [line]
+                    };
+                } else if (currentBlock) {
+                     currentBlock.allLinesInBlock.push(line);
+                    if (cells[0] === '' && cells.length > 1 && (cells.some(c => c.startsWith('Þ')) || cells.some(c => c.toUpperCase().startsWith('HV')))) {
+                        currentBlock.infoLine = line;
+                    } else {
+                        currentBlock.dataLines.push(line);
+                    }
+                }
+            });
+
+            if (currentBlock) {
+                blocks.push(currentBlock);
+            }
+            return blocks;
+        }
+        
+        function processLoaiCongCell(loaiCongCell) {
+            if (!loaiCongCell) return '';
+            
+            const hvPattern = /^HV\s*[\d,.]+\s*x\s*([\d,.]+)$/i;
+            let match = loaiCongCell.match(hvPattern);
+            if (match) {
+                const heightStr = match[1].replace(',', '.');
+                const height = parseFloat(heightStr);
+                return !isNaN(height) ? (height * 1000).toString() : loaiCongCell;
+            } 
+            
+            const phiPattern = /^Þ(\d+)$/;
+            match = loaiCongCell.match(phiPattern);
+            if (match) {
+                const number = match[1];
+                return number + '0';
+            }
+            
+            return loaiCongCell;
+        }
+
+
+        // --- DYNAMIC UI UPDATES ---
+
         function updateChiTietOptions() {
             const input = document.getElementById('inputData').value.trim();
             const chiTietSection = document.getElementById('chiTietSection');
             const chiTietGrid = document.getElementById('chiTietGrid');
             const chiTietTitle = document.getElementById('chiTietTitle');
-
+            
             document.getElementById('selectAllChiTiet').value = '';
 
             if (!input) {
@@ -573,24 +647,27 @@
             }
 
             const lines = input.split('\n');
-            const tenGtSet = new Set();
+            const blocks = parseInputIntoBlocks(lines); 
+            
+            uniqueTenGts = blocks.map(b => b.tenGt);
             const rawLoaiCongMap = {};
-
             let dominantPipeType = null;
-            for (const line of lines) {
-                if (line.trim() === '') continue;
-                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
-                const loaiCong = cells[1];
-                if (loaiCong) {
-                    if (loaiCong.trim().toUpperCase().startsWith('HV')) {
-                        dominantPipeType = 'hop';
-                        break;
-                    } else if (loaiCong.trim().startsWith('Þ')) {
-                        dominantPipeType = 'tron';
-                        break;
+
+            blocks.forEach(block => {
+                if (block.infoLine) {
+                    const infoCells = block.infoLine.split(/\t|\s{2,}/).map(cell => cell.trim());
+                    const loaiCong = infoCells.find(c => c.toUpperCase().startsWith('HV') || c.startsWith('Þ')) || '';
+                    rawLoaiCongMap[block.tenGt] = loaiCong;
+
+                    if (!dominantPipeType) {
+                         if (loaiCong.toUpperCase().startsWith('HV')) {
+                            dominantPipeType = 'hop';
+                        } else if (loaiCong.startsWith('Þ')) {
+                            dominantPipeType = 'tron';
+                        }
                     }
                 }
-            }
+            });
 
             if (dominantPipeType === 'hop') {
                 chiTietTitle.innerHTML = '🎯 Chi tiết các loại cống hộp:';
@@ -600,31 +677,13 @@
                 chiTietTitle.innerHTML = '🎯 Chi tiết cống cho từng Giếng thu:';
             }
 
-            lines.forEach(line => {
-                if (line.trim() === '') return;
-                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
-
-                const tenGt = cells[0];
-                const loaiCong = cells[1];
-
-                if (tenGt && tenGt !== '') {
-                    tenGtSet.add(tenGt);
-                    if (loaiCong && loaiCong !== '' && !rawLoaiCongMap[tenGt]) {
-                        rawLoaiCongMap[tenGt] = loaiCong;
-                    }
-                }
-            });
-
-            uniqueTenGts = Array.from(tenGtSet);
-
             if (uniqueTenGts.length > 0) {
                 chiTietSection.style.display = 'block';
-
                 let gridHTML = '';
                 uniqueTenGts.forEach(tenGt => {
                     const currentValue = chiTietCongMap[tenGt] || '';
-                    const loaiCongDisplay = rawLoaiCongMap[tenGt] || '';
-                    const display = loaiCongDisplay ? ` (${loaiCongDisplay})` : '';
+                    const loaiCongDisplay = rawLoaiCongMap[tenGt] || 'N/A';
+                    const display = ` (${loaiCongDisplay})`;
 
                     gridHTML += `
                         <div class="chi-tiet-item">
@@ -660,249 +719,249 @@
                 } else {
                     chiTietCongMap[tenGt] = value;
                 }
-            });
-
-            uniqueTenGts.forEach(tenGt => {
                 const selectElement = document.getElementById(`select-${tenGt}`);
                 if (selectElement) {
                     selectElement.value = value;
                 }
             });
         }
+        
+        // --- CORE PROCESSING & VALIDATION FLOW ---
 
-        function applyLoaiCongShift(data) {
-            if (data.length <= 1) return data;
-
-            const groupedData = new Map();
-            let tenGtOrder = [];
-
-            data.forEach(row => {
-                if (row.isHeader) return;
-                const tenGt = row.cells[0];
-                if (!tenGt) return;
-
-                if (!groupedData.has(tenGt)) {
-                    groupedData.set(tenGt, []);
-                    tenGtOrder.push(tenGt);
-                }
-                groupedData.get(tenGt).push(row);
-            });
-
-            for (let i = 1; i < tenGtOrder.length; i++) {
-                const prevTenGt = tenGtOrder[i - 1];
-                const currentTenGt = tenGtOrder[i];
-
-                const prevGroup = groupedData.get(prevTenGt);
-                const currentGroup = groupedData.get(currentTenGt);
-
-                if (!prevGroup || prevGroup.length === 0 || !currentGroup) continue;
-
-                const inheritedLoaiCong = prevGroup[prevGroup.length - 1].cells[1];
-                const originalLoaiCongs = currentGroup.map(row => row.cells[1]);
-
-                for (let j = 0; j < currentGroup.length; j++) {
-                    if (j === 0) {
-                        currentGroup[j].cells[1] = inheritedLoaiCong;
-                    } else {
-                        currentGroup[j].cells[1] = originalLoaiCongs[j - 1];
-                    }
-                    currentGroup[j].isChanged = true;
-                }
-            }
-
-            const finalData = [data[0]];
-            tenGtOrder.forEach(tenGt => {
-                finalData.push(...groupedData.get(tenGt));
-            });
-
-            return finalData;
-        }
-
-        // --- MODIFIED: processData now includes validation ---
         function processData() {
             const input = document.getElementById('inputData').value.trim();
             if (!input) {
                 showCustomAlert('Vui lòng nhập dữ liệu', 'error');
                 return;
             }
-
-            // --- VALIDATION LOGIC ---
-            const lines = input.split('\n');
-            const invalidEntries = [];
-            let currentGroup = [];
-            let currentTenGt = null;
-
-            lines.forEach(line => {
-                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
-                const tenGt = cells[0];
-
-                if (tenGt && tenGt !== '') { // Start of a new group
-                    if (currentGroup.length > 0) { // Finish previous group
-                        const firstRowCells = currentGroup[0].split(/\t|\s{2,}/).map(c => c.trim());
-                        // UPDATED: Only check for explicit '0' value, ignore empty or non-numeric
-                        if (parseFloat(firstRowCells[2]) === 0) {
-                            invalidEntries.push({ tenGt: currentTenGt, lines: currentGroup });
-                        }
-                    }
-                    // Start new group
-                    currentGroup = [line];
-                    currentTenGt = tenGt;
-                } else { // Continuation of a group
-                    if (currentGroup.length > 0) {
-                        currentGroup.push(line);
-                    }
-                }
-            });
-
-            if (currentGroup.length > 0) { // Finish the last group
-                const firstRowCells = currentGroup[0].split(/\t|\s{2,}/).map(c => c.trim());
-                if (parseFloat(firstRowCells[2]) === 0) {
-                    invalidEntries.push({ tenGt: currentTenGt, lines: currentGroup });
-                }
-            }
-
-            if (invalidEntries.length > 0) {
-                handleInvalidEntries(invalidEntries);
-                return; // Stop further processing until errors are fixed
-            }
-            // --- END VALIDATION ---
-
-            // If validation passes, continue with original logic
-            runProcessingLogic();
+            runInsufficientDataValidation();
         }
         
-        // --- Main logic extracted to a separate function ---
-        function runProcessingLogic() {
-            const input = document.getElementById('inputData').value.trim();
-            const mocBanDau = parseFloat(document.getElementById('mocBanDau').value) || 0;
-            const beRongLong = parseFloat(document.getElementById('beRongLong').value) || 2.0;
-            const lines = input.split('\n');
-            
-            processedData = [];
-            let lastCol1 = '', lastCol2 = '', lastCol3 = '';
+        function runInsufficientDataValidation() {
+            const lines = document.getElementById('inputData').value.trim().split('\n');
+            const blocks = parseInputIntoBlocks(lines);
+            let firstError = null;
+            const MIN_DATA_COLUMNS = 7;
+            const requiredCols = ['mặt đất tự nhiên', 'đàn giếng thu', 'lưng cống', 'đáy dòng chảy', 'đáy hố lắng', 'đáy móng giếng thu', 'đáy móng cống'];
 
-            pipeTypeMap = {};
-            lines.forEach(line => {
-                if (line.trim() === '') return;
-                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
-                const tenGt = cells[0];
-                const loaiCong = cells[1];
-                if (tenGt && loaiCong && !pipeTypeMap[tenGt]) {
-                    if (loaiCong.trim().toUpperCase().startsWith('HV')) {
-                        pipeTypeMap[tenGt] = 'hop';
-                    } else if (loaiCong.trim().startsWith('Þ')) {
-                        pipeTypeMap[tenGt] = 'tron';
-                    }
-                }
-            });
-
-            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
-            processedData.push({
-                cells: headers,
-                isChanged: false,
-                originalIndex: -1,
-                isHeader: true
-            });
-
-            lines.forEach((line, index) => {
-                if (line.trim() === '') return;
-
-                const cells = line.split(/\t|\s{2,}/).map(cell => cell.trim());
-
-                while (cells.length < headers.length) {
-                    cells.push('');
-                }
-
-                let isChanged = false;
-
-                if (cells[3] && cells[3] !== '' && (!cells[0] || cells[0] === '')) {
-                    cells[0] = lastCol1;
-                    cells[1] = lastCol2;
-                    cells[2] = lastCol3;
-                    isChanged = true;
-                }
-
-                const loaiCongCell = cells[1];
-                if (loaiCongCell) {
-                    const hvPattern = /^HV\s*[\d,.]+\s*x\s*([\d,.]+)$/i;
-                    let match = loaiCongCell.match(hvPattern);
-                    if (match) {
-                        const heightStr = match[1].replace(',', '.');
-                        const height = parseFloat(heightStr);
-                        if (!isNaN(height)) {
-                            cells[1] = (height * 1000).toString();
-                            isChanged = true;
-                        }
-                    } else {
-                        const phiPattern = /^Þ(\d+)$/;
-                        match = loaiCongCell.match(phiPattern);
-                        if (match) {
-                            const number = match[1];
-                            cells[1] = number + '0';
-                            isChanged = true;
+            for (const block of blocks) {
+                // Check if this block is intentionally empty (length = 0)
+                let isIntentionallyEmpty = false;
+                if (block.infoLine) {
+                    const infoCells = block.infoLine.split(/\t|\s{2,}/).map(c => c.trim());
+                    const pipeTypeIndex = infoCells.findIndex(cell => cell.startsWith('Þ') || cell.toUpperCase().startsWith('HV'));
+                    if (pipeTypeIndex !== -1) {
+                        for (let i = pipeTypeIndex + 1; i < infoCells.length; i++) {
+                            if (infoCells[i] !== '' && parseFloat(infoCells[i]) === 0) {
+                                isIntentionallyEmpty = true;
+                                break;
+                            }
                         }
                     }
                 }
 
-                if (cells[0] && cells[0] !== '') lastCol1 = cells[0];
-                if (cells[1] && cells[1] !== '') lastCol2 = cells[1];
-                if (cells[2] && cells[2] !== '') lastCol3 = cells[2];
+                if (isIntentionallyEmpty) {
+                    continue; // Skip column validation for this block
+                }
 
-                processedData.push({
-                    cells: cells,
-                    isChanged: isChanged,
-                    originalIndex: index,
-                    isHeader: false
-                });
-            });
+                for (const line of block.dataLines) {
+                    const cells = line.split(/\t|\s{2,}/).map(c => c.trim()).filter(c => c !== '');
+                    let numericCount = 0;
+                    let foundStart = false;
+                    for(const cell of cells){
+                        if(!isNaN(parseFloat(cell.replace(',', '.')))){
+                            foundStart = true;
+                        }
+                        if(foundStart){
+                            numericCount++;
+                        }
+                    }
+                    if (foundStart && numericCount < MIN_DATA_COLUMNS) {
+                        const missingCount = MIN_DATA_COLUMNS - numericCount;
+                        const missingCols = requiredCols.slice(numericCount);
+                        firstError = { missingCount, missingCols };
+                        break; // Exit inner loop
+                    }
+                }
+                if (firstError) {
+                    break; // Exit outer loop
+                }
+            }
 
-            for (let i = processedData.length - 1; i >= 1; i--) {
-                const currentRow = processedData[i];
-                if (currentRow.isHeader) continue;
+            if (firstError) {
+                handleInsufficientData(firstError);
+            } else {
+                runZeroLengthValidation();
+            }
+        }
 
-                if (currentRow.cells[0] && currentRow.cells[0] !== '' &&
-                    (!currentRow.cells[1] || currentRow.cells[1] === '') &&
-                    (!currentRow.cells[2] || currentRow.cells[2] === '')) {
+        function runZeroLengthValidation() {
+            const lines = document.getElementById('inputData').value.trim().split('\n');
+            const blocks = parseInputIntoBlocks(lines);
+            const zeroLengthEntries = [];
 
-                    for (let j = i - 1; j >= 1; j--) {
-                        const prevRow = processedData[j];
-                        if (prevRow.isHeader) continue;
+            blocks.forEach(block => {
+                if (!block.infoLine) return; 
 
-                        if (prevRow.cells[1] && prevRow.cells[1] !== '' &&
-                            prevRow.cells[2] && prevRow.cells[2] !== '') {
-                            currentRow.cells[1] = prevRow.cells[1];
-                            currentRow.cells[2] = prevRow.cells[2];
-                            currentRow.isChanged = true;
+                const infoCells = block.infoLine.split(/\t|\s{2,}/).map(cell => cell.trim());
+                let chieuDaiCong = '';
+                
+                const pipeTypeIndex = infoCells.findIndex(cell => cell.startsWith('Þ') || cell.toUpperCase().startsWith('HV'));
+
+                if (pipeTypeIndex !== -1) {
+                    for (let i = pipeTypeIndex + 1; i < infoCells.length; i++) {
+                        if (infoCells[i] !== '' && !isNaN(parseFloat(infoCells[i]))) {
+                            chieuDaiCong = infoCells[i];
                             break;
                         }
                     }
                 }
+
+                if (parseFloat(chieuDaiCong) === 0) {
+                    zeroLengthEntries.push({
+                        tenGt: block.tenGt,
+                        infoLine: block.infoLine,
+                        allLinesInBlock: block.allLinesInBlock
+                    });
+                }
+            });
+
+            if (zeroLengthEntries.length > 0) {
+                handleZeroLengthEntries(zeroLengthEntries);
+            } else {
+                runProcessingLogic();
+            }
+        }
+        
+        function runProcessingLogic() {
+            const input = document.getElementById('inputData').value.trim();
+            const mocBanDau = parseFloat(document.getElementById('mocBanDau').value) || 0;
+            const beRongLong = parseFloat(document.getElementById('beRongLong').value) || 1.0;
+            const lines = input.split('\n');
+            const blocks = parseInputIntoBlocks(lines);
+            
+            for (let i = 1; i < blocks.length; i++) {
+                if (!blocks[i].infoLine && blocks[i-1].infoLine) {
+                    blocks[i].infoLine = blocks[i-1].infoLine;
+                }
             }
 
-            processedData = applyLoaiCongShift(processedData);
+            processedData = [];
+            pipeTypeMap = {};
+
+            const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
+            processedData.push({ cells: headers, isHeader: true });
+
+            let previousBlockLoaiCong = null;
+
+            blocks.forEach(block => {
+                let currentBlockLoaiCongRaw = '';
+                let chieuDaiCong = '';
+
+                if (block.infoLine) {
+                    const infoCells = block.infoLine.split(/\t|\s{2,}/).map(cell => cell.trim());
+                    const pipeTypeIndex = infoCells.findIndex(cell => cell.startsWith('Þ') || cell.toUpperCase().startsWith('HV'));
+                    
+                    if (pipeTypeIndex !== -1) {
+                        currentBlockLoaiCongRaw = infoCells[pipeTypeIndex];
+                        for (let i = pipeTypeIndex + 1; i < infoCells.length; i++) {
+                            if (infoCells[i] !== '' && !isNaN(parseFloat(infoCells[i]))) {
+                                chieuDaiCong = infoCells[i];
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (currentBlockLoaiCongRaw.toUpperCase().startsWith('HV')) {
+                    pipeTypeMap[block.tenGt] = 'hop';
+                } else if (currentBlockLoaiCongRaw.startsWith('Þ')) {
+                    pipeTypeMap[block.tenGt] = 'tron';
+                }
+
+                const currentBlockProcessedLoaiCong = processLoaiCongCell(currentBlockLoaiCongRaw);
+
+                block.dataLines.forEach((dataLine, index) => {
+                    const cells = dataLine.split(/\t|\s{2,}/).map(cell => cell.trim());
+                    
+                    let dataStartIndex = -1;
+                    for (let i = 0; i < cells.length; i++) {
+                        if (cells[i] !== '' && !isNaN(parseFloat(cells[i].replace(',', '.')))) {
+                            dataStartIndex = i;
+                            break;
+                        }
+                    }
+
+                    if (dataStartIndex === -1) return; 
+
+                    const newRow = new Array(headers.length).fill('');
+                    newRow[0] = block.tenGt;
+                    newRow[2] = chieuDaiCong;
+                    
+                    newRow[3] = cells[dataStartIndex] || '';
+                    newRow[4] = cells[dataStartIndex + 1] || '';
+                    newRow[5] = cells[dataStartIndex + 2] || '';
+                    newRow[6] = cells[dataStartIndex + 3] || '';
+                    newRow[7] = cells[dataStartIndex + 4] || '';
+                    newRow[8] = cells[dataStartIndex + 5] || '';
+                    newRow[9] = cells[dataStartIndex + 6] || '';
+
+                    if (previousBlockLoaiCong === null) {
+                        newRow[1] = currentBlockProcessedLoaiCong;
+                    } else if (index === 0) {
+                        newRow[1] = previousBlockLoaiCong;
+                    } else {
+                        newRow[1] = currentBlockProcessedLoaiCong;
+                    }
+
+                    processedData.push({ cells: newRow, isChanged: true });
+                });
+
+                previousBlockLoaiCong = currentBlockProcessedLoaiCong;
+            });
+
             calculateLyTrinhAndChiTiet(mocBanDau, beRongLong);
             displayResult();
         }
 
-        // --- Functions to handle validation modal ---
-        function handleInvalidEntries(entries) {
-            invalidEntriesQueue = [...entries]; // Copy the entries to a queue
-            showNextInvalidEntry();
+        // --- VALIDATION MODAL HANDLING ---
+        function handleInsufficientData(error) {
+            const modal = document.getElementById('insufficientDataModal');
+            const messageEl = document.getElementById('insufficientDataMessage');
+            
+            const messageHTML = `Phát hiện thiếu <strong>${error.missingCount}</strong> cột dữ liệu. Cần cung cấp đủ giá trị cho các cột sau: <strong>${error.missingCols.join(', ')}</strong>.`;
+            
+            messageEl.innerHTML = messageHTML;
+            modal.style.display = 'flex';
+
+            document.getElementById('insufficientDataContinueBtn').onclick = () => {
+                modal.style.display = 'none';
+                runZeroLengthValidation();
+            };
+
+            document.getElementById('insufficientDataEditBtn').onclick = () => {
+                modal.style.display = 'none';
+            };
         }
 
-        function showNextInvalidEntry() {
-            if (invalidEntriesQueue.length === 0) {
-                document.getElementById('validationModal').style.display = 'none';
+        function handleZeroLengthEntries(entries) {
+            zeroLengthEntriesQueue = [...entries];
+            showNextZeroLengthEntry();
+        }
+
+        function showNextZeroLengthEntry() {
+            if (zeroLengthEntriesQueue.length === 0) {
+                document.getElementById('zeroLengthModal').style.display = 'none';
                 showCustomAlert('Tất cả lỗi đã được sửa. Đang xử lý lại dữ liệu...');
-                processData(); // Re-run the main process
+                processData();
                 return;
             }
 
-            currentInvalidEntry = invalidEntriesQueue.shift(); // Get the next issue
+            currentInvalidEntry = zeroLengthEntriesQueue.shift(); 
 
-            const modal = document.getElementById('validationModal');
-            const message = document.getElementById('modalMessage');
-            const input = document.getElementById('newLengthValue');
+            const modal = document.getElementById('zeroLengthModal');
+            const message = modal.querySelector('#modalMessage');
+            const input = modal.querySelector('#newLengthValue');
 
             message.innerHTML = `Cột <strong>chieu_dai_cong_m</strong> của Giếng thu <strong>${currentInvalidEntry.tenGt}</strong> có giá trị bằng 0. <br>Vui lòng cập nhật hoặc xóa bộ dữ liệu này.`;
             input.value = '';
@@ -919,18 +978,34 @@
 
             const inputDataEl = document.getElementById('inputData');
             let lines = inputDataEl.value.split('\n');
-            const firstLineOfBlock = currentInvalidEntry.lines[0];
+            const lineToUpdate = currentInvalidEntry.infoLine;
             
-            const lineIndex = lines.findIndex(line => line === firstLineOfBlock);
+            const lineIndex = lines.findIndex(line => line === lineToUpdate);
 
             if (lineIndex !== -1) {
-                let cells = lines[lineIndex].split(/\t|\s{2,}/);
-                cells[2] = newValue; // Update the length
-                lines[lineIndex] = cells.join('\t');
-                inputDataEl.value = lines.join('\n');
+                let cells = lines[lineIndex].split('\t'); 
+                let lengthUpdated = false;
+                
+                const pipeTypeCellIndex = cells.findIndex(c => c.trim().startsWith('Þ') || c.trim().toUpperCase().startsWith('HV'));
+
+                if (pipeTypeCellIndex !== -1) {
+                     for (let i = pipeTypeCellIndex + 1; i < cells.length; i++) {
+                        if (cells[i].trim() !== '' && !isNaN(parseFloat(cells[i].trim()))) {
+                            cells[i] = newValue;
+                            lengthUpdated = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (lengthUpdated) {
+                    lines[lineIndex] = cells.join('\t'); 
+                    inputDataEl.value = lines.join('\n');
+                }
             }
-            showNextInvalidEntry();
+            showNextZeroLengthEntry();
         };
+
 
         document.getElementById('modalRemoveBtn').onclick = function() {
             const message = `Bạn có chắc chắn muốn xóa tất cả dữ liệu của Giếng thu <strong>${currentInvalidEntry.tenGt}</strong> không?`;
@@ -938,103 +1013,82 @@
             showCustomConfirm(message, () => {
                 const inputDataEl = document.getElementById('inputData');
                 let allLines = inputDataEl.value.split('\n');
-                const linesToRemove = new Set(currentInvalidEntry.lines);
+                const linesToRemove = new Set(currentInvalidEntry.allLinesInBlock);
 
                 const newLines = allLines.filter(line => !linesToRemove.has(line));
                 inputDataEl.value = newLines.join('\n');
                 
                 updateChiTietOptions();
-                showNextInvalidEntry();
+                showNextZeroLengthEntry();
             });
         };
 
         document.getElementById('modalCancelBtn').onclick = function() {
-            document.getElementById('validationModal').style.display = 'none';
-            invalidEntriesQueue = [];
+            document.getElementById('zeroLengthModal').style.display = 'none';
+            zeroLengthEntriesQueue = [];
             currentInvalidEntry = null;
             showCustomAlert('Quá trình xử lý đã được hủy bỏ.', 'error');
         };
         
         function calculateLyTrinhAndChiTiet(mocBanDau, beRongLong) {
-            let currentLyTrinh = mocBanDau;
-            let previousTenGt = null;
-            let previousChieuDaiCong = 0;
+            const groupedData = new Map();
+            const tenGtOrder = [];
 
-            for (let i = 1; i < processedData.length; i++) {
-                const currentRow = processedData[i];
-                if (currentRow.isHeader) continue;
+            processedData.forEach(row => {
+                if (row.isHeader) return;
+                const tenGt = row.cells[0];
+                if (!tenGt) return;
 
-                const currentTenGt = currentRow.cells[0] || '';
-                const chieuDaiCong = parseFloat(currentRow.cells[2]) || 0;
-                const loaiCongValue = currentRow.cells[1];
-                const pipeType = pipeTypeMap[currentTenGt];
-
-                const nextRow = (i + 1 < processedData.length) ? processedData[i + 1] : null;
-                const nextTenGt = nextRow ? (nextRow.cells[0] || '') : null;
-
-                if (currentTenGt && currentTenGt !== '') {
-                    if (currentTenGt !== previousTenGt) {
-                        if (previousTenGt !== null) {
-                            currentLyTrinh += previousChieuDaiCong + beRongLong;
-                        }
-
-                        if (currentTenGt === nextTenGt) {
-                            currentRow.cells[10] = '';
-                            currentRow.cells[11] = '';
-                        } else {
-                            const km = Math.floor(currentLyTrinh / 1000);
-                            const m = Math.round(currentLyTrinh % 1000);
-                            currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
-
-                            currentRow.cells[11] = generateChiTietCong(currentTenGt, pipeType, loaiCongValue);
-                        }
-                    } else {
-                        const km = Math.floor(currentLyTrinh / 1000);
-                        const m = Math.round(currentLyTrinh % 1000);
-                        currentRow.cells[10] = `Km${km}+${m.toString().padStart(3, '0')}`;
-
-                        currentRow.cells[11] = generateChiTietCong(currentTenGt, pipeType, loaiCongValue);
-                    }
-
-                    previousTenGt = currentTenGt;
-                    previousChieuDaiCong = chieuDaiCong;
-
-                } else {
-                    currentRow.cells[10] = '';
-                    currentRow.cells[11] = '';
+                if (!groupedData.has(tenGt)) {
+                    groupedData.set(tenGt, []);
+                    tenGtOrder.push(tenGt);
                 }
+                groupedData.get(tenGt).push(row);
+            });
+
+            let currentLyTrinh = mocBanDau;
+
+            for (const tenGt of tenGtOrder) {
+                const group = groupedData.get(tenGt);
+                if (!group || group.length === 0) continue;
+
+                const lastRowOfGroup = group[group.length - 1];
+                
+                const km = Math.floor(currentLyTrinh / 1000);
+                const m_rounded = Math.round(currentLyTrinh % 1000); 
+                lastRowOfGroup.cells[10] = `Km${km}+${m_rounded.toString().padStart(3, '0')}`;
+
+                const pipeType = pipeTypeMap[tenGt];
+                const loaiCongValue = lastRowOfGroup.cells[1];
+                lastRowOfGroup.cells[11] = generateChiTietCong(tenGt, pipeType, loaiCongValue);
+
+                const chieuDaiCong = parseFloat(lastRowOfGroup.cells[2]) || 0;
+                currentLyTrinh += chieuDaiCong + beRongLong;
             }
         }
+
 
         function generateChiTietCong(tenGt, pipeType, loaiCongValue) {
             const chiTiet = chiTietCongMap[tenGt];
+            if (!chiTiet || !loaiCongValue || !pipeType) return '';
 
-            if (!chiTiet || !loaiCongValue || loaiCongValue.trim() === '' || !pipeType) {
-                return '';
-            }
-
-            if (pipeType === 'hop') {
-                return `CH${loaiCongValue}-${chiTiet}`;
-            } else { // 'tron'
-                return `D${loaiCongValue}-${chiTiet}`;
-            }
+            return pipeType === 'hop' ? `CH${loaiCongValue}-${chiTiet}` : `D${loaiCongValue}-${chiTiet}`;
         }
+
+        // --- DISPLAY & EXPORT ---
 
         function displayResult() {
             const resultDiv = document.getElementById('result');
             const outputTextarea = document.getElementById('outputData');
 
             let tableHTML = '<table><thead><tr>';
-
             const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
-            headers.forEach(header => {
-                tableHTML += `<th>${header}</th>`;
-            });
+            headers.forEach(header => tableHTML += `<th>${header}</th>`);
             tableHTML += '</tr></thead><tbody>';
 
             let outputText = '';
 
-            processedData.forEach((row, index) => {
+            processedData.forEach((row) => {
                 if (row.isHeader) {
                     outputText += row.cells.join('\t') + '\n';
                     return;
@@ -1042,15 +1096,9 @@
 
                 const rowClass = row.isChanged ? 'changed-row' : '';
                 tableHTML += `<tr class="${rowClass}">`;
-
-                const rowData = [];
-                row.cells.forEach((cell, cellIndex) => {
-                    tableHTML += `<td>${cell}</td>`;
-                    rowData.push(cell);
-                });
-
+                row.cells.forEach(cell => tableHTML += `<td>${cell}</td>`);
                 tableHTML += '</tr>';
-                outputText += rowData.join('\t') + '\n';
+                outputText += row.cells.join('\t') + '\n';
             });
 
             tableHTML += '</tbody></table>';
@@ -1088,7 +1136,6 @@
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
-
                 showCustomAlert(`Đã tải file ${filename} thành công!`);
             }
         }
