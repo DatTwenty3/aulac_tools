@@ -745,10 +745,9 @@
             const requiredCols = ['mặt đất tự nhiên', 'đàn giếng thu', 'lưng cống', 'đáy dòng chảy', 'đáy hố lắng', 'đáy móng giếng thu', 'đáy móng cống'];
 
             for (const block of blocks) {
-                // Check if this block is intentionally empty (length = 0)
                 let isIntentionallyEmpty = false;
                 if (block.infoLine) {
-                    const infoCells = block.infoLine.split(/\t|\s{2,}/).map(c => c.trim());
+                    const infoCells = block.infoLine.split(/\t|\s{2,}/).map(c => c.trim().replace(',', '.'));
                     const pipeTypeIndex = infoCells.findIndex(cell => cell.startsWith('Þ') || cell.toUpperCase().startsWith('HV'));
                     if (pipeTypeIndex !== -1) {
                         for (let i = pipeTypeIndex + 1; i < infoCells.length; i++) {
@@ -761,7 +760,7 @@
                 }
 
                 if (isIntentionallyEmpty) {
-                    continue; // Skip column validation for this block
+                    continue; 
                 }
 
                 for (const line of block.dataLines) {
@@ -780,11 +779,11 @@
                         const missingCount = MIN_DATA_COLUMNS - numericCount;
                         const missingCols = requiredCols.slice(numericCount);
                         firstError = { missingCount, missingCols };
-                        break; // Exit inner loop
+                        break;
                     }
                 }
                 if (firstError) {
-                    break; // Exit outer loop
+                    break;
                 }
             }
 
@@ -803,7 +802,7 @@
             blocks.forEach(block => {
                 if (!block.infoLine) return; 
 
-                const infoCells = block.infoLine.split(/\t|\s{2,}/).map(cell => cell.trim());
+                const infoCells = block.infoLine.split(/\t|\s{2,}/).map(cell => cell.trim().replace(',', '.'));
                 let chieuDaiCong = '';
                 
                 const pipeTypeIndex = infoCells.findIndex(cell => cell.startsWith('Þ') || cell.toUpperCase().startsWith('HV'));
@@ -865,8 +864,8 @@
                     if (pipeTypeIndex !== -1) {
                         currentBlockLoaiCongRaw = infoCells[pipeTypeIndex];
                         for (let i = pipeTypeIndex + 1; i < infoCells.length; i++) {
-                            if (infoCells[i] !== '' && !isNaN(parseFloat(infoCells[i]))) {
-                                chieuDaiCong = infoCells[i];
+                            if (infoCells[i] !== '' && !isNaN(parseFloat(infoCells[i].replace(',', '.')))) {
+                                chieuDaiCong = infoCells[i].replace(',', '.');
                                 break;
                             }
                         }
@@ -898,13 +897,13 @@
                     newRow[0] = block.tenGt;
                     newRow[2] = chieuDaiCong;
                     
-                    newRow[3] = cells[dataStartIndex] || '';
-                    newRow[4] = cells[dataStartIndex + 1] || '';
-                    newRow[5] = cells[dataStartIndex + 2] || '';
-                    newRow[6] = cells[dataStartIndex + 3] || '';
-                    newRow[7] = cells[dataStartIndex + 4] || '';
-                    newRow[8] = cells[dataStartIndex + 5] || '';
-                    newRow[9] = cells[dataStartIndex + 6] || '';
+                    newRow[3] = (cells[dataStartIndex] || '').replace(',', '.');
+                    newRow[4] = (cells[dataStartIndex + 1] || '').replace(',', '.');
+                    newRow[5] = (cells[dataStartIndex + 2] || '').replace(',', '.');
+                    newRow[6] = (cells[dataStartIndex + 3] || '').replace(',', '.');
+                    newRow[7] = (cells[dataStartIndex + 4] || '').replace(',', '.');
+                    newRow[8] = (cells[dataStartIndex + 5] || '').replace(',', '.');
+                    newRow[9] = (cells[dataStartIndex + 6] || '').replace(',', '.');
 
                     if (previousBlockLoaiCong === null) {
                         newRow[1] = currentBlockProcessedLoaiCong;
@@ -990,7 +989,7 @@
 
                 if (pipeTypeCellIndex !== -1) {
                      for (let i = pipeTypeCellIndex + 1; i < cells.length; i++) {
-                        if (cells[i].trim() !== '' && !isNaN(parseFloat(cells[i].trim()))) {
+                        if (cells[i].trim() !== '' && !isNaN(parseFloat(cells[i].trim().replace(',', '.')))) {
                             cells[i] = newValue;
                             lengthUpdated = true;
                             break;
