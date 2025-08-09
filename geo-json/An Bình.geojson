@@ -3670,7 +3670,11 @@
         "stt": "5",
         "dien_tich_km2": "61.84",
         "dan_so": "51382",
-        "mat_do_km2": "830.89"
+        "mat_do_km2": "830.89",
+        "bi_thu": "Khuyết",
+        "chu_tich": "Phan Thanh Hoàng",
+        "sdt_bt": "0942.546.484",
+        "sdt_ct": "0939.391.050"
       }
     }
   ]

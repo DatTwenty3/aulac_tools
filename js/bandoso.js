@@ -8,7 +8,11 @@ const fieldMap = {
   stt: 'Số thứ tự',
   dien_tich_km2: 'Diện tích (km²)',
   dan_so: 'Dân số',
-  mat_do_km2: 'Mật độ (người/km²)'
+  mat_do_km2: 'Mật độ (người/km²)',
+  bi_thu: 'Bí thư',
+  sdt_bt: 'SĐT Bí thư',
+  chu_tich: 'Chủ tịch',
+  sdt_ct: 'SĐT Chủ tịch'
 };
 
 let cachedGeojsonFiles = [];
