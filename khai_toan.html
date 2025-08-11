@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ tính khái toán Đường - Cầu</title>
+    <style>
+        /* --- Thiết Lập Cơ Bản & Font Chữ --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            /* Nền gradient động với màu tối */
+            background: linear-gradient(-45deg, #111111, #2F2F2F, #111111, #222222);
+            background-size: 400% 400%;
+            animation: gradientAnimation 20s ease infinite;
+            color: #F6F6F6; /* Chữ sáng từ bộ màu */
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* --- Container Chính - Hiệu ứng Liquid Glass --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(47, 47, 47, 0.4); /* #2F2F2F với alpha */
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-radius: 30px;
+            border: 1px solid rgba(246, 246, 246, 0.1); /* #F6F6F6 với alpha */
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* --- Header --- */
+        .header {
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #F6F6F6;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            color: #F6F6F6;
+            opacity: 0.8;
+        }
+
+        /* --- Bố cục nội dung --- */
+        .content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 10px 30px 30px 30px;
+        }
+
+        .section {
+            padding: 20px 0;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #F6F6F6;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #FFCB74; /* Màu nhấn */
+        }
+
+        /* --- Ô Nhập Liệu --- */
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #F6F6F6;
+            opacity: 0.9;
+            font-size: 1em;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            background: rgba(17, 17, 17, 0.5); /* #111111 với alpha */
+            color: #F6F6F6;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(246, 246, 246, 0.1);
+        }
+        
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none; margin: 0;
+        }
+        input[type=number] { -moz-appearance: textfield; }
+        
+        .input-group input::placeholder { color: rgba(246, 246, 246, 0.4); }
+        
+        .input-group input:focus {
+            outline: none;
+            background: rgba(17, 17, 17, 0.8);
+            box-shadow: 0 0 0 4px rgba(255, 203, 116, 0.5); /* Màu nhấn */
+            border-color: #FFCB74; /* Màu nhấn */
+        }
+        
+        /* --- Giao diện Thẻ Lựa Chọn Đơn Giá --- */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .option-card {
+            display: block;
+            background: rgba(47, 47, 47, 0.3); /* #2F2F2F với alpha */
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            border: 1px solid rgba(246, 246, 246, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .option-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            background: rgba(47, 47, 47, 0.5);
+        }
+        
+        .option-card.selected {
+            border-color: #FFCB74; /* Màu nhấn */
+            box-shadow: 0 0 0 3px rgba(255, 203, 116, 0.6); /* Màu nhấn */
+            background: rgba(47, 47, 47, 0.7);
+        }
+
+        .option-card p { margin: 0 0 8px 0; font-size: 0.9em; line-height: 1.5; color: #F6F6F6; opacity: 0.9; }
+        .option-card p:last-child { margin-bottom: 0; }
+        .option-card strong { color: #F6F6F6; }
+        .option-card .cost { font-weight: bold; color: #FFCB74; }
+        .option-card input[type="radio"] { display: none; }
+
+        /* --- Khu Vực Kết Quả --- */
+        .results-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .result-item {
+            background: rgba(47, 47, 47, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .result-item strong { display: block; margin-bottom: 8px; font-size: 1em; font-weight: 500; color: #F6F6F6; opacity: 0.8; }
+        
+        .result-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #F6F6F6;
+            word-wrap: break-word;
+            transition: color 0.3s ease;
+        }
+        
+        .unit { font-size: 1em; opacity: 0.7; margin-left: 8px; color: #F6F6F6; }
+        
+        .value-updated {
+            color: #34c759 !important;
+            transition: color 0.1s ease-in-out;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header h1 { font-size: 2em; }
+            .header p { font-size: 1em; }
+            .content { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛣️ Công cụ tính khái toán</h1>
+            <p>Công cụ tính toán tự động các thông số và chi phí kỹ thuật</p>
+        </div>
+        
+        <div class="content">
+            <!-- THÔNG SỐ HÌNH HỌC -->
+            <div class="section">
+                <h2 class="section-title">Thông Số Hình Học</h2>
+                <div class="input-group">
+                    <label for="roadLength">Chiều dài tuyến đường :</label>
+                    <input type="number" id="roadLength" placeholder="Nhập chiều dài (m)" step="0.01">
+                </div>
+                 <div class="input-group">
+                    <label for="bridgeLength">Chiều dài cầu :</label>
+                    <input type="number" id="bridgeLength" placeholder="Nhập chiều dài (m)" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="roadWidth">Chiều rộng mặt đường :</label>
+                    <input type="number" id="roadWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="shoulderWidth">Chiều rộng lề gia cố :</label>
+                    <input type="number" id="shoulderWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="medianWidth">Chiều rộng dải phân cách :</label>
+                    <input type="number" id="medianWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="sidewalkWidth">Chiều rộng vỉa hè :</label>
+                    <input type="number" id="sidewalkWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="earthWidth">Chiều rộng lề đất :</label>
+                    <input type="number" id="earthWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                </div>
+                 <div class="input-group">
+                    <label for="bridgeWidth">Chiều rộng cầu phần xe chạy :</label>
+                    <input type="number" id="bridgeWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="railingWidth">Chiều rộng lan can :</label>
+                    <input type="number" id="railingWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                </div>
+            </div>
+
+            <!-- LỰA CHỌN ĐƠN GIÁ -->
+            <div class="section">
+                <h2 class="section-title">Lựa Chọn Đơn Giá</h2>
+                <div class="input-group">
+                    <label>1. Chọn đơn giá phần đường:</label>
+                    <div id="roadOptionsContainer" class="options-container"></div>
+                </div>
+                <div class="input-group">
+                    <label>2. Chọn đơn giá phần cầu:</label>
+                    <div id="bridgeOptionsContainer" class="options-container"></div>
+                </div>
+                <div class="input-group">
+                    <label>3. Chọn đơn giá phần cấp nước:</label>
+                    <div id="waterSupplyOptionsContainer" class="options-container"></div>
+                </div>
+                <div class="input-group">
+                    <label>4. Chọn đơn giá cống thoát nước mưa:</label>
+                    <div id="infraOptionsContainer" class="options-container"></div>
+                </div>
+                 <div class="input-group">
+                    <label>5. Chọn đơn giá cáp điện & chiếu sáng:</label>
+                    <div id="powerCableOptionsContainer" class="options-container"></div>
+                </div>
+            </div>
+            
+            <!-- KẾT QUẢ -->
+            <div class="section results">
+                <h2 class="section-title">Kết Quả Tính Toán</h2>
+                <div class="results-content">
+                    <div class="result-item">
+                        <strong>Chi phí xây dựng phần đường:</strong>
+                        <span class="result-value" id="roadCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Chi phí xây dựng phần cầu:</strong>
+                        <span class="result-value" id="bridgeCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Chi phí xây dựng phần cấp nước:</strong>
+                        <span class="result-value" id="waterSupplyCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Chi phí xây dựng cống thoát nước:</strong>
+                        <span class="result-value" id="infraCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
+                     <div class="result-item">
+                        <strong>Chi phí XD cáp điện & chiếu sáng:</strong>
+                        <span class="result-value" id="powerCableCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Chiều rộng nền đường:</strong>
+                        <span class="result-value" id="totalRoadWidth">0.00</span>
+                        <span class="unit">m</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Diện tích mặt cầu:</strong>
+                        <span class="result-value" id="bridgeArea">0.00</span>
+                        <span class="unit">m²</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let costData = {};
+
+        function formatCurrency(num) {
+            if (isNaN(num) || !isFinite(num)) return '0';
+            return Math.round(num).toLocaleString('vi-VN');
+        }
+
+        function formatNumber(num) {
+            if (isNaN(num) || !isFinite(num)) return '0.00';
+            return num.toFixed(2);
+        }
+        
+        function animateValueUpdate(element) {
+            element.classList.add('value-updated');
+            setTimeout(() => {
+                element.classList.remove('value-updated');
+            }, 300);
+        }
+
+        function calculate() {
+            const A = parseFloat(document.getElementById('roadLength').value) || 0;
+            const B = parseFloat(document.getElementById('roadWidth').value) || 0;
+            const C = parseFloat(document.getElementById('shoulderWidth').value) || 0;
+            const D = parseFloat(document.getElementById('medianWidth').value) || 0;
+            const E = parseFloat(document.getElementById('sidewalkWidth').value) || 0;
+            const F = parseFloat(document.getElementById('earthWidth').value) || 0;
+            const L = parseFloat(document.getElementById('bridgeLength').value) || 0;
+            const Bc = parseFloat(document.getElementById('bridgeWidth').value) || 0;
+            const Blc = parseFloat(document.getElementById('railingWidth').value) || 0;
+
+            const totalRoadWidth = F + E + C + D + B + C + E + F;
+            const bridgeArea = L * (Blc + Bc + Blc);
+
+            document.getElementById('totalRoadWidth').textContent = formatNumber(totalRoadWidth);
+            document.getElementById('bridgeArea').textContent = formatNumber(bridgeArea);
+
+            if (Object.keys(costData).length === 0) return;
+
+            const roadCostKey = document.querySelector('input[name="roadCostType"]:checked')?.value;
+            const bridgeCostKey = document.querySelector('input[name="bridgeCostType"]:checked')?.value;
+            const waterSupplyCostKey = document.querySelector('input[name="waterSupplyCostType"]:checked')?.value;
+            const infraCostKey = document.querySelector('input[name="infraCostType"]:checked')?.value;
+            const powerCableCostKey = document.querySelector('input[name="powerCableCostType"]:checked')?.value;
+
+            let roadCost = 0;
+            if (roadCostKey && costData.suat_von_dau_tu_duong_o_to[roadCostKey]) {
+                const roadCostPerKm = costData.suat_von_dau_tu_duong_o_to[roadCostKey].chi_phi_xay_dung;
+                const roadLengthKm = (A - L) / 1000;
+                if (roadLengthKm > 0) {
+                    roadCost = roadLengthKm * roadCostPerKm * 1000000;
+                }
+            }
+            
+            let bridgeCost = 0;
+            if (bridgeCostKey && costData.suat_von_dau_tu_cau[bridgeCostKey]) {
+                const bridgeCostPerM2 = costData.suat_von_dau_tu_cau[bridgeCostKey].chi_phi_xay_dung;
+                bridgeCost = bridgeArea * bridgeCostPerM2 * 1000;
+            }
+
+            let waterSupplyCost = 0;
+            if (waterSupplyCostKey && costData.gia_xay_dung_tuyen_ong_cap_nuoc && costData.gia_xay_dung_tuyen_ong_cap_nuoc[waterSupplyCostKey]) {
+                const waterSupplyCostPerKm = costData.gia_xay_dung_tuyen_ong_cap_nuoc[waterSupplyCostKey].chi_phi_xay_dung;
+                const roadLengthKm = A / 1000;
+                waterSupplyCost = (roadLengthKm * 2) * waterSupplyCostPerKm * 1000;
+            }
+
+            let infraCost = 0;
+            if (infraCostKey && costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[infraCostKey]) {
+                const infraCostPerKm = costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[infraCostKey].chi_phi_xay_dung;
+                const roadLengthKm = A / 1000;
+                infraCost = (roadLengthKm * 2) * infraCostPerKm * 1000; 
+            }
+            
+            let powerCableCost = 0;
+            if (powerCableCostKey && costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV && costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV[powerCableCostKey]) {
+                const powerCableCostPerKm = costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV[powerCableCostKey].chi_phi_xay_dung;
+                const roadLengthKm = A / 1000;
+                powerCableCost = (roadLengthKm * 2) * powerCableCostPerKm * 1000000;
+            }
+            
+            const resultElements = {
+                roadCost: document.getElementById('roadCost'),
+                bridgeCost: document.getElementById('bridgeCost'),
+                waterSupplyCost: document.getElementById('waterSupplyCost'),
+                infraCost: document.getElementById('infraCost'),
+                powerCableCost: document.getElementById('powerCableCost')
+            };
+
+            resultElements.roadCost.textContent = formatCurrency(roadCost);
+            resultElements.bridgeCost.textContent = formatCurrency(bridgeCost);
+            resultElements.waterSupplyCost.textContent = formatCurrency(waterSupplyCost);
+            resultElements.infraCost.textContent = formatCurrency(infraCost);
+            resultElements.powerCableCost.textContent = formatCurrency(powerCableCost);
+            
+            Object.values(resultElements).forEach(animateValueUpdate);
+        }
+
+        function createOptionCards(containerId, data, name) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            if (!data || Object.keys(data).length === 0) {
+                container.innerHTML = '<p>Không có dữ liệu phù hợp.</p>';
+                return;
+            }
+            let isFirst = true;
+
+            for (const key in data) {
+                const item = data[key];
+                const card = document.createElement('label');
+                card.className = 'option-card';
+
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = name;
+                radio.value = key;
+                if (isFirst) {
+                    radio.checked = true;
+                    card.classList.add('selected');
+                    isFirst = false;
+                }
+                
+                let displayUnit = item.don_vi
+                                    .replace('triệu đồng/km', 'trđ/km')
+                                    .replace('1.000 đ/m2', 'nghìn đ/m²')
+                                    .replace('1.000 đ/km', 'nghìn đ/km');
+
+                card.innerHTML = `
+                    <p><strong>${item.nhom} (Mã: ${key})</strong></p>
+                    <p>${item.mo_ta}</p>
+                    <p><strong>Chi phí XD:</strong> <span class="cost">${formatCurrency(item.chi_phi_xay_dung)}</span> ${displayUnit}</p>
+                `;
+                card.prepend(radio);
+                container.appendChild(card);
+            }
+        }
+
+        function handleCardSelection(containerId) {
+            const container = document.getElementById(containerId);
+            const cards = container.querySelectorAll('.option-card');
+            cards.forEach(card => {
+                const radio = card.querySelector('input[type="radio"]');
+                if (radio.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+        }
+
+        async function initializeApp() {
+            try {
+                const response = await fetch('./data/khai_toan_data.json');
+                if (!response.ok) throw new Error(`Lỗi mạng: ${response.statusText}`);
+                costData = await response.json();
+
+                createOptionCards('roadOptionsContainer', costData.suat_von_dau_tu_duong_o_to, 'roadCostType');
+                createOptionCards('bridgeOptionsContainer', costData.suat_von_dau_tu_cau, 'bridgeCostType');
+                
+                if (costData.gia_xay_dung_tuyen_ong_cap_nuoc) {
+                    const waterData = {};
+                    for (const key in costData.gia_xay_dung_tuyen_ong_cap_nuoc) {
+                         if (costData.gia_xay_dung_tuyen_ong_cap_nuoc[key].don_vi === '1.000 đ/km') {
+                            waterData[key] = costData.gia_xay_dung_tuyen_ong_cap_nuoc[key];
+                        }
+                    }
+                    createOptionCards('waterSupplyOptionsContainer', waterData, 'waterSupplyCostType');
+                } else {
+                     document.getElementById('waterSupplyOptionsContainer').innerHTML = '<p>Không tìm thấy dữ liệu "gia_xay_dung_tuyen_ong_cap_nuoc".</p>';
+                }
+
+                const infraData = {};
+                for (const key in costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua) {
+                    if (costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[key].don_vi === '1.000 đ/km') {
+                        infraData[key] = costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[key];
+                    }
+                }
+                createOptionCards('infraOptionsContainer', infraData, 'infraCostType');
+                
+                if (costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV) {
+                    createOptionCards('powerCableOptionsContainer', costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV, 'powerCableCostType');
+                } else {
+                    document.getElementById('powerCableOptionsContainer').innerHTML = '<p>Không tìm thấy dữ liệu "suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV".</p>';
+                }
+
+                const allInputs = document.querySelectorAll('input[type="number"], input[type="radio"]');
+                allInputs.forEach(input => {
+                    input.addEventListener('input', () => {
+                        if (input.type === 'radio') {
+                           handleCardSelection(input.closest('.options-container').id);
+                        }
+                        calculate();
+                    });
+                });
+                
+                calculate();
+
+            } catch (error) {
+                console.error("Không thể khởi tạo ứng dụng:", error);
+                alert("Lỗi: Không thể tải tệp data.json. Vui lòng đảm bảo tệp tồn tại trong cùng thư mục với tệp HTML và kiểm tra lại đường dẫn.");
+            }
+        }
+
+        window.addEventListener('load', initializeApp);
+    </script>
+</body>
+</html>

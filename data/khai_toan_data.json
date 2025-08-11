@@ -1,0 +1,679 @@
+{
+  "suat_von_dau_tu_duong_o_to": {
+    "14120.01": {
+      "nhom": "Đường cấp I - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 32,5m, mặt đường rộng 22,5m, dải phân cách giữa rộng 3m, lề rộng 2x3,5m (trong đó lề gia cố rộng 2x3m đồng nhất kết cấu áo đường), mặt đường gồm 2 lớp bê tông nhựa dày 12cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 76891,
+      "chi_phi_xay_dung": 70823,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.02": {
+      "nhom": "Đường cấp I - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 32,5m, mặt đường rộng 22,5m, dải phân cách giữa rộng 3m, lề rộng 2x3,5m (trong đó lề gia cố rộng 2x3m đồng nhất kết cấu áo đường), mặt đường láng nhựa, tiêu chuẩn nhựa 4,5 kg/m2 trên lớp móng cấp phối đá dăm",
+      "suat_von": 65420,
+      "chi_phi_xay_dung": 60258,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.03": {
+      "nhom": "Đường cấp I - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền rộng đường 31 m, mặt đường rộng 22,5m, dải phân cách giữa rộng 1,5m, lề rộng 2x3,5m (trong đó lề gia cố rộng 2x3m đồng nhất kết cấu áo đường) mặt đường gồm 2 lớp BTN dày 12cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 75428,
+      "chi_phi_xay_dung": 69469,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.04": {
+      "nhom": "Đường cấp I - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 31m, mặt đường rộng 22,5m, dải phân cách giữa rộng 1,5m, lề rộng 2x3,5m (trong đó lề gia cố rộng 2x3m đồng nhất kết cấu áo đường), mặt đường láng nhựa, tiêu chuẩn nhựa 4,5 kg/m2 trên lớp móng cấp phối đá dăm",
+      "suat_von": 63945,
+      "chi_phi_xay_dung": 58892,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.05": {
+      "nhom": "Đường cấp II - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 22,5m, mặt đường rộng 15m, dải phân cách giữa rộng 1,5m, lề rộng 2x3m (trong đó lề gia cố rộng 2x2,5m đồng nhất kết cấu áo đường) mặt đường gồm 2 lớp BTN dày 12cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 55495,
+      "chi_phi_xay_dung": 51108,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.06": {
+      "nhom": "Đường cấp II - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 22,5m, mặt đường rộng 15m, dải phân cách giữa rộng 1,5m, lề rộng 2x3m (trong đó lề gia cố rộng 2x2,5m đồng nhất kết cấu áo đường) mặt đường gồm 1 lớp BTN dày 7cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 50310,
+      "chi_phi_xay_dung": 46333,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.07": {
+      "nhom": "Đường cấp II - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 22,5m, mặt đường rộng 15m, dải phân cách giữa rộng 1,5m, lề rộng 2x3m (trong đó lề gia cố rộng 2x2,5m đồng nhất kết cấu áo đường), mặt đường láng nhựa tiêu chuẩn 4,5Kg/m2 trên lớp móng cấp phối đá dăm",
+      "suat_von": 46635,
+      "chi_phi_xay_dung": 42960,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.11": {
+      "nhom": "Đường cấp III - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 12m, mặt đường rộng 7m, lề rộng 2x2,5m (trong đó lề gia cố rộng 2x2m đồng nhất kết cấu áo đường), mặt đường gồm 2 lớp BTN dày 12cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 29579,
+      "chi_phi_xay_dung": 27246,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.12": {
+      "nhom": "Đường cấp III - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 12m, mặt đường rộng 7m, lề rộng 2x2,5m (trong đó lề gia cố rộng 2x2m đồng nhất kết cấu áo đường), mặt đường gồm 1 lớp BTN dày 7cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 26726,
+      "chi_phi_xay_dung": 24623,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.13": {
+      "nhom": "Đường cấp III - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 12m, mặt đường rộng 7m, lề rộng 2x2,5m (trong đó lề gia cố rộng 2x2m đồng nhất kết cấu áo đường), mặt đường láng nhựa tiêu chuẩn 4,5Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 25155,
+      "chi_phi_xay_dung": 23172,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.14": {
+      "nhom": "Đường cấp III - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 12m, mặt đường rộng 7m, lề rộng 2x2,5m (trong đó lề gia cố rộng 2x2m đồng nhất kết cấu áo đường), mặt đường láng nhựa tiêu chuẩn 3Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 24430,
+      "chi_phi_xay_dung": 22496,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.23": {
+      "nhom": "Đường cấp IV - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 9m, mặt đường rộng 7m, lề rộng 2x1m (trong đó lề gia cố rộng 2x0,5m đồng nhất kết cấu áo đường), mặt đường gồm 2 lớp BTN dày 12cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 20223,
+      "chi_phi_xay_dung": 18615,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.24": {
+      "nhom": "Đường cấp IV - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 9m, mặt đường rộng 7m, lề rộng 2x1m (trong đó lề gia cố rộng 2x0,5m đồng nhất kết cấu áo đường), mặt đường gồm 1 lớp BTN dày 7cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 19715,
+      "chi_phi_xay_dung": 18156,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.25": {
+      "nhom": "Đường cấp IV - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 9m, mặt đường rộng 7m, lề rộng 2x1m (trong đó lề gia cố rộng 2x0,5m đồng nhất kết cấu áo đường), mặt đường láng nhựa tiêu chuẩn 4,5Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 18748,
+      "chi_phi_xay_dung": 17262,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.26": {
+      "nhom": "Đường cấp IV - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 9m, mặt đường rộng 7m, lề rộng 2x1m (trong đó lề gia cố rộng 2x0,5m đồng nhất kết cấu áo đường), mặt đường láng nhựa tiêu chuẩn 3Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 18216,
+      "chi_phi_xay_dung": 16778,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.34": {
+      "nhom": "Đường cấp V - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 7,5m, mặt đường rộng 5,5m, lề rộng 2x1m (trong đó lề gia cố rộng 2x0,5m đồng nhất kết cấu áo đường), mặt đường gồm 1 lớp bê tông nhựa dày 7cm trên lớp móng cấp phối đá dăm",
+      "suat_von": 13998,
+      "chi_phi_xay_dung": 12886,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.35": {
+      "nhom": "Đường cấp V - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 7,5m, mặt đường rộng 5,5m, lề rộng 2x1m (trong đó lề gia cố rộng 2x0,5m đồng nhất kết cấu áo đường), mặt đường láng nhựa tiêu chuẩn 4,5Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 13998,
+      "chi_phi_xay_dung": 12886,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.36": {
+      "nhom": "Đường cấp V - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 7,5m, mặt đường rộng 5,5m, lề rộng 2x1m (trong đó lề gia cố rộng 2x0,5m đồng nhất kết cấu áo đường), mặt đường láng nhựa tiêu chuẩn 3Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 12849,
+      "chi_phi_xay_dung": 11834,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.42": {
+      "nhom": "Đường cấp VI - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 6,5m, mặt đường rộng 3,5m, lề rộng 2x1,5m, mặt đường mặt đường láng nhựa tiêu chuẩn 4,5Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 7144,
+      "chi_phi_xay_dung": 6588,
+      "chi_phi_thiet_bi": null
+    },
+    "14120.43": {
+      "nhom": "Đường cấp VI - Khu vực đồng bằng",
+      "don_vi": "triệu đồng/km",
+      "mo_ta": "Nền đường rộng 6,5m, mặt đường rộng 3,5m, lề rộng 2x1,5m, mặt đường mặt đường láng nhựa tiêu chuẩn 3Kg/m2 trên lớp móng cấp phối đá dăm hoặc đá dăm tiêu chuẩn",
+      "suat_von": 6926,
+      "chi_phi_xay_dung": 6370,
+      "chi_phi_thiet_bi": null
+    }
+  },
+  "suat_von_dau_tu_cau": {
+    "14210.01": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp < 15m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu bản mố nhẹ, móng nông tải trọng HL93, chiều dài nhịp L= 9m",
+      "suat_von": 21597,
+      "chi_phi_xay_dung": 20238,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.02": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp < 15m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm T bê tông cốt thép thường móng nông, tải trọng HL93, chiều dài nhịp 9m < L ≤ 15m",
+      "suat_von": 20923,
+      "chi_phi_xay_dung": 19610,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.03": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp < 15m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm bản bê tông cốt thép dự ứng lực móng nông, tải trọng HL93, chiều dài nhịp 12m < L ≤ 15m",
+      "suat_von": 25238,
+      "chi_phi_xay_dung": 23663,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.04": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp < 15m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm T bê tông cốt thép thường móng cọc bê tông cốt thép, tải trọng HL93, chiều dài nhịp 9m < L ≤ 15m",
+      "suat_von": 26482,
+      "chi_phi_xay_dung": 24816,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.05": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp < 15m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm bản bê tông cốt thép dự ứng lực móng cọc bê tông cốt thép, tải trọng HL93, chiều dài nhịp 12m < L ≤ 15m",
+      "suat_von": 31813,
+      "chi_phi_xay_dung": 29815,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.06": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp 15 ÷ 25m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm bản bê tông cốt thép dự ứng lực móng nông, tải trọng HL93, chiều dài nhịp 15m <L< 24m",
+      "suat_von": 28354,
+      "chi_phi_xay_dung": 26573,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.07": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp 15 ÷ 25m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm bản bê tông cốt thép dự ứng lực móng cọc bê tông cốt thép, tải trong HL93, chiều dài nhịp 15m < L <24m",
+      "suat_von": 30169,
+      "chi_phi_xay_dung": 28263,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.08": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp 25 ÷ 50m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm I, T Super T bê tông cốt thép dự ứng lực móng nông, tải trọng HL93, chiều dài nhịp L < 40m",
+      "suat_von": 35009,
+      "chi_phi_xay_dung": 32806,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.09": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp 25 ÷ 50m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm I, T Super T bê tông cốt thép dự ứng lực móng cọc bê tông cốt thép, tải trọng HL93, chiều dài nhịp L < 40m",
+      "suat_von": 39883,
+      "chi_phi_xay_dung": 37372,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.10": {
+      "nhom": "Cầu đường bộ có chiều dài nhịp 50 ÷ 100m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu dầm hộp bê tông cốt thép dự ứng lực đúc hẫng móng cọc khoan nhồi, tải trọng HL93 chiều dài nhịp lớn nhất L <100m",
+      "suat_von": 46424,
+      "chi_phi_xay_dung": 43501,
+      "chi_phi_thiet_bi": null
+    },
+    "14210.11": {
+      "nhom": "Cầu bộ hành có chiều dài nhịp 25 ÷ 50m",
+      "don_vi": "1.000 đ/m2",
+      "mo_ta": "Cầu vượt qua đường dành cho người đi bộ, dầm dàn thép chiều rộng 3m, 30m<L<50m",
+      "suat_von": 84640,
+      "chi_phi_xay_dung": 68876,
+      "chi_phi_thiet_bi": null
+    }
+  },
+  "gia_bo_phan_ket_cau": {
+    "24120.01": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 80MPa",
+      "chi_phi_xay_dung": 353723
+    },
+    "24120.02": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 100MPa",
+      "chi_phi_xay_dung": 416693
+    },
+    "24120.03": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 120MPa",
+      "chi_phi_xay_dung": 490146
+    },
+    "24120.04": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 140MPa",
+      "chi_phi_xay_dung": 551351
+    },
+    "24120.05": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 80MPa",
+      "chi_phi_xay_dung": 422252
+    },
+    "24120.06": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 100MPa",
+      "chi_phi_xay_dung": 485210
+    },
+    "24120.07": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 120MPa",
+      "chi_phi_xay_dung": 558663
+    },
+    "24120.08": {
+      "nhom": "Mặt đường - Cấp phối đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 140MPa",
+      "chi_phi_xay_dung": 619855
+    },
+    "24120.09": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 80MPa",
+      "chi_phi_xay_dung": 333964
+    },
+    "24120.10": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 100MPa",
+      "chi_phi_xay_dung": 416619
+    },
+    "24120.11": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 120MPa",
+      "chi_phi_xay_dung": 499274
+    },
+    "24120.12": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 3,0 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 140MPa",
+      "chi_phi_xay_dung": 581941
+    },
+    "24120.13": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 80Mpa",
+      "chi_phi_xay_dung": 402468
+    },
+    "24120.14": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 100Mpa",
+      "chi_phi_xay_dung": 485123
+    },
+    "24120.15": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 120Mpa",
+      "chi_phi_xay_dung": 567802
+    },
+    "24120.16": {
+      "nhom": "Mặt đường - Đá dăm láng nhựa tiêu chuẩn 4,5 kg/m2",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 140Mpa",
+      "chi_phi_xay_dung": 650457
+    },
+    "24120.17": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung dày 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 130Mpa",
+      "chi_phi_xay_dung": 711226
+    },
+    "24120.18": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung dày 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 140Mpa",
+      "chi_phi_xay_dung": 741829
+    },
+    "24120.19": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung dày 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 160Mpa",
+      "chi_phi_xay_dung": 803033
+    },
+    "24120.20": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung dày 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eyc ≥ 180Mpa",
+      "chi_phi_xay_dung": 864250
+    },
+    "24120.21": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt mịn 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 130Mpa",
+      "chi_phi_xay_dung": 943896
+    },
+    "24120.22": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt mịn 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 140Mpa",
+      "chi_phi_xay_dung": 974486
+    },
+    "24120.23": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt mịn 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 160Mpa",
+      "chi_phi_xay_dung": 1035690
+    },
+    "24120.24": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt mịn 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 180Mpa",
+      "chi_phi_xay_dung": 1096895
+    },
+    "24120.25": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 130Mpa",
+      "chi_phi_xay_dung": 920630
+    },
+    "24120.26": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 140Mpa",
+      "chi_phi_xay_dung": 951220
+    },
+    "24120.27": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 160Mpa",
+      "chi_phi_xay_dung": 1012425
+    },
+    "24120.28": {
+      "nhom": "Mặt đường - Bê tông nhựa hạt trung 5cm + hạt thô 7cm trên móng cấp phối đá dăm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Eye ≥ 180Mpa",
+      "chi_phi_xay_dung": 1073629
+    },
+    "24120.29": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 15cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 24cm",
+      "chi_phi_xay_dung": 1462043
+    },
+    "24120.30": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 15cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 26cm",
+      "chi_phi_xay_dung": 1572412
+    },
+    "24120.31": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 15cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 28cm",
+      "chi_phi_xay_dung": 1682793
+    },
+    "24120.32": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 18cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 24cm",
+      "chi_phi_xay_dung": 1489549
+    },
+    "24120.33": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 18cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 26cm",
+      "chi_phi_xay_dung": 1599918
+    },
+    "24120.34": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 18cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 28cm",
+      "chi_phi_xay_dung": 1710299
+    },
+    "24120.35": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 20cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 24cm",
+      "chi_phi_xay_dung": 1507890
+    },
+    "24120.36": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 20cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 26cm",
+      "chi_phi_xay_dung": 1618271
+    },
+    "24120.37": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm dày 20cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 28cm",
+      "chi_phi_xay_dung": 1728640
+    },
+    "24120.38": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm gia cố 6% xi măng dày 15cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 24cm",
+      "chi_phi_xay_dung": 1527292
+    },
+    "24120.39": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm gia cố 6% xi măng dày 15cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 26cm",
+      "chi_phi_xay_dung": 1637661
+    },
+    "24120.40": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm gia cố 6% xi măng dày 15cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 28cm",
+      "chi_phi_xay_dung": 1748054
+    },
+    "24120.41": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm gia cố 6% xi măng dày 18cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 24cm",
+      "chi_phi_xay_dung": 1567860
+    },
+    "24120.42": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm gia cố 6% xi măng dày 18cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 26cm",
+      "chi_phi_xay_dung": 1678229
+    },
+    "24120.43": {
+      "nhom": "Mặt đường - Bê tông xi măng, móng cấp phối đá dăm gia cố 6% xi măng dày 18cm",
+      "don_vi": "đ/m2",
+      "mo_ta": "Bê tông xi măng mác 350 dày 28cm",
+      "chi_phi_xay_dung": 1788610
+    },
+    "24120.44": {
+      "nhom": "Rãnh dọc",
+      "don_vi": "đ/m",
+      "mo_ta": "Rãnh đá hộc xây kích thước 40cm x (40cm+120cm) dày 25cm",
+      "chi_phi_xay_dung": 1049169
+    },
+    "24120.45": {
+      "nhom": "Rãnh dọc",
+      "don_vi": "đ/m",
+      "mo_ta": "Rãnh bê tông xi măng mác M150 dày 12cm kích thước 40cm x (40cm+120cm)",
+      "chi_phi_xay_dung": 598849
+    }
+  },
+  "gia_xay_dung_tuyen_ong_cap_nuoc": {
+    "23100.01": {
+      "nhom": "Ống Gang dẻo",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN100",
+      "chi_phi_xay_dung": 939926
+    },
+    "23100.02": {
+      "nhom": "Ống Gang dẻo",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN150",
+      "chi_phi_xay_dung": 1106538
+    },
+    "23100.03": {
+      "nhom": "Ống Gang dẻo",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN200",
+      "chi_phi_xay_dung": 1378731
+    },
+    "23100.04": {
+      "nhom": "Ống Gang dẻo",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN300",
+      "chi_phi_xay_dung": 2825098
+    },
+    "23100.05": {
+      "nhom": "Ống Gang dẻo",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN350",
+      "chi_phi_xay_dung": 4153895
+    },
+    "23100.06": {
+      "nhom": "Ống Gang dẻo",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN450",
+      "chi_phi_xay_dung": 5371578
+    },
+    "23100.07": {
+      "nhom": "Ống Nhựa HDPE",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN50",
+      "chi_phi_xay_dung": 89763
+    },
+    "23100.08": {
+      "nhom": "Ống Nhựa HDPE",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN63",
+      "chi_phi_xay_dung": 104539
+    },
+    "23100.09": {
+      "nhom": "Ống Nhựa HDPE",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN75",
+      "chi_phi_xay_dung": 180420
+    },
+    "23100.10": {
+      "nhom": "Ống Nhựa HDPE",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "DN90",
+      "chi_phi_xay_dung": 182132
+    }
+  },
+  "gia_xay_dung_tuyen_cong_thoat_nuoc_mua": {
+    "23200.01": {
+      "nhom": "Cống tròn BTCT - Tuyến cống",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "Cống D400",
+      "chi_phi_xay_dung": 1262588
+    },
+    "23200.02": {
+      "nhom": "Cống tròn BTCT - Tuyến cống",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "Cống D600",
+      "chi_phi_xay_dung": 2054152
+    },
+    "23200.03": {
+      "nhom": "Cống tròn BTCT - Tuyến cống",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "Cống D800",
+      "chi_phi_xay_dung": 3047043
+    },
+    "23200.04": {
+      "nhom": "Cống tròn BTCT - Tuyến cống",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "Cống D1000",
+      "chi_phi_xay_dung": 4040505
+    },
+    "23200.05": {
+      "nhom": "Cống tròn BTCT - Tuyến cống",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "Cống D1200",
+      "chi_phi_xay_dung": 5479119
+    },
+    "23200.06": {
+      "nhom": "Cống tròn BTCT - Tuyến cống",
+      "don_vi": "1.000 đ/km",
+      "mo_ta": "Cống D1500",
+      "chi_phi_xay_dung": 7454478
+    },
+    "23200.07": {
+      "nhom": "Cửa xả thoát nước mưa",
+      "don_vi": "1.000 đ/cái",
+      "mo_ta": "Cống tròn D600",
+      "chi_phi_xay_dung": 5697
+    },
+    "23200.08": {
+      "nhom": "Cửa xả thoát nước mưa",
+      "don_vi": "1.000 đ/cái",
+      "mo_ta": "Cống tròn D800",
+      "chi_phi_xay_dung": 7364
+    },
+    "23200.09": {
+      "nhom": "Cửa xả thoát nước mưa",
+      "don_vi": "1.000 đ/cái",
+      "mo_ta": "Cống tròn D1000",
+      "chi_phi_xay_dung": 10801
+    },
+    "23200.10": {
+      "nhom": "Cửa xả thoát nước mưa",
+      "don_vi": "1.000 đ/cái",
+      "mo_ta": "Cống tròn D1200",
+      "chi_phi_xay_dung": 17675
+    },
+    "23200.11": {
+      "nhom": "Cửa xả thoát nước mưa",
+      "don_vi": "1.000 đ/cái",
+      "mo_ta": "Cống tròn D1500",
+      "chi_phi_xay_dung": 19513
+    }
+  },
+  "suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV": {
+    "12432.01": {
+      "nhom": "Đường dây cáp điện hạ thế 0,4kV sử dụng cáp vặn xoắn ABC, cột bê tông ly tâm cao 8,5m",
+      "don_vi": "1.000 đ/km cáp",
+      "mo_ta": "ABC 4x120",
+      "suat_von_dau_tu": 863679,
+      "chi_phi_xay_dung": 782698
+    },
+    "12432.02": {
+      "nhom": "Đường dây cáp điện hạ thế 0,4kV sử dụng cáp vặn xoắn ABC, cột bê tông ly tâm cao 8,5m",
+      "don_vi": "1.000 đ/km cáp",
+      "mo_ta": "ABC 4x95",
+      "suat_von_dau_tu": 766241,
+      "chi_phi_xay_dung": 694404
+    },
+    "12432.03": {
+      "nhom": "Đường dây cáp điện hạ thế 0,4kV sử dụng cáp vặn xoắn ABC, cột bê tông ly tâm cao 8,5m",
+      "don_vi": "1.000 đ/km cáp",
+      "mo_ta": "ABC 4x70",
+      "suat_von_dau_tu": 722986,
+      "chi_phi_xay_dung": 655207
+    }
+  }
+}
