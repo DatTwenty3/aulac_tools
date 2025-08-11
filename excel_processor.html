@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LEDAT - Excel Data Processor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* General Styling */
         * {
@@ -13,83 +16,145 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #E9DDBE;
+            font-family: 'Inter', sans-serif;
+            background-color: #F6F6F6;
             min-height: 100vh;
             padding: 20px;
-            color: #1D2536;
+            color: #111111;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Liquid Background */
+        .liquid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
         }
 
-        /* Main Container */
+        .liquid-background .shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.25;
+        }
+
+        .shape1 {
+            width: 600px;
+            height: 600px;
+            background: #FFCB74;
+            top: -15%;
+            left: -15%;
+            animation: moveLiquid 35s infinite alternate ease-in-out;
+        }
+
+        .shape2 {
+            width: 500px;
+            height: 500px;
+            background: #FFDFB9;
+            bottom: -20%;
+            right: -20%;
+            animation: moveLiquid 30s infinite alternate-reverse ease-in-out;
+        }
+        
+        .shape3 {
+            width: 400px;
+            height: 400px;
+            background: #FFD39B;
+            bottom: 25%;
+            left: 20%;
+            animation: moveLiquid 40s infinite alternate ease-in-out;
+        }
+
+
+        /* Main Container - Apple's Frosted Glass Effect */
         .container {
             max-width: 1200px;
-            margin: 0 auto;
-            background: #FFFFFF;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(29, 37, 54, 0.1);
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+            border-radius: 32px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.6);
             padding: 40px;
-            border: 1px solid rgba(29, 37, 54, 0.1);
+            border: 1.5px solid rgba(255, 255, 255, 0.8);
             animation: fadeIn 0.8s ease-out;
         }
 
         /* Typography */
         h1 {
-            color: #1D2536;
+            color: #111111;
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2.2rem;
-            font-weight: 600;
-            text-shadow: 0 2px 4px rgba(29, 37, 54, 0.1);
+            font-size: 2.5rem;
+            font-weight: 700;
+            animation: slideDown 0.6s ease-out;
         }
 
         h3 {
-            color: #1D2536;
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            font-weight: 500;
+            color: #111111;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            border-left: 4px solid #FFCB74;
+            padding-left: 12px;
+            animation: slideInLeft 0.7s ease-out;
         }
 
         /* Input & Textarea */
         .input-section {
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         textarea {
             width: 100%;
             height: 200px;
-            padding: 15px;
-            border: 2px solid rgba(29, 37, 54, 0.2);
-            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid rgba(47, 47, 47, 0.1);
+            border-radius: 16px;
             font-family: 'Consolas', 'Monaco', monospace;
-            font-size: 13px;
-            background: #FFFFFF;
-            color: #1D2536;
+            font-size: 14px;
+            background: rgba(246, 246, 246, 0.5);
+            color: #111111;
             transition: all 0.3s ease;
             resize: vertical;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         textarea:focus {
             outline: none;
-            border-color: #D84F34;
-            box-shadow: 0 0 15px rgba(216, 79, 52, 0.2);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 3px rgba(255, 203, 116, 0.5);
+            background: #fff;
         }
 
         /* Custom Inputs */
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
             font-weight: 500;
-            color: #1D2536;
+            color: #2F2F2F;
         }
 
         input[type="number"] {
-            padding: 8px 12px;
-            border: 2px solid rgba(29, 37, 54, 0.2);
-            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid rgba(47, 47, 47, 0.1);
+            border-radius: 12px;
             font-size: 14px;
-            width: 150px;
-            background: #FFFFFF;
-            color: #1D2536;
+            width: 180px;
+            background: rgba(246, 246, 246, 0.5);
+            color: #111111;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        input[type="number"]:focus {
+             outline: none;
+             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 3px rgba(255, 203, 116, 0.5);
+             background: #fff;
         }
 
         /* Buttons */
@@ -98,79 +163,87 @@
             gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
-            margin: 30px 0;
+            margin: 40px 0;
+            animation: fadeInUp 0.8s ease-out;
         }
 
         button {
-            color: #E9DDBE;
-            padding: 12px 25px;
+            padding: 14px 32px;
             border: none;
-            border-radius: 8px;
+            border-radius: 50px;
             cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(29, 37, 54, 0.3);
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            letter-spacing: 0.5px;
         }
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(29, 37, 54, 0.4);
         }
 
         button:active {
             transform: translateY(0);
+            filter: brightness(0.95);
         }
-
+        
         button[onclick="processData()"] {
-            background: #D84F34;
+            background: #2F2F2F;
+            color: #FFCB74;
+            box-shadow: 0 6px 20px rgba(47, 47, 47, 0.3);
+        }
+        button[onclick="processData()"]:hover {
+            box-shadow: 0 8px 25px rgba(47, 47, 47, 0.4);
         }
 
-        button[onclick="copyResult()"],
-        button[onclick="clearData()"],
-        .csv-button,
-        .lisp-button {
-            background: #1D2536;
+        button.secondary-button {
+            background: rgba(47, 47, 47, 0.1);
+            color: #2F2F2F;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
-
-        button.csv-button:hover,
-        button.lisp-button:hover {
-            background: #1D2536;
-            filter: brightness(1.2);
+        button.secondary-button:hover {
+            background: rgba(47, 47, 47, 0.15);
         }
 
         /* Chi tiết cống selection */
         .chi-tiet-section {
-            background: rgba(216, 79, 52, 0.05);
-            border: 1px solid rgba(216, 79, 52, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 25px 0;
+            background: rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 25px;
+            border-radius: 24px;
+            margin: 35px 0;
         }
 
         .chi-tiet-all-selector {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             padding: 15px;
-            background: rgba(29, 37, 54, 0.05);
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
         }
 
-        .chi-tiet-all-selector select {
-            padding: 8px 12px;
-            border: 2px solid rgba(29, 37, 54, 0.2);
-            border-radius: 6px;
-            background: #FFFFFF;
-            color: #1D2536;
+        .chi-tiet-all-selector select, .chi-tiet-item select {
+            padding: 10px 14px;
+            border: 1px solid rgba(47, 47, 47, 0.1);
+            border-radius: 12px;
+            background: rgba(246, 246, 246, 0.5);
+            color: #111111;
             font-size: 14px;
             cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .chi-tiet-all-selector select:focus, .chi-tiet-item select:focus {
+            outline: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05), 0 0 0 3px rgba(255, 203, 116, 0.5);
         }
 
         .chi-tiet-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 15px;
             margin-top: 15px;
         }
@@ -179,48 +252,31 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px;
-            background: #FFFFFF;
-            border-radius: 8px;
-            border: 1px solid rgba(29, 37, 54, 0.1);
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .chi-tiet-item:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .chi-tiet-item label {
             margin: 0;
             font-weight: 600;
-            color: #1D2536;
+            color: #111111;
             min-width: 120px;
-        }
-
-        .chi-tiet-item select {
-            padding: 8px 12px;
-            border: 2px solid rgba(29, 37, 54, 0.2);
-            border-radius: 6px;
-            background: #FFFFFF;
-            color: #1D2536;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .chi-tiet-item select:focus {
-            outline: none;
-            border-color: #D84F34;
-            box-shadow: 0 0 8px rgba(216, 79, 52, 0.2);
         }
 
         /* Output & Table */
         .output-section {
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         .table-container {
-            background: #FFFFFF;
-            border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 8px 25px rgba(29, 37, 54, 0.1);
-            overflow-x: auto;
-            overflow-y: auto;
+            overflow: auto;
             max-height: 500px;
         }
 
@@ -228,194 +284,112 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
-            overflow: hidden;
-            border-radius: 10px;
             min-width: 1200px;
         }
 
-        th,
-        td {
-            padding: 10px 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(29, 37, 54, 0.1);
-            white-space: nowrap;
-            min-width: 100px;
-        }
-
         th {
-            background: #1D2536;
-            color: #E9DDBE;
-            font-weight: 500;
+            padding: 18px 16px;
+            text-align: left;
+            border: none;
+            border-bottom: 2px solid #FFCB74;
+            background: rgba(255, 223, 185, 0.2);
+            color: #111111;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 12px;
+            letter-spacing: 0.8px;
+            font-size: 13px;
             position: sticky;
             top: 0;
             z-index: 10;
+            backdrop-filter: blur(20px);
         }
 
         td {
-            background: #FFFFFF;
-            transition: all 0.2s ease;
+            padding: 16px;
+            text-align: left;
+            border: none;
+            border-bottom: 1px solid rgba(47, 47, 47, 0.1);
+            background: transparent;
+            transition: background-color 0.2s ease-out;
+        }
+        
+        tr {
+            animation: fadeInRow 0.5s ease-out forwards;
+            opacity: 0;
         }
 
         tr:hover td {
-            background: rgba(29, 37, 54, 0.05);
+            background: rgba(255, 203, 116, 0.15);
         }
 
         .changed-row td {
-            background: rgba(216, 79, 52, 0.15);
-            border-left: 3px solid #D84F34;
+            background: rgba(255, 203, 116, 0.1) !important;
+            border-left: 4px solid #FFCB74;
             font-weight: 500;
         }
 
         /* Scrollbar */
-        .table-container::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
-        }
+        .table-container::-webkit-scrollbar { height: 10px; width: 10px; }
+        .table-container::-webkit-scrollbar-track { background: transparent; }
+        .table-container::-webkit-scrollbar-thumb { background: rgba(47, 47, 47, 0.4); border-radius: 5px; border: 2px solid transparent; background-clip: content-box;}
+        .table-container::-webkit-scrollbar-thumb:hover { background: #2F2F2F; }
 
-        .table-container::-webkit-scrollbar-track {
-            background: rgba(29, 37, 54, 0.1);
-        }
-
-        .table-container::-webkit-scrollbar-thumb {
-            background: #D84F34;
-            border-radius: 4px;
-        }
-
-        .table-container::-webkit-scrollbar-thumb:hover {
-            background: #1D2536;
-        }
-
-        /* Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
         /* Modal Styling */
         .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(29, 37, 54, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            animation: fadeIn 0.3s ease;
-            padding: 15px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; padding: 15px; opacity: 0; visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+        
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
 
         .modal-content {
-            background: #FFFFFF;
-            padding: 30px 40px;
-            border-radius: 15px;
+            background: rgba(246, 246, 246, 0.8);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            padding: 30px 40px; border-radius: 24px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 90%;
-            max-width: 600px;
-            text-align: center;
-        }
-
-        .modal-content h3 {
-            color: #D84F34;
-            margin-bottom: 15px;
-        }
-
-        .modal-content p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-            color: #1D2536;
+            width: 90%; max-width: 600px; text-align: center;
+            transform: scale(0.95); transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
         
-        .modal-content p strong {
-            color: #D84F34;
-        }
-
-        .modal-input-group {
-            margin-bottom: 25px;
-        }
-
-        .modal-input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            text-align: left;
-        }
-
-        .modal-input-group input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 2px solid rgba(29, 37, 54, 0.2);
-            font-size: 1rem;
-        }
+        .modal-overlay.visible .modal-content { transform: scale(1); }
+        .modal-content h3 { color: #111111; margin-bottom: 15px; border: none; padding-left: 0; }
+        .modal-content p { margin-bottom: 20px; line-height: 1.6; color: #2F2F2F; }
+        .modal-content p strong { color: #111111; font-weight: 600; }
+        .modal-input-group { margin-bottom: 25px; }
+        .modal-input-group label { display: block; margin-bottom: 8px; font-weight: 500; text-align: left; }
+        .modal-input-group input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid rgba(47, 47, 47, 0.1); font-size: 1rem; background: rgba(255, 255, 255, 0.7); box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+        .modal-input-group input:focus { outline: none; border-color: #FFCB74; box-shadow: 0 0 0 3px rgba(255, 203, 116, 0.5); }
+        .modal-button-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .modal-button-group button { flex-grow: 1; padding: 12px; border: none; border-radius: 50px; cursor: pointer; font-weight: 600; transition: all 0.2s ease; min-width: 120px; }
+        #modalUpdateBtn, #confirmYesBtn, #insufficientDataContinueBtn { background: #2F2F2F; color: #FFCB74; }
+        #modalRemoveBtn { background: #A4193D; color: #fff; }
+        #modalCancelBtn, #alertOkBtn, #confirmNoBtn, #insufficientDataEditBtn { background: #b0b0b0; color: #fff; }
         
-        .modal-input-group input:focus {
-             outline: none;
-             border-color: #D84F34;
+        /* Keyframes */
+        @keyframes moveLiquid {
+            from { transform: translate(0, 0) rotate(0deg) scale(1); }
+            to { transform: translate(100px, -100px) rotate(180deg) scale(1.2); }
         }
-
-        .modal-button-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .modal-button-group button {
-            flex-grow: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            min-width: 120px;
-        }
-
-        #modalUpdateBtn, #confirmYesBtn, #insufficientDataContinueBtn { background: #D84F34; color: #fff; }
-        #modalRemoveBtn { background: #1D2536; color: #E9DDBE; }
-        #modalCancelBtn, #alertOkBtn, #confirmNoBtn, #insufficientDataEditBtn { background: #9ca3af; color: #fff; }
-
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-            }
-
-            .button-group {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            button {
-                width: 100%;
-                max-width: 300px;
-            }
-
-            .chi-tiet-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInRow { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
+    <div class="liquid-background">
+        <div class="shape shape1"></div>
+        <div class="shape shape2"></div>
+        <div class="shape shape3"></div>
+    </div>
     <div class="container">
         <h1>📊 LEDAT - XỬ LÝ DỮ LIỆU VẼ TRẮC DỌC CỐNG</h1>
 
@@ -440,7 +414,7 @@
 
         <div class="chi-tiet-section" id="chiTietSection" style="display: none;">
             <h3 id="chiTietTitle">🎯 Chi tiết cống cho từng Giếng thu:</h3>
-            <p style="margin-bottom: 15px; color: #1D2536;">Chọn loại chi tiết cống (VH, H10, H30) cho mỗi giếng thu. Giá trị này sẽ được kết hợp với kích thước cống để tạo chi tiết cống.</p>
+            <p style="margin-bottom: 15px; color: #A4193D;">Chọn loại chi tiết cống (VH, H10, H30) cho mỗi giếng thu. Giá trị này sẽ được kết hợp với kích thước cống để tạo chi tiết cống.</p>
 
             <div class="chi-tiet-all-selector">
                 <label for="selectAllChiTiet"><strong>Chọn nhanh cho tất cả:</strong></label>
@@ -458,13 +432,13 @@
 
         <div class="button-group">
             <button onclick="processData()">🚀 Xử lý dữ liệu</button>
-            <button onclick="copyResult()">📋 Sao chép kết quả</button>
-            <button onclick="clearData()">🗑️ Xóa dữ liệu</button>
-            <button class="csv-button" onclick="downloadCSV()">💾 Tải CSV</button>
-            <button class="lisp-button" onclick="downloadLisp()">📄 Tải file LISP mới nhất</button>
+            <button class="secondary-button" onclick="copyResult()">📋 Sao chép kết quả</button>
+            <button class="secondary-button" onclick="clearData()">🗑️ Xóa dữ liệu</button>
+            <button class="secondary-button" onclick="downloadCSV()">💾 Tải CSV</button>
+            <button class="secondary-button" onclick="downloadLisp()">📄 Tải file LISP mới nhất</button>
         </div>
 
-        <div class="output-section">
+        <div class="output-section" id="outputSection" style="display: none;">
             <h3>📈 Kết quả:</h3>
             <div class="table-container">
                 <div id="result"></div>
@@ -473,8 +447,8 @@
         </div>
     </div>
 
-    <!-- Modal for Zero Length Validation -->
-    <div id="zeroLengthModal" class="modal-overlay" style="display: none;">
+    <!-- Modals -->
+    <div id="zeroLengthModal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="modalTitle">⚠️ Cảnh báo dữ liệu</h3>
             <p id="modalMessage">Phát hiện lỗi...</p>
@@ -490,8 +464,7 @@
         </div>
     </div>
     
-    <!-- Modal for Insufficient Data -->
-    <div id="insufficientDataModal" class="modal-overlay" style="display: none;">
+    <div id="insufficientDataModal" class="modal-overlay">
         <div class="modal-content">
             <h3>⚠️ Cảnh báo dữ liệu không đầy đủ</h3>
             <p id="insufficientDataMessage" style="text-align: left; line-height: 1.6;"></p>
@@ -503,18 +476,16 @@
         </div>
     </div>
 
-    <!-- Modal for Simple Alerts -->
-    <div id="alertModal" class="modal-overlay" style="display: none;">
+    <div id="alertModal" class="modal-overlay">
         <div class="modal-content">
              <p id="alertMessage" style="margin-bottom: 25px;">Nội dung thông báo.</p>
              <div class="modal-button-group">
-                 <button id="alertOkBtn">OK</button>
+                  <button id="alertOkBtn">OK</button>
              </div>
         </div>
     </div>
 
-    <!-- Modal for Confirmation -->
-    <div id="confirmModal" class="modal-overlay" style="display: none;">
+    <div id="confirmModal" class="modal-overlay">
         <div class="modal-content">
             <p id="confirmMessage" style="margin-bottom: 25px;">Bạn có chắc chắn?</p>
             <div class="modal-button-group">
@@ -537,37 +508,47 @@
         let currentInvalidEntry = null;
 
         // --- CUSTOM UI FUNCTIONS ---
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('visible');
+            }
+        }
+
+        function hideModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('visible');
+            }
+        }
+
         function showCustomAlert(message, type = 'info') {
-            const alertModal = document.getElementById('alertModal');
             const alertMessage = document.getElementById('alertMessage');
             
             let icon = '✅';
             if (type === 'error') icon = '⚠️';
             
             alertMessage.innerHTML = `${icon} ${message}`;
-            alertModal.style.display = 'flex';
+            showModal('alertModal');
             
-            document.getElementById('alertOkBtn').onclick = () => {
-                alertModal.style.display = 'none';
-            };
+            document.getElementById('alertOkBtn').onclick = () => hideModal('alertModal');
         }
 
         function showCustomConfirm(message, onYes, onNo) {
-            const confirmModal = document.getElementById('confirmModal');
             const confirmMessage = document.getElementById('confirmMessage');
             const yesBtn = document.getElementById('confirmYesBtn');
             const noBtn = document.getElementById('confirmNoBtn');
 
             confirmMessage.innerHTML = message;
-            confirmModal.style.display = 'flex';
+            showModal('confirmModal');
 
             yesBtn.onclick = () => {
-                confirmModal.style.display = 'none';
+                hideModal('confirmModal');
                 if (onYes) onYes();
             };
 
             noBtn.onclick = () => {
-                confirmModal.style.display = 'none';
+                hideModal('confirmModal');
                 if (onNo) onNo();
             };
         }
@@ -594,7 +575,7 @@
                         allLinesInBlock: [line]
                     };
                 } else if (currentBlock) {
-                     currentBlock.allLinesInBlock.push(line);
+                    currentBlock.allLinesInBlock.push(line);
                     if (cells[0] === '' && cells.length > 1 && (cells.some(c => c.startsWith('Þ')) || cells.some(c => c.toUpperCase().startsWith('HV')))) {
                         currentBlock.infoLine = line;
                     } else {
@@ -660,7 +641,7 @@
                     rawLoaiCongMap[block.tenGt] = loaiCong;
 
                     if (!dominantPipeType) {
-                         if (loaiCong.toUpperCase().startsWith('HV')) {
+                        if (loaiCong.toUpperCase().startsWith('HV')) {
                             dominantPipeType = 'hop';
                         } else if (loaiCong.startsWith('Þ')) {
                             dominantPipeType = 'tron';
@@ -680,13 +661,13 @@
             if (uniqueTenGts.length > 0) {
                 chiTietSection.style.display = 'block';
                 let gridHTML = '';
-                uniqueTenGts.forEach(tenGt => {
+                uniqueTenGts.forEach((tenGt, index) => {
                     const currentValue = chiTietCongMap[tenGt] || '';
                     const loaiCongDisplay = rawLoaiCongMap[tenGt] || 'N/A';
                     const display = ` (${loaiCongDisplay})`;
 
                     gridHTML += `
-                        <div class="chi-tiet-item">
+                        <div class="chi-tiet-item" style="animation: fadeInUp 0.5s ease-out ${index * 50}ms forwards; opacity: 0;">
                             <label for="select-${tenGt}">${tenGt}${display}:</label>
                             <select id="select-${tenGt}" onchange="updateChiTietCong('${tenGt}', this.value)">
                                 <option value="">-- Chọn --</option>
@@ -925,21 +906,20 @@
 
         // --- VALIDATION MODAL HANDLING ---
         function handleInsufficientData(error) {
-            const modal = document.getElementById('insufficientDataModal');
             const messageEl = document.getElementById('insufficientDataMessage');
             
             const messageHTML = `Phát hiện thiếu <strong>${error.missingCount}</strong> cột dữ liệu. Cần cung cấp đủ giá trị cho các cột sau: <strong>${error.missingCols.join(', ')}</strong>.`;
             
             messageEl.innerHTML = messageHTML;
-            modal.style.display = 'flex';
+            showModal('insufficientDataModal');
 
             document.getElementById('insufficientDataContinueBtn').onclick = () => {
-                modal.style.display = 'none';
+                hideModal('insufficientDataModal');
                 runZeroLengthValidation();
             };
 
             document.getElementById('insufficientDataEditBtn').onclick = () => {
-                modal.style.display = 'none';
+                hideModal('insufficientDataModal');
             };
         }
 
@@ -950,7 +930,7 @@
 
         function showNextZeroLengthEntry() {
             if (zeroLengthEntriesQueue.length === 0) {
-                document.getElementById('zeroLengthModal').style.display = 'none';
+                hideModal('zeroLengthModal');
                 showCustomAlert('Tất cả lỗi đã được sửa. Đang xử lý lại dữ liệu...');
                 processData();
                 return;
@@ -958,14 +938,13 @@
 
             currentInvalidEntry = zeroLengthEntriesQueue.shift(); 
 
-            const modal = document.getElementById('zeroLengthModal');
-            const message = modal.querySelector('#modalMessage');
-            const input = modal.querySelector('#newLengthValue');
+            const message = document.querySelector('#zeroLengthModal #modalMessage');
+            const input = document.querySelector('#zeroLengthModal #newLengthValue');
 
             message.innerHTML = `Cột <strong>chieu_dai_cong_m</strong> của Giếng thu <strong>${currentInvalidEntry.tenGt}</strong> có giá trị bằng 0. <br>Vui lòng cập nhật hoặc xóa bộ dữ liệu này.`;
             input.value = '';
+            showModal('zeroLengthModal');
             input.focus();
-            modal.style.display = 'flex';
         }
 
         document.getElementById('modalUpdateBtn').onclick = function() {
@@ -989,12 +968,12 @@
 
                 if (pipeTypeCellIndex !== -1) {
                      for (let i = pipeTypeCellIndex + 1; i < cells.length; i++) {
-                        if (cells[i].trim() !== '' && !isNaN(parseFloat(cells[i].trim().replace(',', '.')))) {
-                            cells[i] = newValue;
-                            lengthUpdated = true;
-                            break;
-                        }
-                    }
+                         if (cells[i].trim() !== '' && !isNaN(parseFloat(cells[i].trim().replace(',', '.')))) {
+                             cells[i] = newValue;
+                             lengthUpdated = true;
+                             break;
+                         }
+                     }
                 }
                 
                 if (lengthUpdated) {
@@ -1023,7 +1002,7 @@
         };
 
         document.getElementById('modalCancelBtn').onclick = function() {
-            document.getElementById('zeroLengthModal').style.display = 'none';
+            hideModal('zeroLengthModal');
             zeroLengthEntriesQueue = [];
             currentInvalidEntry = null;
             showCustomAlert('Quá trình xử lý đã được hủy bỏ.', 'error');
@@ -1079,6 +1058,9 @@
         function displayResult() {
             const resultDiv = document.getElementById('result');
             const outputTextarea = document.getElementById('outputData');
+            const outputSection = document.getElementById('outputSection');
+
+            outputSection.style.display = 'block';
 
             let tableHTML = '<table><thead><tr>';
             const headers = ['ten_gt', 'loai_cong', 'chieu_dai_cong_m', 'mat_dat_tu_nhien', 'dan_gieng_thu', 'lung_cong', 'day_dong_chay', 'day_ho_lang', 'day_mong_gieng_thu', 'day_mong_cong', 'ly_trinh', 'chi_tiet_cong'];
@@ -1087,14 +1069,14 @@
 
             let outputText = '';
 
-            processedData.forEach((row) => {
+            processedData.forEach((row, index) => {
                 if (row.isHeader) {
                     outputText += row.cells.join('\t') + '\n';
                     return;
                 }
 
                 const rowClass = row.isChanged ? 'changed-row' : '';
-                tableHTML += `<tr class="${rowClass}">`;
+                tableHTML += `<tr class="${rowClass}" style="animation-delay: ${index * 30}ms">`;
                 row.cells.forEach(cell => tableHTML += `<td>${cell}</td>`);
                 tableHTML += '</tr>';
                 outputText += row.cells.join('\t') + '\n';
@@ -1158,6 +1140,7 @@
             document.getElementById('inputData').value = '';
             document.getElementById('result').innerHTML = '';
             document.getElementById('outputData').value = '';
+            document.getElementById('outputSection').style.display = 'none';
             document.getElementById('chiTietSection').style.display = 'none';
             processedData = [];
             uniqueTenGts = [];
