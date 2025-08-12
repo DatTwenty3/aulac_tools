@@ -317,11 +317,11 @@
                     <input type="number" id="bridgeLength" placeholder="Nhập chiều dài" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="roadWidth">Chiều rộng mặt đường (m):</label>
+                    <label for="roadWidth">Chiều rộng mặt đường (B) (m):</label>
                     <input type="number" id="roadWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="shoulderWidth">Chiều rộng lề gia cố (m):</label>
+                    <label for="shoulderWidth">Chiều rộng lề gia cố (C) (m):</label>
                     <input type="number" id="shoulderWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                 <div class="input-group">
@@ -343,6 +343,14 @@
                 <div class="input-group">
                     <label for="railingWidth">Chiều rộng lan can (m):</label>
                     <input type="number" id="railingWidth" placeholder="Nhập chiều rộng" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="upgradeRoadLength">Chiều dài tuyến đường nâng cấp (m):</label>
+                    <input type="number" id="upgradeRoadLength" placeholder="Nhập chiều dài nâng cấp" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="gpmbWidth">Chiều rộng GPMB (m):</label>
+                    <input type="number" id="gpmbWidth" placeholder="Nhập chiều rộng GPMB" step="0.01">
                 </div>
             </div>
 
@@ -386,6 +394,22 @@
                         <span class="result-value" id="powerCableCost">0</span>
                         <span class="unit">đồng</span>
                     </div>
+                    <div class="result-item hidden" data-result-for="upgradeRoad">
+                        <strong>Chi phí XD nâng cấp mặt đường</strong>
+                         <small class="factor-info">HS Vùng: <span class="regional-factor-display"></span></small>
+                        <span class="result-value" id="upgradeRoadCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
+                    <div class="result-item hidden" data-result-for="compensation">
+                        <strong>Chi phí bồi thường, HT & TĐC</strong>
+                        <span class="result-value" id="compensationCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
+                    <div class="result-item hidden" data-result-for="mineClearance">
+                        <strong>Chi phí rà phá bom mìn</strong>
+                        <span class="result-value" id="mineClearanceCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
                     <div class="result-item">
                         <strong>Chiều rộng nền đường</strong>
                         <span class="result-value" id="totalRoadWidth">0.00</span>
@@ -394,6 +418,16 @@
                     <div class="result-item">
                         <strong>Diện tích mặt cầu</strong>
                         <span class="result-value" id="bridgeArea">0.00</span>
+                        <span class="unit">m²</span>
+                    </div>
+                     <div class="result-item">
+                        <strong>Diện tích mặt đường nâng cấp</strong>
+                        <span class="result-value" id="upgradeRoadArea">0.00</span>
+                        <span class="unit">m²</span>
+                    </div>
+                    <div class="result-item">
+                        <strong>Diện tích GPMB</strong>
+                        <span class="result-value" id="gpmbArea">0.00</span>
                         <span class="unit">m²</span>
                     </div>
                 </div>
@@ -408,7 +442,8 @@
                     jsonPath: './data/khai_toan_data.json',
                     inputs: [
                         'roadLength', 'roadWidth', 'shoulderWidth', 'medianWidth', 
-                        'sidewalkWidth', 'earthWidth', 'bridgeLength', 'bridgeWidth', 'railingWidth'
+                        'sidewalkWidth', 'earthWidth', 'bridgeLength', 'bridgeWidth', 'railingWidth',
+                        'upgradeRoadLength', 'gpmbWidth'
                     ],
                     costCategories: [
                         { 
@@ -452,11 +487,46 @@
                             regionalFactor: 1.012,
                             dataKey: 'suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV', 
                             calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000000
+                        },
+                        {
+                            id: 'upgradeRoad',
+                            name: 'Chi phí nâng cấp mặt đường',
+                            hasCustomFactor: true,
+                            dataKey: 'gia_bo_phan_ket_cau', // Assuming this key exists in JSON
+                            calculate: (state, costItem) => {
+                                return state.results.upgradeRoadArea * costItem.chi_phi_xay_dung * 1000;
+                            }
+                        },
+                        {
+                            id: 'compensation',
+                            name: 'Chi phí bồi thường, HT & TĐC',
+                            directPrice: {
+                                inputId: 'compensationPrice',
+                                label: 'Đơn giá (tr.đ/m²):'
+                            },
+                            calculate: (state) => {
+                                const price = state.inputs.compensationPrice || 0;
+                                return state.results.gpmbArea * price * 1000000;
+                            }
+                        },
+                        {
+                            id: 'mineClearance',
+                            name: 'Chi phí rà phá bom mìn',
+                            directPrice: {
+                                inputId: 'mineClearancePrice',
+                                label: 'Đơn giá (10k đ/m²):'
+                            },
+                            calculate: (state) => {
+                                const price = state.inputs.mineClearancePrice || 0;
+                                return state.results.gpmbArea * price * 10000;
+                            }
                         }
                     ],
                     otherCalculations: {
                         totalRoadWidth: state => state.inputs.earthWidth * 2 + state.inputs.sidewalkWidth * 2 + state.inputs.shoulderWidth * 2 + state.inputs.medianWidth + state.inputs.roadWidth,
-                        bridgeArea: state => state.inputs.bridgeLength * (state.inputs.railingWidth * 2 + state.inputs.bridgeWidth)
+                        bridgeArea: state => state.inputs.bridgeLength * (state.inputs.railingWidth * 2 + state.inputs.bridgeWidth),
+                        upgradeRoadArea: state => state.inputs.upgradeRoadLength * (state.inputs.roadWidth + state.inputs.shoulderWidth * 2),
+                        gpmbArea: state => state.inputs.roadLength * state.inputs.gpmbWidth
                     }
                 },
 
@@ -495,12 +565,29 @@
                         const inputGroup = document.createElement('div');
                         inputGroup.className = 'input-group';
                         
-                        let customFactorHtml = '';
+                        let inlineFactorsHtml = '';
+                        // Standard factors
+                        let dependentFactorHtml = `
+                            <div class="factor-input-group">
+                                <label for="${dependentFactorId}">HS Kéo theo:</label>
+                                <input type="number" id="${dependentFactorId}" data-category-id="${catId}" value="1.0" step="0.01">
+                            </div>
+                        `;
+                        // Custom factor
                         if (cat.hasCustomFactor) {
-                            customFactorHtml = `
+                            dependentFactorHtml += `
                                 <div class="factor-input-group">
                                     <label for="${customFactorId}">HS Tùy chỉnh:</label>
-                                    <input type="number" id="${customFactorId}" data-factor-type="custom" data-category-id="${catId}" value="1.0" step="0.01">
+                                    <input type="number" id="${customFactorId}" data-category-id="${catId}" value="1.0" step="0.01">
+                                </div>
+                            `;
+                        }
+                        // Direct price input
+                        if (cat.directPrice) {
+                            dependentFactorHtml = `
+                                <div class="factor-input-group">
+                                    <label for="${cat.directPrice.inputId}">${cat.directPrice.label}</label>
+                                    <input type="number" id="${cat.directPrice.inputId}" data-category-id="${catId}" value="0" step="0.01">
                                 </div>
                             `;
                         }
@@ -512,11 +599,7 @@
                                     <label for="toggle_${catId}">${index + 1}. ${cat.name}</label>
                                 </div>
                                 <div class="inline-factors hidden" id="inlineFactors_${catId}">
-                                    <div class="factor-input-group">
-                                        <label for="${dependentFactorId}">HS Kéo theo:</label>
-                                        <input type="number" id="${dependentFactorId}" data-factor-type="dependent" data-category-id="${catId}" value="1.0" step="0.01">
-                                    </div>
-                                    ${customFactorHtml}
+                                    ${dependentFactorHtml}
                                 </div>
                             </div>
                             <div id="optionsContainer_${catId}" class="options-container hidden"></div>
@@ -540,10 +623,14 @@
                         this.elements[`inlineFactors_${catId}`] = document.getElementById(`inlineFactors_${catId}`);
                         this.elements[`result_${catId}`] = document.querySelector(`[data-result-for="${catId}"]`);
                         
-                        // Cache factor inputs
-                        this.elements[`dependentFactor_${catId}`] = document.getElementById(`dependentFactor_${catId}`);
-                        if (cat.hasCustomFactor) {
-                             this.elements[`customFactor_${catId}`] = document.getElementById(`customFactor_${catId}`);
+                        // Cache factor/price inputs
+                        if (cat.directPrice) {
+                            this.elements[cat.directPrice.inputId] = document.getElementById(cat.directPrice.inputId);
+                        } else {
+                            this.elements[`dependentFactor_${catId}`] = document.getElementById(`dependentFactor_${catId}`);
+                            if (cat.hasCustomFactor) {
+                                this.elements[`customFactor_${catId}`] = document.getElementById(`customFactor_${catId}`);
+                            }
                         }
                     });
 
@@ -594,15 +681,21 @@
                     // Update cost category options and factors
                     this.config.costCategories.forEach(cat => {
                         const catId = cat.id;
-                        const selectedRadio = document.querySelector(`input[name="${catId}CostType"]:checked`);
-                        this.state.selectedOptions[catId] = selectedRadio ? selectedRadio.value : null;
                         
-                        const depFactorInput = this.elements[`dependentFactor_${catId}`];
-                        this.state.inputs[`dependentFactor_${catId}`] = depFactorInput ? (parseFloat(depFactorInput.value) || 0) : 1;
+                        if (cat.directPrice) {
+                            const priceInput = this.elements[cat.directPrice.inputId];
+                            this.state.inputs[cat.directPrice.inputId] = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
+                        } else {
+                            const selectedRadio = document.querySelector(`input[name="${catId}CostType"]:checked`);
+                            this.state.selectedOptions[catId] = selectedRadio ? selectedRadio.value : null;
 
-                        if (cat.hasCustomFactor) {
-                            const customFactorInput = this.elements[`customFactor_${catId}`];
-                            this.state.inputs[`customFactor_${catId}`] = customFactorInput ? (parseFloat(customFactorInput.value) || 0) : 1;
+                            const depFactorInput = this.elements[`dependentFactor_${catId}`];
+                            this.state.inputs[`dependentFactor_${catId}`] = depFactorInput ? (parseFloat(depFactorInput.value) || 0) : 1;
+
+                            if (cat.hasCustomFactor) {
+                                const customFactorInput = this.elements[`customFactor_${catId}`];
+                                this.state.inputs[`customFactor_${catId}`] = customFactorInput ? (parseFloat(customFactorInput.value) || 0) : 1;
+                            }
                         }
                     });
                 },
@@ -616,19 +709,27 @@
                         const catId = cat.id;
                         let cost = 0;
                         if (this.state.activeCategories.has(catId)) {
-                            const selectedKey = this.state.selectedOptions[catId];
-                            const dataGroup = this.state.costData[cat.dataKey];
-                            if (selectedKey && dataGroup && dataGroup[selectedKey]) {
-                                const baseCost = cat.calculate(this.state, dataGroup[selectedKey]);
-                                
-                                const dependentFactor = this.state.inputs[`dependentFactor_${catId}`] > 0 ? this.state.inputs[`dependentFactor_${catId}`] : 1;
-                                
-                                let customFactor = 1;
-                                if (cat.hasCustomFactor) {
-                                    customFactor = this.state.inputs[`customFactor_${catId}`] > 0 ? this.state.inputs[`customFactor_${catId}`] : 1;
-                                }
+                            // Handle categories with direct price input
+                            if (cat.directPrice) {
+                                cost = cat.calculate(this.state);
+                            } 
+                            // Handle categories with data from JSON
+                            else {
+                                const selectedKey = this.state.selectedOptions[catId];
+                                const dataGroup = this.state.costData[cat.dataKey];
+                                if (selectedKey && dataGroup && dataGroup[selectedKey]) {
+                                    const baseCost = cat.calculate(this.state, dataGroup[selectedKey]);
+                                    
+                                    const dependentFactor = this.state.inputs[`dependentFactor_${catId}`] > 0 ? this.state.inputs[`dependentFactor_${catId}`] : 1;
+                                    const regionalFactor = cat.regionalFactor || 1;
+                                    
+                                    let customFactor = 1;
+                                    if (cat.hasCustomFactor) {
+                                        customFactor = this.state.inputs[`customFactor_${catId}`] > 0 ? this.state.inputs[`customFactor_${catId}`] : 1;
+                                    }
 
-                                cost = baseCost * cat.regionalFactor * dependentFactor * customFactor;
+                                    cost = baseCost * regionalFactor * dependentFactor * customFactor;
+                                }
                             }
                         }
                         this.state.results[`${catId}Cost`] = cost;
@@ -640,9 +741,11 @@
                     this.config.costCategories.forEach(cat => {
                         const catId = cat.id;
                         const isActive = this.state.activeCategories.has(catId);
-                        this.elements[`optionsContainer_${catId}`].classList.toggle('hidden', !isActive);
                         this.elements[`inlineFactors_${catId}`].classList.toggle('hidden', !isActive);
                         this.elements[`result_${catId}`].classList.toggle('hidden', !isActive);
+                        if (this.elements[`optionsContainer_${catId}`]) {
+                            this.elements[`optionsContainer_${catId}`].classList.toggle('hidden', !isActive);
+                        }
                     });
 
                     // Render values
@@ -662,8 +765,10 @@
                         const resultItem = this.elements[`result_${cat.id}`];
                         if (resultItem) {
                             const factorDisplay = resultItem.querySelector('.regional-factor-display');
-                            if (factorDisplay) {
+                            if (factorDisplay && cat.regionalFactor) {
                                 factorDisplay.textContent = cat.regionalFactor;
+                            } else if (factorDisplay) {
+                                factorDisplay.parentElement.classList.add('hidden');
                             }
                         }
                     });
@@ -671,6 +776,7 @@
 
                 createAllOptionCards() {
                     this.config.costCategories.forEach(cat => {
+                        if (!cat.dataKey) return; // Skip categories without data from JSON
                         let data = this.state.costData[cat.dataKey] || {};
                         if (cat.filter) {
                             data = Object.fromEntries(Object.entries(data).filter(([, value]) => cat.filter(value)));
@@ -685,7 +791,7 @@
                     container.innerHTML = '';
 
                     if (!data || Object.keys(data).length === 0) {
-                        container.innerHTML = '<p>Không có dữ liệu phù hợp.</p>';
+                        container.innerHTML = `<p>Không có dữ liệu phù hợp cho mục này.</p>`;
                         return;
                     }
 
