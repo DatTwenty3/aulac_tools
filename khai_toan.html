@@ -6,6 +6,18 @@
     <title>Công cụ tính khái toán Đường - Cầu</title>
     <style>
         /* --- Thiết Lập Cơ Bản & Font Chữ --- */
+        :root {
+            --primary-color: #111111;
+            --secondary-color: #2F2F2F;
+            --accent-color: #FFCB74;
+            --accent-color-light: rgba(255, 203, 116, 0.5);
+            --accent-color-dark: #D4A03C;
+            --bg-color-light: rgba(255, 255, 255, 0.7);
+            --bg-glass: rgba(246, 246, 246, 0.6);
+            --border-color: rgba(47, 47, 47, 0.1);
+            --success-color: #34c759;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -20,11 +32,10 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            /* Nền gradient động với các màu sắc rực rỡ hơn */
             background: linear-gradient(-45deg, #a1c4fd, #c2e9fb, #ff9a9e, #fad0c4);
             background-size: 400% 400%;
             animation: gradientAnimation 15s ease infinite;
-            color: #111111; /* Chữ tối từ bộ màu */
+            color: var(--primary-color);
             min-height: 100vh;
             padding: 2rem;
             display: flex;
@@ -32,7 +43,6 @@
             align-items: flex-start;
         }
 
-        /* --- Container Chính - Hiệu ứng Liquid Glass --- */
         @keyframes fadeIn {
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
@@ -41,17 +51,16 @@
         .container {
             width: 100%;
             max-width: 900px;
-            background: rgba(246, 246, 246, 0.6); /* #F6F6F6 với alpha */
+            background: var(--bg-glass);
             backdrop-filter: blur(30px) saturate(180%);
             -webkit-backdrop-filter: blur(30px) saturate(180%);
             border-radius: 30px;
             border: 1px solid rgba(246, 246, 246, 0.8);
-            box-shadow: 0 16px 40px rgba(47, 47, 47, 0.1); /* #2F2F2F với alpha */
+            box-shadow: 0 16px 40px rgba(47, 47, 47, 0.1);
             overflow: hidden;
             animation: fadeIn 0.5s ease-out;
         }
 
-        /* --- Header --- */
         .header {
             padding: 40px;
             text-align: center;
@@ -61,16 +70,15 @@
             font-size: 2.5em;
             font-weight: 700;
             margin-bottom: 8px;
-            color: #111111;
+            color: var(--primary-color);
         }
         
         .header p {
             font-size: 1.1em;
-            color: #2F2F2F;
+            color: var(--secondary-color);
             opacity: 0.9;
         }
 
-        /* --- Bố cục nội dung --- */
         .content {
             display: grid;
             grid-template-columns: 1fr;
@@ -85,13 +93,12 @@
         .section-title {
             font-size: 1.5em;
             font-weight: 600;
-            color: #111111;
+            color: var(--primary-color);
             margin-bottom: 25px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #FFCB74; /* Màu nhấn */
+            border-bottom: 2px solid var(--accent-color);
         }
 
-        /* --- Ô Nhập Liệu --- */
         .input-group {
             margin-bottom: 25px;
         }
@@ -100,7 +107,7 @@
             display: block;
             margin-bottom: 10px;
             font-weight: 500;
-            color: #2F2F2F;
+            color: var(--secondary-color);
             font-size: 1em;
         }
         
@@ -110,10 +117,10 @@
             border: none;
             border-radius: 12px;
             font-size: 1em;
-            background: rgba(255, 255, 255, 0.7);
-            color: #111111;
+            background: var(--bg-color-light);
+            color: var(--primary-color);
             transition: all 0.3s ease;
-            border: 1px solid rgba(47, 47, 47, 0.1);
+            border: 1px solid var(--border-color);
         }
         
         input[type=number]::-webkit-inner-spin-button,
@@ -127,11 +134,10 @@
         .input-group input:focus {
             outline: none;
             background: white;
-            box-shadow: 0 0 0 4px rgba(255, 203, 116, 0.5); /* Màu nhấn */
-            border-color: #FFCB74; /* Màu nhấn */
+            box-shadow: 0 0 0 4px var(--accent-color-light);
+            border-color: var(--accent-color);
         }
         
-        /* --- Giao diện Thẻ Lựa Chọn Đơn Giá --- */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -148,7 +154,7 @@
             padding: 15px;
             cursor: pointer;
             transition: all 0.25s ease-in-out;
-            border: 1px solid rgba(47, 47, 47, 0.1);
+            border: 1px solid var(--border-color);
             box-shadow: 0 4px 15px rgba(47, 47, 47, 0.05);
         }
 
@@ -158,18 +164,17 @@
         }
         
         .option-card.selected {
-            border-color: #FFCB74; /* Màu nhấn */
-            box-shadow: 0 0 0 3px rgba(255, 203, 116, 0.6); /* Màu nhấn */
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-color-light);
             background: white;
         }
 
-        .option-card p { margin: 0 0 8px 0; font-size: 0.9em; line-height: 1.5; color: #2F2F2F; }
+        .option-card p { margin: 0 0 8px 0; font-size: 0.9em; line-height: 1.5; color: var(--secondary-color); }
         .option-card p:last-child { margin-bottom: 0; }
-        .option-card strong { color: #111111; }
-        .option-card .cost { font-weight: bold; color: #D4A03C; } /* Biến thể đậm của màu nhấn */
+        .option-card strong { color: var(--primary-color); }
+        .option-card .cost { font-weight: bold; color: var(--accent-color-dark); }
         .option-card input[type="radio"] { display: none; }
 
-        /* --- Khu Vực Kết Quả --- */
         .results-content {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -183,24 +188,32 @@
             box-shadow: 0 4px 15px rgba(47, 47, 47, 0.05);
         }
         
-        .result-item strong { display: block; margin-bottom: 8px; font-size: 1em; font-weight: 500; color: #2F2F2F; opacity: 0.8; }
+        .result-item strong { display: block; margin-bottom: 8px; font-size: 1em; font-weight: 500; color: var(--secondary-color); opacity: 0.8; }
         
         .result-value {
             font-size: 1.8em;
             font-weight: 700;
-            color: #111111;
+            color: var(--primary-color);
             word-wrap: break-word;
             transition: color 0.3s ease;
         }
         
-        .unit { font-size: 1em; opacity: 0.7; margin-left: 8px; color: #2F2F2F; }
+        .unit { font-size: 1em; opacity: 0.7; margin-left: 8px; color: var(--secondary-color); }
         
         .value-updated {
-            color: #34c759 !important;
+            color: var(--success-color) !important;
             transition: color 0.1s ease-in-out;
         }
+        
+        .error-message {
+            padding: 15px;
+            background-color: #ffdddd;
+            border-left: 6px solid #f44336;
+            margin: 20px;
+            border-radius: 8px;
+            display: none; /* Ẩn mặc định */
+        }
 
-        /* --- Responsive --- */
         @media (max-width: 768px) {
             body { padding: 1rem; }
             .header h1 { font-size: 2em; }
@@ -215,6 +228,8 @@
             <h1>🛣️ Công cụ tính khái toán</h1>
             <p>Công cụ tính toán tự động các thông số và chi phí kỹ thuật</p>
         </div>
+
+        <div id="errorMessage" class="error-message"></div>
         
         <div class="content">
             <!-- THÔNG SỐ HÌNH HỌC -->
@@ -328,209 +343,289 @@
     </div>
 
     <script>
-        let costData = {};
+        document.addEventListener('DOMContentLoaded', () => {
+            /**
+             * Đối tượng chính quản lý toàn bộ ứng dụng
+             */
+            const CostEstimator = {
+                // --- CẤU HÌNH ---
+                // Nơi định nghĩa tất cả các ID, tên và logic liên quan đến các phần của ứng dụng.
+                // Giúp dễ dàng thêm/bớt hạng mục mà không cần sửa nhiều code.
+                config: {
+                    jsonPath: './data/khai_toan_data.json',
+                    // Định nghĩa các ô nhập liệu
+                    inputs: [
+                        'roadLength', 'roadWidth', 'shoulderWidth', 'medianWidth', 
+                        'sidewalkWidth', 'earthWidth', 'bridgeLength', 'bridgeWidth', 'railingWidth'
+                    ],
+                    // Định nghĩa các hạng mục chi phí
+                    costCategories: [
+                        { 
+                            id: 'road', 
+                            dataKey: 'suat_von_dau_tu_duong_o_to', 
+                            containerId: 'roadOptionsContainer',
+                            outputId: 'roadCost',
+                            calculate: (state, costItem) => {
+                                const roadLengthKm = (state.inputs.roadLength - state.inputs.bridgeLength) / 1000;
+                                return roadLengthKm > 0 ? roadLengthKm * costItem.chi_phi_xay_dung * 1000000 : 0;
+                            }
+                        },
+                        { 
+                            id: 'bridge', 
+                            dataKey: 'suat_von_dau_tu_cau', 
+                            containerId: 'bridgeOptionsContainer',
+                            outputId: 'bridgeCost',
+                            calculate: (state, costItem) => state.results.bridgeArea * costItem.chi_phi_xay_dung * 1000
+                        },
+                        { 
+                            id: 'waterSupply', 
+                            dataKey: 'gia_xay_dung_tuyen_ong_cap_nuoc', 
+                            containerId: 'waterSupplyOptionsContainer',
+                            outputId: 'waterSupplyCost',
+                            filter: item => item.don_vi === '1.000 đ/km',
+                            calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000
+                        },
+                        { 
+                            id: 'infra', 
+                            dataKey: 'gia_xay_dung_tuyen_cong_thoat_nuoc_mua', 
+                            containerId: 'infraOptionsContainer',
+                            outputId: 'infraCost',
+                            filter: item => item.don_vi === '1.000 đ/km',
+                            calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000
+                        },
+                        { 
+                            id: 'powerCable', 
+                            dataKey: 'suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV', 
+                            containerId: 'powerCableOptionsContainer',
+                            outputId: 'powerCableCost',
+                            calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000000
+                        }
+                    ],
+                    // Định nghĩa các kết quả tính toán khác
+                    otherCalculations: {
+                        totalRoadWidth: state => state.inputs.earthWidth * 2 + state.inputs.sidewalkWidth * 2 + state.inputs.shoulderWidth * 2 + state.inputs.medianWidth + state.inputs.roadWidth,
+                        bridgeArea: state => state.inputs.bridgeLength * (state.inputs.railingWidth * 2 + state.inputs.bridgeWidth)
+                    }
+                },
 
-        function formatCurrency(num) {
-            if (isNaN(num) || !isFinite(num)) return '0';
-            return Math.round(num).toLocaleString('vi-VN');
-        }
+                // --- TRẠNG THÁI ---
+                // Lưu trữ tất cả dữ liệu động của ứng dụng.
+                state: {
+                    costData: {},
+                    inputs: {},
+                    selectedOptions: {},
+                    results: {}
+                },
 
-        function formatNumber(num) {
-            if (isNaN(num) || !isFinite(num)) return '0.00';
-            return num.toFixed(2);
-        }
-        
-        function animateValueUpdate(element) {
-            element.classList.add('value-updated');
-            setTimeout(() => {
-                element.classList.remove('value-updated');
-            }, 300);
-        }
+                // --- BỘ ĐỆM DOM ---
+                // Lưu trữ các tham chiếu đến phần tử DOM để tránh truy vấn lặp lại.
+                elements: {},
 
-        function calculate() {
-            const A = parseFloat(document.getElementById('roadLength').value) || 0;
-            const B = parseFloat(document.getElementById('roadWidth').value) || 0;
-            const C = parseFloat(document.getElementById('shoulderWidth').value) || 0;
-            const D = parseFloat(document.getElementById('medianWidth').value) || 0;
-            const E = parseFloat(document.getElementById('sidewalkWidth').value) || 0;
-            const F = parseFloat(document.getElementById('earthWidth').value) || 0;
-            const L = parseFloat(document.getElementById('bridgeLength').value) || 0;
-            const Bc = parseFloat(document.getElementById('bridgeWidth').value) || 0;
-            const Blc = parseFloat(document.getElementById('railingWidth').value) || 0;
+                /**
+                 * Khởi tạo ứng dụng
+                 */
+                async init() {
+                    this.cacheElements();
+                    this.setupEventListeners();
+                    try {
+                        await this.fetchData();
+                        this.createAllOptionCards();
+                        this.updateAndCalculate();
+                    } catch (error) {
+                        console.error("Không thể khởi tạo ứng dụng:", error);
+                        this.showError(`Lỗi: ${error.message}. Vui lòng kiểm tra lại đường dẫn tệp data.json và đảm bảo nó hợp lệ.`);
+                    }
+                },
 
-            const totalRoadWidth = F + E + C + D + B + C + E + F;
-            const bridgeArea = L * (Blc + Bc + Blc);
+                /**
+                 * Lưu các phần tử DOM cần thiết vào bộ đệm
+                 */
+                cacheElements() {
+                    this.elements.errorMessage = document.getElementById('errorMessage');
+                    this.config.inputs.forEach(id => {
+                        this.elements[id] = document.getElementById(id);
+                    });
+                    // Cache all output elements
+                    const outputIds = Object.keys(this.config.otherCalculations).concat(
+                        this.config.costCategories.map(cat => cat.outputId)
+                    );
+                    outputIds.forEach(id => {
+                        this.elements[id] = document.getElementById(id);
+                    });
+                },
 
-            document.getElementById('totalRoadWidth').textContent = formatNumber(totalRoadWidth);
-            document.getElementById('bridgeArea').textContent = formatNumber(bridgeArea);
+                /**
+                 * Tải dữ liệu chi phí từ file JSON
+                 */
+                async fetchData() {
+                    const response = await fetch(this.config.jsonPath);
+                    if (!response.ok) {
+                        throw new Error(`Lỗi mạng: ${response.statusText}`);
+                    }
+                    this.state.costData = await response.json();
+                },
 
-            if (Object.keys(costData).length === 0) return;
+                /**
+                 * Cài đặt các trình lắng nghe sự kiện
+                 */
+                setupEventListeners() {
+                    const form = document.querySelector('.content');
+                    form.addEventListener('input', this.handleInputChange.bind(this));
+                },
 
-            const roadCostKey = document.querySelector('input[name="roadCostType"]:checked')?.value;
-            const bridgeCostKey = document.querySelector('input[name="bridgeCostType"]:checked')?.value;
-            const waterSupplyCostKey = document.querySelector('input[name="waterSupplyCostType"]:checked')?.value;
-            const infraCostKey = document.querySelector('input[name="infraCostType"]:checked')?.value;
-            const powerCableCostKey = document.querySelector('input[name="powerCableCostType"]:checked')?.value;
+                /**
+                 * Xử lý sự kiện khi người dùng thay đổi giá trị nhập liệu
+                 */
+                handleInputChange(event) {
+                    if (event.target.type === 'radio') {
+                        this.handleCardSelection(event.target);
+                    }
+                    this.updateAndCalculate();
+                },
+                
+                /**
+                 * Cập nhật trạng thái, tính toán và hiển thị lại kết quả
+                 */
+                updateAndCalculate() {
+                    this.updateStateFromDOM();
+                    this.calculateAll();
+                    this.render();
+                },
 
-            let roadCost = 0;
-            if (roadCostKey && costData.suat_von_dau_tu_duong_o_to[roadCostKey]) {
-                const roadCostPerKm = costData.suat_von_dau_tu_duong_o_to[roadCostKey].chi_phi_xay_dung;
-                const roadLengthKm = (A - L) / 1000;
-                if (roadLengthKm > 0) {
-                    roadCost = roadLengthKm * roadCostPerKm * 1000000;
+                /**
+                 * Cập nhật đối tượng state từ giá trị hiện tại trong DOM
+                 */
+                updateStateFromDOM() {
+                    // Cập nhật giá trị inputs
+                    this.config.inputs.forEach(id => {
+                        this.state.inputs[id] = parseFloat(this.elements[id].value) || 0;
+                    });
+
+                    // Cập nhật các lựa chọn đơn giá
+                    this.config.costCategories.forEach(cat => {
+                        const selectedRadio = document.querySelector(`input[name="${cat.id}CostType"]:checked`);
+                        this.state.selectedOptions[cat.id] = selectedRadio ? selectedRadio.value : null;
+                    });
+                },
+
+                /**
+                 * Thực hiện tất cả các phép tính
+                 */
+                calculateAll() {
+                    const { inputs, costData, selectedOptions } = this.state;
+
+                    // Tính các giá trị hình học
+                    for (const key in this.config.otherCalculations) {
+                        this.state.results[key] = this.config.otherCalculations[key](this.state);
+                    }
+
+                    // Tính các chi phí
+                    this.config.costCategories.forEach(cat => {
+                        const selectedKey = selectedOptions[cat.id];
+                        const dataGroup = costData[cat.dataKey];
+                        let cost = 0;
+                        if (selectedKey && dataGroup && dataGroup[selectedKey]) {
+                            cost = cat.calculate(this.state, dataGroup[selectedKey]);
+                        }
+                        this.state.results[cat.outputId] = cost;
+                    });
+                },
+
+                /**
+                 * Hiển thị tất cả kết quả ra giao diện
+                 */
+                render() {
+                    for (const key in this.state.results) {
+                        const element = this.elements[key];
+                        if (element) {
+                            const value = this.state.results[key];
+                            const isCurrency = key.toLowerCase().includes('cost');
+                            element.textContent = isCurrency ? this.formatCurrency(value) : this.formatNumber(value);
+                            this.animateValueUpdate(element);
+                        }
+                    }
+                },
+                
+                /**
+                 * Tạo tất cả các thẻ lựa chọn đơn giá dựa trên cấu hình
+                 */
+                createAllOptionCards() {
+                    this.config.costCategories.forEach(cat => {
+                        let data = this.state.costData[cat.dataKey] || {};
+                        if (cat.filter) {
+                            data = Object.fromEntries(Object.entries(data).filter(([key, value]) => cat.filter(value)));
+                        }
+                        this.createOptionCards(cat.containerId, data, `${cat.id}CostType`);
+                    });
+                },
+
+                /**
+                 * Tạo các thẻ lựa chọn cho một hạng mục cụ thể
+                 */
+                createOptionCards(containerId, data, name) {
+                    const container = document.getElementById(containerId);
+                    if (!container) return;
+                    container.innerHTML = '';
+
+                    if (!data || Object.keys(data).length === 0) {
+                        container.innerHTML = '<p>Không có dữ liệu phù hợp.</p>';
+                        return;
+                    }
+
+                    Object.entries(data).forEach(([key, item], index) => {
+                        const card = document.createElement('label');
+                        card.className = 'option-card';
+                        if (index === 0) card.classList.add('selected');
+
+                        const radio = document.createElement('input');
+                        radio.type = 'radio';
+                        radio.name = name;
+                        radio.value = key;
+                        if (index === 0) radio.checked = true;
+                        
+                        const displayUnit = item.don_vi
+                            .replace('triệu đồng/km', 'trđ/km')
+                            .replace('1.000 đ/m2', 'nghìn đ/m²')
+                            .replace('1.000 đ/km', 'nghìn đ/km');
+
+                        card.innerHTML = `
+                            <p><strong>${item.nhom} (Mã: ${key})</strong></p>
+                            <p>${item.mo_ta}</p>
+                            <p><strong>Chi phí XD:</strong> <span class="cost">${this.formatCurrency(item.chi_phi_xay_dung)}</span> ${displayUnit}</p>
+                        `;
+                        card.prepend(radio);
+                        container.appendChild(card);
+                    });
+                },
+
+                /**
+                 * Xử lý hiệu ứng giao diện khi chọn thẻ
+                 */
+                handleCardSelection(radioElement) {
+                    const container = radioElement.closest('.options-container');
+                    if (!container) return;
+                    container.querySelectorAll('.option-card').forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    radioElement.closest('.option-card').classList.add('selected');
+                },
+
+                // --- CÁC HÀM TIỆN ÍCH ---
+                formatCurrency: num => isNaN(num) || !isFinite(num) ? '0' : Math.round(num).toLocaleString('vi-VN'),
+                formatNumber: num => isNaN(num) || !isFinite(num) ? '0.00' : num.toFixed(2),
+                animateValueUpdate(element) {
+                    element.classList.add('value-updated');
+                    setTimeout(() => element.classList.remove('value-updated'), 300);
+                },
+                showError(message) {
+                    this.elements.errorMessage.textContent = message;
+                    this.elements.errorMessage.style.display = 'block';
                 }
-            }
-            
-            let bridgeCost = 0;
-            if (bridgeCostKey && costData.suat_von_dau_tu_cau[bridgeCostKey]) {
-                const bridgeCostPerM2 = costData.suat_von_dau_tu_cau[bridgeCostKey].chi_phi_xay_dung;
-                bridgeCost = bridgeArea * bridgeCostPerM2 * 1000;
-            }
-
-            let waterSupplyCost = 0;
-            if (waterSupplyCostKey && costData.gia_xay_dung_tuyen_ong_cap_nuoc && costData.gia_xay_dung_tuyen_ong_cap_nuoc[waterSupplyCostKey]) {
-                const waterSupplyCostPerKm = costData.gia_xay_dung_tuyen_ong_cap_nuoc[waterSupplyCostKey].chi_phi_xay_dung;
-                const roadLengthKm = A / 1000;
-                waterSupplyCost = (roadLengthKm * 2) * waterSupplyCostPerKm * 1000;
-            }
-
-            let infraCost = 0;
-            if (infraCostKey && costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[infraCostKey]) {
-                const infraCostPerKm = costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[infraCostKey].chi_phi_xay_dung;
-                const roadLengthKm = A / 1000;
-                infraCost = (roadLengthKm * 2) * infraCostPerKm * 1000; 
-            }
-            
-            let powerCableCost = 0;
-            if (powerCableCostKey && costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV && costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV[powerCableCostKey]) {
-                const powerCableCostPerKm = costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV[powerCableCostKey].chi_phi_xay_dung;
-                const roadLengthKm = A / 1000;
-                powerCableCost = (roadLengthKm * 2) * powerCableCostPerKm * 1000000;
-            }
-            
-            const resultElements = {
-                roadCost: document.getElementById('roadCost'),
-                bridgeCost: document.getElementById('bridgeCost'),
-                waterSupplyCost: document.getElementById('waterSupplyCost'),
-                infraCost: document.getElementById('infraCost'),
-                powerCableCost: document.getElementById('powerCableCost')
             };
 
-            resultElements.roadCost.textContent = formatCurrency(roadCost);
-            resultElements.bridgeCost.textContent = formatCurrency(bridgeCost);
-            resultElements.waterSupplyCost.textContent = formatCurrency(waterSupplyCost);
-            resultElements.infraCost.textContent = formatCurrency(infraCost);
-            resultElements.powerCableCost.textContent = formatCurrency(powerCableCost);
-            
-            Object.values(resultElements).forEach(animateValueUpdate);
-        }
-
-        function createOptionCards(containerId, data, name) {
-            const container = document.getElementById(containerId);
-            container.innerHTML = '';
-            if (!data || Object.keys(data).length === 0) {
-                container.innerHTML = '<p>Không có dữ liệu phù hợp.</p>';
-                return;
-            }
-            let isFirst = true;
-
-            for (const key in data) {
-                const item = data[key];
-                const card = document.createElement('label');
-                card.className = 'option-card';
-
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = name;
-                radio.value = key;
-                if (isFirst) {
-                    radio.checked = true;
-                    card.classList.add('selected');
-                    isFirst = false;
-                }
-                
-                let displayUnit = item.don_vi
-                                    .replace('triệu đồng/km', 'trđ/km')
-                                    .replace('1.000 đ/m2', 'nghìn đ/m²')
-                                    .replace('1.000 đ/km', 'nghìn đ/km');
-
-                card.innerHTML = `
-                    <p><strong>${item.nhom} (Mã: ${key})</strong></p>
-                    <p>${item.mo_ta}</p>
-                    <p><strong>Chi phí XD:</strong> <span class="cost">${formatCurrency(item.chi_phi_xay_dung)}</span> ${displayUnit}</p>
-                `;
-                card.prepend(radio);
-                container.appendChild(card);
-            }
-        }
-
-        function handleCardSelection(containerId) {
-            const container = document.getElementById(containerId);
-            const cards = container.querySelectorAll('.option-card');
-            cards.forEach(card => {
-                const radio = card.querySelector('input[type="radio"]');
-                if (radio.checked) {
-                    card.classList.add('selected');
-                } else {
-                    card.classList.remove('selected');
-                }
-            });
-        }
-
-        async function initializeApp() {
-            try {
-                const response = await fetch('./data/khai_toan_data.json');
-                if (!response.ok) throw new Error(`Lỗi mạng: ${response.statusText}`);
-                costData = await response.json();
-
-                createOptionCards('roadOptionsContainer', costData.suat_von_dau_tu_duong_o_to, 'roadCostType');
-                createOptionCards('bridgeOptionsContainer', costData.suat_von_dau_tu_cau, 'bridgeCostType');
-                
-                if (costData.gia_xay_dung_tuyen_ong_cap_nuoc) {
-                    const waterData = {};
-                    for (const key in costData.gia_xay_dung_tuyen_ong_cap_nuoc) {
-                         if (costData.gia_xay_dung_tuyen_ong_cap_nuoc[key].don_vi === '1.000 đ/km') {
-                            waterData[key] = costData.gia_xay_dung_tuyen_ong_cap_nuoc[key];
-                        }
-                    }
-                    createOptionCards('waterSupplyOptionsContainer', waterData, 'waterSupplyCostType');
-                } else {
-                     document.getElementById('waterSupplyOptionsContainer').innerHTML = '<p>Không tìm thấy dữ liệu "gia_xay_dung_tuyen_ong_cap_nuoc".</p>';
-                }
-
-                const infraData = {};
-                for (const key in costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua) {
-                    if (costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[key].don_vi === '1.000 đ/km') {
-                        infraData[key] = costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[key];
-                    }
-                }
-                createOptionCards('infraOptionsContainer', infraData, 'infraCostType');
-                
-                if (costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV) {
-                    createOptionCards('powerCableOptionsContainer', costData.suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV, 'powerCableCostType');
-                } else {
-                    document.getElementById('powerCableOptionsContainer').innerHTML = '<p>Không tìm thấy dữ liệu "suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV".</p>';
-                }
-
-                const allInputs = document.querySelectorAll('input[type="number"], input[type="radio"]');
-                allInputs.forEach(input => {
-                    input.addEventListener('input', () => {
-                        if (input.type === 'radio') {
-                           handleCardSelection(input.closest('.options-container').id);
-                        }
-                        calculate();
-                    });
-                });
-                
-                calculate();
-
-            } catch (error) {
-                console.error("Không thể khởi tạo ứng dụng:", error);
-                alert("Lỗi: Không thể tải tệp data.json. Vui lòng đảm bảo tệp tồn tại trong cùng thư mục với tệp HTML và kiểm tra lại đường dẫn.");
-            }
-        }
-
-        window.addEventListener('load', initializeApp);
+            // Khởi chạy ứng dụng
+            CostEstimator.init();
+        });
     </script>
 </body>
 </html>
