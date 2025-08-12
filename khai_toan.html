@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Công cụ tính khái toán Đường - Cầu</title>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
     <style>
         /* --- Thiết Lập Cơ Bản & Font Chữ --- */
         :root {
@@ -456,6 +457,18 @@
             cursor: pointer;
             font-weight: 600;
         }
+        
+        #exportProjectName {
+             width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            background: var(--bg-color-light);
+            color: var(--primary-color);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
 
         @media (max-width: 768px) {
             body { padding: 1rem; }
@@ -612,6 +625,16 @@
                         <span class="unit">đồng</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- EXPORT SECTION -->
+            <div class="section">
+                <h2 class="section-title">Xuất Báo Cáo</h2>
+                <div class="input-group">
+                    <label for="exportProjectName">Tên dự án:</label>
+                    <input type="text" id="exportProjectName" placeholder="Ví dụ: Dự án Đường 30/4 nối dài">
+                </div>
+                <button id="exportExcelBtn" class="btn btn-add" style="width: 100%; padding: 15px; font-size: 1.1em;">Xuất file Excel</button>
             </div>
         </div>
     </div>
@@ -852,6 +875,8 @@
                     this.elements.modalTitle = document.getElementById('modalTitle');
                     this.elements.modalOptionsContainer = document.getElementById('modalOptionsContainer');
                     this.elements.modalCloseBtn = document.getElementById('modalCloseBtn');
+                    this.elements.exportProjectName = document.getElementById('exportProjectName');
+                    this.elements.exportExcelBtn = document.getElementById('exportExcelBtn');
                     
                     this.config.inputs.forEach(id => {
                         this.elements[id] = document.getElementById(id);
@@ -927,6 +952,7 @@
                             this.handleModalSelection(card);
                         }
                     });
+                    this.elements.exportExcelBtn.addEventListener('click', () => this.exportToExcel());
                 },
 
                 handleInputChange(event) {
@@ -1220,6 +1246,83 @@
                 showError(message) {
                     this.elements.errorMessage.textContent = message;
                     this.elements.errorMessage.style.display = 'block';
+                },
+                
+                exportToExcel() {
+                    const projectName = this.elements.exportProjectName.value.trim() || "Chưa đặt tên";
+                    const wb = XLSX.utils.book_new();
+                    const data = [];
+
+                    // --- Header ---
+                    data.push([`Dự án ${projectName}`]);
+                    data.push([]);
+                    data.push(['Chiều dài tuyến =', this.state.inputs.roadLength, 'm']);
+                    data.push(['Bề rộng mặt đường =', this.state.inputs.roadWidth, 'm']);
+                    data.push(['Bề rộng nền đường =', this.state.results.totalRoadWidth, 'm']);
+                    data.push(['Chiều dài cầu =', this.state.inputs.bridgeLength, 'm']);
+                    data.push(['Bề rộng mặt cầu =', this.state.inputs.bridgeWidth + this.state.inputs.railingWidth * 2, 'm']);
+                    data.push(['Bề rộng GPMB (theo QH) =', this.state.inputs.gpmbWidth, 'm']);
+                    data.push(['Diện tích GPMB (theo QH) =', this.state.results.gpmbArea, 'm²']);
+                    data.push([]);
+
+                    // --- Table Header ---
+                    data.push(['STT', 'NỘI DUNG CHI PHÍ', 'CÁCH TÍNH', 'THÀNH TIỀN', 'GHI CHÚ']);
+                    
+                    // --- Table Body ---
+                    let stt = 1;
+                    let formulaParts = [];
+                    this.config.costCategories.forEach(cat => {
+                        if (this.state.activeCategories.has(cat.id)) {
+                            const cost = this.state.results[`${cat.id}Cost`];
+                            // This is a simplified version. A full implementation would require detailed string building for each case.
+                            const calculationString = "Xem chi tiết trong công cụ"; 
+                            const notes = "Xem chi tiết trong công cụ";
+                            data.push([stt, cat.name, calculationString, cost, notes]);
+                            formulaParts.push(stt);
+                            stt++;
+                        }
+                    });
+
+                    // --- Total Row ---
+                     data.push(['', 'TỔNG CỘNG', formulaParts.join('+'), this.state.results.totalCost, '']);
+
+                    const ws = XLSX.utils.aoa_to_sheet(data);
+
+                    // --- Apply styles and formatting cell by cell ---
+                    const fontStyle = { name: "Times New Roman", sz: 14 };
+                    const boldFontStyle = { name: "Times New Roman", sz: 14, bold: true };
+
+                    Object.keys(ws).forEach(cellAddress => {
+                        if(ws[cellAddress].v === undefined) return;
+                        
+                        const cell = ws[cellAddress];
+                        cell.s = { font: fontStyle };
+
+                        const rowIndex = XLSX.utils.decode_cell(cellAddress).r;
+                        
+                        // Bold specific rows
+                        if (rowIndex === 0 || rowIndex === 10 || rowIndex === data.length - 1) {
+                             cell.s.font = boldFontStyle;
+                        }
+                    });
+
+                    // --- Merges ---
+                    ws['!merges'] = [
+                        XLSX.utils.decode_range("A1:E1"), // Project Name
+                        XLSX.utils.decode_range(`B${data.length}:C${data.length}`) // "TỔNG CỘNG"
+                    ];
+                    
+                    // --- Column Widths ---
+                    ws['!cols'] = [
+                        { wch: 5 },  // STT
+                        { wch: 40 }, // NỘI DUNG CHI PHÍ
+                        { wch: 40 }, // CÁCH TÍNH
+                        { wch: 20 }, // THÀNH TIỀN
+                        { wch: 40 }  // GHI CHÚ
+                    ];
+
+                    XLSX.utils.book_append_sheet(wb, ws, 'Dự toán');
+                    XLSX.writeFile(wb, `DuToan_${projectName.replace(/ /g, '_')}.xlsx`);
                 }
             };
 
