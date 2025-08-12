@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công cụ tính khái toán Đường - Cầu (Bố cục mới)</title>
+    <title>Công cụ tính khái toán Đường - Cầu</title>
     <style>
         /* --- Thiết Lập Cơ Bản & Font Chữ --- */
         :root {
@@ -112,32 +112,55 @@
             font-size: 1em;
         }
         
-        .input-group input[type="number"] {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1em;
-            background: var(--bg-color-light);
-            color: var(--primary-color);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-        }
-        
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             -webkit-appearance: none; margin: 0;
         }
         input[type=number] { -moz-appearance: textfield; }
         
-        .input-group input::placeholder { color: rgba(47, 47, 47, 0.4); }
-        
-        .input-group input:focus {
+        /* --- NEW STYLES FOR GEOMETRIC CARDS --- */
+        .geometric-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .geometric-card {
+            background: rgba(255, 255, 255, 0.4);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(47, 47, 47, 0.05);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        .geometric-card label {
+            font-size: 0.9em;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--secondary-color);
+            display: block;
+        }
+
+        .geometric-card input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            text-align: right;
+            background: var(--bg-color-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--primary-color);
+        }
+
+        .geometric-card input[type="number"]:focus {
             outline: none;
             background: white;
-            box-shadow: 0 0 0 4px var(--accent-color-light);
+            box-shadow: 0 0 0 3px var(--accent-color-light);
             border-color: var(--accent-color);
         }
+
+        /* --- END OF NEW STYLES --- */
         
         .options-container {
             display: flex;
@@ -308,49 +331,51 @@
             <!-- THÔNG SỐ HÌNH HỌC -->
             <div class="section">
                 <h2 class="section-title">Thông Số Hình Học</h2>
-                <div class="input-group">
-                    <label for="roadLength">Chiều dài tuyến đường (m):</label>
-                    <input type="number" id="roadLength" placeholder="Nhập chiều dài" step="0.01">
-                </div>
-                 <div class="input-group">
-                    <label for="bridgeLength">Chiều dài cầu (m):</label>
-                    <input type="number" id="bridgeLength" placeholder="Nhập chiều dài" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="roadWidth">Chiều rộng mặt đường (B) (m):</label>
-                    <input type="number" id="roadWidth" placeholder="Nhập chiều rộng" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="shoulderWidth">Chiều rộng lề gia cố (C) (m):</label>
-                    <input type="number" id="shoulderWidth" placeholder="Nhập chiều rộng" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="medianWidth">Chiều rộng dải phân cách (m):</label>
-                    <input type="number" id="medianWidth" placeholder="Nhập chiều rộng" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="sidewalkWidth">Chiều rộng vỉa hè (m):</label>
-                    <input type="number" id="sidewalkWidth" placeholder="Nhập chiều rộng" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="earthWidth">Chiều rộng lề đất (m):</label>
-                    <input type="number" id="earthWidth" placeholder="Nhập chiều rộng" step="0.01">
-                </div>
-                 <div class="input-group">
-                    <label for="bridgeWidth">Chiều rộng cầu phần xe chạy (m):</label>
-                    <input type="number" id="bridgeWidth" placeholder="Nhập chiều rộng" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="railingWidth">Chiều rộng lan can (m):</label>
-                    <input type="number" id="railingWidth" placeholder="Nhập chiều rộng" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="upgradeRoadLength">Chiều dài tuyến đường nâng cấp (m):</label>
-                    <input type="number" id="upgradeRoadLength" placeholder="Nhập chiều dài nâng cấp" step="0.01">
-                </div>
-                <div class="input-group">
-                    <label for="gpmbWidth">Chiều rộng GPMB (m):</label>
-                    <input type="number" id="gpmbWidth" placeholder="Nhập chiều rộng GPMB" step="0.01">
+                <div class="geometric-cards-container">
+                    <div class="geometric-card">
+                        <label for="roadLength">Chiều dài tuyến (m)</label>
+                        <input type="number" id="roadLength" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="bridgeLength">Chiều dài cầu (m)</label>
+                        <input type="number" id="bridgeLength" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="roadWidth">Rộng mặt đường (B)</label>
+                        <input type="number" id="roadWidth" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="shoulderWidth">Rộng lề gia cố (C)</label>
+                        <input type="number" id="shoulderWidth" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="medianWidth">Rộng dải phân cách</label>
+                        <input type="number" id="medianWidth" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="sidewalkWidth">Rộng vỉa hè</label>
+                        <input type="number" id="sidewalkWidth" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="earthWidth">Rộng lề đất</label>
+                        <input type="number" id="earthWidth" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="bridgeWidth">Rộng cầu xe chạy</label>
+                        <input type="number" id="bridgeWidth" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="railingWidth">Rộng lan can</label>
+                        <input type="number" id="railingWidth" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="upgradeRoadLength">Dài nâng cấp</label>
+                        <input type="number" id="upgradeRoadLength" placeholder="0.00" step="0.01">
+                    </div>
+                    <div class="geometric-card">
+                        <label for="gpmbWidth">Rộng GPMB</label>
+                        <input type="number" id="gpmbWidth" placeholder="0.00" step="0.01">
+                    </div>
                 </div>
             </div>
 
