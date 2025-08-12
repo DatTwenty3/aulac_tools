@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Công cụ tính khái toán Đường - Cầu</title>
+    <title>Công cụ tính khái toán Đường - Cầu (Bố cục mới)</title>
     <style>
         /* --- Thiết Lập Cơ Bản & Font Chữ --- */
         :root {
             --primary-color: #111111;
             --secondary-color: #2F2F2F;
             --accent-color: #FFCB74;
-            --accent-color-light: rgba(255, 203, 116, 0.5);
+            --accent-color-light: rgba(255, 203, 116, 0.5); /* For focus shadow */
+            --accent-color-bg: #fff8e1; /* Light yellow for selected background */
             --accent-color-dark: #D4A03C;
             --bg-color-light: rgba(255, 255, 255, 0.7);
             --bg-glass: rgba(246, 246, 246, 0.6);
@@ -111,7 +112,7 @@
             font-size: 1em;
         }
         
-        .input-group input {
+        .input-group input[type="number"] {
             width: 100%;
             padding: 16px;
             border: none;
@@ -144,7 +145,9 @@
             gap: 15px;
             max-height: 400px;
             overflow-y: auto;
-            padding: 5px;
+            padding: 15px 5px 5px 5px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            margin-top: 15px;
         }
 
         .option-card {
@@ -154,7 +157,7 @@
             padding: 15px;
             cursor: pointer;
             transition: all 0.25s ease-in-out;
-            border: 1px solid var(--border-color);
+            border: 1px solid transparent;
             box-shadow: 0 4px 15px rgba(47, 47, 47, 0.05);
         }
 
@@ -164,9 +167,8 @@
         }
         
         .option-card.selected {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px var(--accent-color-light);
-            background: white;
+            background-color: var(--accent-color-bg);
+            border-color: var(--accent-color-dark);
         }
 
         .option-card p { margin: 0 0 8px 0; font-size: 0.9em; line-height: 1.5; color: var(--secondary-color); }
@@ -186,9 +188,10 @@
             padding: 20px;
             border-radius: 15px;
             box-shadow: 0 4px 15px rgba(47, 47, 47, 0.05);
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
         
-        .result-item strong { display: block; margin-bottom: 8px; font-size: 1em; font-weight: 500; color: var(--secondary-color); opacity: 0.8; }
+        .result-item strong { display: block; margin-bottom: 5px; font-size: 1em; font-weight: 500; color: var(--secondary-color); opacity: 0.8; }
         
         .result-value {
             font-size: 1.8em;
@@ -213,12 +216,82 @@
             border-radius: 8px;
             display: none; /* Ẩn mặc định */
         }
+        
+        .category-toggle-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .category-toggle-wrapper .main-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+
+        .category-toggle-wrapper .main-toggle input[type="checkbox"] {
+            width: 1.3em;
+            height: 1.3em;
+            cursor: pointer;
+        }
+        
+        .category-toggle-wrapper .main-toggle label {
+            margin-bottom: 0;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 10px;
+            transition: all 0.25s ease-in-out;
+            border: 1px solid transparent;
+        }
+
+        .inline-factors {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .inline-factors .factor-input-group {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .inline-factors label {
+            font-size: 0.9em;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+
+        .inline-factors input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        .factor-info {
+            display: block;
+            font-size: 0.8em;
+            color: var(--secondary-color);
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
 
         @media (max-width: 768px) {
             body { padding: 1rem; }
             .header h1 { font-size: 2em; }
             .header p { font-size: 1em; }
             .content { padding: 15px; }
+            .category-toggle-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -236,104 +309,90 @@
             <div class="section">
                 <h2 class="section-title">Thông Số Hình Học</h2>
                 <div class="input-group">
-                    <label for="roadLength">Chiều dài tuyến đường :</label>
-                    <input type="number" id="roadLength" placeholder="Nhập chiều dài (m)" step="0.01">
+                    <label for="roadLength">Chiều dài tuyến đường (m):</label>
+                    <input type="number" id="roadLength" placeholder="Nhập chiều dài" step="0.01">
                 </div>
                  <div class="input-group">
-                    <label for="bridgeLength">Chiều dài cầu :</label>
-                    <input type="number" id="bridgeLength" placeholder="Nhập chiều dài (m)" step="0.01">
+                    <label for="bridgeLength">Chiều dài cầu (m):</label>
+                    <input type="number" id="bridgeLength" placeholder="Nhập chiều dài" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="roadWidth">Chiều rộng mặt đường :</label>
-                    <input type="number" id="roadWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                    <label for="roadWidth">Chiều rộng mặt đường (m):</label>
+                    <input type="number" id="roadWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="shoulderWidth">Chiều rộng lề gia cố :</label>
-                    <input type="number" id="shoulderWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                    <label for="shoulderWidth">Chiều rộng lề gia cố (m):</label>
+                    <input type="number" id="shoulderWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="medianWidth">Chiều rộng dải phân cách :</label>
-                    <input type="number" id="medianWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                    <label for="medianWidth">Chiều rộng dải phân cách (m):</label>
+                    <input type="number" id="medianWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="sidewalkWidth">Chiều rộng vỉa hè :</label>
-                    <input type="number" id="sidewalkWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                    <label for="sidewalkWidth">Chiều rộng vỉa hè (m):</label>
+                    <input type="number" id="sidewalkWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="earthWidth">Chiều rộng lề đất :</label>
-                    <input type="number" id="earthWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                    <label for="earthWidth">Chiều rộng lề đất (m):</label>
+                    <input type="number" id="earthWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                  <div class="input-group">
-                    <label for="bridgeWidth">Chiều rộng cầu phần xe chạy :</label>
-                    <input type="number" id="bridgeWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                    <label for="bridgeWidth">Chiều rộng cầu phần xe chạy (m):</label>
+                    <input type="number" id="bridgeWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
                 <div class="input-group">
-                    <label for="railingWidth">Chiều rộng lan can :</label>
-                    <input type="number" id="railingWidth" placeholder="Nhập chiều rộng (m)" step="0.01">
+                    <label for="railingWidth">Chiều rộng lan can (m):</label>
+                    <input type="number" id="railingWidth" placeholder="Nhập chiều rộng" step="0.01">
                 </div>
             </div>
 
-            <!-- LỰA CHỌN ĐƠN GIÁ -->
-            <div class="section">
-                <h2 class="section-title">Lựa Chọn Đơn Giá</h2>
-                <div class="input-group">
-                    <label>1. Chọn đơn giá phần đường:</label>
-                    <div id="roadOptionsContainer" class="options-container"></div>
-                </div>
-                <div class="input-group">
-                    <label>2. Chọn đơn giá phần cầu:</label>
-                    <div id="bridgeOptionsContainer" class="options-container"></div>
-                </div>
-                <div class="input-group">
-                    <label>3. Chọn đơn giá phần cấp nước:</label>
-                    <div id="waterSupplyOptionsContainer" class="options-container"></div>
-                </div>
-                <div class="input-group">
-                    <label>4. Chọn đơn giá cống thoát nước mưa:</label>
-                    <div id="infraOptionsContainer" class="options-container"></div>
-                </div>
-                 <div class="input-group">
-                    <label>5. Chọn đơn giá cáp điện & chiếu sáng:</label>
-                    <div id="powerCableOptionsContainer" class="options-container"></div>
-                </div>
+            <!-- LỰA CHỌN HẠNG MỤC & HỆ SỐ -->
+            <div class="section" id="costCategoriesSection">
+                <h2 class="section-title">Lựa Chọn Hạng Mục & Hệ Số</h2>
+                <!-- Các hạng mục sẽ được chèn vào đây bằng JS -->
             </div>
             
             <!-- KẾT QUẢ -->
             <div class="section results">
                 <h2 class="section-title">Kết Quả Tính Toán</h2>
                 <div class="results-content">
-                    <div class="result-item">
-                        <strong>Chi phí xây dựng phần đường:</strong>
+                    <div class="result-item hidden" data-result-for="road">
+                        <strong>Chi phí XD phần đường</strong>
+                        <small class="factor-info">HS Vùng: <span class="regional-factor-display"></span></small>
                         <span class="result-value" id="roadCost">0</span>
                         <span class="unit">đồng</span>
                     </div>
-                    <div class="result-item">
-                        <strong>Chi phí xây dựng phần cầu:</strong>
+                    <div class="result-item hidden" data-result-for="bridge">
+                        <strong>Chi phí XD phần cầu</strong>
+                        <small class="factor-info">HS Vùng: <span class="regional-factor-display"></span></small>
                         <span class="result-value" id="bridgeCost">0</span>
                         <span class="unit">đồng</span>
                     </div>
-                    <div class="result-item">
-                        <strong>Chi phí xây dựng phần cấp nước:</strong>
+                    <div class="result-item hidden" data-result-for="waterSupply">
+                        <strong>Chi phí XD phần cấp nước</strong>
+                        <small class="factor-info">HS Vùng: <span class="regional-factor-display"></span></small>
                         <span class="result-value" id="waterSupplyCost">0</span>
                         <span class="unit">đồng</span>
                     </div>
-                    <div class="result-item">
-                        <strong>Chi phí xây dựng cống thoát nước:</strong>
+                    <div class="result-item hidden" data-result-for="infra">
+                        <strong>Chi phí XD cống thoát nước</strong>
+                         <small class="factor-info">HS Vùng: <span class="regional-factor-display"></span></small>
                         <span class="result-value" id="infraCost">0</span>
                         <span class="unit">đồng</span>
                     </div>
-                     <div class="result-item">
-                        <strong>Chi phí XD cáp điện & chiếu sáng:</strong>
+                     <div class="result-item hidden" data-result-for="powerCable">
+                        <strong>Chi phí XD cáp điện & CS</strong>
+                         <small class="factor-info">HS Vùng: <span class="regional-factor-display"></span></small>
                         <span class="result-value" id="powerCableCost">0</span>
                         <span class="unit">đồng</span>
                     </div>
                     <div class="result-item">
-                        <strong>Chiều rộng nền đường:</strong>
+                        <strong>Chiều rộng nền đường</strong>
                         <span class="result-value" id="totalRoadWidth">0.00</span>
                         <span class="unit">m</span>
                     </div>
                     <div class="result-item">
-                        <strong>Diện tích mặt cầu:</strong>
+                        <strong>Diện tích mặt cầu</strong>
                         <span class="result-value" id="bridgeArea">0.00</span>
                         <span class="unit">m²</span>
                     </div>
@@ -344,27 +403,20 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            /**
-             * Đối tượng chính quản lý toàn bộ ứng dụng
-             */
             const CostEstimator = {
-                // --- CẤU HÌNH ---
-                // Nơi định nghĩa tất cả các ID, tên và logic liên quan đến các phần của ứng dụng.
-                // Giúp dễ dàng thêm/bớt hạng mục mà không cần sửa nhiều code.
                 config: {
                     jsonPath: './data/khai_toan_data.json',
-                    // Định nghĩa các ô nhập liệu
                     inputs: [
                         'roadLength', 'roadWidth', 'shoulderWidth', 'medianWidth', 
                         'sidewalkWidth', 'earthWidth', 'bridgeLength', 'bridgeWidth', 'railingWidth'
                     ],
-                    // Định nghĩa các hạng mục chi phí
                     costCategories: [
                         { 
                             id: 'road', 
+                            name: 'Chi phí phần đường',
+                            regionalFactor: 1.118,
+                            hasCustomFactor: true,
                             dataKey: 'suat_von_dau_tu_duong_o_to', 
-                            containerId: 'roadOptionsContainer',
-                            outputId: 'roadCost',
                             calculate: (state, costItem) => {
                                 const roadLengthKm = (state.inputs.roadLength - state.inputs.bridgeLength) / 1000;
                                 return roadLengthKm > 0 ? roadLengthKm * costItem.chi_phi_xay_dung * 1000000 : 0;
@@ -372,110 +424,146 @@
                         },
                         { 
                             id: 'bridge', 
+                            name: 'Chi phí phần cầu',
+                            regionalFactor: 1.011,
                             dataKey: 'suat_von_dau_tu_cau', 
-                            containerId: 'bridgeOptionsContainer',
-                            outputId: 'bridgeCost',
                             calculate: (state, costItem) => state.results.bridgeArea * costItem.chi_phi_xay_dung * 1000
                         },
                         { 
-                            id: 'waterSupply', 
+                            id: 'waterSupply',
+                            name: 'Chi phí phần cấp nước',
+                            regionalFactor: 1.147,
                             dataKey: 'gia_xay_dung_tuyen_ong_cap_nuoc', 
-                            containerId: 'waterSupplyOptionsContainer',
-                            outputId: 'waterSupplyCost',
                             filter: item => item.don_vi === '1.000 đ/km',
                             calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000
                         },
                         { 
                             id: 'infra', 
+                            name: 'Chi phí cống thoát nước mưa',
+                            regionalFactor: 1.071,
+                            hasCustomFactor: true,
                             dataKey: 'gia_xay_dung_tuyen_cong_thoat_nuoc_mua', 
-                            containerId: 'infraOptionsContainer',
-                            outputId: 'infraCost',
                             filter: item => item.don_vi === '1.000 đ/km',
                             calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000
                         },
                         { 
                             id: 'powerCable', 
+                            name: 'Chi phí cáp điện & chiếu sáng',
+                            regionalFactor: 1.012,
                             dataKey: 'suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV', 
-                            containerId: 'powerCableOptionsContainer',
-                            outputId: 'powerCableCost',
                             calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000000
                         }
                     ],
-                    // Định nghĩa các kết quả tính toán khác
                     otherCalculations: {
                         totalRoadWidth: state => state.inputs.earthWidth * 2 + state.inputs.sidewalkWidth * 2 + state.inputs.shoulderWidth * 2 + state.inputs.medianWidth + state.inputs.roadWidth,
                         bridgeArea: state => state.inputs.bridgeLength * (state.inputs.railingWidth * 2 + state.inputs.bridgeWidth)
                     }
                 },
 
-                // --- TRẠNG THÁI ---
-                // Lưu trữ tất cả dữ liệu động của ứng dụng.
                 state: {
                     costData: {},
                     inputs: {},
                     selectedOptions: {},
-                    results: {}
+                    results: {},
+                    activeCategories: new Set()
                 },
 
-                // --- BỘ ĐỆM DOM ---
-                // Lưu trữ các tham chiếu đến phần tử DOM để tránh truy vấn lặp lại.
                 elements: {},
 
-                /**
-                 * Khởi tạo ứng dụng
-                 */
                 async init() {
+                    this.buildDynamicUI();
                     this.cacheElements();
                     this.setupEventListeners();
                     try {
                         await this.fetchData();
                         this.createAllOptionCards();
+                        this.renderStaticFactors();
                         this.updateAndCalculate();
                     } catch (error) {
                         console.error("Không thể khởi tạo ứng dụng:", error);
-                        this.showError(`Lỗi: ${error.message}. Vui lòng kiểm tra lại đường dẫn tệp data.json và đảm bảo nó hợp lệ.`);
+                        this.showError(`Lỗi: ${error.message}. Vui lòng kiểm tra lại đường dẫn tệp data.json.`);
                     }
                 },
+                
+                buildDynamicUI() {
+                    const container = document.getElementById('costCategoriesSection');
+                    this.config.costCategories.forEach((cat, index) => {
+                        const catId = cat.id;
+                        const dependentFactorId = `dependentFactor_${catId}`;
+                        const customFactorId = `customFactor_${catId}`;
 
-                /**
-                 * Lưu các phần tử DOM cần thiết vào bộ đệm
-                 */
+                        const inputGroup = document.createElement('div');
+                        inputGroup.className = 'input-group';
+                        
+                        let customFactorHtml = '';
+                        if (cat.hasCustomFactor) {
+                            customFactorHtml = `
+                                <div class="factor-input-group">
+                                    <label for="${customFactorId}">HS Tùy chỉnh:</label>
+                                    <input type="number" id="${customFactorId}" data-factor-type="custom" data-category-id="${catId}" value="1.0" step="0.01">
+                                </div>
+                            `;
+                        }
+
+                        inputGroup.innerHTML = `
+                            <div class="category-toggle-wrapper">
+                                <div class="main-toggle">
+                                    <input type="checkbox" id="toggle_${catId}" data-category-id="${catId}">
+                                    <label for="toggle_${catId}">${index + 1}. ${cat.name}</label>
+                                </div>
+                                <div class="inline-factors hidden" id="inlineFactors_${catId}">
+                                    <div class="factor-input-group">
+                                        <label for="${dependentFactorId}">HS Kéo theo:</label>
+                                        <input type="number" id="${dependentFactorId}" data-factor-type="dependent" data-category-id="${catId}" value="1.0" step="0.01">
+                                    </div>
+                                    ${customFactorHtml}
+                                </div>
+                            </div>
+                            <div id="optionsContainer_${catId}" class="options-container hidden"></div>
+                        `;
+                        container.appendChild(inputGroup);
+                    });
+                },
+
                 cacheElements() {
                     this.elements.errorMessage = document.getElementById('errorMessage');
+                    // Cache main inputs
                     this.config.inputs.forEach(id => {
                         this.elements[id] = document.getElementById(id);
                     });
-                    // Cache all output elements
-                    const outputIds = Object.keys(this.config.otherCalculations).concat(
-                        this.config.costCategories.map(cat => cat.outputId)
-                    );
-                    outputIds.forEach(id => {
-                        this.elements[id] = document.getElementById(id);
+                    
+                    // Cache cost category related elements
+                    this.config.costCategories.forEach(cat => {
+                        const catId = cat.id;
+                        this.elements[`toggle_${catId}`] = document.getElementById(`toggle_${catId}`);
+                        this.elements[`optionsContainer_${catId}`] = document.getElementById(`optionsContainer_${catId}`);
+                        this.elements[`inlineFactors_${catId}`] = document.getElementById(`inlineFactors_${catId}`);
+                        this.elements[`result_${catId}`] = document.querySelector(`[data-result-for="${catId}"]`);
+                        
+                        // Cache factor inputs
+                        this.elements[`dependentFactor_${catId}`] = document.getElementById(`dependentFactor_${catId}`);
+                        if (cat.hasCustomFactor) {
+                             this.elements[`customFactor_${catId}`] = document.getElementById(`customFactor_${catId}`);
+                        }
+                    });
+
+                    // Cache other calculation outputs
+                    Object.keys(this.config.otherCalculations).forEach(id => {
+                         this.elements[id] = document.getElementById(id);
                     });
                 },
 
-                /**
-                 * Tải dữ liệu chi phí từ file JSON
-                 */
                 async fetchData() {
                     const response = await fetch(this.config.jsonPath);
-                    if (!response.ok) {
-                        throw new Error(`Lỗi mạng: ${response.statusText}`);
-                    }
+                    if (!response.ok) throw new Error(`Lỗi mạng: ${response.statusText}`);
                     this.state.costData = await response.json();
                 },
 
-                /**
-                 * Cài đặt các trình lắng nghe sự kiện
-                 */
                 setupEventListeners() {
                     const form = document.querySelector('.content');
                     form.addEventListener('input', this.handleInputChange.bind(this));
                 },
 
-                /**
-                 * Xử lý sự kiện khi người dùng thay đổi giá trị nhập liệu
-                 */
                 handleInputChange(event) {
                     if (event.target.type === 'radio') {
                         this.handleCardSelection(event.target);
@@ -483,60 +571,83 @@
                     this.updateAndCalculate();
                 },
                 
-                /**
-                 * Cập nhật trạng thái, tính toán và hiển thị lại kết quả
-                 */
                 updateAndCalculate() {
                     this.updateStateFromDOM();
                     this.calculateAll();
                     this.render();
                 },
 
-                /**
-                 * Cập nhật đối tượng state từ giá trị hiện tại trong DOM
-                 */
                 updateStateFromDOM() {
-                    // Cập nhật giá trị inputs
-                    this.config.inputs.forEach(id => {
-                        this.state.inputs[id] = parseFloat(this.elements[id].value) || 0;
+                    this.state.activeCategories.clear();
+                    this.config.costCategories.forEach(cat => {
+                        const toggle = this.elements[`toggle_${cat.id}`];
+                        if (toggle && toggle.checked) {
+                            this.state.activeCategories.add(cat.id);
+                        }
                     });
 
-                    // Cập nhật các lựa chọn đơn giá
+                    // Update main inputs
+                    this.config.inputs.forEach(id => {
+                        this.state.inputs[id] = parseFloat(document.getElementById(id).value) || 0;
+                    });
+
+                    // Update cost category options and factors
                     this.config.costCategories.forEach(cat => {
-                        const selectedRadio = document.querySelector(`input[name="${cat.id}CostType"]:checked`);
-                        this.state.selectedOptions[cat.id] = selectedRadio ? selectedRadio.value : null;
+                        const catId = cat.id;
+                        const selectedRadio = document.querySelector(`input[name="${catId}CostType"]:checked`);
+                        this.state.selectedOptions[catId] = selectedRadio ? selectedRadio.value : null;
+                        
+                        const depFactorInput = this.elements[`dependentFactor_${catId}`];
+                        this.state.inputs[`dependentFactor_${catId}`] = depFactorInput ? (parseFloat(depFactorInput.value) || 0) : 1;
+
+                        if (cat.hasCustomFactor) {
+                            const customFactorInput = this.elements[`customFactor_${catId}`];
+                            this.state.inputs[`customFactor_${catId}`] = customFactorInput ? (parseFloat(customFactorInput.value) || 0) : 1;
+                        }
                     });
                 },
 
-                /**
-                 * Thực hiện tất cả các phép tính
-                 */
                 calculateAll() {
-                    const { inputs, costData, selectedOptions } = this.state;
-
-                    // Tính các giá trị hình học
                     for (const key in this.config.otherCalculations) {
                         this.state.results[key] = this.config.otherCalculations[key](this.state);
                     }
-
-                    // Tính các chi phí
+                    
                     this.config.costCategories.forEach(cat => {
-                        const selectedKey = selectedOptions[cat.id];
-                        const dataGroup = costData[cat.dataKey];
+                        const catId = cat.id;
                         let cost = 0;
-                        if (selectedKey && dataGroup && dataGroup[selectedKey]) {
-                            cost = cat.calculate(this.state, dataGroup[selectedKey]);
+                        if (this.state.activeCategories.has(catId)) {
+                            const selectedKey = this.state.selectedOptions[catId];
+                            const dataGroup = this.state.costData[cat.dataKey];
+                            if (selectedKey && dataGroup && dataGroup[selectedKey]) {
+                                const baseCost = cat.calculate(this.state, dataGroup[selectedKey]);
+                                
+                                const dependentFactor = this.state.inputs[`dependentFactor_${catId}`] > 0 ? this.state.inputs[`dependentFactor_${catId}`] : 1;
+                                
+                                let customFactor = 1;
+                                if (cat.hasCustomFactor) {
+                                    customFactor = this.state.inputs[`customFactor_${catId}`] > 0 ? this.state.inputs[`customFactor_${catId}`] : 1;
+                                }
+
+                                cost = baseCost * cat.regionalFactor * dependentFactor * customFactor;
+                            }
                         }
-                        this.state.results[cat.outputId] = cost;
+                        this.state.results[`${catId}Cost`] = cost;
                     });
                 },
 
-                /**
-                 * Hiển thị tất cả kết quả ra giao diện
-                 */
                 render() {
+                    // Render visibility
+                    this.config.costCategories.forEach(cat => {
+                        const catId = cat.id;
+                        const isActive = this.state.activeCategories.has(catId);
+                        this.elements[`optionsContainer_${catId}`].classList.toggle('hidden', !isActive);
+                        this.elements[`inlineFactors_${catId}`].classList.toggle('hidden', !isActive);
+                        this.elements[`result_${catId}`].classList.toggle('hidden', !isActive);
+                    });
+
+                    // Render values
                     for (const key in this.state.results) {
-                        const element = this.elements[key];
+                        const element = document.getElementById(key);
                         if (element) {
                             const value = this.state.results[key];
                             const isCurrency = key.toLowerCase().includes('cost');
@@ -546,22 +657,28 @@
                     }
                 },
                 
-                /**
-                 * Tạo tất cả các thẻ lựa chọn đơn giá dựa trên cấu hình
-                 */
+                renderStaticFactors() {
+                    this.config.costCategories.forEach(cat => {
+                        const resultItem = this.elements[`result_${cat.id}`];
+                        if (resultItem) {
+                            const factorDisplay = resultItem.querySelector('.regional-factor-display');
+                            if (factorDisplay) {
+                                factorDisplay.textContent = cat.regionalFactor;
+                            }
+                        }
+                    });
+                },
+
                 createAllOptionCards() {
                     this.config.costCategories.forEach(cat => {
                         let data = this.state.costData[cat.dataKey] || {};
                         if (cat.filter) {
-                            data = Object.fromEntries(Object.entries(data).filter(([key, value]) => cat.filter(value)));
+                            data = Object.fromEntries(Object.entries(data).filter(([, value]) => cat.filter(value)));
                         }
-                        this.createOptionCards(cat.containerId, data, `${cat.id}CostType`);
+                        this.createOptionCards(`optionsContainer_${cat.id}`, data, `${cat.id}CostType`);
                     });
                 },
 
-                /**
-                 * Tạo các thẻ lựa chọn cho một hạng mục cụ thể
-                 */
                 createOptionCards(containerId, data, name) {
                     const container = document.getElementById(containerId);
                     if (!container) return;
@@ -598,19 +715,13 @@
                     });
                 },
 
-                /**
-                 * Xử lý hiệu ứng giao diện khi chọn thẻ
-                 */
                 handleCardSelection(radioElement) {
                     const container = radioElement.closest('.options-container');
                     if (!container) return;
-                    container.querySelectorAll('.option-card').forEach(card => {
-                        card.classList.remove('selected');
-                    });
+                    container.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
                     radioElement.closest('.option-card').classList.add('selected');
                 },
 
-                // --- CÁC HÀM TIỆN ÍCH ---
                 formatCurrency: num => isNaN(num) || !isFinite(num) ? '0' : Math.round(num).toLocaleString('vi-VN'),
                 formatNumber: num => isNaN(num) || !isFinite(num) ? '0.00' : num.toFixed(2),
                 animateValueUpdate(element) {
@@ -623,7 +734,6 @@
                 }
             };
 
-            // Khởi chạy ứng dụng
             CostEstimator.init();
         });
     </script>
