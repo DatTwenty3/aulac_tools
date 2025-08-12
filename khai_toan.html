@@ -17,6 +17,9 @@
             --bg-glass: rgba(246, 246, 246, 0.6);
             --border-color: rgba(47, 47, 47, 0.1);
             --success-color: #34c759;
+            --total-cost-bg: #e6f7ff;
+            --total-cost-border: #91d5ff;
+            --total-cost-text: #0050b3;
         }
 
         * {
@@ -214,6 +217,18 @@
             transition: opacity 0.3s ease, transform 0.3s ease;
         }
         
+        .result-item.total {
+            background: var(--total-cost-bg);
+            border: 1px solid var(--total-cost-border);
+            grid-column: 1 / -1; /* Span full width */
+        }
+        .result-item.total strong {
+            color: var(--total-cost-text);
+        }
+        .result-item.total .result-value {
+            color: var(--total-cost-text);
+        }
+
         .result-item strong { display: block; margin-bottom: 5px; font-size: 1em; font-weight: 500; color: var(--secondary-color); opacity: 0.8; }
         
         .result-value {
@@ -272,6 +287,7 @@
 
         .inline-factors {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             align-items: center;
         }
@@ -288,10 +304,13 @@
             white-space: nowrap;
         }
 
-        .inline-factors input[type="number"] {
+        .inline-factors input[type="number"], .inline-factors select {
             width: 80px;
             padding: 8px;
             font-size: 0.9em;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color-light);
         }
 
         .factor-info {
@@ -349,31 +368,31 @@
                         <input type="number" id="shoulderWidth" placeholder="0.00" step="0.01">
                     </div>
                     <div class="geometric-card">
-                        <label for="medianWidth">Rộng dải phân cách</label>
+                        <label for="medianWidth">Rộng dải phân cách (m)</label>
                         <input type="number" id="medianWidth" placeholder="0.00" step="0.01">
                     </div>
                     <div class="geometric-card">
-                        <label for="sidewalkWidth">Rộng vỉa hè</label>
+                        <label for="sidewalkWidth">Rộng vỉa hè (m)</label>
                         <input type="number" id="sidewalkWidth" placeholder="0.00" step="0.01">
                     </div>
                     <div class="geometric-card">
-                        <label for="earthWidth">Rộng lề đất</label>
+                        <label for="earthWidth">Rộng lề đất (m)</label>
                         <input type="number" id="earthWidth" placeholder="0.00" step="0.01">
                     </div>
                     <div class="geometric-card">
-                        <label for="bridgeWidth">Rộng cầu xe chạy</label>
+                        <label for="bridgeWidth">Rộng cầu xe chạy (m)</label>
                         <input type="number" id="bridgeWidth" placeholder="0.00" step="0.01">
                     </div>
                     <div class="geometric-card">
-                        <label for="railingWidth">Rộng lan can</label>
+                        <label for="railingWidth">Rộng lan can (m)</label>
                         <input type="number" id="railingWidth" placeholder="0.00" step="0.01">
                     </div>
                     <div class="geometric-card">
-                        <label for="upgradeRoadLength">Dài nâng cấp</label>
+                        <label for="upgradeRoadLength">Dài nâng cấp (m)</label>
                         <input type="number" id="upgradeRoadLength" placeholder="0.00" step="0.01">
                     </div>
                     <div class="geometric-card">
-                        <label for="gpmbWidth">Rộng GPMB</label>
+                        <label for="gpmbWidth">Rộng GPMB (m)</label>
                         <input type="number" id="gpmbWidth" placeholder="0.00" step="0.01">
                     </div>
                 </div>
@@ -455,6 +474,11 @@
                         <span class="result-value" id="gpmbArea">0.00</span>
                         <span class="unit">m²</span>
                     </div>
+                    <div class="result-item total">
+                        <strong>Tổng chi phí dự án</strong>
+                        <span class="result-value" id="totalCost">0</span>
+                        <span class="unit">đồng</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -493,25 +517,38 @@
                             id: 'waterSupply',
                             name: 'Chi phí phần cấp nước',
                             regionalFactor: 1.147,
+                            hasSidesOption: true,
                             dataKey: 'gia_xay_dung_tuyen_ong_cap_nuoc', 
                             filter: item => item.don_vi === '1.000 đ/km',
-                            calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000
+                            calculate: (state, costItem) => {
+                                const sides = state.inputs.sides_waterSupply || 2;
+                                return (state.inputs.roadLength / 1000 * sides) * costItem.chi_phi_xay_dung * 1000;
+                            }
                         },
                         { 
                             id: 'infra', 
                             name: 'Chi phí cống thoát nước mưa',
                             regionalFactor: 1.071,
                             hasCustomFactor: true,
+                            hasSidesOption: true,
                             dataKey: 'gia_xay_dung_tuyen_cong_thoat_nuoc_mua', 
                             filter: item => item.don_vi === '1.000 đ/km',
-                            calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000
+                            calculate: (state, costItem) => {
+                                const sides = state.inputs.sides_infra || 2;
+                                return (state.inputs.roadLength / 1000 * sides) * costItem.chi_phi_xay_dung * 1000;
+                            }
                         },
                         { 
                             id: 'powerCable', 
                             name: 'Chi phí cáp điện & chiếu sáng',
                             regionalFactor: 1.012,
+                            hasCustomFactor: true,
+                            hasSidesOption: true,
                             dataKey: 'suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV', 
-                            calculate: (state, costItem) => (state.inputs.roadLength / 1000 * 2) * costItem.chi_phi_xay_dung * 1000000
+                            calculate: (state, costItem) => {
+                                const sides = state.inputs.sides_powerCable || 2;
+                                return (state.inputs.roadLength / 1000 * sides) * costItem.chi_phi_xay_dung * 1000000;
+                            }
                         },
                         {
                             id: 'upgradeRoad',
@@ -527,11 +564,11 @@
                             name: 'Chi phí bồi thường, HT & TĐC',
                             directPrice: {
                                 inputId: 'compensationPrice',
-                                label: 'Đơn giá (tr.đ/m²):'
+                                label: 'Đơn giá (đồng/m²):'
                             },
                             calculate: (state) => {
                                 const price = state.inputs.compensationPrice || 0;
-                                return state.results.gpmbArea * price * 1000000;
+                                return state.results.gpmbArea * price;
                             }
                         },
                         {
@@ -539,11 +576,11 @@
                             name: 'Chi phí rà phá bom mìn',
                             directPrice: {
                                 inputId: 'mineClearancePrice',
-                                label: 'Đơn giá (10k đ/m²):'
+                                label: 'Đơn giá (đồng/m²):'
                             },
                             calculate: (state) => {
                                 const price = state.inputs.mineClearancePrice || 0;
-                                return state.results.gpmbArea * price * 10000;
+                                return state.results.gpmbArea * price;
                             }
                         }
                     ],
@@ -586,33 +623,51 @@
                         const catId = cat.id;
                         const dependentFactorId = `dependentFactor_${catId}`;
                         const customFactorId = `customFactor_${catId}`;
+                        const sidesId = `sides_${catId}`;
 
                         const inputGroup = document.createElement('div');
                         inputGroup.className = 'input-group';
                         
                         let inlineFactorsHtml = '';
-                        // Standard factors
-                        let dependentFactorHtml = `
-                            <div class="factor-input-group">
-                                <label for="${dependentFactorId}">HS Kéo theo:</label>
-                                <input type="number" id="${dependentFactorId}" data-category-id="${catId}" value="1.0" step="0.01">
-                            </div>
-                        `;
+                        
+                        // Sides option
+                        if (cat.hasSidesOption) {
+                             inlineFactorsHtml += `
+                                <div class="factor-input-group">
+                                    <label for="${sidesId}">Số bên:</label>
+                                    <select id="${sidesId}">
+                                        <option value="2" selected>2 bên</option>
+                                        <option value="1">1 bên</option>
+                                    </select>
+                                </div>
+                            `;
+                        }
+
+                        // Dependent factor
+                        if (!cat.directPrice) {
+                            inlineFactorsHtml += `
+                                <div class="factor-input-group">
+                                    <label for="${dependentFactorId}">HS Kéo đuôi:</label>
+                                    <input type="number" id="${dependentFactorId}" value="1.0" step="0.01">
+                                </div>
+                            `;
+                        }
+                        
                         // Custom factor
                         if (cat.hasCustomFactor) {
-                            dependentFactorHtml += `
+                            inlineFactorsHtml += `
                                 <div class="factor-input-group">
                                     <label for="${customFactorId}">HS Tùy chỉnh:</label>
-                                    <input type="number" id="${customFactorId}" data-category-id="${catId}" value="1.0" step="0.01">
+                                    <input type="number" id="${customFactorId}" value="1.0" step="0.01">
                                 </div>
                             `;
                         }
                         // Direct price input
                         if (cat.directPrice) {
-                            dependentFactorHtml = `
+                            inlineFactorsHtml = `
                                 <div class="factor-input-group">
                                     <label for="${cat.directPrice.inputId}">${cat.directPrice.label}</label>
-                                    <input type="number" id="${cat.directPrice.inputId}" data-category-id="${catId}" value="0" step="0.01">
+                                    <input type="number" id="${cat.directPrice.inputId}" value="0" step="0.01">
                                 </div>
                             `;
                         }
@@ -624,7 +679,7 @@
                                     <label for="toggle_${catId}">${index + 1}. ${cat.name}</label>
                                 </div>
                                 <div class="inline-factors hidden" id="inlineFactors_${catId}">
-                                    ${dependentFactorHtml}
+                                    ${inlineFactorsHtml}
                                 </div>
                             </div>
                             <div id="optionsContainer_${catId}" class="options-container hidden"></div>
@@ -656,6 +711,9 @@
                             if (cat.hasCustomFactor) {
                                 this.elements[`customFactor_${catId}`] = document.getElementById(`customFactor_${catId}`);
                             }
+                             if (cat.hasSidesOption) {
+                                this.elements[`sides_${catId}`] = document.getElementById(`sides_${catId}`);
+                            }
                         }
                     });
 
@@ -663,6 +721,8 @@
                     Object.keys(this.config.otherCalculations).forEach(id => {
                          this.elements[id] = document.getElementById(id);
                     });
+                    // Cache total cost element
+                    this.elements.totalCost = document.getElementById('totalCost');
                 },
 
                 async fetchData() {
@@ -721,6 +781,10 @@
                                 const customFactorInput = this.elements[`customFactor_${catId}`];
                                 this.state.inputs[`customFactor_${catId}`] = customFactorInput ? (parseFloat(customFactorInput.value) || 0) : 1;
                             }
+                             if (cat.hasSidesOption) {
+                                const sidesSelect = this.elements[`sides_${catId}`];
+                                this.state.inputs[`sides_${catId}`] = sidesSelect ? parseInt(sidesSelect.value, 10) : 2;
+                            }
                         }
                     });
                 },
@@ -730,6 +794,7 @@
                         this.state.results[key] = this.config.otherCalculations[key](this.state);
                     }
                     
+                    let totalCost = 0;
                     this.config.costCategories.forEach(cat => {
                         const catId = cat.id;
                         let cost = 0;
@@ -758,7 +823,9 @@
                             }
                         }
                         this.state.results[`${catId}Cost`] = cost;
+                        totalCost += cost;
                     });
+                    this.state.results.totalCost = totalCost;
                 },
 
                 render() {
