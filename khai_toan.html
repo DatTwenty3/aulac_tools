@@ -13,13 +13,12 @@
             --accent-color-light: rgba(255, 203, 116, 0.5); /* For focus shadow */
             --accent-color-bg: #fff8e1; /* Light yellow for selected background */
             --accent-color-dark: #D4A03C;
-            --bg-color-light: rgba(255, 255, 255, 0.7);
-            --bg-glass: rgba(246, 246, 246, 0.6);
-            --border-color: rgba(47, 47, 47, 0.1);
+            --bg-color-light: rgba(255, 255, 255, 0.3);
+            --bg-glass: rgba(255, 255, 255, 0.2);
+            --border-color: rgba(255, 255, 255, 0.4);
             --success-color: #34c759;
-            --total-cost-bg: #e6f7ff;
-            --total-cost-border: #91d5ff;
             --total-cost-text: #0050b3;
+            --danger-color: #f5222d;
         }
 
         * {
@@ -56,10 +55,10 @@
             width: 100%;
             max-width: 900px;
             background: var(--bg-glass);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
             border-radius: 30px;
-            border: 1px solid rgba(246, 246, 246, 0.8);
+            border: 1px solid var(--border-color);
             box-shadow: 0 16px 40px rgba(47, 47, 47, 0.1);
             overflow: hidden;
             animation: fadeIn 0.5s ease-out;
@@ -121,7 +120,6 @@
         }
         input[type=number] { -moz-appearance: textfield; }
         
-        /* --- NEW STYLES FOR GEOMETRIC CARDS --- */
         .geometric-cards-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -129,11 +127,18 @@
         }
 
         .geometric-card {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.15);
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 2px 10px rgba(47, 47, 47, 0.05);
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid var(--border-color);
+            transition: all 0.25s ease-in-out;
+        }
+
+        .geometric-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(47, 47, 47, 0.1);
+            border-color: rgba(255, 255, 255, 0.7);
         }
 
         .geometric-card label {
@@ -151,9 +156,10 @@
             font-weight: 600;
             text-align: right;
             background: var(--bg-color-light);
-            border: 1px solid var(--border-color);
+            border: 1px solid transparent;
             border-radius: 8px;
             color: var(--primary-color);
+            transition: all 0.2s ease-in-out;
         }
 
         .geometric-card input[type="number"]:focus {
@@ -162,8 +168,6 @@
             box-shadow: 0 0 0 3px var(--accent-color-light);
             border-color: var(--accent-color);
         }
-
-        /* --- END OF NEW STYLES --- */
         
         .options-container {
             display: flex;
@@ -178,7 +182,7 @@
 
         .option-card {
             display: block;
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 15px;
             padding: 15px;
             cursor: pointer;
@@ -210,16 +214,20 @@
         }
         
         .result-item {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
             padding: 20px;
             border-radius: 15px;
+            border: 1px solid var(--border-color);
             box-shadow: 0 4px 15px rgba(47, 47, 47, 0.05);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: all 0.25s ease-in-out;
+        }
+
+        .result-item:not(.total):hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(47, 47, 47, 0.1);
         }
         
         .result-item.total {
-            background: var(--total-cost-bg);
-            border: 1px solid var(--total-cost-border);
             grid-column: 1 / -1; /* Span full width */
         }
         .result-item.total strong {
@@ -285,6 +293,10 @@
             border: 1px solid transparent;
         }
 
+        .category-toggle-wrapper .main-toggle label:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
         .inline-factors {
             display: flex;
             flex-wrap: wrap;
@@ -304,14 +316,91 @@
             white-space: nowrap;
         }
 
-        .inline-factors input[type="number"], .inline-factors select {
-            width: 80px;
+        .inline-factors input[type="number"], .inline-factors select, .btn {
             padding: 8px;
             font-size: 0.9em;
             border-radius: 8px;
-            border: 1px solid var(--border-color);
+            border: 1px solid transparent;
             background: var(--bg-color-light);
         }
+        .inline-factors input[type="number"] { width: 80px; }
+        .inline-factors select { width: 80px; }
+        
+        .btn {
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+        }
+        .btn-add {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            padding: 8px 15px;
+        }
+        .btn-add:hover {
+            background-color: var(--accent-color-dark);
+        }
+        .btn-remove {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+            padding: 5px 10px;
+        }
+        .btn-remove:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .segments-container {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .segment-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .segment-row > * {
+            margin-right: 10px;
+        }
+        .segment-row .segment-selection {
+            flex-grow: 1;
+            background: var(--bg-color-light);
+            padding: 8px;
+            border-radius: 8px;
+            min-width: 200px;
+            border: 1px solid transparent;
+        }
+        .segment-row .segment-selection:hover {
+            border-color: var(--accent-color);
+        }
+        .segment-row .selected-option-name {
+            font-size: 0.9em;
+            font-style: italic;
+            opacity: 0.8;
+        }
+        .segment-row .btn-select-type {
+            padding: 8px 12px;
+        }
+
+        .segment-row label {
+            font-size: 0.9em;
+            margin-bottom: 0;
+        }
+        .segment-row input {
+            padding: 8px;
+            font-size: 0.9em;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            background: var(--bg-color-light);
+            width: 100px;
+        }
+        .segment-row .btn-remove { margin-left: auto; }
 
         .factor-info {
             display: block;
@@ -323,6 +412,49 @@
 
         .hidden {
             display: none !important;
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            width: 90%;
+            max-width: 800px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(25px) saturate(150%);
+            -webkit-backdrop-filter: blur(25px) saturate(150%);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        #modalOptionsContainer {
+            max-height: 60vh;
+            overflow-y: auto;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Thêm khoảng cách giữa các thẻ */
+        }
+        #modalCloseBtn {
+            display: block;
+            margin: 10px auto 0 auto;
+            padding: 10px 25px;
+            background-color: var(--accent-color);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
         }
 
         @media (max-width: 768px) {
@@ -340,7 +472,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🛣️ Công cụ tính khái toán</h1>
+            <h1>CÔNG CỤ TÍNH KHÁI TOÁN TỰ ĐỘNG</h1>
             <p>Công cụ tính toán tự động các thông số và chi phí kỹ thuật</p>
         </div>
 
@@ -484,6 +616,15 @@
         </div>
     </div>
 
+    <!-- Modal for selection -->
+    <div id="selectionModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h3 id="modalTitle">Chọn loại</h3>
+            <div id="modalOptionsContainer"></div>
+            <button id="modalCloseBtn" class="btn">Đóng</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const CostEstimator = {
@@ -530,12 +671,21 @@
                             name: 'Chi phí cống thoát nước mưa',
                             regionalFactor: 1.071,
                             hasCustomFactor: true,
-                            hasSidesOption: true,
+                            isSegmented: true,
                             dataKey: 'gia_xay_dung_tuyen_cong_thoat_nuoc_mua', 
                             filter: item => item.don_vi === '1.000 đ/km',
-                            calculate: (state, costItem) => {
-                                const sides = state.inputs.sides_infra || 2;
-                                return (state.inputs.roadLength / 1000 * sides) * costItem.chi_phi_xay_dung * 1000;
+                            calculate: (state) => {
+                                let totalBaseCost = 0;
+                                if (state.inputs.infraSegments) {
+                                    state.inputs.infraSegments.forEach(segment => {
+                                        const costItem = state.costData.gia_xay_dung_tuyen_cong_thoat_nuoc_mua[segment.type];
+                                        if (costItem) {
+                                            const segmentCost = (segment.length / 1000 * segment.sides) * costItem.chi_phi_xay_dung * 1000;
+                                            totalBaseCost += segmentCost;
+                                        }
+                                    });
+                                }
+                                return totalBaseCost;
                             }
                         },
                         { 
@@ -547,7 +697,7 @@
                             dataKey: 'suat_von_dau_tu_duong_day_cap_dien_ha_the_0_4kV', 
                             calculate: (state, costItem) => {
                                 const sides = state.inputs.sides_powerCable || 2;
-                                return (state.inputs.roadLength / 1000 * sides) * costItem.chi_phi_xay_dung * 1000;
+                                return (state.inputs.roadLength / 1000 * sides) * costItem.chi_phi_xay_dung * 1000000;
                             }
                         },
                         {
@@ -597,7 +747,8 @@
                     inputs: {},
                     selectedOptions: {},
                     results: {},
-                    activeCategories: new Set()
+                    activeCategories: new Set(),
+                    currentTargetSegmentRow: null
                 },
 
                 elements: {},
@@ -630,7 +781,6 @@
                         
                         let inlineFactorsHtml = '';
                         
-                        // Sides option
                         if (cat.hasSidesOption) {
                              inlineFactorsHtml += `
                                 <div class="factor-input-group">
@@ -643,8 +793,7 @@
                             `;
                         }
 
-                        // Dependent factor
-                        if (!cat.directPrice) {
+                        if (!cat.directPrice && !cat.isSegmented) {
                             inlineFactorsHtml += `
                                 <div class="factor-input-group">
                                     <label for="${dependentFactorId}">HS Kéo đuôi:</label>
@@ -653,7 +802,6 @@
                             `;
                         }
                         
-                        // Custom factor
                         if (cat.hasCustomFactor) {
                             inlineFactorsHtml += `
                                 <div class="factor-input-group">
@@ -662,7 +810,6 @@
                                 </div>
                             `;
                         }
-                        // Direct price input
                         if (cat.directPrice) {
                             inlineFactorsHtml = `
                                 <div class="factor-input-group">
@@ -671,6 +818,17 @@
                                 </div>
                             `;
                         }
+
+                        let optionsHtml = '';
+                        if (cat.isSegmented) {
+                            optionsHtml = `
+                                <div id="segmentsContainer_${catId}" class="segments-container hidden"></div>
+                                <button type="button" id="addSegment_${catId}" class="btn btn-add hidden" data-category-id="${catId}">+ Thêm đoạn cống</button>
+                            `;
+                        } else {
+                            optionsHtml = `<div id="optionsContainer_${catId}" class="options-container hidden"></div>`;
+                        }
+
 
                         inputGroup.innerHTML = `
                             <div class="category-toggle-wrapper">
@@ -682,7 +840,7 @@
                                     ${inlineFactorsHtml}
                                 </div>
                             </div>
-                            <div id="optionsContainer_${catId}" class="options-container hidden"></div>
+                            ${optionsHtml}
                         `;
                         container.appendChild(inputGroup);
                     });
@@ -690,24 +848,34 @@
 
                 cacheElements() {
                     this.elements.errorMessage = document.getElementById('errorMessage');
-                    // Cache main inputs
+                    this.elements.modal = document.getElementById('selectionModal');
+                    this.elements.modalTitle = document.getElementById('modalTitle');
+                    this.elements.modalOptionsContainer = document.getElementById('modalOptionsContainer');
+                    this.elements.modalCloseBtn = document.getElementById('modalCloseBtn');
+                    
                     this.config.inputs.forEach(id => {
                         this.elements[id] = document.getElementById(id);
                     });
                     
-                    // Cache cost category related elements
                     this.config.costCategories.forEach(cat => {
                         const catId = cat.id;
                         this.elements[`toggle_${catId}`] = document.getElementById(`toggle_${catId}`);
-                        this.elements[`optionsContainer_${catId}`] = document.getElementById(`optionsContainer_${catId}`);
                         this.elements[`inlineFactors_${catId}`] = document.getElementById(`inlineFactors_${catId}`);
                         this.elements[`result_${catId}`] = document.querySelector(`[data-result-for="${catId}"]`);
                         
-                        // Cache factor/price inputs
+                        if (cat.isSegmented) {
+                            this.elements[`segmentsContainer_${catId}`] = document.getElementById(`segmentsContainer_${catId}`);
+                            this.elements[`addSegment_${catId}`] = document.getElementById(`addSegment_${catId}`);
+                        } else {
+                            this.elements[`optionsContainer_${catId}`] = document.getElementById(`optionsContainer_${catId}`);
+                        }
+
                         if (cat.directPrice) {
                             this.elements[cat.directPrice.inputId] = document.getElementById(cat.directPrice.inputId);
                         } else {
-                            this.elements[`dependentFactor_${catId}`] = document.getElementById(`dependentFactor_${catId}`);
+                             if (!cat.isSegmented) {
+                                this.elements[`dependentFactor_${catId}`] = document.getElementById(`dependentFactor_${catId}`);
+                            }
                             if (cat.hasCustomFactor) {
                                 this.elements[`customFactor_${catId}`] = document.getElementById(`customFactor_${catId}`);
                             }
@@ -717,11 +885,9 @@
                         }
                     });
 
-                    // Cache other calculation outputs
                     Object.keys(this.config.otherCalculations).forEach(id => {
                          this.elements[id] = document.getElementById(id);
                     });
-                    // Cache total cost element
                     this.elements.totalCost = document.getElementById('totalCost');
                 },
 
@@ -734,6 +900,33 @@
                 setupEventListeners() {
                     const form = document.querySelector('.content');
                     form.addEventListener('input', this.handleInputChange.bind(this));
+                    
+                    const costCategoriesSection = document.getElementById('costCategoriesSection');
+                    costCategoriesSection.addEventListener('click', (event) => {
+                        if (event.target.matches('.btn-add')) {
+                            this.addSegment(event.target.dataset.categoryId);
+                        }
+                        if (event.target.matches('.btn-remove')) {
+                            event.target.closest('.segment-row').remove();
+                            this.updateAndCalculate();
+                        }
+                        if (event.target.matches('.btn-select-type')) {
+                            this.openSelectionModal(event);
+                        }
+                    });
+
+                    this.elements.modalCloseBtn.addEventListener('click', () => this.closeSelectionModal());
+                    this.elements.modal.addEventListener('click', (event) => {
+                        if (event.target === this.elements.modal) {
+                            this.closeSelectionModal();
+                        }
+                    });
+                    this.elements.modalOptionsContainer.addEventListener('click', (event) => {
+                        const card = event.target.closest('.option-card');
+                        if (card) {
+                            this.handleModalSelection(card);
+                        }
+                    });
                 },
 
                 handleInputChange(event) {
@@ -758,16 +951,24 @@
                         }
                     });
 
-                    // Update main inputs
                     this.config.inputs.forEach(id => {
                         this.state.inputs[id] = parseFloat(document.getElementById(id).value) || 0;
                     });
 
-                    // Update cost category options and factors
                     this.config.costCategories.forEach(cat => {
                         const catId = cat.id;
                         
-                        if (cat.directPrice) {
+                        if (cat.isSegmented) {
+                            this.state.inputs[`${catId}Segments`] = [];
+                            const segmentRows = this.elements[`segmentsContainer_${catId}`].querySelectorAll('.segment-row');
+                            segmentRows.forEach(row => {
+                                this.state.inputs[`${catId}Segments`].push({
+                                    type: row.querySelector('input[data-type="type"]').value,
+                                    length: parseFloat(row.querySelector('input[data-type="length"]').value) || 0,
+                                    sides: parseInt(row.querySelector('select[data-type="sides"]').value, 10)
+                                });
+                            });
+                        } else if (cat.directPrice) {
                             const priceInput = this.elements[cat.directPrice.inputId];
                             this.state.inputs[cat.directPrice.inputId] = priceInput ? (parseFloat(priceInput.value) || 0) : 0;
                         } else {
@@ -776,15 +977,15 @@
 
                             const depFactorInput = this.elements[`dependentFactor_${catId}`];
                             this.state.inputs[`dependentFactor_${catId}`] = depFactorInput ? (parseFloat(depFactorInput.value) || 0) : 1;
+                        }
 
-                            if (cat.hasCustomFactor) {
-                                const customFactorInput = this.elements[`customFactor_${catId}`];
-                                this.state.inputs[`customFactor_${catId}`] = customFactorInput ? (parseFloat(customFactorInput.value) || 0) : 1;
-                            }
-                             if (cat.hasSidesOption) {
-                                const sidesSelect = this.elements[`sides_${catId}`];
-                                this.state.inputs[`sides_${catId}`] = sidesSelect ? parseInt(sidesSelect.value, 10) : 2;
-                            }
+                        if (cat.hasCustomFactor) {
+                            const customFactorInput = this.elements[`customFactor_${catId}`];
+                            this.state.inputs[`customFactor_${catId}`] = customFactorInput ? (parseFloat(customFactorInput.value) || 0) : 1;
+                        }
+                        if (cat.hasSidesOption) {
+                            const sidesSelect = this.elements[`sides_${catId}`];
+                            this.state.inputs[`sides_${catId}`] = sidesSelect ? parseInt(sidesSelect.value, 10) : 2;
                         }
                     });
                 },
@@ -799,26 +1000,28 @@
                         const catId = cat.id;
                         let cost = 0;
                         if (this.state.activeCategories.has(catId)) {
-                            // Handle categories with direct price input
+                            let baseCost = 0;
                             if (cat.directPrice) {
-                                cost = cat.calculate(this.state);
-                            } 
-                            // Handle categories with data from JSON
-                            else {
-                                const selectedKey = this.state.selectedOptions[catId];
-                                const dataGroup = this.state.costData[cat.dataKey];
-                                if (selectedKey && dataGroup && dataGroup[selectedKey]) {
-                                    const baseCost = cat.calculate(this.state, dataGroup[selectedKey]);
-                                    
-                                    const dependentFactor = this.state.inputs[`dependentFactor_${catId}`] > 0 ? this.state.inputs[`dependentFactor_${catId}`] : 1;
-                                    const regionalFactor = cat.regionalFactor || 1;
-                                    
-                                    let customFactor = 1;
-                                    if (cat.hasCustomFactor) {
-                                        customFactor = this.state.inputs[`customFactor_${catId}`] > 0 ? this.state.inputs[`customFactor_${catId}`] : 1;
-                                    }
+                                baseCost = cat.calculate(this.state);
+                                cost = baseCost;
+                            } else {
+                                const regionalFactor = cat.regionalFactor || 1;
+                                let customFactor = 1;
+                                if (cat.hasCustomFactor) {
+                                    customFactor = this.state.inputs[`customFactor_${catId}`] > 0 ? this.state.inputs[`customFactor_${catId}`] : 1;
+                                }
 
-                                    cost = baseCost * regionalFactor * dependentFactor * customFactor;
+                                if (cat.isSegmented) {
+                                    baseCost = cat.calculate(this.state);
+                                    cost = baseCost * regionalFactor * customFactor;
+                                } else {
+                                    const selectedKey = this.state.selectedOptions[catId];
+                                    const dataGroup = this.state.costData[cat.dataKey];
+                                    if (selectedKey && dataGroup && dataGroup[selectedKey]) {
+                                        baseCost = cat.calculate(this.state, dataGroup[selectedKey]);
+                                        const dependentFactor = this.state.inputs[`dependentFactor_${catId}`] > 0 ? this.state.inputs[`dependentFactor_${catId}`] : 1;
+                                        cost = baseCost * regionalFactor * dependentFactor * customFactor;
+                                    }
                                 }
                             }
                         }
@@ -835,7 +1038,11 @@
                         const isActive = this.state.activeCategories.has(catId);
                         this.elements[`inlineFactors_${catId}`].classList.toggle('hidden', !isActive);
                         this.elements[`result_${catId}`].classList.toggle('hidden', !isActive);
-                        if (this.elements[`optionsContainer_${catId}`]) {
+                        
+                        if (cat.isSegmented) {
+                            this.elements[`segmentsContainer_${catId}`].classList.toggle('hidden', !isActive);
+                            this.elements[`addSegment_${catId}`].classList.toggle('hidden', !isActive);
+                        } else if (this.elements[`optionsContainer_${catId}`]) {
                             this.elements[`optionsContainer_${catId}`].classList.toggle('hidden', !isActive);
                         }
                     });
@@ -868,7 +1075,7 @@
 
                 createAllOptionCards() {
                     this.config.costCategories.forEach(cat => {
-                        if (!cat.dataKey) return; // Skip categories without data from JSON
+                        if (!cat.dataKey || cat.isSegmented) return;
                         let data = this.state.costData[cat.dataKey] || {};
                         if (cat.filter) {
                             data = Object.fromEntries(Object.entries(data).filter(([, value]) => cat.filter(value)));
@@ -911,6 +1118,90 @@
                         card.prepend(radio);
                         container.appendChild(card);
                     });
+                },
+                
+                addSegment(catId) {
+                    const container = this.elements[`segmentsContainer_${catId}`];
+                    const segmentRow = document.createElement('div');
+                    segmentRow.className = 'segment-row';
+                    segmentRow.innerHTML = `
+                        <div class="segment-selection">
+                            <span class="selected-option-name">Chưa chọn loại cống</span>
+                            <input type="hidden" data-type="type" value="">
+                        </div>
+                        <button type="button" class="btn btn-select-type" data-category-id="${catId}">Chọn</button>
+                        <label>Dài (m):</label>
+                        <input type="number" data-type="length" value="0" step="0.01">
+                        <label>Số bên:</label>
+                        <select data-type="sides">
+                            <option value="2" selected>2 bên</option>
+                            <option value="1">1 bên</option>
+                        </select>
+                        <button type="button" class="btn btn-remove">Xoá</button>
+                    `;
+                    container.appendChild(segmentRow);
+                },
+
+                openSelectionModal(event) {
+                    const catId = event.target.dataset.categoryId;
+                    const category = this.config.costCategories.find(c => c.id === catId);
+                    if (!category) return;
+
+                    this.state.currentTargetSegmentRow = event.target.closest('.segment-row');
+                    this.elements.modalTitle.textContent = `Chọn loại - ${category.name}`;
+                    
+                    let data = this.state.costData[category.dataKey] || {};
+                    if (category.filter) {
+                        data = Object.fromEntries(Object.entries(data).filter(([, value]) => category.filter(value)));
+                    }
+
+                    this.populateModal(data);
+                    this.elements.modal.classList.remove('hidden');
+                },
+
+                closeSelectionModal() {
+                    this.elements.modal.classList.add('hidden');
+                    this.state.currentTargetSegmentRow = null;
+                },
+
+                populateModal(data) {
+                    const container = this.elements.modalOptionsContainer;
+                    container.innerHTML = '';
+                    if (!data || Object.keys(data).length === 0) {
+                        container.innerHTML = `<p>Không có dữ liệu phù hợp.</p>`;
+                        return;
+                    }
+                    Object.entries(data).forEach(([key, item]) => {
+                        const card = document.createElement('div');
+                        card.className = 'option-card';
+                        card.dataset.value = key;
+                        card.dataset.name = `${item.nhom} (${key})`;
+                        const displayUnit = item.don_vi
+                            .replace('triệu đồng/km', 'trđ/km')
+                            .replace('1.000 đ/m2', 'nghìn đ/m²')
+                            .replace('1.000 đ/km', 'nghìn đ/km');
+                        card.innerHTML = `
+                            <p><strong>${item.nhom} (Mã: ${key})</strong></p>
+                            <p>${item.mo_ta}</p>
+                            <p><strong>Chi phí XD:</strong> <span class="cost">${this.formatCurrency(item.chi_phi_xay_dung)}</span> ${displayUnit}</p>
+                        `;
+                        container.appendChild(card);
+                    });
+                },
+
+                handleModalSelection(card) {
+                    if (!this.state.currentTargetSegmentRow) return;
+
+                    const { value, name } = card.dataset;
+                    
+                    const nameSpan = this.state.currentTargetSegmentRow.querySelector('.selected-option-name');
+                    const valueInput = this.state.currentTargetSegmentRow.querySelector('input[data-type="type"]');
+
+                    nameSpan.textContent = name;
+                    valueInput.value = value;
+
+                    this.closeSelectionModal();
+                    this.updateAndCalculate();
                 },
 
                 handleCardSelection(radioElement) {
