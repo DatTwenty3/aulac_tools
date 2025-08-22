@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Thông tin Cọc - Giao diện Glass</title>
+    <style>
+        :root {
+            --background-blur: 12px;
+            --background-color: rgba(255, 255, 255, 0.15);
+            --border-color: rgba(255, 255, 255, 0.25);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --text-color: #1d1d1f;
+            --text-color-secondary: #555;
+            --accent-color: #007aff;
+            --accent-color-hover: #0056b3;
+            --danger-color: #ff3b30;
+            --left-accent-color: #34c759; /* Apple's green */
+            --right-accent-color: #5856d6; /* Apple's indigo */
+            --border-radius: 18px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background: #f5f5f7;
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--text-color);
+            background-image: 
+                radial-gradient(circle at 15% 50%, #b3e5fc 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, #ffcdd2 0%, transparent 25%),
+                radial-gradient(circle at 50% 80%, #c8e6c9 0%, transparent 25%);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--background-color);
+            backdrop-filter: blur(var(--background-blur));
+            -webkit-backdrop-filter: blur(var(--background-blur));
+            border-radius: 24px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-color-secondary);
+        }
+
+        .content {
+            padding: 2rem;
+        }
+
+        .pole-section {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .pole-section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .pole-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            color: var(--text-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color-secondary);
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--text-color);
+            transition: all var(--transition-speed) ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: rgba(0, 122, 255, 0.5);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .collapsible {
+            background: transparent;
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 0.75rem 0;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all var(--transition-speed) ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+
+        .collapsible:hover {
+            color: var(--accent-color-hover);
+        }
+
+        .collapsible::after {
+            content: '›';
+            font-size: 2rem;
+            font-weight: 300;
+            transition: transform var(--transition-speed) ease;
+            transform: rotate(90deg);
+        }
+
+        .collapsible.active::after {
+            transform: rotate(-90deg);
+        }
+        
+        .targets-content {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            padding: 0 0.5rem;
+        }
+        
+        .targets-content.show {
+            max-height: 1000px; /* Should be larger than content */
+            padding: 1rem 0.5rem;
+        }
+
+        .sub-table-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        /* Styling for left and right tables */
+        .sub-table h4 {
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            font-weight: 600;
+        }
+        .sub-table-left h4 {
+            color: var(--left-accent-color);
+            border-bottom: 2px solid var(--left-accent-color);
+        }
+        .sub-table-right h4 {
+            color: var(--right-accent-color);
+            border-bottom: 2px solid var(--right-accent-color);
+        }
+        .sub-table-left .target-row {
+            background: rgba(52, 199, 89, 0.08);
+            border-color: rgba(52, 199, 89, 0.2);
+        }
+        .sub-table-right .target-row {
+            background: rgba(88, 86, 214, 0.08);
+            border-color: rgba(88, 86, 214, 0.2);
+        }
+        .sub-table-left .btn-secondary {
+            color: var(--left-accent-color);
+        }
+        .sub-table-right .btn-secondary {
+            color: var(--right-accent-color);
+        }
+
+        .target-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            border: 1px solid var(--border-color);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all var(--transition-speed) ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-color-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: rgba(255, 255, 255, 0.5);
+            color: var(--accent-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        .btn-danger:hover {
+            opacity: 0.85;
+        }
+
+        .remove-pole-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .action-buttons {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .content {
+                padding: 1.5rem;
+            }
+            .sub-table-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quản lý Thông tin Cọc</h1>
+            <p>Nhập dữ liệu và xuất file định dạng .ntd một cách trực quan</p>
+        </div>
+        
+        <div class="content">
+            <div id="poles-container"></div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="addPole()">➕ Thêm Cọc</button>
+                <button class="btn btn-primary" onclick="generateAndDownload()">💾 Tạo & Tải file .ntd</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let poleCount = 0;
+
+        function addPole() {
+            poleCount++;
+            const container = document.getElementById('poles-container');
+            
+            const poleDiv = document.createElement('div');
+            poleDiv.className = 'pole-section';
+            poleDiv.id = `pole-${poleCount}`;
+            
+            poleDiv.innerHTML = `
+                <div class="pole-header">
+                    <h3 class="section-title">Cọc ${poleCount}</h3>
+                    <button class="btn btn-danger remove-pole-btn" onclick="removePole(${poleCount})">🗑️ Xóa</button>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tên cọc</label>
+                        <input type="text" id="pole-name-${poleCount}" placeholder="Ví dụ: DT">
+                    </div>
+                    <div class="form-group">
+                        <label>Cộng dồn</label>
+                        <input type="number" id="pole-cumulative-${poleCount}" step="0.001" placeholder="0.000">
+                    </div>
+                    <div class="form-group">
+                        <label>Cao độ tự nhiên</label>
+                        <input type="number" id="pole-elevation-${poleCount}" step="0.001" placeholder="0.920">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Góc chắn cung</label>
+                        <input type="number" id="pole-angle-${poleCount}" step="0.001" placeholder="180.000">
+                    </div>
+                    <div class="form-group">
+                        <label>Bán kính</label>
+                        <input type="number" id="pole-radius-${poleCount}" step="0.001" placeholder="0.000">
+                    </div>
+                </div>
+                
+                <div class="sub-tables">
+                    <button class="collapsible" onclick="toggleTargets(${poleCount})">
+                        <span>Chi tiết Targets Trái/Phải</span>
+                    </button>
+                    <div class="targets-content" id="targets-content-${poleCount}">
+                        <div class="sub-table-grid">
+                            <div class="sub-table sub-table-left">
+                                <h4>Bảng Trái</h4>
+                                <div id="left-targets-${poleCount}"></div>
+                                <button class="btn btn-secondary" onclick="addTarget(${poleCount}, 'left')">➕ Thêm Target</button>
+                            </div>
+                            
+                            <div class="sub-table sub-table-right">
+                                <h4>Bảng Phải</h4>
+                                <div id="right-targets-${poleCount}"></div>
+                                <button class="btn btn-secondary" onclick="addTarget(${poleCount}, 'right')">➕ Thêm Target</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(poleDiv);
+            
+            // Thêm target mặc định
+            addTarget(poleCount, 'left');
+            addTarget(poleCount, 'right');
+        }
+
+        function removePole(poleId) {
+            const poleElement = document.getElementById(`pole-${poleId}`);
+            if (poleElement) {
+                poleElement.remove();
+                reorderPoles();
+            }
+        }
+
+        function toggleTargets(poleId) {
+            const content = document.getElementById(`targets-content-${poleId}`);
+            const button = content.previousElementSibling;
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                button.classList.remove('active');
+            } else {
+                content.classList.add('show');
+                button.classList.add('active');
+            }
+        }
+
+        function reorderPoles() {
+            const poleElements = document.querySelectorAll('.pole-section');
+            
+            if (poleElements.length === 0) {
+                poleCount = 0;
+                return;
+            }
+            
+            poleElements.forEach((poleElement, index) => {
+                const newPoleNumber = index + 1;
+                const oldPoleId = poleElement.id.split('-')[1];
+                
+                if (oldPoleId === newPoleNumber.toString()) return;
+
+                poleElement.id = `pole-${newPoleNumber}`;
+                
+                poleElement.querySelector('.section-title').textContent = `Cọc ${newPoleNumber}`;
+                
+                poleElement.querySelector('.remove-pole-btn').setAttribute('onclick', `removePole(${newPoleNumber})`);
+                
+                const inputs = ['pole-name', 'pole-cumulative', 'pole-elevation', 'pole-angle', 'pole-radius'];
+                inputs.forEach(inputName => {
+                    const input = poleElement.querySelector(`#${inputName}-${oldPoleId}`);
+                    if (input) input.id = `${inputName}-${newPoleNumber}`;
+                });
+                
+                const targetsContent = poleElement.querySelector(`#targets-content-${oldPoleId}`);
+                if (targetsContent) targetsContent.id = `targets-content-${newPoleNumber}`;
+                
+                const toggleBtn = poleElement.querySelector(`[onclick*="toggleTargets(${oldPoleId})"]`);
+                if (toggleBtn) toggleBtn.setAttribute('onclick', `toggleTargets(${newPoleNumber})`);
+                
+                const leftContainer = poleElement.querySelector(`#left-targets-${oldPoleId}`);
+                if (leftContainer) leftContainer.id = `left-targets-${newPoleNumber}`;
+                
+                const rightContainer = poleElement.querySelector(`#right-targets-${oldPoleId}`);
+                if (rightContainer) rightContainer.id = `right-targets-${newPoleNumber}`;
+                
+                const addLeftBtn = poleElement.querySelector(`[onclick*="addTarget(${oldPoleId}, 'left')"]`);
+                if (addLeftBtn) addLeftBtn.setAttribute('onclick', `addTarget(${newPoleNumber}, 'left')`);
+                
+                const addRightBtn = poleElement.querySelector(`[onclick*="addTarget(${oldPoleId}, 'right')"]`);
+                if (addRightBtn) addRightBtn.setAttribute('onclick', `addTarget(${newPoleNumber}, 'right')`);
+            });
+            
+            poleCount = poleElements.length;
+        }
+
+        function addTarget(poleId, side) {
+            const container = document.getElementById(`${side}-targets-${poleId}`);
+            const targetId = `target-${poleId}-${side}-${Date.now()}`;
+            
+            const targetDiv = document.createElement('div');
+            targetDiv.className = 'target-row';
+            targetDiv.id = targetId;
+            
+            targetDiv.innerHTML = `
+                <div class="form-group">
+                    <label>Cộng dồn</label>
+                    <input type="number" step="0.001" class="${side}-cumulative" placeholder="5.181">
+                </div>
+                <div class="form-group">
+                    <label>Z.Tự nhiên</label>
+                    <input type="number" step="0.001" class="${side}-elevation" placeholder="0.910">
+                </div>
+                <button class="btn btn-danger" onclick="removeTarget('${targetId}')" style="grid-column: 1/-1; justify-self: center; width: auto; margin-top: 10px; padding: 0.25rem 0.75rem;">🗑️</button>
+            `;
+            
+            container.appendChild(targetDiv);
+        }
+
+        function removeTarget(targetId) {
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.remove();
+            }
+        }
+
+        function generateOutput() {
+            let result = 'TDN\tVersion 3.5\nSYMBOLS\tND\tTD\tP\tTC\tNC\nTYPEINPUT\t0\t0\t0\t0\t0\n';
+            
+            const poleElements = document.querySelectorAll('.pole-section');
+            
+            poleElements.forEach(poleElement => {
+                const poleId = poleElement.id.split('-')[1];
+                
+                const name = document.getElementById(`pole-name-${poleId}`)?.value || 'DT';
+                const cumulative = parseFloat(document.getElementById(`pole-cumulative-${poleId}`)?.value || 0);
+                const elevation = parseFloat(document.getElementById(`pole-elevation-${poleId}`)?.value || 0);
+                const angle = parseFloat(document.getElementById(`pole-angle-${poleId}`)?.value || 180);
+                const radius = parseFloat(document.getElementById(`pole-radius-${poleId}`)?.value || 0);
+                
+                const angleRad = (angle * Math.PI / 180).toFixed(12);
+                
+                result += `POLE\t${name}\t${cumulative.toFixed(5)}\t${elevation.toFixed(5)}\t0.00000\t0.00000\t${angleRad}\n`;
+                
+                const leftTargets = poleElement.querySelectorAll(`#left-targets-${poleId} .target-row`);
+                leftTargets.forEach(targetRow => {
+                    const cumVal = parseFloat(targetRow.querySelector('.left-cumulative').value || 0);
+                    const elevVal = parseFloat(targetRow.querySelector('.left-elevation').value || 0);
+                    if (cumVal !== 0 || elevVal !== 0) {
+                        result += `TARGETL\t${(-cumVal).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
+                    }
+                });
+                
+                const rightTargets = poleElement.querySelectorAll(`#right-targets-${poleId} .target-row`);
+                rightTargets.forEach(targetRow => {
+                    const cumVal = parseFloat(targetRow.querySelector('.right-cumulative').value || 0);
+                    const elevVal = parseFloat(targetRow.querySelector('.right-elevation').value || 0);
+                    if (cumVal !== 0 || elevVal !== 0) {
+                        result += `TARGETR\t${cumVal.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
+                    }
+                });
+            });
+            
+            return result;
+        }
+
+        function generateAndDownload() {
+            const content = generateOutput();
+            
+            const poleElements = document.querySelectorAll('.pole-section');
+            if (poleElements.length === 0) {
+                // Có thể thêm một thông báo tùy chỉnh ở đây thay vì alert
+                console.warn('Không có dữ liệu cọc để tạo file.');
+                return;
+            }
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            
+            const firstPoleName = document.querySelector('[id^="pole-name-"]')?.value || 'data';
+            link.download = `${firstPoleName}.ntd`;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            window.URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            addPole();
+        });
+    </script>
+</body>
+</html>
