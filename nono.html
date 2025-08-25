@@ -59,7 +59,6 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            /* Giới hạn chiều cao của container để thanh cuộn hoạt động đúng */
             max-height: calc(100vh - 4rem); 
         }
 
@@ -80,13 +79,31 @@
             display: flex;
             flex-direction: column;
             transition: background-color var(--transition-speed) ease;
-            overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài */
+            overflow: hidden;
         }
-        .item-list-sidebar h2 {
-            font-size: 1.25rem;
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border-color);
+        }
+        .sidebar-header h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0;
+        }
+        #btn-delete-all {
+            background: transparent;
+            border: none;
+            color: var(--danger-color);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+        #btn-delete-all:hover {
+            background-color: rgba(255, 59, 48, 0.1);
         }
 
         #search-item {
@@ -258,7 +275,17 @@
             display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
             background-color: rgba(255,255,255,0.1);
         }
-        .footer { text-align: center; padding: 1.5rem; color: var(--text-color-secondary); font-size: 0.9rem; }
+        .footer { text-align: center; padding: 1.5rem; color: var(--text-color-secondary); font-size: 0.9rem; position: relative; }
+        #save-status {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 2rem;
+            font-size: 0.8rem;
+            color: var(--text-color-secondary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        #save-status.visible { opacity: 1; }
         
         .visualization-container {
             width: 100%;
@@ -392,7 +419,10 @@
         
         <div class="main-layout">
             <aside class="item-list-sidebar">
-                <h2>Danh sách Mặt cắt</h2>
+                <div class="sidebar-header">
+                    <h2>Danh sách</h2>
+                    <button id="btn-delete-all" title="Xóa toàn bộ mặt cắt">Xóa tất cả</button>
+                </div>
                 <input type="text" id="search-item" placeholder="🔍 Tìm kiếm mặt cắt..." onkeyup="filterItems()">
                 <div id="item-list"></div>
             </aside>
@@ -401,13 +431,14 @@
                 <div id="placeholder-message">
                     <div class="placeholder-icon">🗂️</div>
                     <h3>Chưa có mặt cắt nào</h3>
-                    <p>Hãy "Thêm Mặt cắt" hoặc "Import CSV" để bắt đầu.</p>
+                    <p>Hãy "Thêm Mặt cắt" hoặc "Import" để bắt đầu.</p>
                 </div>
             </main>
         </div>
         
         <div class="action-buttons">
             <button id="btn-add-item" class="btn btn-secondary"><span class="btn-text">➕ Thêm Mặt cắt</span></button>
+            <button id="btn-import-ntd" class="btn btn-secondary"><span class="btn-text">📂 Import NTD</span><div class="btn-loader"></div></button>
             <button id="btn-import-csv" class="btn btn-secondary"><span class="btn-text">📄 Import CSV</span><div class="btn-loader"></div></button>
             <button id="btn-generate" class="btn btn-primary"><span class="btn-text">💾 Tạo & Tải file .ntd</span><div class="btn-loader"></div></button>
         </div>
@@ -419,9 +450,11 @@
 
     <footer class="footer">
         <p>&copy; 2025 LEDAT. All Rights Reserved.</p>
+        <span id="save-status"></span>
     </footer>
 
     <input type="file" id="csv-importer" accept=".csv" style="display: none;">
+    <input type="file" id="ntd-importer" accept=".ntd" style="display: none;">
     <div id="chart-tooltip"></div>
     <div id="tutorial-tooltip" class="tutorial-tooltip">
         <p id="tutorial-text"></p>
@@ -451,18 +484,23 @@
         let activeItemId = null;
         let hoveredPointInfo = null;
         let confirmCallback = null;
+        let saveTimeout;
 
         // --- Event Listeners Setup ---
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
+            loadDataFromLocalStorage();
             updatePlaceholder();
         });
 
         function setupEventListeners() {
             document.getElementById('btn-add-item').addEventListener('click', () => addItem());
             document.getElementById('btn-import-csv').addEventListener('click', triggerCsvImport);
+            document.getElementById('btn-import-ntd').addEventListener('click', triggerNtdImport);
             document.getElementById('btn-generate').addEventListener('click', generateAndDownload);
+            document.getElementById('btn-delete-all').addEventListener('click', confirmDeleteAll);
             document.getElementById('csv-importer').addEventListener('change', handleCsvFile);
+            document.getElementById('ntd-importer').addEventListener('change', handleNtdFile);
             
             const modal = document.getElementById('confirmation-modal');
             document.getElementById('modal-cancel-btn').addEventListener('click', closeConfirmationModal);
@@ -513,7 +551,7 @@
                     <button class="tab-button active" onclick="openTab(event, ${currentItemId}, 'info')">Thông tin chung</button>
                     <button class="tab-button" onclick="openTab(event, ${currentItemId}, 'targets')">Chi tiết Targets</button>
                 </div>
-                <div id="info-${currentItemId}" class="tab-content active" oninput="drawCrossSection(${currentItemId})">
+                <div id="info-${currentItemId}" class="tab-content active" oninput="scheduleSave()">
                     <div class="form-row">
                         <div class="form-group"><label>Tên mặt cắt</label><input type="text" id="item-name-${currentItemId}" placeholder="Ví dụ: MC1" oninput="updateItemTitle(${currentItemId})"></div>
                         <div class="form-group"><label>Lý trình</label><input type="number" id="item-cumulative-${currentItemId}" step="0.001" placeholder="0.000"></div>
@@ -524,7 +562,7 @@
                         <div class="form-group"><label>Bán kính</label><input type="number" id="item-radius-${currentItemId}" step="0.001" placeholder="0.000"></div>
                     </div>
                 </div>
-                <div id="targets-${currentItemId}" class="tab-content" oninput="drawCrossSection(${currentItemId})">
+                <div id="targets-${currentItemId}" class="tab-content" oninput="scheduleSave()">
                     <div class="targets-layout-grid">
                         <div class="targets-column">
                              <div class="visualization-container">
@@ -568,12 +606,12 @@
             rightCanvas.addEventListener('mousemove', handleChartMouseMove);
             rightCanvas.addEventListener('mouseleave', handleChartMouseLeave);
 
-            addTarget(currentItemId, 'left');
-            addTarget(currentItemId, 'right');
-            
             if (!isInitial) {
+                addTarget(currentItemId, 'left');
+                addTarget(currentItemId, 'right');
                 selectItem(currentItemId);
                 listContainer.scrollTop = listContainer.scrollHeight;
+                scheduleSave();
             }
             updatePlaceholder();
         }
@@ -618,17 +656,36 @@
 
             if (itemCount === 0) {
                 activeItemId = null;
-                updatePlaceholder();
-                return;
+            } else if (activeItemId === itemIdToRemove) {
+                const nextActiveIndex = Math.max(0, currentIndex - 1);
+                if (remainingItems[nextActiveIndex]) {
+                    const nextItemId = parseInt(remainingItems[nextActiveIndex].id.split('-').pop());
+                    selectItem(nextItemId);
+                } else {
+                     activeItemId = null;
+                }
             }
 
-            // Re-select an appropriate item
-            if (activeItemId === itemIdToRemove) {
-                const nextActiveIndex = Math.max(0, currentIndex - 1);
-                const nextItemId = parseInt(remainingItems[nextActiveIndex].id.split('-').pop());
-                selectItem(nextItemId);
-            }
-            // No reordering needed as selection logic handles finding the next valid item.
+            updatePlaceholder();
+            scheduleSave();
+        }
+        
+        function confirmDeleteAll() {
+            if (itemCount === 0) return;
+            openConfirmationModal(
+                `Xóa tất cả mặt cắt`,
+                `Bạn có chắc chắn muốn xóa toàn bộ <b>${itemCount} mặt cắt</b>? Hành động này không thể hoàn tác.`,
+                deleteAllItems
+            );
+        }
+
+        function deleteAllItems() {
+            document.getElementById('item-list').innerHTML = '';
+            document.getElementById('item-details-wrapper').innerHTML = '';
+            itemCount = 0;
+            activeItemId = null;
+            updatePlaceholder();
+            scheduleSave();
         }
         
         function updatePlaceholder() {
@@ -637,9 +694,10 @@
             const hasItems = itemCount > 0;
             placeholder.style.display = hasItems ? 'none' : 'flex';
             detailsWrapper.style.display = hasItems ? 'block' : 'none';
+            document.getElementById('btn-delete-all').style.display = hasItems ? 'block' : 'none';
         }
 
-        function addTarget(itemId, side) {
+        function addTarget(itemId, side, shouldDraw = true) {
             const container = document.getElementById(`${side}-targets-${itemId}`);
             if (!container) return;
             const targetId = `target-${itemId}-${side}-${Date.now()}`;
@@ -652,7 +710,10 @@
                 <button class="btn-icon-danger" onclick="removeTarget('${targetId}')">🗑️</button>
             `;
             container.appendChild(targetDiv);
-            drawCrossSection(itemId);
+            if (shouldDraw) {
+                drawCrossSection(itemId);
+                scheduleSave();
+            }
         }
 
         function removeTarget(targetId) {
@@ -661,6 +722,7 @@
                 const itemId = targetId.split('-')[1];
                 targetElement.remove();
                 drawCrossSection(itemId);
+                scheduleSave();
             }
         }
         
@@ -693,6 +755,7 @@
                 const newTitle = nameInput.value.trim() || `Mặt cắt ${itemId}`;
                 titleElement.textContent = newTitle;
                 listItem.textContent = newTitle;
+                scheduleSave();
             }
         }
 
@@ -704,7 +767,98 @@
             }
         }
 
-        // --- Data Handling ---
+        // --- Data Handling & Auto-Save ---
+        function scheduleSave() {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveDataToLocalStorage, 1000);
+        }
+
+        function saveDataToLocalStorage() {
+            const allItemsData = [];
+            document.querySelectorAll('.item-section').forEach(itemElement => {
+                const itemId = itemElement.id.split('-')[1];
+                const itemData = {
+                    id: itemId,
+                    name: document.getElementById(`item-name-${itemId}`)?.value || '',
+                    cumulative: document.getElementById(`item-cumulative-${itemId}`)?.value || '',
+                    elevation: document.getElementById(`item-elevation-${itemId}`)?.value || '',
+                    angle: document.getElementById(`item-angle-${itemId}`)?.value || '',
+                    radius: document.getElementById(`item-radius-${itemId}`)?.value || '',
+                    leftTargets: [],
+                    rightTargets: []
+                };
+
+                itemElement.querySelectorAll(`#left-targets-${itemId} .target-row`).forEach(row => {
+                    itemData.leftTargets.push({
+                        cumulative: row.querySelector('.left-cumulative').value || '',
+                        elevation: row.querySelector('.left-elevation').value || ''
+                    });
+                });
+
+                itemElement.querySelectorAll(`#right-targets-${itemId} .target-row`).forEach(row => {
+                    itemData.rightTargets.push({
+                        cumulative: row.querySelector('.right-cumulative').value || '',
+                        elevation: row.querySelector('.right-elevation').value || ''
+                    });
+                });
+                allItemsData.push(itemData);
+            });
+
+            localStorage.setItem('crossSectionData', JSON.stringify(allItemsData));
+            
+            const saveStatus = document.getElementById('save-status');
+            saveStatus.textContent = `Đã lưu lúc ${new Date().toLocaleTimeString()}`;
+            saveStatus.classList.add('visible');
+            setTimeout(() => saveStatus.classList.remove('visible'), 2000);
+        }
+
+        function loadDataFromLocalStorage() {
+            const savedData = localStorage.getItem('crossSectionData');
+            if (!savedData) return;
+
+            const items = JSON.parse(savedData);
+            if (!Array.isArray(items) || items.length === 0) return;
+
+            items.forEach(itemData => {
+                addItem(true);
+                const newId = itemCount;
+
+                document.getElementById(`item-name-${newId}`).value = itemData.name;
+                document.getElementById(`item-cumulative-${newId}`).value = itemData.cumulative;
+                document.getElementById(`item-elevation-${newId}`).value = itemData.elevation;
+                document.getElementById(`item-angle-${newId}`).value = itemData.angle;
+                document.getElementById(`item-radius-${newId}`).value = itemData.radius;
+                updateItemTitle(newId);
+
+                const leftContainer = document.getElementById(`left-targets-${newId}`);
+                const rightContainer = document.getElementById(`right-targets-${newId}`);
+                leftContainer.innerHTML = ''; 
+                rightContainer.innerHTML = ''; 
+
+                itemData.leftTargets.forEach(target => {
+                    addTarget(newId, 'left', false);
+                    const newRow = leftContainer.lastElementChild;
+                    if (newRow) {
+                        newRow.querySelector('.left-cumulative').value = target.cumulative;
+                        newRow.querySelector('.left-elevation').value = target.elevation;
+                    }
+                });
+
+                itemData.rightTargets.forEach(target => {
+                    addTarget(newId, 'right', false);
+                    const newRow = rightContainer.lastElementChild;
+                    if (newRow) {
+                        newRow.querySelector('.right-cumulative').value = target.cumulative;
+                        newRow.querySelector('.right-elevation').value = target.elevation;
+                    }
+                });
+            });
+
+            if (itemCount > 0) {
+                selectItem(1);
+            }
+        }
+
         function generateAndDownload() {
             if (itemCount === 0) { console.warn('Không có dữ liệu để tạo file.'); return; }
             toggleButtonLoading('btn-generate', true);
@@ -721,7 +875,7 @@
                 document.body.removeChild(link);
                 window.URL.revokeObjectURL(url);
                 toggleButtonLoading('btn-generate', false);
-            }, 500); // Simulate processing time
+            }, 500);
         }
 
         function generateOutput() {
@@ -750,6 +904,7 @@
         }
 
         function triggerCsvImport() { document.getElementById('csv-importer').click(); }
+        function triggerNtdImport() { document.getElementById('ntd-importer').click(); }
         
         function handleCsvFile(event) {
             const file = event.target.files[0];
@@ -760,16 +915,29 @@
                 setTimeout(() => {
                     processCsvData(e.target.result);
                     toggleButtonLoading('btn-import-csv', false);
-                }, 500); // Simulate processing time
+                }, 500);
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        function handleNtdFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            toggleButtonLoading('btn-import-ntd', true);
+            const reader = new FileReader();
+            reader.onload = e => {
+                setTimeout(() => {
+                    processNtdData(e.target.result);
+                    toggleButtonLoading('btn-import-ntd', false);
+                }, 500);
             };
             reader.readAsText(file);
             event.target.value = '';
         }
 
         function processCsvData(csvText) {
-            document.getElementById('item-list').innerHTML = '';
-            document.getElementById('item-details-wrapper').innerHTML = '';
-            itemCount = 0; activeItemId = null;
+            deleteAllItems();
             const lines = csvText.trim().split(/\r?\n/);
             if (lines.length < 2) { updatePlaceholder(); return; }
             const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
@@ -787,21 +955,79 @@
                 const data = line.split(',');
                 if (data.length < headers.length) return;
                 
-                addItem(true); // Add item without selecting it
+                addItem(true);
                 const newId = itemCount;
                 
-                const tenBienBao = data[headerIndices['TEN BIEN BAO']].trim();
-                const lyTrinh = parseLyTrinh(data[headerIndices['LY TRINH']].trim());
-                const goc = data[headerIndices['GOC']].trim();
-
-                document.getElementById(`item-name-${newId}`).value = tenBienBao;
-                document.getElementById(`item-cumulative-${newId}`).value = lyTrinh;
-                document.getElementById(`item-angle-${newId}`).value = goc;
+                document.getElementById(`item-name-${newId}`).value = data[headerIndices['TEN BIEN BAO']].trim();
+                document.getElementById(`item-cumulative-${newId}`).value = parseLyTrinh(data[headerIndices['LY TRINH']].trim());
+                document.getElementById(`item-angle-${newId}`).value = data[headerIndices['GOC']].trim();
                 updateItemTitle(newId);
             });
 
-            if (itemCount > 0) selectItem(1);
-            else updatePlaceholder();
+            if (itemCount > 0) {
+                selectItem(1);
+            }
+            scheduleSave();
+        }
+
+        function processNtdData(ntdText) {
+            deleteAllItems();
+
+            const lines = ntdText.trim().split(/\r?\n/);
+            let currentItemId = 0;
+
+            lines.forEach(line => {
+                const parts = line.split(/\s+/);
+                const command = parts[0].toUpperCase();
+
+                if (command === 'POLE') {
+                    addItem(true);
+                    currentItemId = itemCount;
+
+                    const name = parts[1] || `MC${currentItemId}`;
+                    const cumulative = parseFloat(parts[2]) || 0;
+                    const elevation = parseFloat(parts[3]) || 0;
+                    const angleRad = parseFloat(parts[6]) || 0;
+                    const angleDeg = (angleRad * 180 / Math.PI).toFixed(3);
+
+                    document.getElementById(`item-name-${currentItemId}`).value = name;
+                    document.getElementById(`item-cumulative-${currentItemId}`).value = cumulative;
+                    document.getElementById(`item-elevation-${currentItemId}`).value = elevation;
+                    document.getElementById(`item-angle-${currentItemId}`).value = angleDeg;
+                    updateItemTitle(currentItemId);
+
+                    document.getElementById(`left-targets-${currentItemId}`).innerHTML = '';
+                    document.getElementById(`right-targets-${currentItemId}`).innerHTML = '';
+
+                } else if (command === 'TARGETL' && currentItemId > 0) {
+                    const cumVal = parseFloat(parts[1]) || 0;
+                    const elevVal = parseFloat(parts[2]) || 0;
+
+                    addTarget(currentItemId, 'left', false);
+                    const newRow = document.getElementById(`left-targets-${currentItemId}`).lastElementChild;
+                    if (newRow) {
+                        newRow.querySelector('.left-cumulative').value = -cumVal;
+                        newRow.querySelector('.left-elevation').value = elevVal;
+                    }
+
+                } else if (command === 'TARGETR' && currentItemId > 0) {
+                    const cumVal = parseFloat(parts[1]) || 0;
+                    const elevVal = parseFloat(parts[2]) || 0;
+
+                    addTarget(currentItemId, 'right', false);
+                    const newRow = document.getElementById(`right-targets-${currentItemId}`).lastElementChild;
+                    if (newRow) {
+                        newRow.querySelector('.right-cumulative').value = cumVal;
+                        newRow.querySelector('.right-elevation').value = elevVal;
+                    }
+                }
+            });
+
+            if (itemCount > 0) {
+                selectItem(1);
+                drawCrossSection(1);
+            }
+            scheduleSave();
         }
 
         function parseLyTrinh(lyTrinhStr) {
@@ -864,7 +1090,7 @@
             });
 
             let dataHeight = maxY_data - minY_data;
-            if (dataHeight < 1) dataHeight = 1; // Ensure a minimum height for the y-axis range
+            if (dataHeight < 1) dataHeight = 1;
             const yPadding = dataHeight * 0.2;
             const minY = minY_data - yPadding;
             const maxY = maxY_data + yPadding;
@@ -944,7 +1170,6 @@
             const points = canvas.chartDataPoints || [];
             if (points.length === 0) return;
 
-            // Re-calculate scale to find the closest point
             const initialElevation = parseFloat(document.getElementById(`item-elevation-${itemId}`)?.value) || 0;
             let minY_data = initialElevation, maxY_data = initialElevation, maxX_dist = 0;
             points.forEach(p => {
@@ -970,7 +1195,7 @@
                 : padding.left + dist * scaleX;
 
             let foundPoint = null;
-            let minDistance = 15; // Larger hit radius
+            let minDistance = 15;
             points.forEach((p, index) => {
                 const canvasX = toCanvasX(p.dist);
                 const canvasY = toCanvasY(p.y);
