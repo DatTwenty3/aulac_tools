@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý Dữ liệu Mặt cắt</title>
+    <title>Quản lý Dữ liệu Mặt cắt - Giao diện Thông minh</title>
     <style>
         :root {
             --background-blur: 16px;
@@ -59,6 +59,8 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            /* Giới hạn chiều cao của container để thanh cuộn hoạt động đúng */
+            max-height: calc(100vh - 4rem); 
         }
 
         .header {
@@ -69,7 +71,7 @@
         .header h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; }
         .header p { font-size: 1.1rem; color: var(--text-color-secondary); }
 
-        .main-layout { display: grid; grid-template-columns: 300px 1fr; flex-grow: 1; }
+        .main-layout { display: grid; grid-template-columns: 300px 1fr; flex-grow: 1; overflow: hidden; }
 
         .item-list-sidebar {
             padding: 1.5rem;
@@ -78,6 +80,7 @@
             display: flex;
             flex-direction: column;
             transition: background-color var(--transition-speed) ease;
+            overflow: hidden; /* Đảm bảo nội dung không tràn ra ngoài */
         }
         .item-list-sidebar h2 {
             font-size: 1.25rem;
@@ -115,7 +118,7 @@
             transform: translateX(4px);
         }
 
-        .details-container { padding: 2rem; background-color: rgba(255,255,255,0.1); }
+        .details-container { padding: 2rem; background-color: rgba(255,255,255,0.1); overflow-y: auto; }
 
         #item-details-wrapper .item-section { display: none; animation: fadeIn 0.5s ease; }
         #item-details-wrapper .item-section.active { display: block; }
@@ -367,11 +370,13 @@
             .targets-layout-grid { gap: 1rem; }
         }
         @media (max-width: 768px) {
-            body { padding: 0.5rem; } .container { border-radius: 12px; }
+            body { padding: 0.5rem; } 
+            .container { border-radius: 12px; max-height: none; }
             .main-layout { grid-template-columns: 1fr; }
-            .item-list-sidebar { border-right: none; border-bottom: 1px solid var(--border-color); }
+            .item-list-sidebar { border-right: none; border-bottom: 1px solid var(--border-color); overflow: visible; }
             #item-list { max-height: 25vh; }
-            .details-container, .item-list-sidebar, .header, .action-buttons { padding: 1.5rem 1rem; }
+            .details-container { padding: 1.5rem 1rem; overflow-y: visible; }
+            .action-buttons { padding: 1.5rem 1rem; }
             .guide-fab-container { bottom: 1rem; right: 1rem; }
             .btn-guide-fab { width: 50px; height: 50px; font-size: 1.5rem; }
             .targets-layout-grid { grid-template-columns: 1fr; }
