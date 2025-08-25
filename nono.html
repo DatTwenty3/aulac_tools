@@ -15,8 +15,8 @@
             --accent-color: #007aff;
             --accent-color-hover: #0056b3;
             --danger-color: #ff3b30;
-            --left-accent-color: #34c759; /* Apple's green */
-            --right-accent-color: #5856d6; /* Apple's indigo */
+            --left-accent-color: #34c759;
+            --right-accent-color: #5856d6;
             --border-radius: 18px;
             --transition-speed: 0.3s;
         }
@@ -40,7 +40,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1200px; /* Tăng chiều rộng để chứa 2 cột */
             margin: 0 auto;
             background: var(--background-color);
             backdrop-filter: blur(var(--background-blur));
@@ -61,7 +61,6 @@
             font-size: 2.25rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            color: var(--text-color);
         }
 
         .header p {
@@ -69,22 +68,80 @@
             color: var(--text-color-secondary);
         }
 
-        .content {
+        /* Bố cục 2 cột mới */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 0;
+        }
+
+        /* Cột danh sách cọc (bên trái) */
+        .pole-list-sidebar {
+            padding: 1.5rem;
+            border-right: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.1);
+            height: 100%;
+        }
+        
+        .pole-list-sidebar h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        #pole-list {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .pole-list-item {
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        .pole-list-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .pole-list-item.active {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+        }
+
+        /* Cột chi tiết (bên phải) */
+        .details-container {
             padding: 2rem;
         }
+
+        #pole-details-wrapper .pole-section {
+            display: none; /* Ẩn tất cả các cọc ban đầu */
+        }
+        
+        #pole-details-wrapper .pole-section.active {
+            display: block; /* Chỉ hiện cọc được chọn */
+        }
+
+        #placeholder-message {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-color-secondary);
+        }
+        #placeholder-message h3 { font-size: 1.5rem; margin-bottom: 0.5rem;}
+
 
         .pole-section {
             background: rgba(255, 255, 255, 0.3);
             border-radius: var(--border-radius);
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
-            transition: all var(--transition-speed) ease;
-        }
-
-        .pole-section:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 15px var(--shadow-color);
         }
 
         .pole-header {
@@ -95,8 +152,7 @@
         }
         
         .section-title {
-            color: var(--text-color);
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 600;
         }
 
@@ -133,61 +189,15 @@
             background: rgba(255, 255, 255, 0.8);
         }
 
-        .collapsible {
-            background: transparent;
-            color: var(--accent-color);
-            cursor: pointer;
-            padding: 0.75rem 0;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: all var(--transition-speed) ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 1rem;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
-        }
-
-        .collapsible:hover {
-            color: var(--accent-color-hover);
-        }
-
-        .collapsible::after {
-            content: '›';
-            font-size: 2rem;
-            font-weight: 300;
-            transition: transform var(--transition-speed) ease;
-            transform: rotate(90deg);
-        }
-
-        .collapsible.active::after {
-            transform: rotate(-90deg);
-        }
-        
-        .targets-content {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
-            padding: 0 0.5rem;
-        }
-        
-        .targets-content.show {
-            max-height: 1000px; /* Should be larger than content */
-            padding: 1rem 0.5rem;
-        }
-
         .sub-table-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1.5rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
         }
         
-        /* Styling for left and right tables */
         .sub-table h4 {
             padding-bottom: 0.5rem;
             margin-bottom: 1rem;
@@ -210,12 +220,8 @@
             background: rgba(88, 86, 214, 0.08);
             border-color: rgba(88, 86, 214, 0.2);
         }
-        .sub-table-left .btn-secondary {
-            color: var(--left-accent-color);
-        }
-        .sub-table-right .btn-secondary {
-            color: var(--right-accent-color);
-        }
+        .sub-table-left .btn-secondary { color: var(--left-accent-color); }
+        .sub-table-right .btn-secondary { color: var(--right-accent-color); }
 
         .target-row {
             display: grid;
@@ -246,7 +252,6 @@
             background-color: var(--accent-color);
             color: white;
         }
-
         .btn-primary:hover {
             background-color: var(--accent-color-hover);
             transform: translateY(-2px);
@@ -258,58 +263,41 @@
             color: var(--accent-color);
             border: 1px solid var(--border-color);
         }
+        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.8); }
 
-        .btn-secondary:hover {
-            background-color: rgba(255, 255, 255, 0.8);
-        }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-danger:hover { opacity: 0.85; }
 
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        .btn-danger:hover {
-            opacity: 0.85;
-        }
-
-        .remove-pole-btn {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
+        .remove-pole-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
 
         .action-buttons {
             text-align: center;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
+            padding: 2rem;
             border-top: 1px solid var(--border-color);
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
             gap: 1rem;
         }
 
-        .footer {
-            text-align: center;
-            padding: 1.5rem;
-            margin-top: 1rem;
-            color: var(--text-color-secondary);
-            font-size: 0.9rem;
-        }
+        .footer { text-align: center; padding: 1.5rem; color: var(--text-color-secondary); font-size: 0.9rem; }
 
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 250px 1fr;
+            }
+        }
         @media (max-width: 768px) {
-            body {
-                padding: 1rem;
+            body { padding: 0.5rem; }
+            .container { border-radius: 12px; }
+            .main-layout {
+                grid-template-columns: 1fr; /* Chuyển về 1 cột trên mobile */
             }
-            .content {
-                padding: 1.5rem;
-            }
-            .sub-table-grid {
-                grid-template-columns: 1fr;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .header h1 {
-                font-size: 1.8rem;
-            }
+            .pole-list-sidebar { border-right: none; border-bottom: 1px solid var(--border-color); }
+            #pole-list { max-height: 25vh; }
+            .details-container, .pole-list-sidebar { padding: 1rem; }
+            .header { padding: 1.5rem 1rem; }
+            .action-buttons { padding: 1.5rem 1rem; }
         }
     </style>
 </head>
@@ -317,16 +305,29 @@
     <div class="container">
         <div class="header">
             <h1>Quản lý Thông tin Cọc</h1>
-            <p>Nhập dữ liệu và xuất file định dạng .ntd một cách trực quan</p>
+            <p>Nhập dữ liệu, import từ CSV và xuất file định dạng .ntd</p>
         </div>
         
-        <div class="content">
-            <div id="poles-container"></div>
-            
-            <div class="action-buttons">
-                <button class="btn btn-secondary" onclick="addPole()">➕ Thêm Cọc</button>
-                <button class="btn btn-primary" onclick="generateAndDownload()">💾 Tạo & Tải file .ntd</button>
-            </div>
+        <div class="main-layout">
+            <aside class="pole-list-sidebar">
+                <h2>Danh sách Cọc</h2>
+                <div id="pole-list"></div>
+            </aside>
+            <main class="details-container">
+                <div id="pole-details-wrapper">
+                    <!-- Các form chi tiết của cọc sẽ được thêm vào đây bằng JS -->
+                </div>
+                <div id="placeholder-message">
+                    <h3>Chưa có cọc nào</h3>
+                    <p>Hãy "Thêm Cọc" hoặc "Import CSV" để bắt đầu.</p>
+                </div>
+            </main>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="addPole()">➕ Thêm Cọc</button>
+            <button class="btn btn-secondary" onclick="triggerCsvImport()">📄 Import CSV</button>
+            <button class="btn btn-primary" onclick="generateAndDownload()">💾 Tạo & Tải file .ntd</button>
         </div>
     </div>
 
@@ -334,149 +335,205 @@
         <p>&copy; 2025 LEDAT. All Rights Reserved.</p>
     </footer>
 
+    <input type="file" id="csv-importer" accept=".csv" style="display: none;">
+
     <script>
         let poleCount = 0;
+        let activePoleId = null;
 
-        function addPole() {
+        // --- HÀM ĐÃ SỬA LỖI ---
+        function addPole(isInitial = false) {
             poleCount++;
-            const container = document.getElementById('poles-container');
-            
+            const currentPoleId = poleCount; // Ghi lại ID của cọc hiện tại
+
+            // 1. Tạo item trong danh sách bên trái
+            const listContainer = document.getElementById('pole-list');
+            const listItem = document.createElement('div');
+            listItem.className = 'pole-list-item';
+            listItem.id = `pole-list-item-${currentPoleId}`;
+            listItem.textContent = `Cọc ${currentPoleId}`;
+            // Sử dụng ID đã ghi lại cho sự kiện onclick
+            listItem.onclick = () => selectPole(currentPoleId);
+            listContainer.appendChild(listItem);
+
+            // 2. Tạo form chi tiết bên phải
+            const detailsWrapper = document.getElementById('pole-details-wrapper');
             const poleDiv = document.createElement('div');
             poleDiv.className = 'pole-section';
-            poleDiv.id = `pole-${poleCount}`;
+            poleDiv.id = `pole-${currentPoleId}`;
             
+            // Sử dụng currentPoleId cho tất cả ID và sự kiện bên trong HTML
             poleDiv.innerHTML = `
                 <div class="pole-header">
-                    <h3 class="section-title">Cọc ${poleCount}</h3>
-                    <button class="btn btn-danger remove-pole-btn" onclick="removePole(${poleCount})">🗑️ Xóa</button>
+                    <h3 class="section-title">Cọc ${currentPoleId}</h3>
+                    <button class="btn btn-danger remove-pole-btn" onclick="removePole(${currentPoleId})">🗑️ Xóa</button>
                 </div>
-                
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tên cọc</label>
-                        <input type="text" id="pole-name-${poleCount}" placeholder="Ví dụ: DT">
+                        <input type="text" id="pole-name-${currentPoleId}" placeholder="Ví dụ: DT" oninput="updatePoleTitle(${currentPoleId})">
                     </div>
                     <div class="form-group">
                         <label>Cộng dồn</label>
-                        <input type="number" id="pole-cumulative-${poleCount}" step="0.001" placeholder="0.000">
+                        <input type="number" id="pole-cumulative-${currentPoleId}" step="0.001" placeholder="0.000">
                     </div>
                     <div class="form-group">
                         <label>Cao độ tự nhiên</label>
-                        <input type="number" id="pole-elevation-${poleCount}" step="0.001" placeholder="0.920">
+                        <input type="number" id="pole-elevation-${currentPoleId}" step="0.001" placeholder="0.920">
                     </div>
                 </div>
-                
                 <div class="form-row">
                     <div class="form-group">
                         <label>Góc chắn cung</label>
-                        <input type="number" id="pole-angle-${poleCount}" step="0.001" placeholder="180.000">
+                        <input type="number" id="pole-angle-${currentPoleId}" step="0.001" placeholder="180.000">
                     </div>
                     <div class="form-group">
                         <label>Bán kính</label>
-                        <input type="number" id="pole-radius-${poleCount}" step="0.001" placeholder="0.000">
+                        <input type="number" id="pole-radius-${currentPoleId}" step="0.001" placeholder="0.000">
                     </div>
                 </div>
-                
-                <div class="sub-tables">
-                    <button class="collapsible" onclick="toggleTargets(${poleCount})">
-                        <span>Chi tiết Targets Trái/Phải</span>
-                    </button>
-                    <div class="targets-content" id="targets-content-${poleCount}">
-                        <div class="sub-table-grid">
-                            <div class="sub-table sub-table-left">
-                                <h4>Bảng Trái</h4>
-                                <div id="left-targets-${poleCount}"></div>
-                                <button class="btn btn-secondary" onclick="addTarget(${poleCount}, 'left')">➕ Thêm Target</button>
-                            </div>
-                            
-                            <div class="sub-table sub-table-right">
-                                <h4>Bảng Phải</h4>
-                                <div id="right-targets-${poleCount}"></div>
-                                <button class="btn btn-secondary" onclick="addTarget(${poleCount}, 'right')">➕ Thêm Target</button>
-                            </div>
-                        </div>
+                <div class="sub-table-grid">
+                    <div class="sub-table sub-table-left">
+                        <h4>Bảng Trái</h4>
+                        <div id="left-targets-${currentPoleId}"></div>
+                        <button class="btn btn-secondary" onclick="addTarget(${currentPoleId}, 'left')">➕ Thêm Target</button>
+                    </div>
+                    <div class="sub-table sub-table-right">
+                        <h4>Bảng Phải</h4>
+                        <div id="right-targets-${currentPoleId}"></div>
+                        <button class="btn btn-secondary" onclick="addTarget(${currentPoleId}, 'right')">➕ Thêm Target</button>
                     </div>
                 </div>
             `;
+            detailsWrapper.appendChild(poleDiv);
             
-            container.appendChild(poleDiv);
+            addTarget(currentPoleId, 'left');
+            addTarget(currentPoleId, 'right');
             
-            // Thêm target mặc định
-            addTarget(poleCount, 'left');
-            addTarget(poleCount, 'right');
+            if (!isInitial) {
+                selectPole(currentPoleId);
+            }
+            updatePlaceholder();
         }
 
-        function removePole(poleId) {
-            const poleElement = document.getElementById(`pole-${poleId}`);
-            if (poleElement) {
-                poleElement.remove();
-                reorderPoles();
+        function selectPole(poleId) {
+            activePoleId = poleId;
+
+            document.querySelectorAll('.pole-list-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const listItem = document.getElementById(`pole-list-item-${poleId}`);
+            if (listItem) {
+                listItem.classList.add('active');
+            }
+
+            document.querySelectorAll('#pole-details-wrapper .pole-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            const poleSection = document.getElementById(`pole-${poleId}`);
+            if (poleSection) {
+                poleSection.classList.add('active');
+            }
+            updatePlaceholder();
+        }
+
+        function updatePoleTitle(poleId) {
+            const nameInput = document.getElementById(`pole-name-${poleId}`);
+            const titleElement = document.querySelector(`#pole-${poleId} .section-title`);
+            const listItem = document.getElementById(`pole-list-item-${poleId}`);
+
+            if (nameInput && titleElement && listItem) {
+                const newTitle = nameInput.value.trim() || `Cọc ${poleId}`;
+                titleElement.textContent = newTitle;
+                listItem.textContent = newTitle;
             }
         }
 
-        function toggleTargets(poleId) {
-            const content = document.getElementById(`targets-content-${poleId}`);
-            const button = content.previousElementSibling;
+        function removePole(poleIdToRemove) {
+            const poleElement = document.getElementById(`pole-${poleIdToRemove}`);
+            const listItem = document.getElementById(`pole-list-item-${poleIdToRemove}`);
             
-            if (content.classList.contains('show')) {
-                content.classList.remove('show');
-                button.classList.remove('active');
+            if (!poleElement || !listItem) return;
+
+            const allListItems = Array.from(document.querySelectorAll('.pole-list-item'));
+            const currentIndex = allListItems.findIndex(item => item.id === `pole-list-item-${poleIdToRemove}`);
+            let nextActiveIndex = -1;
+
+            if (poleCount > 1) {
+                if (activePoleId === poleIdToRemove) {
+                    nextActiveIndex = (currentIndex === allListItems.length - 1) ? currentIndex - 1 : currentIndex;
+                } else {
+                    const activeItem = document.getElementById(`pole-list-item-${activePoleId}`);
+                    nextActiveIndex = allListItems.indexOf(activeItem);
+                    if (currentIndex < nextActiveIndex) {
+                        nextActiveIndex--;
+                    }
+                }
+            }
+
+            poleElement.remove();
+            listItem.remove();
+            
+            reorderPoles();
+
+            if (nextActiveIndex !== -1 && poleCount > 0) {
+                selectPole(nextActiveIndex + 1);
             } else {
-                content.classList.add('show');
-                button.classList.add('active');
+                activePoleId = null;
+                updatePlaceholder();
             }
         }
 
         function reorderPoles() {
             const poleElements = document.querySelectorAll('.pole-section');
-            
-            if (poleElements.length === 0) {
-                poleCount = 0;
-                return;
-            }
-            
+            const listItems = document.querySelectorAll('.pole-list-item');
+
+            poleCount = poleElements.length;
+
             poleElements.forEach((poleElement, index) => {
                 const newPoleNumber = index + 1;
-                const oldPoleId = poleElement.id.split('-')[1];
-                
-                if (oldPoleId === newPoleNumber.toString()) return;
 
+                // Cập nhật form chi tiết
                 poleElement.id = `pole-${newPoleNumber}`;
-                
-                poleElement.querySelector('.section-title').textContent = `Cọc ${newPoleNumber}`;
-                
                 poleElement.querySelector('.remove-pole-btn').setAttribute('onclick', `removePole(${newPoleNumber})`);
                 
-                const inputs = ['pole-name', 'pole-cumulative', 'pole-elevation', 'pole-angle', 'pole-radius'];
-                inputs.forEach(inputName => {
-                    const input = poleElement.querySelector(`#${inputName}-${oldPoleId}`);
-                    if (input) input.id = `${inputName}-${newPoleNumber}`;
-                });
+                poleElement.querySelector('[id^="pole-name-"]').id = `pole-name-${newPoleNumber}`;
+                poleElement.querySelector('[id^="pole-cumulative-"]').id = `pole-cumulative-${newPoleNumber}`;
+                poleElement.querySelector('[id^="pole-elevation-"]').id = `pole-elevation-${newPoleNumber}`;
+                poleElement.querySelector('[id^="pole-angle-"]').id = `pole-angle-${newPoleNumber}`;
+                poleElement.querySelector('[id^="pole-radius-"]').id = `pole-radius-${newPoleNumber}`;
+
+                poleElement.querySelector('[id^="pole-name-"]').setAttribute('oninput', `updatePoleTitle(${newPoleNumber})`);
                 
-                const targetsContent = poleElement.querySelector(`#targets-content-${oldPoleId}`);
-                if (targetsContent) targetsContent.id = `targets-content-${newPoleNumber}`;
+                poleElement.querySelector('[id^="left-targets-"]').id = `left-targets-${newPoleNumber}`;
+                poleElement.querySelector('[id^="right-targets-"]').id = `right-targets-${newPoleNumber}`;
+                poleElement.querySelector('.sub-table-left .btn-secondary').setAttribute('onclick', `addTarget(${newPoleNumber}, 'left')`);
+                poleElement.querySelector('.sub-table-right .btn-secondary').setAttribute('onclick', `addTarget(${newPoleNumber}, 'right')`);
+
+                // Cập nhật item trong danh sách
+                const listItem = listItems[index];
+                listItem.id = `pole-list-item-${newPoleNumber}`;
+                listItem.onclick = () => selectPole(newPoleNumber);
                 
-                const toggleBtn = poleElement.querySelector(`[onclick*="toggleTargets(${oldPoleId})"]`);
-                if (toggleBtn) toggleBtn.setAttribute('onclick', `toggleTargets(${newPoleNumber})`);
-                
-                const leftContainer = poleElement.querySelector(`#left-targets-${oldPoleId}`);
-                if (leftContainer) leftContainer.id = `left-targets-${newPoleNumber}`;
-                
-                const rightContainer = poleElement.querySelector(`#right-targets-${oldPoleId}`);
-                if (rightContainer) rightContainer.id = `right-targets-${newPoleNumber}`;
-                
-                const addLeftBtn = poleElement.querySelector(`[onclick*="addTarget(${oldPoleId}, 'left')"]`);
-                if (addLeftBtn) addLeftBtn.setAttribute('onclick', `addTarget(${newPoleNumber}, 'left')`);
-                
-                const addRightBtn = poleElement.querySelector(`[onclick*="addTarget(${oldPoleId}, 'right')"]`);
-                if (addRightBtn) addRightBtn.setAttribute('onclick', `addTarget(${newPoleNumber}, 'right')`);
+                updatePoleTitle(newPoleNumber);
             });
-            
-            poleCount = poleElements.length;
+        }
+        
+        function updatePlaceholder() {
+            const placeholder = document.getElementById('placeholder-message');
+            const detailsWrapper = document.getElementById('pole-details-wrapper');
+            if (poleCount > 0) {
+                placeholder.style.display = 'none';
+                detailsWrapper.style.display = 'block';
+            } else {
+                placeholder.style.display = 'block';
+                detailsWrapper.style.display = 'none';
+            }
         }
 
         function addTarget(poleId, side) {
             const container = document.getElementById(`${side}-targets-${poleId}`);
+            if (!container) return;
             const targetId = `target-${poleId}-${side}-${Date.now()}`;
             
             const targetDiv = document.createElement('div');
@@ -484,94 +541,119 @@
             targetDiv.id = targetId;
             
             targetDiv.innerHTML = `
-                <div class="form-group">
-                    <label>Cộng dồn</label>
-                    <input type="number" step="0.001" class="${side}-cumulative" placeholder="5.181">
-                </div>
-                <div class="form-group">
-                    <label>Z.Tự nhiên</label>
-                    <input type="number" step="0.001" class="${side}-elevation" placeholder="0.910">
-                </div>
+                <div class="form-group"><label>Cộng dồn</label><input type="number" step="0.001" class="${side}-cumulative" placeholder="5.181"></div>
+                <div class="form-group"><label>Z.Tự nhiên</label><input type="number" step="0.001" class="${side}-elevation" placeholder="0.910"></div>
                 <button class="btn btn-danger" onclick="removeTarget('${targetId}')" style="grid-column: 1/-1; justify-self: center; width: auto; margin-top: 10px; padding: 0.25rem 0.75rem;">🗑️</button>
             `;
-            
             container.appendChild(targetDiv);
         }
 
         function removeTarget(targetId) {
             const targetElement = document.getElementById(targetId);
-            if (targetElement) {
-                targetElement.remove();
-            }
+            if (targetElement) targetElement.remove();
         }
 
         function generateOutput() {
             let result = 'TDN\tVersion 3.5\nSYMBOLS\tND\tTD\tP\tTC\tNC\nTYPEINPUT\t0\t0\t0\t0\t0\n';
-            
-            const poleElements = document.querySelectorAll('.pole-section');
-            
-            poleElements.forEach(poleElement => {
+            document.querySelectorAll('.pole-section').forEach(poleElement => {
                 const poleId = poleElement.id.split('-')[1];
-                
                 const name = document.getElementById(`pole-name-${poleId}`)?.value || 'DT';
                 const cumulative = parseFloat(document.getElementById(`pole-cumulative-${poleId}`)?.value || 0);
                 const elevation = parseFloat(document.getElementById(`pole-elevation-${poleId}`)?.value || 0);
                 const angle = parseFloat(document.getElementById(`pole-angle-${poleId}`)?.value || 180);
-                const radius = parseFloat(document.getElementById(`pole-radius-${poleId}`)?.value || 0);
                 
                 const angleRad = (angle * Math.PI / 180).toFixed(12);
-                
                 result += `POLE\t${name}\t${cumulative.toFixed(5)}\t${elevation.toFixed(5)}\t0.00000\t0.00000\t${angleRad}\n`;
                 
-                const leftTargets = poleElement.querySelectorAll(`#left-targets-${poleId} .target-row`);
-                leftTargets.forEach(targetRow => {
-                    const cumVal = parseFloat(targetRow.querySelector('.left-cumulative').value || 0);
-                    const elevVal = parseFloat(targetRow.querySelector('.left-elevation').value || 0);
-                    if (cumVal !== 0 || elevVal !== 0) {
-                        result += `TARGETL\t${(-cumVal).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
-                    }
+                poleElement.querySelectorAll(`#left-targets-${poleId} .target-row`).forEach(row => {
+                    const cumVal = parseFloat(row.querySelector('.left-cumulative').value || 0);
+                    const elevVal = parseFloat(row.querySelector('.left-elevation').value || 0);
+                    if (cumVal !== 0 || elevVal !== 0) result += `TARGETL\t${(-cumVal).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
                 });
-                
-                const rightTargets = poleElement.querySelectorAll(`#right-targets-${poleId} .target-row`);
-                rightTargets.forEach(targetRow => {
-                    const cumVal = parseFloat(targetRow.querySelector('.right-cumulative').value || 0);
-                    const elevVal = parseFloat(targetRow.querySelector('.right-elevation').value || 0);
-                    if (cumVal !== 0 || elevVal !== 0) {
-                        result += `TARGETR\t${cumVal.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
-                    }
+                poleElement.querySelectorAll(`#right-targets-${poleId} .target-row`).forEach(row => {
+                    const cumVal = parseFloat(row.querySelector('.right-cumulative').value || 0);
+                    const elevVal = parseFloat(row.querySelector('.right-elevation').value || 0);
+                    if (cumVal !== 0 || elevVal !== 0) result += `TARGETR\t${cumVal.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
                 });
             });
-            
             return result;
         }
 
         function generateAndDownload() {
-            const content = generateOutput();
-            
-            const poleElements = document.querySelectorAll('.pole-section');
-            if (poleElements.length === 0) {
-                // Có thể thêm một thông báo tùy chỉnh ở đây thay vì alert
+            if (poleCount === 0) {
                 console.warn('Không có dữ liệu cọc để tạo file.');
                 return;
             }
-            
+            const content = generateOutput();
             const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            
-            const firstPoleName = document.querySelector('[id^="pole-name-"]')?.value || 'data';
-            link.download = `${firstPoleName}.ntd`;
-            
+            link.download = `${document.querySelector('.pole-list-item.active')?.textContent || 'data'}.ntd`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            
             window.URL.revokeObjectURL(url);
         }
 
+        function triggerCsvImport() { document.getElementById('csv-importer').click(); }
+
+        function handleCsvFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => processCsvData(e.target.result);
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function parseLyTrinh(lyTrinhStr) {
+            if (!lyTrinhStr) return 0;
+            const cleanedStr = lyTrinhStr.toLowerCase().replace('km', '');
+            const parts = cleanedStr.split('+');
+            if (parts.length !== 2) return parseFloat(lyTrinhStr) || 0;
+            return ((parseFloat(parts[0]) || 0) * 1000) + (parseFloat(parts[1]) || 0);
+        }
+
+        function processCsvData(csvText) {
+            document.getElementById('pole-list').innerHTML = '';
+            document.getElementById('pole-details-wrapper').innerHTML = '';
+            poleCount = 0;
+            activePoleId = null;
+
+            const lines = csvText.trim().split(/\r?\n/);
+            if (lines.length < 2) {
+                updatePlaceholder();
+                return;
+            }
+
+            const headers = lines[0].split(',').map(h => h.trim().toUpperCase());
+            const lyTrinhIndex = headers.indexOf('LY TRINH');
+            const tenBienBaoIndex = headers.indexOf('TEN BIEN BAO');
+            const gocIndex = headers.indexOf('GOC');
+
+            if (lyTrinhIndex === -1 || tenBienBaoIndex === -1 || gocIndex === -1) {
+                console.error("File CSV thiếu header bắt buộc.");
+                updatePlaceholder();
+                return;
+            }
+
+            for (let i = 1; i < lines.length; i++) {
+                const data = lines[i].split(',');
+                if (data.length < headers.length) continue;
+                addPole(true);
+                const tenBienBao = data[tenBienBaoIndex].trim();
+                document.getElementById(`pole-name-${poleCount}`).value = tenBienBao;
+                document.getElementById(`pole-cumulative-${poleCount}`).value = parseLyTrinh(data[lyTrinhIndex].trim());
+                document.getElementById(`pole-angle-${poleCount}`).value = data[gocIndex].trim();
+                updatePoleTitle(poleCount);
+            }
+            if (poleCount > 0) selectPole(1);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
-            addPole();
+            updatePlaceholder();
+            document.getElementById('csv-importer').addEventListener('change', handleCsvFile);
         });
     </script>
 </body>
