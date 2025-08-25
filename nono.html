@@ -211,79 +211,88 @@
         }
         .footer { text-align: center; padding: 1.5rem; color: var(--text-color-secondary); font-size: 0.9rem; }
         
+        /* --- CSS CHO BIỂU ĐỒ --- */
+        .visualization-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .visualization-container {
+            width: 100%;
+            height: 250px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            position: relative;
+        }
+        .chart-title {
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-color-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .cross-section-canvas {
+            width: 100%;
+            height: calc(100% - 25px);
+            display: block;
+            cursor: crosshair;
+        }
+        .canvas-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-color-secondary);
+            text-align: center;
+        }
+        #chart-tooltip {
+            position: fixed;
+            display: none;
+            background: rgba(40, 40, 40, 0.85);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            pointer-events: none; /* Quan trọng: để không cản event của canvas */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: opacity 0.1s ease;
+            z-index: 1002;
+        }
+
         /* --- CSS CHO TÍNH NĂNG HƯỚNG DẪN --- */
         .tutorial-highlight {
             position: relative !important;
             z-index: 1000;
-            /* Hiệu ứng spotlight dùng box-shadow để tạo lớp phủ xung quanh */
             box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
             transition: box-shadow 0.3s ease;
         }
         
         .tutorial-tooltip {
-            position: absolute;
-            background-color: white;
-            color: var(--text-color);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            z-index: 1001;
-            width: 300px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
+            position: absolute; background-color: white; color: var(--text-color);
+            padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1001; width: 300px; opacity: 0; visibility: hidden;
+            transform: translateY(10px); transition: all 0.3s ease;
         }
-        .tutorial-tooltip.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        .tutorial-tooltip p {
-            font-size: 1rem;
-            line-height: 1.5;
-            margin-bottom: 1rem;
-        }
-        .tutorial-tooltip-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .tutorial-tooltip-nav .step-counter {
-            font-size: 0.9rem;
-            color: var(--text-color-secondary);
-        }
-        .tutorial-tooltip-nav button {
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
+        .tutorial-tooltip.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .tutorial-tooltip p { font-size: 1rem; line-height: 1.5; margin-bottom: 1rem; }
+        .tutorial-tooltip-nav { display: flex; justify-content: space-between; align-items: center; }
+        .tutorial-tooltip-nav .step-counter { font-size: 0.9rem; color: var(--text-color-secondary); }
+        .tutorial-tooltip-nav button { padding: 0.5rem 1rem; font-size: 0.9rem; }
 
-        /* --- Nút Hướng dẫn nổi --- */
-        .guide-fab-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 998;
-        }
+        .guide-fab-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 998; }
         .btn-guide-fab {
-            background-color: var(--accent-color);
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: none;
-            font-size: 1.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all var(--transition-speed) ease;
+            background-color: var(--accent-color); color: white; width: 60px; height: 60px;
+            border-radius: 50%; border: none; font-size: 1.75rem; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer; transition: all var(--transition-speed) ease;
         }
         .btn-guide-fab:hover {
-            background-color: var(--accent-color-hover);
-            transform: translateY(-3px) scale(1.05);
+            background-color: var(--accent-color-hover); transform: translateY(-3px) scale(1.05);
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
         }
 
@@ -296,6 +305,7 @@
             .details-container, .item-list-sidebar, .header, .action-buttons { padding: 1.5rem 1rem; }
             .guide-fab-container { bottom: 1rem; right: 1rem; }
             .btn-guide-fab { width: 50px; height: 50px; font-size: 1.5rem; }
+            .visualization-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -329,9 +339,7 @@
     </div>
 
     <div class="guide-fab-container">
-        <button id="btn-guide" class="btn-guide-fab" onclick="startTutorial()" title="Bắt đầu Hướng dẫn">
-            🎓
-        </button>
+        <button id="btn-guide" class="btn-guide-fab" onclick="startTutorial()" title="Bắt đầu Hướng dẫn">🎓</button>
     </div>
 
     <footer class="footer">
@@ -339,8 +347,7 @@
     </footer>
 
     <input type="file" id="csv-importer" accept=".csv" style="display: none;">
-
-    <!-- HTML cho tính năng hướng dẫn -->
+    <div id="chart-tooltip"></div>
     <div id="tutorial-tooltip" class="tutorial-tooltip">
         <p id="tutorial-text"></p>
         <div class="tutorial-tooltip-nav">
@@ -352,10 +359,10 @@
         </div>
     </div>
 
-
     <script>
         let itemCount = 0;
         let activeItemId = null;
+        let hoveredPointInfo = null;
 
         function addItem(isInitial = false) {
             itemCount++;
@@ -383,28 +390,44 @@
                     <button class="tab-button active" onclick="openTab(event, ${currentItemId}, 'info')">Thông tin chung</button>
                     <button class="tab-button" onclick="openTab(event, ${currentItemId}, 'targets')">Chi tiết Targets</button>
                 </div>
-                <div id="info-${currentItemId}" class="tab-content active">
+                <div id="info-${currentItemId}" class="tab-content active" oninput="drawCrossSection(${currentItemId})">
                     <div class="form-row">
                         <div class="form-group"><label>Tên mặt cắt</label><input type="text" id="item-name-${currentItemId}" placeholder="Ví dụ: MC1" oninput="updateItemTitle(${currentItemId})"></div>
                         <div class="form-group"><label>Lý trình</label><input type="number" id="item-cumulative-${currentItemId}" step="0.001" placeholder="0.000"></div>
                     </div>
                     <div class="form-row">
-                        <div class="form-group"><label>Cao độ tự nhiên</label><input type="number" id="item-elevation-${currentItemId}" step="0.001" placeholder="0.920"></div>
+                        <div class="form-group"><label>Cao độ tự nhiên (Tim đường)</label><input type="number" id="item-elevation-${currentItemId}" step="0.001" placeholder="0.920"></div>
                         <div class="form-group"><label>Góc chắn cung</label><input type="number" id="item-angle-${currentItemId}" step="0.001" placeholder="180.000"></div>
                         <div class="form-group"><label>Bán kính</label><input type="number" id="item-radius-${currentItemId}" step="0.001" placeholder="0.000"></div>
                     </div>
                 </div>
-                <div id="targets-${currentItemId}" class="tab-content">
+                <div id="targets-${currentItemId}" class="tab-content" oninput="drawCrossSection(${currentItemId})">
+                    <div class="visualization-grid">
+                        <div class="visualization-container">
+                            <h5 class="chart-title" style="color: var(--left-accent-color);">Biểu đồ Trái</h5>
+                            <canvas id="canvas-left-${currentItemId}" class="cross-section-canvas"></canvas>
+                            <div id="canvas-placeholder-left-${currentItemId}" class="canvas-placeholder">
+                                <p>Nhập dữ liệu Bảng Trái</p>
+                            </div>
+                        </div>
+                        <div class="visualization-container">
+                             <h5 class="chart-title" style="color: var(--right-accent-color);">Biểu đồ Phải</h5>
+                            <canvas id="canvas-right-${currentItemId}" class="cross-section-canvas"></canvas>
+                            <div id="canvas-placeholder-right-${currentItemId}" class="canvas-placeholder">
+                                <p>Nhập dữ liệu Bảng Phải</p>
+                            </div>
+                        </div>
+                    </div>
                     <div class="sub-table-grid">
                         <div class="sub-table sub-table-left">
                             <h4>Bảng Trái</h4>
-                            <div class="targets-header"><span>Cộng dồn</span><span>Z.Tự nhiên</span></div>
+                            <div class="targets-header"><span>Δ Cộng dồn</span><span>Δ Cao độ</span></div>
                             <div class="targets-container" id="left-targets-${currentItemId}"></div>
                             <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'left')">➕ Thêm</button>
                         </div>
                         <div class="sub-table sub-table-right">
                             <h4>Bảng Phải</h4>
-                            <div class="targets-header"><span>Cộng dồn</span><span>Z.Tự nhiên</span></div>
+                            <div class="targets-header"><span>Δ Cộng dồn</span><span>Δ Cao độ</span></div>
                             <div class="targets-container" id="right-targets-${currentItemId}"></div>
                             <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'right')">➕ Thêm</button>
                         </div>
@@ -413,6 +436,14 @@
             `;
             detailsWrapper.appendChild(itemDiv);
             
+            // Thêm event listeners cho canvas
+            const leftCanvas = document.getElementById(`canvas-left-${currentItemId}`);
+            const rightCanvas = document.getElementById(`canvas-right-${currentItemId}`);
+            leftCanvas.addEventListener('mousemove', handleChartMouseMove);
+            leftCanvas.addEventListener('mouseleave', handleChartMouseLeave);
+            rightCanvas.addEventListener('mousemove', handleChartMouseMove);
+            rightCanvas.addEventListener('mouseleave', handleChartMouseLeave);
+
             addTarget(currentItemId, 'left');
             addTarget(currentItemId, 'right');
             
@@ -426,6 +457,10 @@
             itemSection.querySelectorAll('.tab-button').forEach(tb => tb.classList.remove('active'));
             document.getElementById(`${tabName}-${itemId}`).classList.add('active');
             event.currentTarget.classList.add('active');
+
+            if (tabName === 'targets') {
+                setTimeout(() => drawCrossSection(itemId), 50);
+            }
         }
         
         function filterItems() {
@@ -441,7 +476,13 @@
             document.querySelectorAll('.item-list-item').forEach(item => item.classList.remove('active'));
             document.getElementById(`item-list-item-${itemId}`)?.classList.add('active');
             document.querySelectorAll('#item-details-wrapper .item-section').forEach(section => section.classList.remove('active'));
-            document.getElementById(`item-${itemId}`)?.classList.add('active');
+            const currentSection = document.getElementById(`item-${itemId}`);
+            if (currentSection) {
+                currentSection.classList.add('active');
+                if (currentSection.querySelector('.tab-button[onclick*="targets"]').classList.contains('active')) {
+                    setTimeout(() => drawCrossSection(itemId), 50);
+                }
+            }
             updatePlaceholder();
         }
 
@@ -496,16 +537,32 @@
                 
                 itemElement.querySelector('.tab-button[onclick*="info"]').setAttribute('onclick', `openTab(event, ${newItemNumber}, 'info')`);
                 itemElement.querySelector('.tab-button[onclick*="targets"]').setAttribute('onclick', `openTab(event, ${newItemNumber}, 'targets')`);
-                itemElement.querySelector('[id^="info-"]').id = `info-${newItemNumber}`;
-                itemElement.querySelector('[id^="targets-"]').id = `targets-${newItemNumber}`;
+                
+                const infoTab = itemElement.querySelector('[id^="info-"]');
+                if(infoTab) {
+                    infoTab.id = `info-${newItemNumber}`;
+                    infoTab.setAttribute('oninput', `drawCrossSection(${newItemNumber})`);
+                }
+
+                const targetsTab = itemElement.querySelector('[id^="targets-"]');
+                if (targetsTab) {
+                    targetsTab.id = `targets-${newItemNumber}`;
+                    targetsTab.setAttribute('oninput', `drawCrossSection(${newItemNumber})`);
+                }
+                itemElement.querySelector('[id^="canvas-left-"]').id = `canvas-left-${newItemNumber}`;
+                itemElement.querySelector('[id^="canvas-placeholder-left-"]').id = `canvas-placeholder-left-${newItemNumber}`;
+                itemElement.querySelector('[id^="canvas-right-"]').id = `canvas-right-${newItemNumber}`;
+                itemElement.querySelector('[id^="canvas-placeholder-right-"]').id = `canvas-placeholder-right-${newItemNumber}`;
 
                 ['name', 'cumulative', 'elevation', 'angle', 'radius'].forEach(field => {
-                    const input = itemElement.querySelector(`[id$="-${oldId}"]`);
-                    if(input && input.id.includes(`item-${field}`)){
-                         input.id = `item-${field}-${newItemNumber}`;
+                    const input = itemElement.querySelector(`[id^=item-${field}-]`);
+                    if (input) {
+                        input.id = `item-${field}-${newItemNumber}`;
+                        if (field === 'name') {
+                            input.setAttribute('oninput', `updateItemTitle(${newItemNumber})`);
+                        }
                     }
                 });
-                itemElement.querySelector(`#item-name-${newItemNumber}`).setAttribute('oninput', `updateItemTitle(${newItemNumber})`);
                 
                 itemElement.querySelector('[id^="left-targets-"]').id = `left-targets-${newItemNumber}`;
                 itemElement.querySelector('[id^="right-targets-"]').id = `right-targets-${newItemNumber}`;
@@ -534,16 +591,21 @@
             targetDiv.className = 'target-row';
             targetDiv.id = targetId;
             targetDiv.innerHTML = `
-                <input type="number" step="0.001" class="${side}-cumulative" placeholder="Cộng dồn">
-                <input type="number" step="0.001" class="${side}-elevation" placeholder="Z.Tự nhiên">
+                <input type="number" step="0.001" class="${side}-cumulative" placeholder="Δ Dài">
+                <input type="number" step="0.001" class="${side}-elevation" placeholder="Δ Cao độ">
                 <button class="btn-icon-danger" onclick="removeTarget('${targetId}')">🗑️</button>
             `;
             container.appendChild(targetDiv);
+            drawCrossSection(itemId);
         }
 
         function removeTarget(targetId) {
             const targetElement = document.getElementById(targetId);
-            if (targetElement) targetElement.remove();
+            if (targetElement) {
+                const itemId = targetId.split('-')[1];
+                targetElement.remove();
+                drawCrossSection(itemId);
+            }
         }
 
         function generateOutput() {
@@ -557,13 +619,13 @@
                 const angleRad = (angle * Math.PI / 180).toFixed(12);
                 result += `POLE\t${name}\t${cumulative.toFixed(5)}\t${elevation.toFixed(5)}\t0.00000\t0.00000\t${angleRad}\n`;
                 itemElement.querySelectorAll(`#left-targets-${itemId} .target-row`).forEach(row => {
-                    const cumVal = parseFloat(row.querySelector('.left-cumulative').value || 0);
-                    const elevVal = parseFloat(row.querySelector('.left-elevation').value || 0);
+                    const cumVal = parseFloat(row.querySelector('.left-cumulative').value) || 0;
+                    const elevVal = parseFloat(row.querySelector('.left-elevation').value) || 0;
                     if (cumVal !== 0 || elevVal !== 0) result += `TARGETL\t${(-cumVal).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
                 });
                 itemElement.querySelectorAll(`#right-targets-${itemId} .target-row`).forEach(row => {
-                    const cumVal = parseFloat(row.querySelector('.right-cumulative').value || 0);
-                    const elevVal = parseFloat(row.querySelector('.right-elevation').value || 0);
+                    const cumVal = parseFloat(row.querySelector('.right-cumulative').value) || 0;
+                    const elevVal = parseFloat(row.querySelector('.right-elevation').value) || 0;
                     if (cumVal !== 0 || elevVal !== 0) result += `TARGETR\t${cumVal.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
                 });
             });
@@ -624,173 +686,317 @@
             if (itemCount > 0) selectItem(1);
         }
         
-        // --- LOGIC CHO TÍNH NĂNG HƯỚNG DẪN ---
+        // --- LOGIC VẼ BIỂU ĐỒ ---
+        function drawCrossSection(itemId) {
+            if (!itemId) return;
+            drawSideChart(itemId, 'left');
+            drawSideChart(itemId, 'right');
+        }
+
+        function drawSideChart(itemId, side) {
+            const canvas = document.getElementById(`canvas-${side}-${itemId}`);
+            const placeholder = document.getElementById(`canvas-placeholder-${side}-${itemId}`);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            const initialElevation = parseFloat(document.getElementById(`item-elevation-${itemId}`)?.value) || 0;
+
+            const points = [];
+            let totalLength = 0;
+            let currentElevation = initialElevation;
+            const rows = document.querySelectorAll(`#${side}-targets-${itemId} .target-row`);
+
+            rows.forEach((row) => {
+                const lengthDelta = parseFloat(row.querySelector(`.${side}-cumulative`).value) || 0;
+                const elevationDelta = parseFloat(row.querySelector(`.${side}-elevation`).value) || 0;
+                
+                totalLength += lengthDelta;
+                currentElevation += elevationDelta;
+                
+                points.push({ dist: totalLength, y: currentElevation });
+            });
+            
+            const allPoints = [{dist: 0, y: initialElevation}, ...points];
+            canvas.chartDataPoints = allPoints; // Lưu trữ dữ liệu thực tế để dùng cho tooltip
+
+            if (points.length === 0 || rows.length > 0 && Array.from(rows).every(r => !r.querySelector(`.${side}-cumulative`).value && !r.querySelector(`.${side}-elevation`).value)) {
+                placeholder.style.display = 'block';
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+            placeholder.style.display = 'none';
+            
+            let minY_data = initialElevation, maxY_data = initialElevation;
+            let maxX_dist = 0;
+
+            allPoints.forEach(p => {
+                if (p.y < minY_data) minY_data = p.y;
+                if (p.y > maxY_data) maxY_data = p.y;
+                if (p.dist > maxX_dist) maxX_dist = p.dist;
+            });
+
+            let dataHeight = maxY_data - minY_data;
+            if (dataHeight === 0) dataHeight = 1;
+            const minY = minY_data - dataHeight * 0.2;
+            const maxY = maxY_data + dataHeight * 0.2;
+            const finalDataHeight = maxY - minY;
+
+            const minX_dist = 0;
+            const dataWidth = maxX_dist === 0 ? 1 : maxX_dist;
+
+            const padding = { top: 20, right: 20, bottom: 30, left: 50 };
+            const viewWidth = canvas.width - padding.left - padding.right;
+            const viewHeight = canvas.height - padding.top - padding.bottom;
+
+            const scaleX = viewWidth / dataWidth;
+            const scaleY = viewHeight / finalDataHeight;
+
+            const toCanvasY = (dataY) => canvas.height - padding.bottom - (dataY - minY) * scaleY;
+            
+            const toCanvasX = (side === 'left')
+                ? (dist) => canvas.width - padding.right - dist * scaleX
+                : (dist) => padding.left + dist * scaleX;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 0.5;
+            ctx.font = '10px -apple-system, sans-serif';
+            ctx.fillStyle = '#666';
+
+            for (let i = 0; i <= 4; i++) {
+                const yVal = minY + (finalDataHeight / 4) * i;
+                const y = toCanvasY(yVal);
+                ctx.beginPath();
+                ctx.moveTo(padding.left, y);
+                ctx.lineTo(canvas.width - padding.right, y);
+                ctx.stroke();
+                ctx.fillText(yVal.toFixed(2), 5, y + 3);
+            }
+
+            for (let i = 0; i <= 4; i++) {
+                const distVal = minX_dist + (dataWidth / 4) * i;
+                const x = toCanvasX(distVal);
+                ctx.beginPath();
+                ctx.moveTo(x, padding.top);
+                ctx.lineTo(x, canvas.height - padding.bottom);
+                ctx.stroke();
+                ctx.fillText(distVal.toFixed(2), x - 10, canvas.height - padding.bottom + 15);
+            }
+
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.font = 'bold 11px -apple-system, sans-serif';
+            ctx.fillStyle = 'var(--text-color-secondary)';
+            ctx.fillText('Cao độ', 0, 0);
+            ctx.restore();
+
+            const color = getComputedStyle(document.documentElement).getPropertyValue(`--${side}-accent-color`);
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, `${color}40`);
+            gradient.addColorStop(1, `${color}00`);
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(0), toCanvasY(initialElevation));
+            points.forEach(p => ctx.lineTo(toCanvasX(p.dist), toCanvasY(p.y)));
+            ctx.lineTo(toCanvasX(points.length > 0 ? points[points.length-1].dist : 0), canvas.height - padding.bottom);
+            ctx.lineTo(toCanvasX(0), canvas.height - padding.bottom);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(toCanvasX(0), toCanvasY(initialElevation));
+            points.forEach(p => ctx.lineTo(toCanvasX(p.dist), toCanvasY(p.y)));
+            ctx.stroke();
+
+            // Vẽ các điểm, và điểm được hover
+            allPoints.forEach((p, index) => {
+                const isHovered = hoveredPointInfo && hoveredPointInfo.canvasId === canvas.id && hoveredPointInfo.pointIndex === index;
+                const radius = isHovered ? 7 : 4;
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(toCanvasX(p.dist), toCanvasY(p.y), radius, 0, Math.PI * 2);
+                ctx.fill();
+                if(isHovered){
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function handleChartMouseMove(event) {
+            const canvas = event.target;
+            const [_, side, itemId] = canvas.id.split('-');
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+            const points = canvas.chartDataPoints || [];
+            
+            let foundPoint = null;
+            let minDistance = 10; // Bán kính bắt dính điểm
+
+            const toCanvasY = (dataY, minY, finalDataHeight, padding, scaleY) => canvas.height - padding.bottom - (dataY - minY) * scaleY;
+            const toCanvasX = (dist, padding, scaleX) => (side === 'left')
+                ? canvas.width - padding.right - dist * scaleX
+                : padding.left + dist * scaleX;
+            
+            // Cần tính lại các giá trị scale để tìm đúng tọa độ canvas
+            const initialElevation = parseFloat(document.getElementById(`item-elevation-${itemId}`)?.value) || 0;
+            let minY_data = initialElevation, maxY_data = initialElevation, maxX_dist = 0;
+            points.forEach(p => {
+                if (p.y < minY_data) minY_data = p.y;
+                if (p.y > maxY_data) maxY_data = p.y;
+                if (p.dist > maxX_dist) maxX_dist = p.dist;
+            });
+            let dataHeight = maxY_data - minY_data;
+            if (dataHeight === 0) dataHeight = 1;
+            const minY = minY_data - dataHeight * 0.2;
+            const maxY = maxY_data + dataHeight * 0.2;
+            const finalDataHeight = maxY - minY;
+            const dataWidth = maxX_dist === 0 ? 1 : maxX_dist;
+            const padding = { top: 20, right: 20, bottom: 30, left: 50 };
+            const viewWidth = canvas.width - padding.left - padding.right;
+            const viewHeight = canvas.height - padding.top - padding.bottom;
+            const scaleX = viewWidth / dataWidth;
+            const scaleY = viewHeight / finalDataHeight;
+
+
+            points.forEach((p, index) => {
+                const canvasX = toCanvasX(p.dist, padding, scaleX);
+                const canvasY = toCanvasY(p.y, minY, finalDataHeight, padding, scaleY);
+                const distance = Math.sqrt(Math.pow(mouseX - canvasX, 2) + Math.pow(mouseY - canvasY, 2));
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    foundPoint = {
+                        canvasId: canvas.id,
+                        pointIndex: index,
+                        data: p
+                    };
+                }
+            });
+
+            if (foundPoint) {
+                hoveredPointInfo = foundPoint;
+                drawCrossSection(itemId);
+                updateTooltip(event);
+            } else if (hoveredPointInfo) {
+                handleChartMouseLeave();
+            }
+        }
+
+        function handleChartMouseLeave() {
+            const tooltip = document.getElementById('chart-tooltip');
+            if (hoveredPointInfo) {
+                const [_, side, itemId] = hoveredPointInfo.canvasId.split('-');
+                hoveredPointInfo = null;
+                drawCrossSection(itemId);
+                tooltip.style.display = 'none';
+            }
+        }
+
+        function updateTooltip(event) {
+            const tooltip = document.getElementById('chart-tooltip');
+            if (hoveredPointInfo) {
+                const { data } = hoveredPointInfo;
+                tooltip.innerHTML = `Khoảng cách: ${data.dist.toFixed(2)}<br>Cao độ: ${data.y.toFixed(2)}`;
+                tooltip.style.display = 'block';
+                tooltip.style.left = `${event.pageX + 15}px`;
+                tooltip.style.top = `${event.pageY + 15}px`;
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
         
+        // --- LOGIC HƯỚNG DẪN ---
         let currentTutorialStep = 0;
         const tutorialSteps = [
-            {
-                element: '#btn-add-item',
-                text: 'Chào mừng bạn! Nhấn vào đây để <b>thêm một mặt cắt mới</b> và bắt đầu nhập liệu thủ công.',
-                position: 'top'
-            },
-            {
-                element: '#btn-import-csv',
-                text: 'Hoặc bạn có thể <b>nhập dữ liệu hàng loạt</b> một cách nhanh chóng từ file CSV có sẵn.',
-                position: 'top'
-            },
-            {
-                element: '#item-list',
-                text: 'Tất cả các mặt cắt bạn tạo sẽ được <b>liệt kê tại đây</b>. Nhấn vào một mục để xem và chỉnh sửa chi tiết.',
-                position: 'right',
-                action: () => { if(itemCount === 0) addItem(); }
-            },
-            {
-                element: '.details-container',
-                text: 'Đây là khu vực hiển thị <b>thông tin chi tiết</b> của mặt cắt đang được chọn.',
-                position: 'left'
-            },
-            {
-                element: () => `#item-${activeItemId} .tab-button[onclick*="targets"]`,
-                text: 'Chuyển qua tab này để nhập <b>dữ liệu chi tiết</b> cho các điểm target.',
-                position: 'bottom',
-                action: () => {
-                    const tabButton = document.querySelector(`#item-${activeItemId} .tab-button[onclick*="targets"]`);
-                    if (tabButton) tabButton.click();
-                }
-            },
-            {
-                element: () => `#item-${activeItemId} .sub-table-left .btn-add-target`,
-                text: 'Nhấn vào đây để <b>thêm các điểm target</b> cho bảng bên trái.',
-                position: 'bottom'
-            },
-            {
-                element: '#btn-generate',
-                text: 'Sau khi đã nhập xong tất cả dữ liệu, nhấn vào đây để <b>tạo và tải về file .ntd</b> cuối cùng.',
-                position: 'top'
-            },
-            {
-                element: '#btn-guide',
-                text: 'Bạn có thể bắt đầu lại hướng dẫn bất cứ lúc nào bằng cách nhấn vào nút này!',
-                position: 'top'
-            }
+            { element: '#btn-add-item', text: 'Chào mừng bạn! Nhấn vào đây để <b>thêm một mặt cắt mới</b>.', position: 'top' },
+            { element: '#btn-import-csv', text: 'Hoặc <b>nhập dữ liệu hàng loạt</b> từ file CSV.', position: 'top' },
+            { element: '#item-list', text: 'Các mặt cắt sẽ được <b>liệt kê tại đây</b>. Nhấn để xem chi tiết.', position: 'right', action: () => { if(itemCount === 0) addItem(); } },
+            { element: '.details-container', text: 'Đây là khu vực <b>hiển thị thông tin chi tiết</b> của mặt cắt.', position: 'left' },
+            { element: () => `#item-${activeItemId} .tab-button[onclick*="targets"]`, text: 'Chuyển qua tab này để nhập <b>dữ liệu chi tiết</b> và xem biểu đồ.', position: 'bottom', action: () => { const el = document.querySelector(`#item-${activeItemId} .tab-button[onclick*="targets"]`); if (el) el.click(); } },
+            { element: () => `#targets-${activeItemId} .visualization-grid`, text: 'Biểu đồ mặt cắt trái và phải sẽ được <b>tự động vẽ ở đây</b> khi bạn nhập dữ liệu.', position: 'bottom' },
+            { element: () => `#item-${activeItemId} .sub-table-left .btn-add-target`, text: 'Nhấn vào đây để <b>thêm các điểm target</b> cho bảng bên trái.', position: 'bottom' },
+            { element: '#btn-generate', text: 'Khi đã xong, nhấn vào đây để <b>tạo và tải về file .ntd</b>.', position: 'top' },
+            { element: '#btn-guide', text: 'Bạn có thể xem lại hướng dẫn này bất cứ lúc nào!', position: 'top' }
         ];
 
         function startTutorial() {
             currentTutorialStep = 0;
             showTutorialStep(currentTutorialStep);
         }
-
         function endTutorial() {
-            document.getElementById('tutorial-tooltip').classList.remove('active');
             const highlighted = document.querySelector('.tutorial-highlight');
-            if (highlighted) {
-                highlighted.classList.remove('tutorial-highlight');
-            }
+            if (highlighted) highlighted.classList.remove('tutorial-highlight');
+            document.getElementById('tutorial-tooltip').classList.remove('active');
         }
-
         function nextTutorialStep() {
             currentTutorialStep++;
-            if (currentTutorialStep < tutorialSteps.length) {
-                showTutorialStep(currentTutorialStep);
-            } else {
-                endTutorial();
-            }
+            if (currentTutorialStep < tutorialSteps.length) showTutorialStep(currentTutorialStep);
+            else endTutorial();
         }
-
         function showTutorialStep(stepIndex) {
             const step = tutorialSteps[stepIndex];
-            
-            if (step.action) {
-                step.action();
-            }
-
+            if (step.action) step.action();
             setTimeout(() => {
                 const selector = typeof step.element === 'function' ? step.element() : step.element;
                 const element = document.querySelector(selector);
-                
-                if (!element) {
-                    console.warn('Tutorial element not found:', selector);
-                    nextTutorialStep(); 
-                    return;
-                }
-
+                if (!element) { nextTutorialStep(); return; }
                 const oldHighlight = document.querySelector('.tutorial-highlight');
                 if (oldHighlight) oldHighlight.classList.remove('tutorial-highlight');
-
                 element.classList.add('tutorial-highlight');
                 element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-
                 const tooltip = document.getElementById('tutorial-tooltip');
-                const tooltipText = document.getElementById('tutorial-text');
-                const stepCounter = document.getElementById('tutorial-step-counter');
-
-                tooltipText.innerHTML = step.text;
-                stepCounter.textContent = `${stepIndex + 1} / ${tutorialSteps.length}`;
-                
+                tooltip.querySelector('#tutorial-text').innerHTML = step.text;
+                tooltip.querySelector('#tutorial-step-counter').textContent = `${stepIndex + 1} / ${tutorialSteps.length}`;
                 const nextButton = tooltip.querySelector('button[onclick="nextTutorialStep()"]');
-                if (stepIndex === tutorialSteps.length - 1) {
-                    nextButton.innerHTML = 'Hoàn thành 🎉';
-                } else {
-                    nextButton.innerHTML = 'Tiếp theo &rarr;';
-                }
-
+                nextButton.innerHTML = (stepIndex === tutorialSteps.length - 1) ? 'Hoàn thành 🎉' : 'Tiếp theo &rarr;';
                 positionTooltip(element, tooltip, step.position);
                 tooltip.classList.add('active');
-
-            }, 100); 
+            }, 100);
         }
-
         function positionTooltip(targetElement, tooltip, position) {
             const targetRect = targetElement.getBoundingClientRect();
             const tooltipRect = tooltip.getBoundingClientRect();
-
             let top, left;
-
             switch (position) {
-                case 'top':
-                    top = targetRect.top - tooltipRect.height - 15;
-                    left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
-                    break;
-                case 'bottom':
-                    top = targetRect.bottom + 15;
-                    left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
-                    break;
-                case 'left':
-                    top = targetRect.top + (targetRect.height / 2) - (tooltipRect.height / 2);
-                    left = targetRect.left - tooltipRect.width - 15;
-                    break;
-                case 'right':
-                    top = targetRect.top + (targetRect.height / 2) - (tooltipRect.height / 2);
-                    left = targetRect.right + 15;
-                    break;
-                default:
-                    top = targetRect.bottom + 15;
-                    left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
+                case 'top': top = targetRect.top - tooltipRect.height - 15; left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2); break;
+                case 'bottom': top = targetRect.bottom + 15; left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2); break;
+                case 'left': top = targetRect.top + (targetRect.height / 2) - (tooltipRect.height / 2); left = targetRect.left - tooltipRect.width - 15; break;
+                case 'right': top = targetRect.top + (targetRect.height / 2) - (tooltipRect.height / 2); left = targetRect.right + 15; break;
+                default: top = targetRect.bottom + 15; left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
             }
-
-            // Tự động chuyển lên trên nếu không đủ không gian ở dưới
-            if (position === 'bottom' && (top + tooltipRect.height) > window.innerHeight - 10) {
-                top = targetRect.top - tooltipRect.height - 15;
-            }
-            // Tự động chuyển xuống dưới nếu không đủ không gian ở trên
-            if (position === 'top' && top < 10) {
-                top = targetRect.bottom + 15;
-            }
-
+            if (position === 'bottom' && (top + tooltipRect.height) > window.innerHeight - 10) top = targetRect.top - tooltipRect.height - 15;
+            if (position === 'top' && top < 10) top = targetRect.bottom + 15;
             if (left < 10) left = 10;
-            if ((left + tooltipRect.width) > window.innerWidth - 10) {
-                left = window.innerWidth - tooltipRect.width - 10;
-            }
-            
+            if ((left + tooltipRect.width) > window.innerWidth - 10) left = window.innerWidth - tooltipRect.width - 10;
             tooltip.style.top = `${top}px`;
             tooltip.style.left = `${left}px`;
         }
         
-        // --- KẾT THÚC LOGIC HƯỚNG DẪN ---
-
         document.addEventListener('DOMContentLoaded', function() {
             updatePlaceholder();
             document.getElementById('csv-importer').addEventListener('change', handleCsvFile);
+            new ResizeObserver(() => {
+                if (activeItemId) {
+                    const currentSection = document.getElementById(`item-${activeItemId}`);
+                    if (currentSection && currentSection.querySelector('.tab-button[onclick*="targets"]').classList.contains('active')) {
+                        drawCrossSection(activeItemId);
+                    }
+                }
+            }).observe(document.querySelector('.container'));
         });
     </script>
 </body>
