@@ -867,7 +867,7 @@
                     <button class="tab-button active" onclick="openTab(event, ${currentItemId}, 'info')">Mặt trắc dọc</button>
                     <button class="tab-button" onclick="openTab(event, ${currentItemId}, 'targets')">Mặt trắc ngang</button>
                 </div>
-                <div id="info-${currentItemId}" class="tab-content active" oninput="scheduleSave()">
+                <div id="info-${currentItemId}" class="tab-content active" oninput="handleInfoInput(${currentItemId})">
                     <div class="form-row">
                         <div class="form-group"><label>Tên mặt cắt</label><input type="text" id="item-name-${currentItemId}" placeholder="Ví dụ: MC1" oninput="updateItemTitle(${currentItemId})"></div>
                         <div class="form-group"><label>Lý trình</label><input type="number" id="item-cumulative-${currentItemId}" step="0.001" placeholder="0.000"></div>
@@ -878,7 +878,7 @@
                         <div class="form-group"><label>Bán kính</label><input type="number" id="item-radius-${currentItemId}" step="0.001" placeholder="0.000"></div>
                     </div>
                 </div>
-                                 <div id="targets-${currentItemId}" class="tab-content" oninput="scheduleSave()">
+                                 <div id="targets-${currentItemId}" class="tab-content" oninput="handleTargetsInput(${currentItemId})">
                      <div class="targets-layout-grid">
                          <div class="targets-column">
                               <div class="visualization-container">
@@ -1101,6 +1101,19 @@
             });
         }
 
+        function handleInfoInput(itemId){
+            scheduleSave();
+            const itemSection = document.getElementById(`item-${itemId}`);
+            if (itemSection && itemSection.querySelector('.tab-button[onclick*="targets"]').classList.contains('active')) {
+                drawCrossSection(itemId);
+            }
+        }
+
+        function handleTargetsInput(itemId){
+            scheduleSave();
+            drawCrossSection(itemId);
+        }
+
                  function updateItemTitle(itemId) {
              const nameInput = document.getElementById(`item-name-${itemId}`);
              const titleElement = document.querySelector(`#item-${itemId} .section-title`);
@@ -1141,8 +1154,8 @@
                   });
               }
               
-              // Cập nhật biểu đồ cho mặt cắt hiện tại nếu có
-              if (itemId && activeItemId) {
+              // Vẽ lại biểu đồ cho item đang active nếu có
+              if (activeItemId) {
                   drawCrossSection(activeItemId);
               }
               scheduleSave();
