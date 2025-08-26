@@ -6,20 +6,21 @@
     <title>Quản lý Dữ liệu Mặt cắt - Giao diện Thông minh</title>
     <style>
         :root {
-            --background-blur: 16px;
-            --background-color: rgba(248, 248, 248, 0.6);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --shadow-color: rgba(0, 0, 0, 0.1);
+            --background-blur: 20px;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
             --text-color: #1d1d1f;
-            --text-color-secondary: #6e6e73;
+            --text-color-secondary: #86868b;
             --accent-color: #007aff;
             --accent-color-hover: #0056b3;
             --danger-color: #ff3b30;
             --danger-color-hover: #d9362b;
-            --left-accent-color: #34c759;
-            --right-accent-color: #5856d6;
-            --border-radius: 20px;
-            --transition-speed: 0.3s;
+            --left-accent-color: #30d158;
+            --right-accent-color: #5e5ce6;
+            --border-radius: 16px;
+            --transition-speed: 0.4s;
+            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,16 +30,29 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #f0f2f5;
+            font-family: var(--font-family);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 2rem;
             color: var(--text-color);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Subtle background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-image: 
-                radial-gradient(circle at 10% 20%, #d1e9ff 0%, transparent 25%),
-                radial-gradient(circle at 90% 30%, #ffe2e6 0%, transparent 25%),
-                radial-gradient(circle at 50% 90%, #d4f7d4 0%, transparent 30%);
-            background-attachment: fixed;
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
         }
 
         /* --- Custom Scrollbar --- */
@@ -50,35 +64,60 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: var(--background-color);
+            background: var(--glass-bg);
             backdrop-filter: blur(var(--background-blur));
             -webkit-backdrop-filter: blur(var(--background-blur));
-            border-radius: 24px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 16px 40px -12px var(--shadow-color);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            max-height: calc(100vh - 4rem); 
+            max-height: calc(100vh - 4rem);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .header {
             text-align: center;
-            padding: 2.5rem 2rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 3rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
         }
-        .header h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .header p { font-size: 1.1rem; color: var(--text-color-secondary); }
+
+        .header h1 { 
+            font-size: 2.5rem; 
+            font-weight: 600; 
+            margin-bottom: 0.75rem;
+            color: var(--text-color);
+            letter-spacing: -0.02em;
+        }
+        
+        .header p { 
+            font-size: 1.125rem; 
+            color: var(--text-color-secondary);
+            font-weight: 400;
+        }
 
         .main-layout { display: grid; grid-template-columns: 300px 1fr; flex-grow: 1; overflow: hidden; }
 
         .item-list-sidebar {
             padding: 1.5rem;
-            border-right: 1px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.1);
+            border-right: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.03);
             display: flex;
             flex-direction: column;
-            transition: background-color var(--transition-speed) ease;
+            transition: all var(--transition-speed) ease;
             overflow: hidden;
         }
         .sidebar-header {
@@ -119,23 +158,33 @@
         #item-list { flex-grow: 1; overflow-y: auto; padding-right: 8px; margin-right: -8px; }
 
         .item-list-item {
-            padding: 0.8rem 1rem;
+            padding: 0.875rem 1rem;
             margin-bottom: 0.5rem;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             transition: all var(--transition-speed) ease;
             font-weight: 500;
-        }
-        .item-list-item:hover { background-color: rgba(0, 0, 0, 0.05); transform: translateX(4px); }
-        .item-list-item.active {
-            background-color: var(--accent-color);
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
-            transform: translateX(4px);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid transparent;
         }
 
-        .details-container { padding: 2rem; background-color: rgba(255,255,255,0.1); overflow-y: auto; }
+        .item-list-item:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(2px);
+        }
+
+        .item-list-item.active {
+            background: var(--accent-color);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+        }
+
+        .details-container { 
+            padding: 2rem; 
+            background: rgba(255, 255, 255, 0.02); 
+            overflow-y: auto; 
+        }
 
         #item-details-wrapper .item-section { display: none; animation: fadeIn 0.5s ease; }
         #item-details-wrapper .item-section.active { display: block; }
@@ -162,14 +211,29 @@
             margin-bottom: 1.5rem;
         }
         .tab-button {
-            padding: 0.75rem 1.5rem; border: none; background: transparent; cursor: pointer;
-            font-size: 1rem; font-weight: 500; color: var(--text-color-secondary);
-            border-radius: 10px 10px 0 0; position: relative; bottom: -1px;
+            padding: 0.75rem 1.5rem; 
+            border: none; 
+            background: transparent; 
+            cursor: pointer;
+            font-size: 1rem; 
+            font-weight: 500; 
+            color: var(--text-color-secondary);
+            border-radius: 12px 12px 0 0; 
+            position: relative; 
+            bottom: -1px;
             transition: all var(--transition-speed) ease;
         }
+
         .tab-button.active {
-            background-color: rgba(255, 255, 255, 0.3); color: var(--accent-color); font-weight: 600;
-            border: 1px solid var(--border-color); border-bottom: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.08); 
+            color: var(--accent-color); 
+            font-weight: 600;
+            border: 1px solid var(--glass-border); 
+            border-bottom: 1px solid transparent;
+        }
+
+        .tab-button:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.04);
         }
 
         .tab-content { display: none; }
@@ -178,13 +242,27 @@
         .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--text-color-secondary); font-size: 0.9rem; }
         input[type="text"], input[type="number"] {
-            width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: 12px;
-            font-size: 1rem; background: rgba(255, 255, 255, 0.5); color: var(--text-color);
+            width: 100%; 
+            padding: 0.875rem 1rem; 
+            border: 1px solid var(--glass-border); 
+            border-radius: 12px;
+            font-size: 1rem; 
+            background: rgba(255, 255, 255, 0.08); 
+            color: var(--text-color);
             transition: all var(--transition-speed) ease;
+            font-family: var(--font-family);
         }
+
         input[type="text"]:focus, input[type="number"]:focus {
-            outline: none; border-color: rgba(0, 122, 255, 0.5);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15); background: rgba(255, 255, 255, 0.8);
+            outline: none; 
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); 
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        input[type="text"]:hover, input[type="number"]:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .targets-layout-grid {
@@ -197,7 +275,18 @@
             flex-direction: column;
             gap: 1.5rem;
         }
-        .sub-table { background: rgba(255,255,255,0.3); border-radius: 16px; padding: 1rem; border: 1px solid var(--border-color); }
+        .sub-table { 
+            background: rgba(255, 255, 255, 0.06); 
+            border-radius: 16px; 
+            padding: 1.5rem; 
+            border: 1px solid var(--glass-border);
+            transition: all var(--transition-speed) ease;
+        }
+
+        .sub-table:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
         .sub-table h4 {
             padding-bottom: 0.5rem; margin-bottom: 1rem; display: inline-block; font-weight: 600;
         }
@@ -205,6 +294,69 @@
         .sub-table-right h4 { color: var(--right-accent-color); border-bottom: 2px solid var(--right-accent-color); }
         .sub-table-left .btn-add-target { color: var(--left-accent-color); }
         .sub-table-right .btn-add-target { color: var(--right-accent-color); }
+
+        .input-mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .input-mode-section {
+            margin-bottom: 1rem;
+        }
+
+        .input-mode-section h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-color);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all var(--transition-speed) ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-color-secondary);
+        }
+
+        .toggle-label.active {
+            color: var(--accent-color);
+        }
 
         .targets-header {
             display: grid;
@@ -242,17 +394,54 @@
         }
 
         .btn {
-            padding: 0.75rem 1.5rem; border: none; border-radius: 12px; cursor: pointer;
-            font-size: 1rem; font-weight: 600; transition: all var(--transition-speed) ease;
-            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            position: relative;
+            padding: 0.875rem 1.5rem; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer;
+            font-size: 1rem; 
+            font-weight: 600; 
+            transition: all var(--transition-speed) ease;
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 0.5rem;
+            font-family: var(--font-family);
         }
-        .btn-primary { background-color: var(--accent-color); color: white; }
-        .btn-primary:hover { background-color: var(--accent-color-hover); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0, 122, 255, 0.2); }
-        .btn-secondary { background-color: rgba(255, 255, 255, 0.5); color: var(--accent-color); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background-color: rgba(255, 255, 255, 0.8); }
-        .btn-danger { background-color: var(--danger-color); color: white; }
-        .btn-danger:hover { background-color: var(--danger-color-hover); }
+
+        .btn-primary { 
+            background: var(--accent-color); 
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+        }
+        
+        .btn-primary:hover { 
+            background: var(--accent-color-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+        
+        .btn-secondary { 
+            background: rgba(255, 255, 255, 0.08); 
+            color: var(--accent-color); 
+            border: 1px solid var(--glass-border);
+        }
+        
+        .btn-secondary:hover { 
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateY(-1px);
+        }
+        
+        .btn-danger { 
+            background: var(--danger-color); 
+            color: white;
+            box-shadow: 0 2px 8px rgba(255, 59, 48, 0.2);
+        }
+        
+        .btn-danger:hover { 
+            background: var(--danger-color-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 59, 48, 0.3);
+        }
         .remove-item-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
 
         .btn .btn-loader {
@@ -271,9 +460,14 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .action-buttons {
-            text-align: center; padding: 2rem; border-top: 1px solid var(--border-color);
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
-            background-color: rgba(255,255,255,0.1);
+            text-align: center; 
+            padding: 2rem; 
+            border-top: 1px solid var(--glass-border);
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 1rem;
+            background: rgba(255, 255, 255, 0.03);
         }
         .footer { text-align: center; padding: 1.5rem; color: var(--text-color-secondary); font-size: 0.9rem; position: relative; }
         #save-status {
@@ -290,11 +484,17 @@
         .visualization-container {
             width: 100%;
             height: 300px;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.06);
             border-radius: 16px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
             padding: 0.5rem;
             position: relative;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .visualization-container:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
         }
         .chart-title {
             text-align: center;
@@ -354,14 +554,25 @@
 
         .guide-fab-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 998; }
         .btn-guide-fab {
-            background-color: var(--accent-color); color: white; width: 60px; height: 60px;
-            border-radius: 50%; border: none; font-size: 1.75rem; display: flex;
-            align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            cursor: pointer; transition: all var(--transition-speed) ease;
+            background: var(--accent-color); 
+            color: white; 
+            width: 56px; 
+            height: 56px;
+            border-radius: 50%; 
+            border: none; 
+            font-size: 1.5rem; 
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+            cursor: pointer; 
+            transition: all var(--transition-speed) ease;
         }
+
         .btn-guide-fab:hover {
-            background-color: var(--accent-color-hover); transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+            background: var(--accent-color-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
         }
 
         /* --- Confirmation Modal --- */
@@ -480,11 +691,14 @@
     </div>
 
     <script>
-        let itemCount = 0;
-        let activeItemId = null;
-        let hoveredPointInfo = null;
-        let confirmCallback = null;
-        let saveTimeout;
+                 let itemCount = 0;
+         let targetCount = 0; // Counter để tạo ID duy nhất cho target rows
+         let activeItemId = null;
+         let hoveredPointInfo = null;
+         let confirmCallback = null;
+         let saveTimeout;
+         let inputModes = {}; // Lưu trữ chế độ nhập cho từng item
+         let displayModes = {}; // Lưu trữ chế độ hiển thị cho từng item
 
         // --- Event Listeners Setup ---
         document.addEventListener('DOMContentLoaded', function() {
@@ -535,12 +749,27 @@
             listItem.id = `item-list-item-${currentItemId}`;
             listItem.textContent = `Mặt cắt ${currentItemId}`;
             listItem.onclick = () => selectItem(currentItemId);
+            
+            // Add animation
+            listItem.style.opacity = '0';
+            listItem.style.transform = 'translateX(-20px)';
             listContainer.appendChild(listItem);
+            
+            // Animate in
+            requestAnimationFrame(() => {
+                listItem.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                listItem.style.opacity = '1';
+                listItem.style.transform = 'translateX(0)';
+            });
 
             const detailsWrapper = document.getElementById('item-details-wrapper');
             const itemDiv = document.createElement('div');
             itemDiv.className = 'item-section';
             itemDiv.id = `item-${currentItemId}`;
+            
+            // Add animation
+            itemDiv.style.opacity = '0';
+            itemDiv.style.transform = 'translateY(30px)';
             
             itemDiv.innerHTML = `
                 <div class="item-header">
@@ -548,8 +777,8 @@
                     <button class="btn btn-danger remove-item-btn" onclick="confirmRemoveItem(${currentItemId})">🗑️ Xóa</button>
                 </div>
                 <div class="tab-nav">
-                    <button class="tab-button active" onclick="openTab(event, ${currentItemId}, 'info')">Thông tin chung</button>
-                    <button class="tab-button" onclick="openTab(event, ${currentItemId}, 'targets')">Chi tiết Targets</button>
+                    <button class="tab-button active" onclick="openTab(event, ${currentItemId}, 'info')">Mặt trắc dọc</button>
+                    <button class="tab-button" onclick="openTab(event, ${currentItemId}, 'targets')">Mặt trắc ngang</button>
                 </div>
                 <div id="info-${currentItemId}" class="tab-content active" oninput="scheduleSave()">
                     <div class="form-row">
@@ -562,42 +791,57 @@
                         <div class="form-group"><label>Bán kính</label><input type="number" id="item-radius-${currentItemId}" step="0.001" placeholder="0.000"></div>
                     </div>
                 </div>
-                <div id="targets-${currentItemId}" class="tab-content" oninput="scheduleSave()">
-                    <div class="targets-layout-grid">
-                        <div class="targets-column">
+                                 <div id="targets-${currentItemId}" class="tab-content" oninput="scheduleSave()">
+                     <div class="input-mode-section">
+                         <h5>Chế độ hiển thị:</h5>
+                         <div class="input-mode-toggle">
+                             <span class="toggle-label" id="toggle-label-display-${currentItemId}">Khoảng cách lẻ</span>
+                             <div class="toggle-switch" id="toggle-switch-display-${currentItemId}" onclick="toggleDisplayMode(${currentItemId})"></div>
+                             <span class="toggle-label active" id="toggle-label-active-display-${currentItemId}">Cộng dồn</span>
+                         </div>
+                     </div>
+                     <div class="targets-layout-grid">
+                         <div class="targets-column">
+                              <div class="visualization-container">
+                                 <h5 class="chart-title" style="color: var(--left-accent-color);">Biểu đồ Trái</h5>
+                                 <canvas id="canvas-left-${currentItemId}" class="cross-section-canvas"></canvas>
+                                 <div id="canvas-placeholder-left-${currentItemId}" class="canvas-placeholder">
+                                     <p>Nhập dữ liệu Bảng Trái</p>
+                                 </div>
+                             </div>
+                             <div class="sub-table sub-table-left">
+                                 <h4>Bảng Trái</h4>
+                                                                   <div class="targets-header"><span id="left-header-${currentItemId}">KCL Khoảng cách</span><span id="left-elevation-header-${currentItemId}">KCL Cao độ</span></div>
+                                 <div class="targets-container" id="left-targets-${currentItemId}"></div>
+                                 <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'left')">➕ Thêm</button>
+                             </div>
+                         </div>
+                         <div class="targets-column">
                              <div class="visualization-container">
-                                <h5 class="chart-title" style="color: var(--left-accent-color);">Biểu đồ Trái</h5>
-                                <canvas id="canvas-left-${currentItemId}" class="cross-section-canvas"></canvas>
-                                <div id="canvas-placeholder-left-${currentItemId}" class="canvas-placeholder">
-                                    <p>Nhập dữ liệu Bảng Trái</p>
-                                </div>
-                            </div>
-                            <div class="sub-table sub-table-left">
-                                <h4>Bảng Trái</h4>
-                                <div class="targets-header"><span>Δ Cộng dồn</span><span>Δ Cao độ</span></div>
-                                <div class="targets-container" id="left-targets-${currentItemId}"></div>
-                                <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'left')">➕ Thêm</button>
-                            </div>
-                        </div>
-                        <div class="targets-column">
-                            <div class="visualization-container">
-                                <h5 class="chart-title" style="color: var(--right-accent-color);">Biểu đồ Phải</h5>
-                                <canvas id="canvas-right-${currentItemId}" class="cross-section-canvas"></canvas>
-                                <div id="canvas-placeholder-right-${currentItemId}" class="canvas-placeholder">
-                                    <p>Nhập dữ liệu Bảng Phải</p>
-                                </div>
-                            </div>
-                            <div class="sub-table sub-table-right">
-                                <h4>Bảng Phải</h4>
-                                <div class="targets-header"><span>Δ Cộng dồn</span><span>Δ Cao độ</span></div>
-                                <div class="targets-container" id="right-targets-${currentItemId}"></div>
-                                <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'right')">➕ Thêm</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                 <h5 class="chart-title" style="color: var(--right-accent-color);">Biểu đồ Phải</h5>
+                                 <canvas id="canvas-right-${currentItemId}" class="cross-section-canvas"></canvas>
+                                 <div id="canvas-placeholder-right-${currentItemId}" class="canvas-placeholder">
+                                     <p>Nhập dữ liệu Bảng Phải</p>
+                                 </div>
+                             </div>
+                             <div class="sub-table sub-table-right">
+                                 <h4>Bảng Phải</h4>
+                                                                   <div class="targets-header"><span id="right-header-${currentItemId}">KCL Khoảng cách</span><span id="right-elevation-header-${currentItemId}">KCL Cao độ</span></div>
+                                 <div class="targets-container" id="right-targets-${currentItemId}"></div>
+                                 <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'right')">➕ Thêm</button>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
             `;
             detailsWrapper.appendChild(itemDiv);
+            
+            // Animate in the item section
+            requestAnimationFrame(() => {
+                itemDiv.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                itemDiv.style.opacity = '1';
+                itemDiv.style.transform = 'translateY(0)';
+            });
             
             const leftCanvas = document.getElementById(`canvas-left-${currentItemId}`);
             const rightCanvas = document.getElementById(`canvas-right-${currentItemId}`);
@@ -606,14 +850,18 @@
             rightCanvas.addEventListener('mousemove', handleChartMouseMove);
             rightCanvas.addEventListener('mouseleave', handleChartMouseLeave);
 
-            if (!isInitial) {
-                addTarget(currentItemId, 'left');
-                addTarget(currentItemId, 'right');
-                selectItem(currentItemId);
-                listContainer.scrollTop = listContainer.scrollHeight;
-                scheduleSave();
-            }
-            updatePlaceholder();
+                         if (!isInitial) {
+                 addTarget(currentItemId, 'left');
+                 addTarget(currentItemId, 'right');
+                 selectItem(currentItemId);
+                 listContainer.scrollTop = listContainer.scrollHeight;
+                 scheduleSave();
+             }
+             
+             // Khởi tạo chế độ hiển thị mặc định (khoảng cách lẻ)
+             displayModes[currentItemId] = false;
+             
+             updatePlaceholder();
         }
 
         function selectItem(itemId) {
@@ -700,16 +948,30 @@
         function addTarget(itemId, side, shouldDraw = true) {
             const container = document.getElementById(`${side}-targets-${itemId}`);
             if (!container) return;
-            const targetId = `target-${itemId}-${side}-${Date.now()}`;
+            targetCount++;
+            const targetId = `target-${itemId}-${side}-${targetCount}`;
             const targetDiv = document.createElement('div');
             targetDiv.className = 'target-row';
             targetDiv.id = targetId;
+            
+            // Add animation
+            targetDiv.style.opacity = '0';
+            targetDiv.style.transform = 'translateY(20px)';
+            
             targetDiv.innerHTML = `
-                <input type="number" step="0.001" class="${side}-cumulative" placeholder="Δ Dài">
-                <input type="number" step="0.001" class="${side}-elevation" placeholder="Δ Cao độ">
+                                 <input type="number" step="0.001" class="${side}-cumulative" placeholder="KCL Dài">
+                 <input type="number" step="0.001" class="${side}-elevation" placeholder="KCL Cao độ">
                 <button class="btn-icon-danger" onclick="removeTarget('${targetId}')">🗑️</button>
             `;
             container.appendChild(targetDiv);
+            
+            // Animate in
+            requestAnimationFrame(() => {
+                targetDiv.style.transition = 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                targetDiv.style.opacity = '1';
+                targetDiv.style.transform = 'translateY(0)';
+            });
+            
             if (shouldDraw) {
                 drawCrossSection(itemId);
                 scheduleSave();
@@ -719,10 +981,20 @@
         function removeTarget(targetId) {
             const targetElement = document.getElementById(targetId);
             if (targetElement) {
-                const itemId = targetId.split('-')[1];
-                targetElement.remove();
-                drawCrossSection(itemId);
-                scheduleSave();
+                // Tìm itemId từ targetId
+                const parts = targetId.split('-');
+                const itemId = parts[1];
+                
+                // Animate out
+                targetElement.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                targetElement.style.opacity = '0';
+                targetElement.style.transform = 'translateY(-20px) scale(0.8)';
+                
+                setTimeout(() => {
+                    targetElement.remove();
+                    drawCrossSection(itemId);
+                    scheduleSave();
+                }, 300);
             }
         }
         
@@ -747,17 +1019,109 @@
             });
         }
 
-        function updateItemTitle(itemId) {
-            const nameInput = document.getElementById(`item-name-${itemId}`);
-            const titleElement = document.querySelector(`#item-${itemId} .section-title`);
-            const listItem = document.getElementById(`item-list-item-${itemId}`);
-            if (nameInput && titleElement && listItem) {
-                const newTitle = nameInput.value.trim() || `Mặt cắt ${itemId}`;
-                titleElement.textContent = newTitle;
-                listItem.textContent = newTitle;
-                scheduleSave();
-            }
-        }
+                 function updateItemTitle(itemId) {
+             const nameInput = document.getElementById(`item-name-${itemId}`);
+             const titleElement = document.querySelector(`#item-${itemId} .section-title`);
+             const listItem = document.getElementById(`item-list-item-${itemId}`);
+             if (nameInput && titleElement && listItem) {
+                 const newTitle = nameInput.value.trim() || `Mặt cắt ${itemId}`;
+                 titleElement.textContent = newTitle;
+                 listItem.textContent = newTitle;
+                 scheduleSave();
+             }
+         }
+
+                   // --- Display Mode Functions ---
+          function toggleDisplayMode(itemId) {
+              const toggleSwitch = document.getElementById(`toggle-switch-display-${itemId}`);
+              const toggleLabel = document.getElementById(`toggle-label-display-${itemId}`);
+              const toggleLabelActive = document.getElementById(`toggle-label-active-display-${itemId}`);
+              const leftHeader = document.getElementById(`left-header-${itemId}`);
+              const rightHeader = document.getElementById(`right-header-${itemId}`);
+              
+              // Chuyển đổi chế độ hiển thị
+              displayModes[itemId] = !displayModes[itemId];
+              
+                             if (displayModes[itemId]) {
+                   // Chế độ cộng dồn
+                   toggleSwitch.classList.add('active');
+                   toggleLabel.classList.remove('active');
+                   toggleLabelActive.classList.add('active');
+                   leftHeader.textContent = 'CD Khoảng cách';
+                   rightHeader.textContent = 'CD Khoảng cách';
+                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'CD Cao độ';
+                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'CD Cao độ';
+               } else {
+                   // Chế độ khoảng cách lẻ
+                   toggleSwitch.classList.remove('active');
+                   toggleLabel.classList.add('active');
+                   toggleLabelActive.classList.remove('active');
+                   leftHeader.textContent = 'KCL Khoảng cách';
+                   rightHeader.textContent = 'KCL Khoảng cách';
+                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
+                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
+               }
+              
+              // Chỉ cập nhật biểu đồ, không thay đổi dữ liệu
+              drawCrossSection(itemId);
+              scheduleSave();
+          }
+
+         
+
+                   function getCumulativeValues(itemId, side) {
+              const container = document.getElementById(`${side}-targets-${itemId}`);
+              if (!container) return [];
+              
+              const values = [];
+              let cumulative = 0;
+              
+              container.querySelectorAll('.target-row').forEach(row => {
+                  const input = row.querySelector(`.${side}-cumulative`);
+                  const value = parseFloat(input.value) || 0;
+                  
+                  if (displayModes[itemId]) {
+                      // Chế độ cộng dồn - sử dụng giá trị trực tiếp
+                      cumulative = value;
+                  } else {
+                      // Chế độ khoảng cách lẻ - cộng dồn
+                      cumulative += value;
+                  }
+                  
+                  values.push(cumulative);
+              });
+              
+              return values;
+          }
+
+                   function updateInputModeUI(itemId) {
+              // Cập nhật UI cho chế độ hiển thị
+              const displayToggleSwitch = document.getElementById(`toggle-switch-display-${itemId}`);
+              const displayToggleLabel = document.getElementById(`toggle-label-display-${itemId}`);
+              const displayToggleLabelActive = document.getElementById(`toggle-label-active-display-${itemId}`);
+              const leftHeader = document.getElementById(`left-header-${itemId}`);
+              const rightHeader = document.getElementById(`right-header-${itemId}`);
+              
+                             if (displayModes[itemId]) {
+                   // Chế độ cộng dồn
+                   displayToggleSwitch.classList.add('active');
+                   displayToggleLabel.classList.remove('active');
+                   displayToggleLabelActive.classList.add('active');
+                   leftHeader.textContent = 'CD Khoảng cách';
+                   rightHeader.textContent = 'CD Khoảng cách';
+                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'CD Cao độ';
+                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'CD Cao độ';
+               } else {
+                   // Chế độ khoảng cách lẻ
+                   displayToggleSwitch.classList.remove('active');
+                   displayToggleLabel.classList.add('active');
+                   displayToggleLabelActive.classList.remove('active');
+                   leftHeader.textContent = 'KCL Khoảng cách';
+                   rightHeader.textContent = 'KCL Khoảng cách';
+                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
+                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
+               }
+          }
 
         function toggleButtonLoading(buttonId, isLoading) {
             const button = document.getElementById(buttonId);
@@ -777,16 +1141,17 @@
             const allItemsData = [];
             document.querySelectorAll('.item-section').forEach(itemElement => {
                 const itemId = itemElement.id.split('-')[1];
-                const itemData = {
-                    id: itemId,
-                    name: document.getElementById(`item-name-${itemId}`)?.value || '',
-                    cumulative: document.getElementById(`item-cumulative-${itemId}`)?.value || '',
-                    elevation: document.getElementById(`item-elevation-${itemId}`)?.value || '',
-                    angle: document.getElementById(`item-angle-${itemId}`)?.value || '',
-                    radius: document.getElementById(`item-radius-${itemId}`)?.value || '',
-                    leftTargets: [],
-                    rightTargets: []
-                };
+                                 const itemData = {
+                     id: itemId,
+                     name: document.getElementById(`item-name-${itemId}`)?.value || '',
+                     cumulative: document.getElementById(`item-cumulative-${itemId}`)?.value || '',
+                     elevation: document.getElementById(`item-elevation-${itemId}`)?.value || '',
+                     angle: document.getElementById(`item-angle-${itemId}`)?.value || '',
+                     radius: document.getElementById(`item-radius-${itemId}`)?.value || '',
+                     displayMode: displayModes[itemId] || false,
+                     leftTargets: [],
+                     rightTargets: []
+                 };
 
                 itemElement.querySelectorAll(`#left-targets-${itemId} .target-row`).forEach(row => {
                     itemData.leftTargets.push({
@@ -825,10 +1190,15 @@
 
                 document.getElementById(`item-name-${newId}`).value = itemData.name;
                 document.getElementById(`item-cumulative-${newId}`).value = itemData.cumulative;
-                document.getElementById(`item-elevation-${newId}`).value = itemData.elevation;
-                document.getElementById(`item-angle-${newId}`).value = itemData.angle;
-                document.getElementById(`item-radius-${newId}`).value = itemData.radius;
-                updateItemTitle(newId);
+                                 document.getElementById(`item-elevation-${newId}`).value = itemData.elevation;
+                 document.getElementById(`item-angle-${newId}`).value = itemData.angle;
+                 document.getElementById(`item-radius-${newId}`).value = itemData.radius;
+                 
+                 // Khôi phục chế độ hiển thị
+                 displayModes[newId] = itemData.displayMode || false;
+                 updateInputModeUI(newId);
+                 
+                 updateItemTitle(newId);
 
                 const leftContainer = document.getElementById(`left-targets-${newId}`);
                 const rightContainer = document.getElementById(`right-targets-${newId}`);
@@ -887,18 +1257,50 @@
                 const cumulative = parseFloat(document.getElementById(`item-cumulative-${itemId}`)?.value || 0);
                 const elevation = parseFloat(document.getElementById(`item-elevation-${itemId}`)?.value || 0);
                 const angle = parseFloat(document.getElementById(`item-angle-${itemId}`)?.value || 180);
+                const radius = parseFloat(document.getElementById(`item-radius-${itemId}`)?.value || 0);
                 const angleRad = (angle * Math.PI / 180).toFixed(12);
-                result += `POLE\t${name}\t${cumulative.toFixed(5)}\t${elevation.toFixed(5)}\t0.00000\t0.00000\t${angleRad}\n`;
-                itemElement.querySelectorAll(`#left-targets-${itemId} .target-row`).forEach(row => {
-                    const cumVal = parseFloat(row.querySelector('.left-cumulative').value) || 0;
-                    const elevVal = parseFloat(row.querySelector('.left-elevation').value) || 0;
-                    if (cumVal !== 0 || elevVal !== 0) result += `TARGETL\t${(-cumVal).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
-                });
-                itemElement.querySelectorAll(`#right-targets-${itemId} .target-row`).forEach(row => {
-                    const cumVal = parseFloat(row.querySelector('.right-cumulative').value) || 0;
-                    const elevVal = parseFloat(row.querySelector('.right-elevation').value) || 0;
-                    if (cumVal !== 0 || elevVal !== 0) result += `TARGETR\t${cumVal.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
-                });
+                result += `POLE\t${name}\t${cumulative.toFixed(5)}\t${elevation.toFixed(5)}\t0.00000\t${radius.toFixed(5)}\t${angleRad}\n`;
+                                 // Xử lý targets bên trái
+                 let leftCumulative = 0;
+                 itemElement.querySelectorAll(`#left-targets-${itemId} .target-row`).forEach(row => {
+                     const cumVal = parseFloat(row.querySelector('.left-cumulative').value) || 0;
+                     const elevVal = parseFloat(row.querySelector('.left-elevation').value) || 0;
+                     
+                                           let targetCumulative;
+                      if (displayModes[itemId]) {
+                          // Chế độ cộng dồn - sử dụng giá trị trực tiếp
+                          targetCumulative = cumVal;
+                      } else {
+                          // Chế độ khoảng cách lẻ - cộng dồn
+                          leftCumulative += cumVal;
+                          targetCumulative = leftCumulative;
+                      }
+                     
+                     if (targetCumulative !== 0 || elevVal !== 0) {
+                         result += `TARGETL\t${(-targetCumulative).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
+                     }
+                 });
+                 
+                 // Xử lý targets bên phải
+                 let rightCumulative = 0;
+                 itemElement.querySelectorAll(`#right-targets-${itemId} .target-row`).forEach(row => {
+                     const cumVal = parseFloat(row.querySelector('.right-cumulative').value) || 0;
+                     const elevVal = parseFloat(row.querySelector('.right-elevation').value) || 0;
+                     
+                                           let targetCumulative;
+                      if (displayModes[itemId]) {
+                          // Chế độ cộng dồn - sử dụng giá trị trực tiếp
+                          targetCumulative = cumVal;
+                      } else {
+                          // Chế độ khoảng cách lẻ - cộng dồn
+                          rightCumulative += cumVal;
+                          targetCumulative = rightCumulative;
+                      }
+                     
+                     if (targetCumulative !== 0 || elevVal !== 0) {
+                         result += `TARGETR\t${targetCumulative.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
+                     }
+                 });
             });
             return result;
         }
@@ -987,12 +1389,14 @@
                     const name = parts[1] || `MC${currentItemId}`;
                     const cumulative = parseFloat(parts[2]) || 0;
                     const elevation = parseFloat(parts[3]) || 0;
+                    const radius = parseFloat(parts[5]) || 0;
                     const angleRad = parseFloat(parts[6]) || 0;
                     const angleDeg = (angleRad * 180 / Math.PI).toFixed(3);
 
                     document.getElementById(`item-name-${currentItemId}`).value = name;
                     document.getElementById(`item-cumulative-${currentItemId}`).value = cumulative;
                     document.getElementById(`item-elevation-${currentItemId}`).value = elevation;
+                    document.getElementById(`item-radius-${currentItemId}`).value = radius;
                     document.getElementById(`item-angle-${currentItemId}`).value = angleDeg;
                     updateItemTitle(currentItemId);
 
@@ -1045,35 +1449,61 @@
             drawSideChart(itemId, 'right');
         }
 
-        function drawSideChart(itemId, side) {
-            const canvas = document.getElementById(`canvas-${side}-${itemId}`);
-            const placeholder = document.getElementById(`canvas-placeholder-${side}-${itemId}`);
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            
-            const dpr = window.devicePixelRatio || 1;
-            const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
+                 function drawSideChart(itemId, side) {
+             const canvas = document.getElementById(`canvas-${side}-${itemId}`);
+             const placeholder = document.getElementById(`canvas-placeholder-${side}-${itemId}`);
+             if (!canvas) return;
+             const ctx = canvas.getContext('2d');
+             
+             const dpr = window.devicePixelRatio || 1;
+             const rect = canvas.getBoundingClientRect();
+             canvas.width = rect.width * dpr;
+             canvas.height = rect.height * dpr;
+             ctx.scale(dpr, dpr);
 
-            const initialElevation = parseFloat(document.getElementById(`item-elevation-${itemId}`)?.value) || 0;
+             const initialElevation = parseFloat(document.getElementById(`item-elevation-${itemId}`)?.value) || 0;
 
-            const points = [];
-            let totalLength = 0;
-            let currentElevation = initialElevation;
-            const rows = document.querySelectorAll(`#${side}-targets-${itemId} .target-row`);
+             const points = [];
+             let currentElevation = initialElevation;
+             const rows = document.querySelectorAll(`#${side}-targets-${itemId} .target-row`);
 
-            rows.forEach((row) => {
-                const lengthDelta = parseFloat(row.querySelector(`.${side}-cumulative`).value) || 0;
-                const elevationDelta = parseFloat(row.querySelector(`.${side}-elevation`).value) || 0;
-                totalLength += lengthDelta;
-                currentElevation += elevationDelta;
-                points.push({ dist: totalLength, y: currentElevation });
-            });
-            
-            const allPoints = [{dist: 0, y: initialElevation}, ...points];
-            canvas.chartDataPoints = allPoints; 
+             rows.forEach((row, index) => {
+                 const lengthValue = parseFloat(row.querySelector(`.${side}-cumulative`).value) || 0;
+                 const elevationDelta = parseFloat(row.querySelector(`.${side}-elevation`).value) || 0;
+                 
+                                   let totalLength;
+                  if (displayModes[itemId]) {
+                      // Chế độ cộng dồn - sử dụng giá trị trực tiếp
+                      totalLength = lengthValue;
+                  } else {
+                      // Chế độ khoảng cách lẻ - tính tổng từ đầu
+                      totalLength = 0;
+                      for (let i = 0; i <= index; i++) {
+                          const prevRow = rows[i];
+                          const prevValue = parseFloat(prevRow.querySelector(`.${side}-cumulative`).value) || 0;
+                          totalLength += prevValue;
+                      }
+                  }
+                  
+                  let totalElevation;
+                  if (displayModes[itemId]) {
+                      // Chế độ cộng dồn cao độ - sử dụng giá trị trực tiếp
+                      totalElevation = elevationDelta;
+                  } else {
+                      // Chế độ cao độ lẻ - tính tổng từ đầu
+                      totalElevation = initialElevation;
+                      for (let i = 0; i <= index; i++) {
+                          const prevRow = rows[i];
+                          const prevValue = parseFloat(prevRow.querySelector(`.${side}-elevation`).value) || 0;
+                          totalElevation += prevValue;
+                      }
+                  }
+                  
+                  points.push({ dist: totalLength, y: totalElevation });
+             });
+             
+             const allPoints = [{dist: 0, y: initialElevation}, ...points];
+             canvas.chartDataPoints = allPoints; 
 
             if (points.length === 0 && Array.from(rows).every(r => !r.querySelector(`.${side}-cumulative`).value && !r.querySelector(`.${side}-elevation`).value)) {
                 placeholder.style.display = 'block';
