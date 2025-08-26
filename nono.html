@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LEDAT - Quản lý Dữ liệu Mặt cắt</title>
+    <title>LEDAT - Trình quản lý dữ liệu mặt cắt (.ntd)</title>
     <style>
         :root {
-            --background-blur: 20px;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            --text-color: #1d1d1f;
-            --text-color-secondary: #86868b;
-            --accent-color: #007aff;
-            --accent-color-hover: #0056b3;
+            --background-blur: 24px;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(17, 25, 40, 0.12);
+            --glass-shadow: 0 10px 30px rgba(17, 25, 40, 0.08);
+            --text-color: #0b1220;
+            --text-color-secondary: #64748b;
+            --accent-color: #4f46e5; /* Indigo */
+            --accent-color-hover: #4338ca;
+            --accent-color-2: #06b6d4; /* Cyan */
+            --accent-color-3: #f59e0b; /* Amber */
+            --accent-color-4: #ef4444; /* Red */
             --danger-color: #ff3b30;
             --danger-color-hover: #d9362b;
-            --left-accent-color: #30d158;
-            --right-accent-color: #5e5ce6;
+            --left-accent-color: #22c55e; /* Emerald */
+            --right-accent-color: #8b5cf6; /* Violet */
             --border-radius: 16px;
             --transition-speed: 0.4s;
             --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
@@ -31,7 +34,7 @@
 
         body {
             font-family: var(--font-family);
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
             min-height: 100vh;
             padding: 2rem;
             color: var(--text-color);
@@ -47,9 +50,10 @@
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.03) 0%, transparent 50%);
+                radial-gradient(circle at 12% 88%, rgba(79, 70, 229, 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 82% 18%, rgba(6, 182, 212, 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 42% 42%, rgba(245, 158, 11, 0.10) 0%, transparent 45%),
+                radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -172,7 +176,7 @@
         }
 
         .item-list-item.active {
-            background: var(--accent-color);
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--left-accent-color) 100%);
             color: white;
             font-weight: 600;
             box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
@@ -223,7 +227,7 @@
         }
 
         .tab-button.active {
-            background: rgba(255, 255, 255, 0.08); 
+            background: linear-gradient(135deg, rgba(79,70,229,0.18), rgba(6,182,212,0.18)); 
             color: var(--accent-color); 
             font-weight: 600;
             border: 1px solid var(--glass-border); 
@@ -297,11 +301,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-bottom: 1rem;
-            padding: 0.75rem;
+            padding: 0.5rem 0.75rem;
             background: rgba(255, 255, 255, 0.04);
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid var(--glass-border);
         }
 
@@ -317,18 +321,34 @@
         }
         
         .global-input-modes {
-            margin-top: 2rem;
-            padding: 1rem;
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
             background: rgba(255, 255, 255, 0.04);
             border-radius: 8px;
             border: 1px solid var(--glass-border);
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .input-mode-row {
+            display: flex;
+            gap: 2rem;
+            align-items: stretch;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+        }
+
+        .input-mode-section {
+            flex: 1 1 320px;
+            min-width: 280px;
         }
         
         .global-input-modes h3 {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: var(--text-color);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             text-align: center;
         }
 
@@ -365,11 +385,19 @@
         }
 
         .toggle-label {
-            font-size: 0.9rem;
+            font-size: 0.86rem;
             font-weight: 500;
             color: var(--text-color-secondary);
-            text-align: center;
-            flex: 1;
+            flex: 0 0 auto;
+            white-space: nowrap;
+            padding: 0 4px;
+        }
+
+        .input-mode-toggle .toggle-label:first-of-type {
+            text-align: left;
+        }
+        .input-mode-toggle .toggle-label:last-of-type {
+            text-align: right;
         }
 
         .toggle-label.active {
@@ -439,13 +467,13 @@
         }
         
         .btn-secondary { 
-            background: rgba(255, 255, 255, 0.08); 
+            background: linear-gradient(135deg, rgba(79,70,229,0.12), rgba(6,182,212,0.12)); 
             color: var(--accent-color); 
             border: 1px solid var(--glass-border);
         }
         
         .btn-secondary:hover { 
-            background: rgba(255, 255, 255, 0.12);
+            background: linear-gradient(135deg, rgba(79,70,229,0.2), rgba(6,182,212,0.2));
             transform: translateY(-1px);
         }
         
@@ -593,7 +621,7 @@
 
         .guide-fab-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 998; }
         .btn-guide-fab {
-            background: var(--accent-color); 
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-color-2)); 
             color: white; 
             width: 56px; 
             height: 56px;
@@ -609,7 +637,7 @@
         }
 
         .btn-guide-fab:hover {
-            background: var(--accent-color-hover);
+            background: linear-gradient(135deg, var(--accent-color-hover), var(--accent-color-2));
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
         }
@@ -662,8 +690,29 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>LEDAT - Quản lý Dữ liệu Mặt cắt</h1>
-            <p>Nhập, trực quan hóa và xuất dữ liệu mặt cắt sang định dạng .ntd</p>
+            <h1>LEDAT - Trình quản lý Dữ liệu Mặt cắt</h1>
+            <p>Nhập liệu, trực quan hóa và xuất ra định dạng tệp .ntd</p>
+            <div class="global-input-modes">
+                <h3>Chế độ nhập chung</h3>
+                <div class="input-mode-row">
+                <div class="input-mode-section">
+                    <h5>Khoảng cách:</h5>
+                    <div class="input-mode-toggle">
+                        <span class="toggle-label" id="toggle-label-distance-global">Khoảng cách lẻ</span>
+                        <div class="toggle-switch" id="toggle-switch-distance-global" onclick="toggleInputMode(null, 'distance')"></div>
+                        <span class="toggle-label active" id="toggle-label-active-distance-global">Khoảng cách cộng dồn</span>
+                    </div>
+                </div>
+                <div class="input-mode-section">
+                    <h5>Cao độ:</h5>
+                    <div class="input-mode-toggle">
+                        <span class="toggle-label" id="toggle-label-elevation-global">Cao độ tương đối</span>
+                        <div class="toggle-switch" id="toggle-switch-elevation-global" onclick="toggleInputMode(null, 'elevation')"></div>
+                        <span class="toggle-label active" id="toggle-label-active-elevation-global">Cao độ tuyệt đối</span>
+                    </div>
+                </div>
+                </div>
+            </div>
         </div>
         
         <div class="main-layout">
@@ -674,26 +723,6 @@
                 </div>
                 <input type="text" id="search-item" placeholder="🔍 Tìm kiếm mặt cắt..." onkeyup="filterItems()">
                 <div id="item-list"></div>
-                
-                <div class="global-input-modes">
-                    <h3>Chế độ nhập chung</h3>
-                    <div class="input-mode-section">
-                        <h5>Khoảng cách:</h5>
-                        <div class="input-mode-toggle">
-                            <span class="toggle-label" id="toggle-label-distance-global">Khoảng cách lẻ</span>
-                            <div class="toggle-switch" id="toggle-switch-distance-global" onclick="toggleInputMode(null, 'distance')"></div>
-                            <span class="toggle-label active" id="toggle-label-active-distance-global">Cộng dồn</span>
-                        </div>
-                    </div>
-                    <div class="input-mode-section">
-                        <h5>Cao độ:</h5>
-                        <div class="input-mode-toggle">
-                            <span class="toggle-label" id="toggle-label-elevation-global">Cao độ tương đối</span>
-                            <div class="toggle-switch" id="toggle-switch-elevation-global" onclick="toggleInputMode(null, 'elevation')"></div>
-                            <span class="toggle-label active" id="toggle-label-active-elevation-global">Cao độ tuyệt đối</span>
-                        </div>
-                    </div>
-                </div>
             </aside>
             <main class="details-container">
                 <div id="item-details-wrapper"></div>
