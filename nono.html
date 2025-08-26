@@ -39,7 +39,6 @@
             overflow-x: hidden;
         }
 
-        /* Subtle background pattern */
         body::before {
             content: '';
             position: fixed;
@@ -55,7 +54,6 @@
             z-index: -1;
         }
 
-        /* --- Custom Scrollbar --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 4px; }
@@ -380,7 +378,7 @@
 
         .targets-header {
             display: grid;
-            grid-template-columns: 1fr 1fr 40px;
+            grid-template-columns: 1fr 1fr 1fr 40px;
             gap: 1rem;
             padding: 0 0.5rem 0.5rem;
             font-size: 0.9rem;
@@ -396,7 +394,7 @@
         }
         .target-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 40px;
+            grid-template-columns: 1fr 1fr 1fr 40px;
             gap: 1rem;
             align-items: center;
             margin-bottom: 0.5rem;
@@ -616,7 +614,6 @@
             box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
         }
 
-        /* --- Confirmation Modal --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4);
@@ -678,7 +675,6 @@
                 <input type="text" id="search-item" placeholder="🔍 Tìm kiếm mặt cắt..." onkeyup="filterItems()">
                 <div id="item-list"></div>
                 
-                <!-- Chế độ nhập chung cho toàn bộ dự án -->
                 <div class="global-input-modes">
                     <h3>Chế độ nhập chung</h3>
                     <div class="input-mode-section">
@@ -692,9 +688,9 @@
                     <div class="input-mode-section">
                         <h5>Cao độ:</h5>
                         <div class="input-mode-toggle">
-                            <span class="toggle-label" id="toggle-label-elevation-global">Cao độ lẻ</span>
+                            <span class="toggle-label" id="toggle-label-elevation-global">Cao độ tương đối</span>
                             <div class="toggle-switch" id="toggle-switch-elevation-global" onclick="toggleInputMode(null, 'elevation')"></div>
-                            <span class="toggle-label active" id="toggle-label-active-elevation-global">Cộng dồn</span>
+                            <span class="toggle-label active" id="toggle-label-active-elevation-global">Cao độ tuyệt đối</span>
                         </div>
                     </div>
                 </div>
@@ -740,7 +736,6 @@
          </div>
      </div>
     
-    <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="modal-overlay">
         <div class="modal-content">
             <h3 id="modal-title">Xác nhận hành động</h3>
@@ -866,7 +861,7 @@
                              </div>
                              <div class="sub-table sub-table-left">
                                  <h4>Bảng Trái</h4>
-                                                                   <div class="targets-header"><span id="left-header-${currentItemId}">KCL Khoảng cách</span><span id="left-elevation-header-${currentItemId}">KCL Cao độ</span></div>
+                                                                   <div class="targets-header"><span id="left-header-${currentItemId}">KCL Khoảng cách</span><span id="left-elevation-header-${currentItemId}">Cao độ tương đối</span><span>Mô tả</span></div>
                                  <div class="targets-container" id="left-targets-${currentItemId}"></div>
                                  <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'left')">➕ Thêm</button>
                              </div>
@@ -881,7 +876,7 @@
                              </div>
                              <div class="sub-table sub-table-right">
                                  <h4>Bảng Phải</h4>
-                                                                   <div class="targets-header"><span id="right-header-${currentItemId}">KCL Khoảng cách</span><span id="right-elevation-header-${currentItemId}">KCL Cao độ</span></div>
+                                                                   <div class="targets-header"><span id="right-header-${currentItemId}">KCL Khoảng cách</span><span id="right-elevation-header-${currentItemId}">Cao độ tương đối</span><span>Mô tả</span></div>
                                  <div class="targets-container" id="right-targets-${currentItemId}"></div>
                                  <button class="btn btn-secondary btn-add-target" onclick="addTarget(${currentItemId}, 'right')">➕ Thêm</button>
                              </div>
@@ -1013,10 +1008,13 @@
             targetDiv.style.opacity = '0';
             targetDiv.style.transform = 'translateY(20px)';
             
+            const distancePlaceholder = globalDistanceMode ? 'CD Dài' : 'KCL Dài';
+            const elevationPlaceholder = globalElevationMode ? 'Cao độ tuyệt đối' : 'Cao độ tương đối';
             targetDiv.innerHTML = `
-                                 <input type="number" step="0.001" class="${side}-cumulative" placeholder="KCL Dài">
-                 <input type="number" step="0.001" class="${side}-elevation" placeholder="KCL Cao độ">
-                <button class="btn-icon-danger" onclick="removeTarget('${targetId}')">🗑️</button>
+                                 <input type="number" step="0.001" class="${side}-cumulative" placeholder="${distancePlaceholder}">
+                <input type="number" step="0.001" class="${side}-elevation" placeholder="${elevationPlaceholder}">
+                <input type="text" class="${side}-desc" placeholder="Mô tả">
+               <button class="btn-icon-danger" onclick="removeTarget('${targetId}')">🗑️</button>
             `;
             container.appendChild(targetDiv);
             
@@ -1096,8 +1094,9 @@
                   updateGlobalInputModeUI();
                   
                   // Cập nhật tất cả các mặt cắt
-                  Object.keys(items).forEach(id => {
-                      updateInputModeUI(parseInt(id));
+                  document.querySelectorAll('#item-details-wrapper .item-section').forEach(section => {
+                      const id = parseInt(section.id.split('-')[1]);
+                      updateInputModeUI(id);
                   });
               } else if (type === 'elevation') {
                   // Chuyển đổi chế độ cao độ chung
@@ -1107,8 +1106,9 @@
                   updateGlobalInputModeUI();
                   
                   // Cập nhật tất cả các mặt cắt
-                  Object.keys(items).forEach(id => {
-                      updateInputModeUI(parseInt(id));
+                  document.querySelectorAll('#item-details-wrapper .item-section').forEach(section => {
+                      const id = parseInt(section.id.split('-')[1]);
+                      updateInputModeUI(id);
                   });
               }
               
@@ -1203,12 +1203,26 @@
               
               if (globalElevationMode) {
                   // Chế độ cộng dồn cao độ
-                  leftElevationHeader.textContent = 'CD Cao độ';
-                  rightElevationHeader.textContent = 'CD Cao độ';
+                  leftElevationHeader.textContent = 'Cao độ tuyệt đối';
+                  rightElevationHeader.textContent = 'Cao độ tuyệt đối';
               } else {
                   // Chế độ cao độ lẻ
-                  leftElevationHeader.textContent = 'KCL Cao độ';
-                  rightElevationHeader.textContent = 'KCL Cao độ';
+                  leftElevationHeader.textContent = 'Cao độ tương đối';
+                  rightElevationHeader.textContent = 'Cao độ tương đối';
+              }
+
+              // Đồng bộ placeholder theo chế độ hiện tại
+              const distancePlaceholder = globalDistanceMode ? 'CD Dài' : 'KCL Dài';
+              const elevationPlaceholder = globalElevationMode ? 'Cao độ tuyệt đối' : 'Cao độ tương đối';
+              const leftContainer = document.getElementById(`left-targets-${itemId}`);
+              const rightContainer = document.getElementById(`right-targets-${itemId}`);
+              if (leftContainer) {
+                  leftContainer.querySelectorAll('input.left-cumulative').forEach(inp => inp.placeholder = distancePlaceholder);
+                  leftContainer.querySelectorAll('input.left-elevation').forEach(inp => inp.placeholder = elevationPlaceholder);
+              }
+              if (rightContainer) {
+                  rightContainer.querySelectorAll('input.right-cumulative').forEach(inp => inp.placeholder = distancePlaceholder);
+                  rightContainer.querySelectorAll('input.right-elevation').forEach(inp => inp.placeholder = elevationPlaceholder);
               }
           }
 
@@ -1245,14 +1259,16 @@
                 itemElement.querySelectorAll(`#left-targets-${itemId} .target-row`).forEach(row => {
                     itemData.leftTargets.push({
                         cumulative: row.querySelector('.left-cumulative').value || '',
-                        elevation: row.querySelector('.left-elevation').value || ''
+                        elevation: row.querySelector('.left-elevation').value || '',
+                        desc: row.querySelector('.left-desc')?.value || ''
                     });
                 });
 
                 itemElement.querySelectorAll(`#right-targets-${itemId} .target-row`).forEach(row => {
                     itemData.rightTargets.push({
                         cumulative: row.querySelector('.right-cumulative').value || '',
-                        elevation: row.querySelector('.right-elevation').value || ''
+                        elevation: row.querySelector('.right-elevation').value || '',
+                        desc: row.querySelector('.right-desc')?.value || ''
                     });
                 });
                 allItemsData.push(itemData);
@@ -1314,6 +1330,7 @@
                     if (newRow) {
                         newRow.querySelector('.left-cumulative').value = target.cumulative;
                         newRow.querySelector('.left-elevation').value = target.elevation;
+                        if (typeof target.desc !== 'undefined') newRow.querySelector('.left-desc').value = target.desc;
                     }
                 });
 
@@ -1323,6 +1340,7 @@
                     if (newRow) {
                         newRow.querySelector('.right-cumulative').value = target.cumulative;
                         newRow.querySelector('.right-elevation').value = target.elevation;
+                        if (typeof target.desc !== 'undefined') newRow.querySelector('.right-desc').value = target.desc;
                     }
                 });
             });
@@ -1331,8 +1349,9 @@
                 selectItem(1);
                 // Cập nhật UI global và cho tất cả các mặt cắt với chế độ nhập đã khôi phục
                 updateGlobalInputModeUI();
-                Object.keys(items).forEach(id => {
-                    updateInputModeUI(parseInt(id));
+                document.querySelectorAll('#item-details-wrapper .item-section').forEach(section => {
+                    const id = parseInt(section.id.split('-')[1]);
+                    updateInputModeUI(id);
                 });
             }
         }
@@ -1378,8 +1397,9 @@
                  itemElement.querySelectorAll(`#left-targets-${itemId} .target-row`).forEach(row => {
                      const cumVal = parseFloat(row.querySelector('.left-cumulative').value) || 0;
                      const elevVal = parseFloat(row.querySelector('.left-elevation').value) || 0;
+                     const descVal = (row.querySelector('.left-desc')?.value || '').trim();
                      
-                                           let targetCumulative;
+                                      let targetCumulative;
                       if (globalDistanceMode) {
                           // Chế độ cộng dồn - sử dụng giá trị trực tiếp
                           targetCumulative = cumVal;
@@ -1389,8 +1409,9 @@
                           targetCumulative = leftCumulative;
                       }
                      
-                     if (targetCumulative !== 0 || elevVal !== 0) {
-                         result += `TARGETL\t${(-targetCumulative).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
+                     if (targetCumulative !== 0 || elevVal !== 0 || descVal) {
+                         const descPart = descVal ? `\t${descVal}` : '';
+                         result += `TARGETL\t${(-targetCumulative).toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*${descPart}\n`;
                      }
                  });
                  
@@ -1399,8 +1420,9 @@
                  itemElement.querySelectorAll(`#right-targets-${itemId} .target-row`).forEach(row => {
                      const cumVal = parseFloat(row.querySelector('.right-cumulative').value) || 0;
                      const elevVal = parseFloat(row.querySelector('.right-elevation').value) || 0;
+                     const descVal = (row.querySelector('.right-desc')?.value || '').trim();
                      
-                                           let targetCumulative;
+                                      let targetCumulative;
                       if (globalDistanceMode) {
                           // Chế độ cộng dồn - sử dụng giá trị trực tiếp
                           targetCumulative = cumVal;
@@ -1410,8 +1432,9 @@
                           targetCumulative = rightCumulative;
                       }
                      
-                     if (targetCumulative !== 0 || elevVal !== 0) {
-                         result += `TARGETR\t${targetCumulative.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*\t\n`;
+                     if (targetCumulative !== 0 || elevVal !== 0 || descVal) {
+                         const descPart = descVal ? `\t${descVal}` : '';
+                         result += `TARGETR\t${targetCumulative.toFixed(5)}\t${elevVal.toFixed(5)}\tNOBLOCK*0*${descPart}\n`;
                      }
                  });
             });
@@ -1443,9 +1466,22 @@
             const reader = new FileReader();
             reader.onload = e => {
                 setTimeout(() => {
-                    processNtdData(e.target.result);
-                    toggleButtonLoading('btn-import-ntd', false);
+                    try {
+                        processNtdData(e.target.result);
+                    } catch (err) {
+                        console.error('Lỗi xử lý NTD:', err);
+                        openConfirmationModal('Lỗi Import NTD', 'Đã xảy ra lỗi khi xử lý file NTD.', () => {});
+                    } finally {
+                        toggleButtonLoading('btn-import-ntd', false);
+                    }
                 }, 500);
+            };
+            reader.onerror = () => {
+                toggleButtonLoading('btn-import-ntd', false);
+                openConfirmationModal('Lỗi Import NTD', 'Không thể đọc file NTD.', () => {});
+            };
+            reader.onabort = () => {
+                toggleButtonLoading('btn-import-ntd', false);
             };
             reader.readAsText(file);
             event.target.value = '';
@@ -1529,23 +1565,27 @@
                 } else if (command === 'TARGETL' && currentItemId > 0) {
                     const cumVal = parseFloat(parts[1]) || 0;
                     const elevVal = parseFloat(parts[2]) || 0;
+                    const descVal = parts[4] ? parts[4].trim() : '';
 
                     addTarget(currentItemId, 'left', false);
                     const newRow = document.getElementById(`left-targets-${currentItemId}`).lastElementChild;
                     if (newRow) {
                         newRow.querySelector('.left-cumulative').value = -cumVal;
                         newRow.querySelector('.left-elevation').value = elevVal;
+                        if (descVal) newRow.querySelector('.left-desc').value = descVal;
                     }
 
                 } else if (command === 'TARGETR' && currentItemId > 0) {
                     const cumVal = parseFloat(parts[1]) || 0;
                     const elevVal = parseFloat(parts[2]) || 0;
+                    const descVal = parts[4] ? parts[4].trim() : '';
 
                     addTarget(currentItemId, 'right', false);
                     const newRow = document.getElementById(`right-targets-${currentItemId}`).lastElementChild;
                     if (newRow) {
                         newRow.querySelector('.right-cumulative').value = cumVal;
                         newRow.querySelector('.right-elevation').value = elevVal;
+                        if (descVal) newRow.querySelector('.right-desc').value = descVal;
                     }
                 }
             });
@@ -1554,8 +1594,9 @@
                 selectItem(1);
                 // Cập nhật UI global và cho tất cả các mặt cắt với chế độ nhập đã đọc
                 updateGlobalInputModeUI();
-                Object.keys(items).forEach(id => {
-                    updateInputModeUI(parseInt(id));
+                document.querySelectorAll('#item-details-wrapper .item-section').forEach(section => {
+                    const id = parseInt(section.id.split('-')[1]);
+                    updateInputModeUI(id);
                 });
                 drawCrossSection(1);
             }
