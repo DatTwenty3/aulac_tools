@@ -118,6 +118,16 @@ const subjectsConfig = [
             law: ['quanlyhang3_PLC.csv', 'quanlyhang3_PLR.csv'],
             specialized: ['quanlyhang3_CM.csv']
         }
+    },
+    {
+        id: 'diahinh3',
+        title: 'Khảo sát địa hình, Hạng III',
+        subtitle: 'Thi chứng chỉ hành nghề Khảo sát địa hình, Hạng III',
+        icon: '🔍',
+        files: {
+            law: ['dia_hinh_3_PLC.csv', 'dia_hinh_3_PLR.csv'],
+            specialized: ['dia_hinh_3_CM.csv']
+        }
     }
 ];
 
