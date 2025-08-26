@@ -298,6 +298,7 @@
         .input-mode-toggle {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 0.75rem;
             margin-bottom: 1rem;
             padding: 0.75rem;
@@ -316,6 +317,22 @@
             color: var(--text-color-secondary);
             margin-bottom: 0.5rem;
         }
+        
+        .global-input-modes {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .global-input-modes h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
 
         .toggle-switch {
             position: relative;
@@ -325,6 +342,7 @@
             border-radius: 12px;
             cursor: pointer;
             transition: all var(--transition-speed) ease;
+            flex-shrink: 0;
         }
 
         .toggle-switch.active {
@@ -352,6 +370,8 @@
             font-size: 0.9rem;
             font-weight: 500;
             color: var(--text-color-secondary);
+            text-align: center;
+            flex: 1;
         }
 
         .toggle-label.active {
@@ -532,13 +552,34 @@
             z-index: 1002;
         }
 
-        .tutorial-highlight {
-            position: relative !important;
-            z-index: 1000;
-            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
-            border-radius: 8px;
-            transition: box-shadow 0.3s ease;
-        }
+        
+         
+         .tutorial-highlight {
+             position: relative !important;
+             z-index: 1001;
+             border-radius: 8px;
+             transition: all 0.3s ease;
+             box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.6), 0 0 15px rgba(34, 197, 94, 0.4);
+         }
+         
+         .tutorial-highlight::before {
+             content: '';
+             position: absolute;
+             top: -3px;
+             left: -3px;
+             right: -3px;
+             bottom: -3px;
+             background: linear-gradient(45deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+             border: 2px solid rgba(34, 197, 94, 0.8);
+             border-radius: 10px;
+             z-index: -1;
+             animation: pulse 2s infinite;
+         }
+         
+         @keyframes pulse {
+             0%, 100% { opacity: 0.3; }
+             50% { opacity: 0.6; }
+         }
         
         .tutorial-tooltip {
             position: absolute; background-color: white; color: var(--text-color);
@@ -636,6 +677,27 @@
                 </div>
                 <input type="text" id="search-item" placeholder="🔍 Tìm kiếm mặt cắt..." onkeyup="filterItems()">
                 <div id="item-list"></div>
+                
+                <!-- Chế độ nhập chung cho toàn bộ dự án -->
+                <div class="global-input-modes">
+                    <h3>Chế độ nhập chung</h3>
+                    <div class="input-mode-section">
+                        <h5>Khoảng cách:</h5>
+                        <div class="input-mode-toggle">
+                            <span class="toggle-label" id="toggle-label-distance-global">Khoảng cách lẻ</span>
+                            <div class="toggle-switch" id="toggle-switch-distance-global" onclick="toggleInputMode(null, 'distance')"></div>
+                            <span class="toggle-label active" id="toggle-label-active-distance-global">Cộng dồn</span>
+                        </div>
+                    </div>
+                    <div class="input-mode-section">
+                        <h5>Cao độ:</h5>
+                        <div class="input-mode-toggle">
+                            <span class="toggle-label" id="toggle-label-elevation-global">Cao độ lẻ</span>
+                            <div class="toggle-switch" id="toggle-switch-elevation-global" onclick="toggleInputMode(null, 'elevation')"></div>
+                            <span class="toggle-label active" id="toggle-label-active-elevation-global">Cộng dồn</span>
+                        </div>
+                    </div>
+                </div>
             </aside>
             <main class="details-container">
                 <div id="item-details-wrapper"></div>
@@ -666,17 +728,17 @@
 
     <input type="file" id="csv-importer" accept=".csv" style="display: none;">
     <input type="file" id="ntd-importer" accept=".ntd" style="display: none;">
-    <div id="chart-tooltip"></div>
-    <div id="tutorial-tooltip" class="tutorial-tooltip">
-        <p id="tutorial-text"></p>
-        <div class="tutorial-tooltip-nav">
-            <button class="btn btn-secondary" onclick="endTutorial()">Bỏ qua</button>
-            <div>
-                <span id="tutorial-step-counter" class="step-counter"></span>
-                <button class="btn btn-primary" onclick="nextTutorialStep()">Tiếp theo &rarr;</button>
-            </div>
-        </div>
-    </div>
+         <div id="chart-tooltip"></div>
+     <div id="tutorial-tooltip" class="tutorial-tooltip">
+         <p id="tutorial-text"></p>
+         <div class="tutorial-tooltip-nav">
+             <button class="btn btn-secondary" onclick="endTutorial()">Bỏ qua</button>
+             <div>
+                 <span id="tutorial-step-counter" class="step-counter"></span>
+                 <button class="btn btn-primary" onclick="nextTutorialStep()">Tiếp theo &rarr;</button>
+             </div>
+         </div>
+     </div>
     
     <!-- Confirmation Modal -->
     <div id="confirmation-modal" class="modal-overlay">
@@ -698,7 +760,8 @@
          let confirmCallback = null;
          let saveTimeout;
          let inputModes = {}; // Lưu trữ chế độ nhập cho từng item
-         let displayModes = {}; // Lưu trữ chế độ hiển thị cho từng item
+         let globalDistanceMode = false; // Chế độ nhập khoảng cách chung (false = lẻ, true = cộng dồn)
+         let globalElevationMode = false; // Chế độ nhập cao độ chung (false = lẻ, true = cộng dồn)
 
         // --- Event Listeners Setup ---
         document.addEventListener('DOMContentLoaded', function() {
@@ -792,14 +855,6 @@
                     </div>
                 </div>
                                  <div id="targets-${currentItemId}" class="tab-content" oninput="scheduleSave()">
-                     <div class="input-mode-section">
-                         <h5>Chế độ hiển thị:</h5>
-                         <div class="input-mode-toggle">
-                             <span class="toggle-label" id="toggle-label-display-${currentItemId}">Khoảng cách lẻ</span>
-                             <div class="toggle-switch" id="toggle-switch-display-${currentItemId}" onclick="toggleDisplayMode(${currentItemId})"></div>
-                             <span class="toggle-label active" id="toggle-label-active-display-${currentItemId}">Cộng dồn</span>
-                         </div>
-                     </div>
                      <div class="targets-layout-grid">
                          <div class="targets-column">
                               <div class="visualization-container">
@@ -858,8 +913,8 @@
                  scheduleSave();
              }
              
-             // Khởi tạo chế độ hiển thị mặc định (khoảng cách lẻ)
-             displayModes[currentItemId] = false;
+             // Sử dụng chế độ nhập chung cho tất cả mặt cắt
+             updateInputModeUI(currentItemId);
              
              updatePlaceholder();
         }
@@ -1031,39 +1086,36 @@
              }
          }
 
-                   // --- Display Mode Functions ---
-          function toggleDisplayMode(itemId) {
-              const toggleSwitch = document.getElementById(`toggle-switch-display-${itemId}`);
-              const toggleLabel = document.getElementById(`toggle-label-display-${itemId}`);
-              const toggleLabelActive = document.getElementById(`toggle-label-active-display-${itemId}`);
-              const leftHeader = document.getElementById(`left-header-${itemId}`);
-              const rightHeader = document.getElementById(`right-header-${itemId}`);
+                   // --- Input Mode Functions ---
+          function toggleInputMode(itemId, type) {
+              if (type === 'distance') {
+                  // Chuyển đổi chế độ khoảng cách chung
+                  globalDistanceMode = !globalDistanceMode;
+                  
+                  // Cập nhật UI global
+                  updateGlobalInputModeUI();
+                  
+                  // Cập nhật tất cả các mặt cắt
+                  Object.keys(items).forEach(id => {
+                      updateInputModeUI(parseInt(id));
+                  });
+              } else if (type === 'elevation') {
+                  // Chuyển đổi chế độ cao độ chung
+                  globalElevationMode = !globalElevationMode;
+                  
+                  // Cập nhật UI global
+                  updateGlobalInputModeUI();
+                  
+                  // Cập nhật tất cả các mặt cắt
+                  Object.keys(items).forEach(id => {
+                      updateInputModeUI(parseInt(id));
+                  });
+              }
               
-              // Chuyển đổi chế độ hiển thị
-              displayModes[itemId] = !displayModes[itemId];
-              
-                             if (displayModes[itemId]) {
-                   // Chế độ cộng dồn
-                   toggleSwitch.classList.add('active');
-                   toggleLabel.classList.remove('active');
-                   toggleLabelActive.classList.add('active');
-                   leftHeader.textContent = 'CD Khoảng cách';
-                   rightHeader.textContent = 'CD Khoảng cách';
-                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'CD Cao độ';
-                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'CD Cao độ';
-               } else {
-                   // Chế độ khoảng cách lẻ
-                   toggleSwitch.classList.remove('active');
-                   toggleLabel.classList.add('active');
-                   toggleLabelActive.classList.remove('active');
-                   leftHeader.textContent = 'KCL Khoảng cách';
-                   rightHeader.textContent = 'KCL Khoảng cách';
-                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
-                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
-               }
-              
-              // Chỉ cập nhật biểu đồ, không thay đổi dữ liệu
-              drawCrossSection(itemId);
+              // Cập nhật biểu đồ cho mặt cắt hiện tại nếu có
+              if (itemId && activeItemId) {
+                  drawCrossSection(activeItemId);
+              }
               scheduleSave();
           }
 
@@ -1080,7 +1132,7 @@
                   const input = row.querySelector(`.${side}-cumulative`);
                   const value = parseFloat(input.value) || 0;
                   
-                  if (displayModes[itemId]) {
+                  if (globalDistanceMode) {
                       // Chế độ cộng dồn - sử dụng giá trị trực tiếp
                       cumulative = value;
                   } else {
@@ -1094,33 +1146,70 @@
               return values;
           }
 
-                   function updateInputModeUI(itemId) {
-              // Cập nhật UI cho chế độ hiển thị
-              const displayToggleSwitch = document.getElementById(`toggle-switch-display-${itemId}`);
-              const displayToggleLabel = document.getElementById(`toggle-label-display-${itemId}`);
-              const displayToggleLabelActive = document.getElementById(`toggle-label-active-display-${itemId}`);
+                   function updateGlobalInputModeUI() {
+              // Cập nhật UI cho chế độ khoảng cách global
+              const distanceToggleSwitch = document.getElementById('toggle-switch-distance-global');
+              const distanceToggleLabel = document.getElementById('toggle-label-distance-global');
+              const distanceToggleLabelActive = document.getElementById('toggle-label-active-distance-global');
+              
+              if (globalDistanceMode) {
+                  // Chế độ cộng dồn khoảng cách
+                  distanceToggleSwitch.classList.add('active');
+                  distanceToggleLabel.classList.remove('active');
+                  distanceToggleLabelActive.classList.add('active');
+              } else {
+                  // Chế độ khoảng cách lẻ
+                  distanceToggleSwitch.classList.remove('active');
+                  distanceToggleLabel.classList.add('active');
+                  distanceToggleLabelActive.classList.remove('active');
+              }
+              
+              // Cập nhật UI cho chế độ cao độ global
+              const elevationToggleSwitch = document.getElementById('toggle-switch-elevation-global');
+              const elevationToggleLabel = document.getElementById('toggle-label-elevation-global');
+              const elevationToggleLabelActive = document.getElementById('toggle-label-active-elevation-global');
+              
+              if (globalElevationMode) {
+                  // Chế độ cộng dồn cao độ
+                  elevationToggleSwitch.classList.add('active');
+                  elevationToggleLabel.classList.remove('active');
+                  elevationToggleLabelActive.classList.add('active');
+              } else {
+                  // Chế độ cao độ lẻ
+                  elevationToggleSwitch.classList.remove('active');
+                  elevationToggleLabel.classList.add('active');
+                  elevationToggleLabelActive.classList.remove('active');
+              }
+          }
+          
+          function updateInputModeUI(itemId) {
+              // Cập nhật UI cho chế độ khoảng cách
               const leftHeader = document.getElementById(`left-header-${itemId}`);
               const rightHeader = document.getElementById(`right-header-${itemId}`);
               
-                             if (displayModes[itemId]) {
-                   // Chế độ cộng dồn
-                   displayToggleSwitch.classList.add('active');
-                   displayToggleLabel.classList.remove('active');
-                   displayToggleLabelActive.classList.add('active');
-                   leftHeader.textContent = 'CD Khoảng cách';
-                   rightHeader.textContent = 'CD Khoảng cách';
-                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'CD Cao độ';
-                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'CD Cao độ';
-               } else {
-                   // Chế độ khoảng cách lẻ
-                   displayToggleSwitch.classList.remove('active');
-                   displayToggleLabel.classList.add('active');
-                   displayToggleLabelActive.classList.remove('active');
-                   leftHeader.textContent = 'KCL Khoảng cách';
-                   rightHeader.textContent = 'KCL Khoảng cách';
-                   document.getElementById(`left-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
-                   document.getElementById(`right-elevation-header-${itemId}`).textContent = 'KCL Cao độ';
-               }
+              if (globalDistanceMode) {
+                  // Chế độ cộng dồn khoảng cách
+                  leftHeader.textContent = 'CD Khoảng cách';
+                  rightHeader.textContent = 'CD Khoảng cách';
+              } else {
+                  // Chế độ khoảng cách lẻ
+                  leftHeader.textContent = 'KCL Khoảng cách';
+                  rightHeader.textContent = 'KCL Khoảng cách';
+              }
+              
+              // Cập nhật UI cho chế độ cao độ
+              const leftElevationHeader = document.getElementById(`left-elevation-header-${itemId}`);
+              const rightElevationHeader = document.getElementById(`right-elevation-header-${itemId}`);
+              
+              if (globalElevationMode) {
+                  // Chế độ cộng dồn cao độ
+                  leftElevationHeader.textContent = 'CD Cao độ';
+                  rightElevationHeader.textContent = 'CD Cao độ';
+              } else {
+                  // Chế độ cao độ lẻ
+                  leftElevationHeader.textContent = 'KCL Cao độ';
+                  rightElevationHeader.textContent = 'KCL Cao độ';
+              }
           }
 
         function toggleButtonLoading(buttonId, isLoading) {
@@ -1148,7 +1237,7 @@
                      elevation: document.getElementById(`item-elevation-${itemId}`)?.value || '',
                      angle: document.getElementById(`item-angle-${itemId}`)?.value || '',
                      radius: document.getElementById(`item-radius-${itemId}`)?.value || '',
-                     displayMode: displayModes[itemId] || false,
+                     // Chế độ nhập được lưu chung cho toàn bộ dự án
                      leftTargets: [],
                      rightTargets: []
                  };
@@ -1169,7 +1258,12 @@
                 allItemsData.push(itemData);
             });
 
-            localStorage.setItem('crossSectionData', JSON.stringify(allItemsData));
+            const dataToSave = {
+                items: allItemsData,
+                globalDistanceMode: globalDistanceMode,
+                globalElevationMode: globalElevationMode
+            };
+            localStorage.setItem('crossSectionData', JSON.stringify(dataToSave));
             
             const saveStatus = document.getElementById('save-status');
             saveStatus.textContent = `Đã lưu lúc ${new Date().toLocaleTimeString()}`;
@@ -1181,7 +1275,17 @@
             const savedData = localStorage.getItem('crossSectionData');
             if (!savedData) return;
 
-            const items = JSON.parse(savedData);
+            const data = JSON.parse(savedData);
+            
+            // Khôi phục chế độ nhập chung
+            if (data.globalDistanceMode !== undefined) {
+                globalDistanceMode = data.globalDistanceMode;
+            }
+            if (data.globalElevationMode !== undefined) {
+                globalElevationMode = data.globalElevationMode;
+            }
+            
+            const items = data.items || data; // Hỗ trợ cả format cũ và mới
             if (!Array.isArray(items) || items.length === 0) return;
 
             items.forEach(itemData => {
@@ -1194,8 +1298,7 @@
                  document.getElementById(`item-angle-${newId}`).value = itemData.angle;
                  document.getElementById(`item-radius-${newId}`).value = itemData.radius;
                  
-                 // Khôi phục chế độ hiển thị
-                 displayModes[newId] = itemData.displayMode || false;
+                 // Chế độ nhập được áp dụng chung cho toàn bộ dự án
                  updateInputModeUI(newId);
                  
                  updateItemTitle(newId);
@@ -1226,6 +1329,11 @@
 
             if (itemCount > 0) {
                 selectItem(1);
+                // Cập nhật UI global và cho tất cả các mặt cắt với chế độ nhập đã khôi phục
+                updateGlobalInputModeUI();
+                Object.keys(items).forEach(id => {
+                    updateInputModeUI(parseInt(id));
+                });
             }
         }
 
@@ -1249,7 +1357,12 @@
         }
 
         function generateOutput() {
-            let result = 'TDN\tVersion 3.5\nSYMBOLS\tND\tTD\tP\tTC\tNC\nTYPEINPUT\t0\t0\t0\t0\t0\n';
+            let result = 'TDN\tVersion 3.5\nSYMBOLS\tND\tTD\tP\tTC\tNC\n';
+            
+            // Thêm dòng TYPEINPUT với chế độ nhập chung
+            const distanceModeValue = globalDistanceMode ? 0 : 1; // 0 = cộng dồn, 1 = lẻ
+            const elevationModeValue = globalElevationMode ? 0 : 1; // 0 = cộng dồn, 1 = lẻ
+            result += `TYPEINPUT\t${distanceModeValue}\t0\t${elevationModeValue}\t0\t0\n`;
             const itemElements = document.querySelectorAll('.item-section');
             itemElements.forEach((itemElement, index) => {
                 const itemId = itemElement.id.split('-')[1];
@@ -1267,7 +1380,7 @@
                      const elevVal = parseFloat(row.querySelector('.left-elevation').value) || 0;
                      
                                            let targetCumulative;
-                      if (displayModes[itemId]) {
+                      if (globalDistanceMode) {
                           // Chế độ cộng dồn - sử dụng giá trị trực tiếp
                           targetCumulative = cumVal;
                       } else {
@@ -1288,7 +1401,7 @@
                      const elevVal = parseFloat(row.querySelector('.right-elevation').value) || 0;
                      
                                            let targetCumulative;
-                      if (displayModes[itemId]) {
+                      if (globalDistanceMode) {
                           // Chế độ cộng dồn - sử dụng giá trị trực tiếp
                           targetCumulative = cumVal;
                       } else {
@@ -1382,7 +1495,17 @@
                 const parts = line.split(/\s+/);
                 const command = parts[0].toUpperCase();
 
-                if (command === 'POLE') {
+                // Xử lý dòng TYPEINPUT để đọc chế độ nhập
+                if (command === 'TYPEINPUT') {
+                    const distanceMode = parseInt(parts[1]) || 0; // 0 = cộng dồn, 1 = lẻ
+                    const elevationMode = parseInt(parts[3]) || 0; // 0 = cộng dồn, 1 = lẻ
+                    
+                    globalDistanceMode = (distanceMode === 0); // true = cộng dồn, false = lẻ
+                    globalElevationMode = (elevationMode === 0); // true = cộng dồn, false = lẻ
+                    return; // Tiếp tục với dòng tiếp theo
+                }
+
+                                if (command === 'POLE') {
                     addItem(true);
                     currentItemId = itemCount;
 
@@ -1429,6 +1552,11 @@
 
             if (itemCount > 0) {
                 selectItem(1);
+                // Cập nhật UI global và cho tất cả các mặt cắt với chế độ nhập đã đọc
+                updateGlobalInputModeUI();
+                Object.keys(items).forEach(id => {
+                    updateInputModeUI(parseInt(id));
+                });
                 drawCrossSection(1);
             }
             scheduleSave();
@@ -1472,7 +1600,7 @@
                  const elevationDelta = parseFloat(row.querySelector(`.${side}-elevation`).value) || 0;
                  
                                    let totalLength;
-                  if (displayModes[itemId]) {
+                  if (globalDistanceMode) {
                       // Chế độ cộng dồn - sử dụng giá trị trực tiếp
                       totalLength = lengthValue;
                   } else {
@@ -1486,7 +1614,7 @@
                   }
                   
                   let totalElevation;
-                  if (displayModes[itemId]) {
+                  if (globalElevationMode) {
                       // Chế độ cộng dồn cao độ - sử dụng giá trị trực tiếp
                       totalElevation = elevationDelta;
                   } else {
@@ -1682,54 +1810,72 @@
             confirmCallback = null;
         }
 
-        // --- Tutorial Logic ---
-        let currentTutorialStep = 0;
-        const tutorialSteps = [
-            { element: '#btn-add-item', text: 'Chào mừng bạn! Nhấn vào đây để <b>thêm một mặt cắt mới</b>.', position: 'top' },
-            { element: '#btn-import-csv', text: 'Hoặc <b>nhập dữ liệu hàng loạt</b> từ file CSV.', position: 'top' },
-            { element: '#item-list', text: 'Các mặt cắt sẽ được <b>liệt kê tại đây</b>. Nhấn để xem chi tiết.', position: 'right', action: () => { if(itemCount === 0) addItem(); } },
-            { element: '.details-container', text: 'Đây là khu vực <b>hiển thị thông tin chi tiết</b> của mặt cắt.', position: 'left' },
-            { element: () => `#item-${activeItemId} .tab-button[onclick*="targets"]`, text: 'Chuyển qua tab này để nhập <b>dữ liệu chi tiết</b> và xem biểu đồ.', position: 'bottom', action: () => { const el = document.querySelector(`#item-${activeItemId} .tab-button[onclick*="targets"]`); if (el) el.click(); } },
-            { element: () => `#targets-${activeItemId} .targets-layout-grid`, text: 'Biểu đồ và bảng nhập liệu được đặt cạnh nhau để bạn <b>dễ dàng theo dõi</b>.', position: 'bottom' },
-            { element: () => `#item-${activeItemId} .sub-table-left .btn-add-target`, text: 'Nhấn vào đây để <b>thêm các điểm target</b>. Biểu đồ sẽ tự động cập nhật.', position: 'top' },
-            { element: '#btn-generate', text: 'Khi đã xong, nhấn vào đây để <b>tạo và tải về file .ntd</b>.', position: 'top' },
-            { element: '#btn-guide', text: 'Bạn có thể xem lại hướng dẫn này bất cứ lúc nào!', position: 'top' }
-        ];
+                 // --- Tutorial Logic ---
+         let currentTutorialStep = 0;
+         const tutorialSteps = [
+             { element: '#btn-add-item', text: 'Chào mừng bạn đến với <b>LEDAT - Quản lý Dữ liệu Mặt cắt</b>! Nhấn vào đây để <b>thêm một mặt cắt mới</b>.', position: 'top' },
+             { element: '#btn-import-ntd', text: 'Hoặc <b>nhập dữ liệu từ file NTD</b> có sẵn để tiếp tục công việc.', position: 'top' },
+             { element: '#btn-import-csv', text: 'Bạn cũng có thể <b>nhập dữ liệu hàng loạt</b> từ file CSV.', position: 'top' },
+             { element: '#item-list', text: 'Các mặt cắt sẽ được <b>liệt kê tại đây</b>. Nhấn để xem và chỉnh sửa chi tiết.', position: 'right', action: () => { if(itemCount === 0) addItem(); } },
+             { element: '.details-container', text: 'Đây là khu vực <b>hiển thị thông tin chi tiết</b> của mặt cắt được chọn.', position: 'left' },
+             { element: () => `#item-${activeItemId} .tab-button[onclick*="info"]`, text: 'Tab <b>Mặt trắc dọc</b> để nhập thông tin cơ bản: tên mặt cắt, lý trình, cao độ, góc chắn cung, bán kính.', position: 'bottom' },
+             { element: () => `#item-${activeItemId} .tab-button[onclick*="targets"]`, text: 'Tab <b>Mặt trắc ngang</b> để nhập dữ liệu chi tiết và xem biểu đồ trực quan.', position: 'bottom', action: () => { const el = document.querySelector(`#item-${activeItemId} .tab-button[onclick*="targets"]`); if (el) el.click(); } },
+             { element: '.global-input-modes', text: 'Chọn <b>chế độ nhập chung</b> cho khoảng cách và cao độ. Áp dụng cho toàn bộ các mặt cắt trong dự án.', position: 'right' },
+             { element: () => `#targets-${activeItemId} .targets-layout-grid`, text: 'Biểu đồ và bảng nhập liệu được đặt cạnh nhau để bạn <b>dễ dàng theo dõi</b> và kiểm tra dữ liệu.', position: 'bottom' },
+             { element: () => `#item-${activeItemId} .sub-table-left .btn-add-target`, text: 'Nhấn vào đây để <b>thêm các điểm target</b> cho bên trái. Biểu đồ sẽ tự động cập nhật.', position: 'top' },
+             { element: () => `#item-${activeItemId} .sub-table-right .btn-add-target`, text: 'Tương tự, thêm các điểm target cho <b>bên phải</b> của mặt cắt.', position: 'top' },
+             { element: '#btn-generate', text: 'Khi đã hoàn thành, nhấn vào đây để <b>tạo và tải về file .ntd</b> để sử dụng trong phần mềm khác.', position: 'top' },
+             { element: '#btn-guide', text: 'Bạn có thể xem lại hướng dẫn này bất cứ lúc nào bằng cách nhấn vào nút này!', position: 'top' }
+         ];
 
-        function startTutorial() {
-            currentTutorialStep = 0;
-            showTutorialStep(currentTutorialStep);
-        }
-        function endTutorial() {
-            const highlighted = document.querySelector('.tutorial-highlight');
-            if (highlighted) highlighted.classList.remove('tutorial-highlight');
-            document.getElementById('tutorial-tooltip').classList.remove('active');
-        }
+                 function startTutorial() {
+             currentTutorialStep = 0;
+             showTutorialStep(currentTutorialStep);
+         }
+         function endTutorial() {
+             const highlighted = document.querySelector('.tutorial-highlight');
+             if (highlighted) highlighted.classList.remove('tutorial-highlight');
+             document.getElementById('tutorial-tooltip').classList.remove('active');
+         }
         function nextTutorialStep() {
             currentTutorialStep++;
             if (currentTutorialStep < tutorialSteps.length) showTutorialStep(currentTutorialStep);
             else endTutorial();
         }
-        function showTutorialStep(stepIndex) {
-            const step = tutorialSteps[stepIndex];
-            if (step.action) step.action();
-            setTimeout(() => {
-                const selector = typeof step.element === 'function' ? step.element() : step.element;
-                const element = document.querySelector(selector);
-                if (!element) { nextTutorialStep(); return; }
-                const oldHighlight = document.querySelector('.tutorial-highlight');
-                if (oldHighlight) oldHighlight.classList.remove('tutorial-highlight');
-                element.classList.add('tutorial-highlight');
-                element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-                const tooltip = document.getElementById('tutorial-tooltip');
-                tooltip.querySelector('#tutorial-text').innerHTML = step.text;
-                tooltip.querySelector('#tutorial-step-counter').textContent = `${stepIndex + 1} / ${tutorialSteps.length}`;
-                const nextButton = tooltip.querySelector('button[onclick="nextTutorialStep()"]');
-                nextButton.innerHTML = (stepIndex === tutorialSteps.length - 1) ? 'Hoàn thành 🎉' : 'Tiếp theo &rarr;';
-                positionTooltip(element, tooltip, step.position);
-                tooltip.classList.add('active');
-            }, 100);
-        }
+                 function showTutorialStep(stepIndex) {
+             const step = tutorialSteps[stepIndex];
+             if (step.action) step.action();
+             setTimeout(() => {
+                 const selector = typeof step.element === 'function' ? step.element() : step.element;
+                 const element = document.querySelector(selector);
+                 if (!element) { 
+                     console.warn('Element not found for step', stepIndex, selector);
+                     nextTutorialStep(); 
+                     return; 
+                 }
+                 
+                 // Xóa highlight cũ
+                 const oldHighlight = document.querySelector('.tutorial-highlight');
+                 if (oldHighlight) oldHighlight.classList.remove('tutorial-highlight');
+                 
+                 // Thêm highlight mới
+                 element.classList.add('tutorial-highlight');
+                 
+                 // Scroll đến element
+                 element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                 
+                 // Cập nhật tooltip
+                 const tooltip = document.getElementById('tutorial-tooltip');
+                 tooltip.querySelector('#tutorial-text').innerHTML = step.text;
+                 tooltip.querySelector('#tutorial-step-counter').textContent = `${stepIndex + 1} / ${tutorialSteps.length}`;
+                 const nextButton = tooltip.querySelector('button[onclick="nextTutorialStep()"]');
+                 nextButton.innerHTML = (stepIndex === tutorialSteps.length - 1) ? 'Hoàn thành 🎉' : 'Tiếp theo &rarr;';
+                 
+                 // Định vị tooltip
+                 positionTooltip(element, tooltip, step.position);
+                 tooltip.classList.add('active');
+             }, 200); // Tăng delay để đảm bảo DOM đã cập nhật
+         }
         function positionTooltip(targetElement, tooltip, position) {
             const targetRect = targetElement.getBoundingClientRect();
             const tooltipRect = tooltip.getBoundingClientRect();
