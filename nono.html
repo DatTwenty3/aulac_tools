@@ -6,23 +6,23 @@
     <title>LEDAT - Trình quản lý dữ liệu mặt cắt (.ntd)</title>
     <style>
         :root {
-            --background-blur: 24px;
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(17, 25, 40, 0.12);
-            --glass-shadow: 0 10px 30px rgba(17, 25, 40, 0.08);
-            --text-color: #0b1220;
-            --text-color-secondary: #64748b;
-            --accent-color: #4f46e5; /* Indigo */
-            --accent-color-hover: #4338ca;
-            --accent-color-2: #06b6d4; /* Cyan */
-            --accent-color-3: #f59e0b; /* Amber */
-            --accent-color-4: #ef4444; /* Red */
-            --danger-color: #ff3b30;
-            --danger-color-hover: #d9362b;
-            --left-accent-color: #22c55e; /* Emerald */
-            --right-accent-color: #8b5cf6; /* Violet */
-            --border-radius: 16px;
-            --transition-speed: 0.4s;
+            --background-blur: 32px;
+            --glass-bg: rgba(250, 249, 246, 0.8);
+            --glass-border: rgba(78, 66, 65, 0.08);
+            --glass-shadow: 0 8px 32px rgba(78, 66, 65, 0.06);
+            --text-color: #4E4241;
+            --text-color-secondary: #8B7D7B;
+            --accent-color: #A3B18A;
+            --accent-color-hover: #95A37C;
+            --accent-color-2: #B8C4A0;
+            --accent-color-3: #A3B18A;
+            --accent-color-4: #A3B18A;
+            --danger-color: #E53E3E;
+            --danger-color-hover: #C53030;
+            --left-accent-color: #A3B18A;
+            --right-accent-color: #95A37C;
+            --border-radius: 20px;
+            --transition-speed: 0.3s;
             --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
         }
 
@@ -34,7 +34,7 @@
 
         body {
             font-family: var(--font-family);
-            background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+            background: #FAF9F6;
             min-height: 100vh;
             padding: 2rem;
             color: var(--text-color);
@@ -49,11 +49,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
-                radial-gradient(circle at 12% 88%, rgba(79, 70, 229, 0.10) 0%, transparent 45%),
-                radial-gradient(circle at 82% 18%, rgba(6, 182, 212, 0.10) 0%, transparent 45%),
-                radial-gradient(circle at 42% 42%, rgba(245, 158, 11, 0.10) 0%, transparent 45%),
-                radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
+            background: rgba(163, 177, 138, 0.02);
             pointer-events: none;
             z-index: -1;
         }
@@ -94,7 +90,9 @@
             text-align: center;
             padding: 3rem 2rem;
             border-bottom: 1px solid var(--glass-border);
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(250, 249, 246, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .header h1 { 
@@ -116,7 +114,9 @@
         .item-list-sidebar {
             padding: 1.5rem;
             border-right: 1px solid var(--glass-border);
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(250, 249, 246, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             display: flex;
             flex-direction: column;
             transition: all var(--transition-speed) ease;
@@ -176,15 +176,17 @@
         }
 
         .item-list-item.active {
-            background: linear-gradient(135deg, var(--accent-color) 0%, var(--left-accent-color) 100%);
+            background: var(--accent-color);
             color: white;
             font-weight: 600;
-            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(163, 177, 138, 0.3);
         }
 
         .details-container { 
             padding: 2rem; 
-            background: rgba(255, 255, 255, 0.02); 
+            background: rgba(250, 249, 246, 0.2); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             overflow-y: auto; 
         }
 
@@ -227,7 +229,7 @@
         }
 
         .tab-button.active {
-            background: linear-gradient(135deg, rgba(79,70,229,0.18), rgba(6,182,212,0.18)); 
+            background: rgba(163, 177, 138, 0.15); 
             color: var(--accent-color); 
             font-weight: 600;
             border: 1px solid var(--glass-border); 
@@ -247,18 +249,20 @@
             width: 100%; 
             padding: 0.875rem 1rem; 
             border: 1px solid var(--glass-border); 
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 1rem; 
-            background: rgba(255, 255, 255, 0.08); 
+            background: rgba(250, 249, 246, 0.6); 
             color: var(--text-color);
             transition: all var(--transition-speed) ease;
             font-family: var(--font-family);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         input[type="text"]:focus, input[type="number"]:focus {
             outline: none; 
             border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1); 
+            box-shadow: 0 0 0 3px rgba(138, 154, 91, 0.15); 
             background: rgba(255, 255, 255, 0.12);
         }
 
@@ -278,11 +282,13 @@
             gap: 1.5rem;
         }
         .sub-table { 
-            background: rgba(255, 255, 255, 0.06); 
-            border-radius: 16px; 
+            background: rgba(250, 249, 246, 0.4); 
+            border-radius: 20px; 
             padding: 1.5rem; 
             border: 1px solid var(--glass-border);
             transition: all var(--transition-speed) ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .sub-table:hover {
@@ -304,9 +310,11 @@
             gap: 0.5rem;
             margin-bottom: 1rem;
             padding: 0.5rem 0.75rem;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 10px;
+            background: rgba(250, 249, 246, 0.4);
+            border-radius: 16px;
             border: 1px solid var(--glass-border);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .input-mode-section {
@@ -323,12 +331,14 @@
         .global-input-modes {
             margin-top: 1rem;
             padding: 0.75rem 1rem;
-            background: rgba(255, 255, 255, 0.04);
-            border-radius: 8px;
+            background: rgba(250, 249, 246, 0.5);
+            border-radius: 16px;
             border: 1px solid var(--glass-border);
             max-width: 760px;
             margin-left: auto;
             margin-right: auto;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .input-mode-row {
@@ -457,23 +467,23 @@
         .btn-primary { 
             background: var(--accent-color); 
             color: white;
-            box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+            box-shadow: 0 2px 8px rgba(163, 177, 138, 0.25);
         }
         
         .btn-primary:hover { 
             background: var(--accent-color-hover);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(163, 177, 138, 0.35);
         }
         
         .btn-secondary { 
-            background: linear-gradient(135deg, rgba(79,70,229,0.12), rgba(6,182,212,0.12)); 
+            background: rgba(163, 177, 138, 0.1); 
             color: var(--accent-color); 
             border: 1px solid var(--glass-border);
         }
         
         .btn-secondary:hover { 
-            background: linear-gradient(135deg, rgba(79,70,229,0.2), rgba(6,182,212,0.2));
+            background: rgba(163, 177, 138, 0.15);
             transform: translateY(-1px);
         }
         
@@ -513,7 +523,9 @@
             flex-wrap: wrap; 
             justify-content: center; 
             gap: 1rem;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(250, 249, 246, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         .footer { text-align: center; padding: 1.5rem; color: var(--text-color-secondary); font-size: 0.9rem; position: relative; }
         #save-status {
@@ -530,12 +542,14 @@
         .visualization-container {
             width: 100%;
             height: 300px;
-            background: rgba(255, 255, 255, 0.06);
-            border-radius: 16px;
+            background: rgba(250, 249, 246, 0.4);
+            border-radius: 20px;
             border: 1px solid var(--glass-border);
             padding: 0.5rem;
             position: relative;
             transition: all var(--transition-speed) ease;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         .visualization-container:hover {
@@ -595,8 +609,8 @@
              left: -3px;
              right: -3px;
              bottom: -3px;
-             background: linear-gradient(45deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
-             border: 2px solid rgba(34, 197, 94, 0.8);
+             background: rgba(163, 177, 138, 0.1);
+             border: 2px solid rgba(163, 177, 138, 0.8);
              border-radius: 10px;
              z-index: -1;
              animation: pulse 2s infinite;
@@ -621,7 +635,7 @@
 
         .guide-fab-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 998; }
         .btn-guide-fab {
-            background: linear-gradient(135deg, var(--accent-color), var(--accent-color-2)); 
+            background: var(--accent-color); 
             color: white; 
             width: 56px; 
             height: 56px;
@@ -631,15 +645,15 @@
             display: flex;
             align-items: center; 
             justify-content: center; 
-            box-shadow: 0 4px 16px rgba(0, 122, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(163, 177, 138, 0.3);
             cursor: pointer; 
             transition: all var(--transition-speed) ease;
         }
 
         .btn-guide-fab:hover {
-            background: linear-gradient(135deg, var(--accent-color-hover), var(--accent-color-2));
+            background: var(--accent-color-hover);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(163, 177, 138, 0.4);
         }
 
         .modal-overlay {
