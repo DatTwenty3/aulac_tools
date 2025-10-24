@@ -104,11 +104,13 @@ function addGeojsonToMap(map, data) {
   const layer = L.geoJSON(data, {
     style: function(feature) {
       const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      // Sử dụng màu từ GeoJSON nếu có, nếu không thì dùng màu mặc định
+      const featureStyle = feature.properties.style || {};
       return {
-        color: '#3388ff',
-        weight: 2,
+        color: featureStyle.color || '#3388ff',
+        weight: featureStyle.weight || 2,
         fillColor: randomColor,
-        fillOpacity: currentOverlayOpacity
+        fillOpacity: featureStyle.opacity || currentOverlayOpacity
       };
     },
     onEachFeature: function (feature, layer) {
@@ -123,13 +125,21 @@ function addGeojsonToMap(map, data) {
       });
       // Reset style khi popup đóng
       layer.on('popupclose', function() {
-        layer.setStyle({color: '#3388ff', weight: 2});
+        const featureStyle = feature.properties.style || {};
+        layer.setStyle({
+          color: featureStyle.color || '#3388ff', 
+          weight: featureStyle.weight || 2
+        });
       });
       layer.on('mouseover', function() {
         layer.setStyle({fillOpacity: 0.5, color: '#ff7800'});
       });
       layer.on('mouseout', function() {
-        layer.setStyle({fillOpacity: currentOverlayOpacity, color: '#3388ff'});
+        const featureStyle = feature.properties.style || {};
+        layer.setStyle({
+          fillOpacity: currentOverlayOpacity, 
+          color: featureStyle.color || '#3388ff'
+        });
       });
     }
   }).addTo(map);
