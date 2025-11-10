@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VN2000 - Công cụ Tọa độ & Địa chính</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #e3f2fd;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(25, 118, 210, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 152, 0, 0.05) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-30px, -30px) rotate(5deg); }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 40px rgba(25, 118, 210, 0.08);
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            color: #1d1d1f;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #1976d2, #ff9800);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            opacity: 0.6;
+            font-size: 15px;
+            font-weight: 400;
+            color: #6e6e73;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6e6e73;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+            min-width: 150px;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: #1d1d1f;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .tab.active {
+            color: #1d1d1f;
+            font-weight: 600;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #1976d2, #ff9800);
+        }
+
+        .content {
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1d1d1f;
+            font-size: 13px;
+            letter-spacing: -0.1px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #1d1d1f;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1976d2;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
+        }
+
+        input::placeholder {
+            color: #86868b;
+            opacity: 0.6;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        button {
+            background: linear-gradient(90deg, #ff9800 60%, #e69500 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: -0.1px;
+            margin-top: 8px;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.08);
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #1976d2 60%, #ff9800 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: rgba(25, 118, 210, 0.1);
+            color: rgba(25, 118, 210, 0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result {
+            margin-top: 32px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .result h3 {
+            color: #1d1d1f;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .result-item {
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .result-label {
+            font-weight: 500;
+            color: #6e6e73;
+            font-size: 14px;
+        }
+
+        .result-value {
+            color: #1d1d1f;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .error {
+            background: rgba(255, 245, 245, 0.8);
+            border-color: rgba(255, 59, 48, 0.2);
+        }
+
+        .error h3 {
+            color: #d70015;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6e6e73;
+        }
+
+        .spinner {
+            border: 2.5px solid rgba(25, 118, 210, 0.1);
+            border-top: 2.5px solid #1976d2;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .info-box {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-bottom: 28px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .info-box p {
+            color: #6e6e73;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                border-radius: 20px;
+            }
+
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 32px 24px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .content {
+                padding: 28px 24px;
+            }
+
+            .tab {
+                font-size: 13px;
+                padding: 16px 12px;
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VN2000 - Công cụ Tọa độ & Địa chính</h1>
+            <p>Công cụ chuyển đổi tọa độ và tra cứu thông tin địa chính Việt Nam</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(0)">Thông tin địa chính</button>
+            <button class="tab" onclick="switchTab(1)">WGS84 → VN2000</button>
+            <button class="tab" onclick="switchTab(2)">VN2000 → WGS84</button>
+            <button class="tab" onclick="switchTab(3)">Độ cao</button>
+        </div>
+
+        <div class="content">
+            <!-- Tab 1: Location Info -->
+            <div class="tab-content active" id="tab-0">
+                <div class="info-box">
+                    <p>Tra cứu thông tin địa chính (xã, huyện, tỉnh) theo tọa độ WGS84. Bao gồm thông tin sau sáp nhập và trước sáp nhập.</p>
+                </div>
+                <form onsubmit="getLocationInfo(event)">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Vĩ độ (Latitude)</label>
+                            <input type="number" id="loc_lat" step="any" placeholder="VD: 16.0302630" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kinh độ (Longitude)</label>
+                            <input type="number" id="loc_lng" step="any" placeholder="VD: 107.904724" required>
+                        </div>
+                    </div>
+                    <button type="submit">Tra cứu thông tin</button>
+                </form>
+                <div id="result-0"></div>
+            </div>
+
+            <!-- Tab 2: WGS84 to VN2000 -->
+            <div class="tab-content" id="tab-1">
+                <div class="info-box">
+                    <p>Chuyển đổi tọa độ từ hệ WGS84 (GPS) sang hệ tọa độ quốc gia VN2000.</p>
+                </div>
+                <form onsubmit="wgs84ToVn2000(event)">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Vĩ độ (Latitude)</label>
+                            <input type="number" id="wgs_lat" step="any" placeholder="VD: 16.0302630" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kinh độ (Longitude)</label>
+                            <input type="number" id="wgs_lng" step="any" placeholder="VD: 107.904724" required>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Múi chiếu (Zone Width)</label>
+                            <select id="wgs_zone">
+                                <option value="3" selected>3 độ</option>
+                                <option value="6">6 độ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tỉnh/Thành phố</label>
+                            <select id="wgs_province" onchange="updateMeridian('wgs')" required>
+                                <option value="">-- Chọn tỉnh/thành phố --</option>
+                                <option value="104.75">An Giang</option>
+                                <option value="107.75">Bà Rịa - Vũng Tàu</option>
+                                <option value="105.00">Bạc Liêu</option>
+                                <option value="107.00">Bắc Giang</option>
+                                <option value="106.50">Bắc Kạn</option>
+                                <option value="105.50">Bắc Ninh</option>
+                                <option value="105.75">Bến Tre</option>
+                                <option value="105.75">Bình Dương</option>
+                                <option value="108.25">Bình Định</option>
+                                <option value="106.25">Bình Phước</option>
+                                <option value="108.50">Bình Thuận</option>
+                                <option value="104.50">Cà Mau</option>
+                                <option value="105.75">Cao Bằng</option>
+                                <option value="105.00">Cần Thơ</option>
+                                <option value="107.75">Đà Nẵng</option>
+                                <option value="108.50">Đắk Lắk</option>
+                                <option value="108.50">Đắk Nông</option>
+                                <option value="103.00">Điện Biên</option>
+                                <option value="107.75">Đồng Nai</option>
+                                <option value="105.00">Đồng Tháp</option>
+                                <option value="108.50">Gia Lai</option>
+                                <option value="105.50">Hà Giang</option>
+                                <option value="105.00">Hà Nam</option>
+                                <option value="105.00">Hà Nội</option>
+                                <option value="105.50">Hà Tĩnh</option>
+                                <option value="105.50">Hải Dương</option>
+                                <option value="105.75">Hải Phòng</option>
+                                <option value="105.00">Hậu Giang</option>
+                                <option value="106.00">Hoà Bình</option>
+                                <option value="105.75">Hồ Chí Minh</option>
+                                <option value="105.50">Hưng Yên</option>
+                                <option value="108.25">Khánh Hoà</option>
+                                <option value="104.50">Kiên Giang</option>
+                                <option value="107.50">Kon Tum</option>
+                                <option value="103.00">Lai Châu</option>
+                                <option value="107.25">Lạng Sơn</option>
+                                <option value="104.75">Lào Cai</option>
+                                <option value="107.75">Lâm Đồng</option>
+                                <option value="105.75">Long An</option>
+                                <option value="105.50">Nam Định</option>
+                                <option value="104.75">Nghệ An</option>
+                                <option value="105.00">Ninh Bình</option>
+                                <option value="108.25">Ninh Thuận</option>
+                                <option value="104.75">Phú Thọ</option>
+                                <option value="108.50">Phú Yên</option>
+                                <option value="106.00">Quảng Bình</option>
+                                <option value="107.75">Quảng Nam</option>
+                                <option value="108.00">Quảng Ngãi</option>
+                                <option value="107.75">Quảng Ninh</option>
+                                <option value="106.25">Quảng Trị</option>
+                                <option value="105.50">Sóc Trăng</option>
+                                <option value="104.00">Sơn La</option>
+                                <option value="105.50">Tây Ninh</option>
+                                <option value="105.50">Thái Bình</option>
+                                <option value="106.50">Thái Nguyên</option>
+                                <option value="105.00">Thanh Hoá</option>
+                                <option value="107.00">Thừa Thiên Huế</option>
+                                <option value="105.75">Tiền Giang</option>
+                                <option value="105.50">Trà Vinh</option>
+                                <option value="106.00">Tuyên Quang</option>
+                                <option value="105.50">Vĩnh Long</option>
+                                <option value="105.00">Vĩnh Phúc</option>
+                                <option value="104.75">Yên Bái</option>
+                            </select>
+                            <input type="hidden" id="wgs_meridian" value="">
+                        </div>
+                    </div>
+                    <button type="submit">Chuyển đổi</button>
+                </form>
+                <div id="result-1"></div>
+            </div>
+
+            <!-- Tab 3: VN2000 to WGS84 -->
+            <div class="tab-content" id="tab-2">
+                <div class="info-box">
+                    <p>Chuyển đổi tọa độ từ hệ VN2000 về hệ WGS84 (GPS).</p>
+                </div>
+                <form onsubmit="vn2000ToWgs84(event)">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Tọa độ X (m)</label>
+                            <input type="number" id="vn_x" step="any" placeholder="VD: 1772933.81" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tọa độ Y (m)</label>
+                            <input type="number" id="vn_y" step="any" placeholder="VD: 516361.59" required>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Múi chiếu (Zone Width)</label>
+                            <select id="vn_zone">
+                                <option value="3" selected>3 độ</option>
+                                <option value="6">6 độ</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tỉnh/Thành phố</label>
+                            <select id="vn_province" onchange="updateMeridian('vn')" required>
+                                <option value="">-- Chọn tỉnh/thành phố --</option>
+                                <option value="104.75">An Giang</option>
+                                <option value="107.75">Bà Rịa - Vũng Tàu</option>
+                                <option value="105.00">Bạc Liêu</option>
+                                <option value="107.00">Bắc Giang</option>
+                                <option value="106.50">Bắc Kạn</option>
+                                <option value="105.50">Bắc Ninh</option>
+                                <option value="105.75">Bến Tre</option>
+                                <option value="105.75">Bình Dương</option>
+                                <option value="108.25">Bình Định</option>
+                                <option value="106.25">Bình Phước</option>
+                                <option value="108.50">Bình Thuận</option>
+                                <option value="104.50">Cà Mau</option>
+                                <option value="105.75">Cao Bằng</option>
+                                <option value="105.00">Cần Thơ</option>
+                                <option value="107.75">Đà Nẵng</option>
+                                <option value="108.50">Đắk Lắk</option>
+                                <option value="108.50">Đắk Nông</option>
+                                <option value="103.00">Điện Biên</option>
+                                <option value="107.75">Đồng Nai</option>
+                                <option value="105.00">Đồng Tháp</option>
+                                <option value="108.50">Gia Lai</option>
+                                <option value="105.50">Hà Giang</option>
+                                <option value="105.00">Hà Nam</option>
+                                <option value="105.00">Hà Nội</option>
+                                <option value="105.50">Hà Tĩnh</option>
+                                <option value="105.50">Hải Dương</option>
+                                <option value="105.75">Hải Phòng</option>
+                                <option value="105.00">Hậu Giang</option>
+                                <option value="106.00">Hoà Bình</option>
+                                <option value="105.75">Hồ Chí Minh</option>
+                                <option value="105.50">Hưng Yên</option>
+                                <option value="108.25">Khánh Hoà</option>
+                                <option value="104.50">Kiên Giang</option>
+                                <option value="107.50">Kon Tum</option>
+                                <option value="103.00">Lai Châu</option>
+                                <option value="107.25">Lạng Sơn</option>
+                                <option value="104.75">Lào Cai</option>
+                                <option value="107.75">Lâm Đồng</option>
+                                <option value="105.75">Long An</option>
+                                <option value="105.50">Nam Định</option>
+                                <option value="104.75">Nghệ An</option>
+                                <option value="105.00">Ninh Bình</option>
+                                <option value="108.25">Ninh Thuận</option>
+                                <option value="104.75">Phú Thọ</option>
+                                <option value="108.50">Phú Yên</option>
+                                <option value="106.00">Quảng Bình</option>
+                                <option value="107.75">Quảng Nam</option>
+                                <option value="108.00">Quảng Ngãi</option>
+                                <option value="107.75">Quảng Ninh</option>
+                                <option value="106.25">Quảng Trị</option>
+                                <option value="105.50">Sóc Trăng</option>
+                                <option value="104.00">Sơn La</option>
+                                <option value="105.50">Tây Ninh</option>
+                                <option value="105.50">Thái Bình</option>
+                                <option value="106.50">Thái Nguyên</option>
+                                <option value="105.00">Thanh Hoá</option>
+                                <option value="107.00">Thừa Thiên Huế</option>
+                                <option value="105.75">Tiền Giang</option>
+                                <option value="105.50">Trà Vinh</option>
+                                <option value="106.00">Tuyên Quang</option>
+                                <option value="105.50">Vĩnh Long</option>
+                                <option value="105.00">Vĩnh Phúc</option>
+                                <option value="104.75">Yên Bái</option>
+                            </select>
+                            <input type="hidden" id="vn_meridian" value="">
+                        </div>
+                    </div>
+                    <button type="submit">Chuyển đổi</button>
+                </form>
+                <div id="result-2"></div>
+            </div>
+
+            <!-- Tab 4: Elevation -->
+            <div class="tab-content" id="tab-3">
+                <div class="info-box">
+                    <p>Tra cứu độ cao (cao độ) theo tọa độ WGS84 tại Việt Nam.</p>
+                </div>
+                <form onsubmit="getElevation(event)">
+                    <div class="input-row">
+                        <div class="form-group">
+                            <label>Vĩ độ (Latitude)</label>
+                            <input type="number" id="elev_lat" step="any" placeholder="VD: 16.0302630" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kinh độ (Longitude)</label>
+                            <input type="number" id="elev_lng" step="any" placeholder="VD: 107.904724" required>
+                        </div>
+                    </div>
+                    <button type="submit">Tra cứu độ cao</button>
+                </form>
+                <div id="result-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach((tab, i) => {
+                if (i === index) {
+                    tab.classList.add('active');
+                    contents[i].classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                    contents[i].classList.remove('active');
+                }
+            });
+        }
+
+        function showLoading(resultId) {
+            const resultDiv = document.getElementById(`result-${resultId}`);
+            resultDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p style="margin-top: 15px;">Đang xử lý...</p></div>';
+        }
+
+        function showError(resultId, message) {
+            const resultDiv = document.getElementById(`result-${resultId}`);
+            resultDiv.innerHTML = `<div class="result error"><h3>Lỗi</h3><p>${message}</p></div>`;
+        }
+
+        function showResult(resultId, title, data) {
+            const resultDiv = document.getElementById(`result-${resultId}`);
+            resultDiv.innerHTML = `<div class="result"><h3>${title}</h3>${data}</div>`;
+        }
+
+        function updateMeridian(type) {
+            const provinceSelect = document.getElementById(`${type}_province`);
+            const meridianInput = document.getElementById(`${type}_meridian`);
+            if (provinceSelect && meridianInput) {
+                meridianInput.value = provinceSelect.value;
+            }
+        }
+
+        async function getLocationInfo(event) {
+            event.preventDefault();
+            const lat = document.getElementById('loc_lat').value;
+            const lng = document.getElementById('loc_lng').value;
+            
+            showLoading(0);
+            
+            try {
+                const response = await fetch(`https://vn2000.vn/api/locationinfo?lat=${lat}&lng=${lng}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const sau = result.data.diachinh_sausapnhap?.properties;
+                    const truoc = result.data.diachinh_truocsapnhap?.properties;
+                    
+                    let html = '<h4 style="color: #1d1d1f; margin-bottom: 12px; font-weight: 600; font-size: 15px;">Sau sáp nhập</h4>';
+                    if (sau) {
+                        html += `
+                            <div class="result-item"><span class="result-label">Xã/Phường:</span><span class="result-value">${sau.loai} ${sau.ten_xa}</span></div>
+                            <div class="result-item"><span class="result-label">Huyện/Quận:</span><span class="result-value">${sau.ten_huyen || 'N/A'}</span></div>
+                            <div class="result-item"><span class="result-label">Tỉnh/TP:</span><span class="result-value">${sau.ten_tinh}</span></div>
+                            <div class="result-item"><span class="result-label">Diện tích:</span><span class="result-value">${sau.dtich_km2} km²</span></div>
+                            <div class="result-item"><span class="result-label">Dân số:</span><span class="result-value">${sau.dan_so?.toLocaleString()} người</span></div>
+                        `;
+                    }
+                    
+                    if (truoc) {
+                        html += '<h4 style="color: #1d1d1f; margin: 24px 0 12px; font-weight: 600; font-size: 15px;">Trước sáp nhập</h4>';
+                        html += `
+                            <div class="result-item"><span class="result-label">Xã/Phường:</span><span class="result-value">${truoc.loai} ${truoc.ten_xa}</span></div>
+                            <div class="result-item"><span class="result-label">Huyện/Quận:</span><span class="result-value">${truoc.ten_huyen}</span></div>
+                            <div class="result-item"><span class="result-label">Tỉnh/TP:</span><span class="result-value">${truoc.ten_tinh}</span></div>
+                        `;
+                    }
+                    
+                    showResult(0, 'Thông tin địa chính', html);
+                } else {
+                    showError(0, result.message || 'Không thể lấy thông tin');
+                }
+            } catch (error) {
+                showError(0, 'Lỗi kết nối API: ' + error.message);
+            }
+        }
+
+        async function wgs84ToVn2000(event) {
+            event.preventDefault();
+            updateMeridian('wgs');
+            const lat = document.getElementById('wgs_lat').value;
+            const lng = document.getElementById('wgs_lng').value;
+            const zone = document.getElementById('wgs_zone').value;
+            const meridian = document.getElementById('wgs_meridian').value;
+            
+            showLoading(1);
+            
+            try {
+                const response = await fetch(`https://vn2000.vn/api/wgs84tovn2000?lat=${lat}&lng=${lng}&zone_width=${zone}&central_meridian=${meridian}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const provinceSelect = document.getElementById('wgs_province');
+                    const provinceName = provinceSelect && provinceSelect.selectedIndex > 0 
+                        ? provinceSelect.options[provinceSelect.selectedIndex].text 
+                        : 'Chưa chọn';
+                    const html = `
+                        <div class="result-item"><span class="result-label">Tọa độ X:</span><span class="result-value">${result.data.x} m</span></div>
+                        <div class="result-item"><span class="result-label">Tọa độ Y:</span><span class="result-value">${result.data.y} m</span></div>
+                        <div class="result-item"><span class="result-label">Múi chiếu:</span><span class="result-value">${zone}°</span></div>
+                        <div class="result-item"><span class="result-label">Tỉnh/Thành phố:</span><span class="result-value">${provinceName}</span></div>
+                        <div class="result-item"><span class="result-label">Kinh tuyến trục:</span><span class="result-value">${meridian}°</span></div>
+                    `;
+                    showResult(1, 'Kết quả chuyển đổi WGS84 → VN2000', html);
+                } else {
+                    showError(1, result.message || 'Không thể chuyển đổi');
+                }
+            } catch (error) {
+                showError(1, 'Lỗi kết nối API: ' + error.message);
+            }
+        }
+
+        async function vn2000ToWgs84(event) {
+            event.preventDefault();
+            updateMeridian('vn');
+            const x = document.getElementById('vn_x').value;
+            const y = document.getElementById('vn_y').value;
+            const zone = document.getElementById('vn_zone').value;
+            const meridian = document.getElementById('vn_meridian').value;
+            
+            showLoading(2);
+            
+            try {
+                const response = await fetch(`https://vn2000.vn/api/vn2000towgs84?x=${x}&y=${y}&zone_width=${zone}&central_meridian=${meridian}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const provinceSelect = document.getElementById('vn_province');
+                    const provinceName = provinceSelect && provinceSelect.selectedIndex > 0 
+                        ? provinceSelect.options[provinceSelect.selectedIndex].text 
+                        : 'Chưa chọn';
+                    const html = `
+                        <div class="result-item"><span class="result-label">Vĩ độ (Latitude):</span><span class="result-value">${result.data.lat}°</span></div>
+                        <div class="result-item"><span class="result-label">Kinh độ (Longitude):</span><span class="result-value">${result.data.lng}°</span></div>
+                        <div class="result-item"><span class="result-label">Múi chiếu:</span><span class="result-value">${zone}°</span></div>
+                        <div class="result-item"><span class="result-label">Tỉnh/Thành phố:</span><span class="result-value">${provinceName}</span></div>
+                        <div class="result-item"><span class="result-label">Kinh tuyến trục:</span><span class="result-value">${meridian}°</span></div>
+                    `;
+                    showResult(2, 'Kết quả chuyển đổi VN2000 → WGS84', html);
+                } else {
+                    showError(2, result.message || 'Không thể chuyển đổi');
+                }
+            } catch (error) {
+                showError(2, 'Lỗi kết nối API: ' + error.message);
+            }
+        }
+
+        async function getElevation(event) {
+            event.preventDefault();
+            const lat = document.getElementById('elev_lat').value;
+            const lng = document.getElementById('elev_lng').value;
+            
+            showLoading(3);
+            
+            try {
+                const response = await fetch(`https://vn2000.vn/api/elevation?lat=${lat}&lng=${lng}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const html = `
+                        <div class="result-item"><span class="result-label">Vĩ độ:</span><span class="result-value">${result.data.lat}°</span></div>
+                        <div class="result-item"><span class="result-label">Kinh độ:</span><span class="result-value">${result.data.lng}°</span></div>
+                        <div class="result-item"><span class="result-label">Độ cao:</span><span class="result-value">${result.data.elevation} ${result.data.unit}</span></div>
+                    `;
+                    showResult(3, 'Thông tin độ cao', html);
+                } else {
+                    showError(3, result.message || 'Không thể lấy thông tin độ cao');
+                }
+            } catch (error) {
+                showError(3, 'Lỗi kết nối API: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
