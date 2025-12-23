@@ -101,19 +101,24 @@ function setupLocateButton(map) {
 
 // ====== HIỂN THỊ GEOJSON LÊN BẢN ĐỒ ======
 function addGeojsonToMap(map, data) {
+  const isDhlvb = data && data.name === 'DHLVB';
   const layer = L.geoJSON(data, {
     style: function(feature) {
       const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
       // Sử dụng màu từ GeoJSON nếu có, nếu không thì dùng màu mặc định
       const featureStyle = feature.properties.style || {};
       return {
-        color: featureStyle.color || '#3388ff',
-        weight: featureStyle.weight || 2,
-        fillColor: randomColor,
+        color: isDhlvb ? '#ff0000' : (featureStyle.color || '#3388ff'),
+        weight: isDhlvb ? 4 : (featureStyle.weight || 2),
+        fillColor: isDhlvb ? '#ff0000' : randomColor,
         fillOpacity: featureStyle.opacity || currentOverlayOpacity
       };
     },
     onEachFeature: function (feature, layer) {
+      const featureStyle = feature.properties.style || {};
+      const baseColor = isDhlvb ? '#ff0000' : (featureStyle.color || '#3388ff');
+      const baseWeight = isDhlvb ? 4 : (featureStyle.weight || 2);
+      const dhlvbPopup = '<div class="popup-info"><div class="popup-title">Dự án</div><div><strong>Đường hành lang ven biển</strong></div></div>';
       // Tooltip tên xã/phường
       if (feature.properties && feature.properties.ten) {
         layer.bindTooltip(feature.properties.ten, {direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip'});
@@ -121,24 +126,26 @@ function addGeojsonToMap(map, data) {
       // Popup chi tiết khi click
       layer.on('click', function() {
         layer.setStyle({color: '#2ecc40', weight: 3});
-        layer.bindPopup(createPopupContent(feature.properties)).openPopup();
+        if (isDhlvb) {
+          layer.bindPopup(dhlvbPopup).openPopup();
+        } else {
+          layer.bindPopup(createPopupContent(feature.properties)).openPopup();
+        }
       });
       // Reset style khi popup đóng
       layer.on('popupclose', function() {
-        const featureStyle = feature.properties.style || {};
         layer.setStyle({
-          color: featureStyle.color || '#3388ff', 
-          weight: featureStyle.weight || 2
+          color: baseColor, 
+          weight: baseWeight
         });
       });
       layer.on('mouseover', function() {
         layer.setStyle({fillOpacity: 0.5, color: '#ff7800'});
       });
       layer.on('mouseout', function() {
-        const featureStyle = feature.properties.style || {};
         layer.setStyle({
           fillOpacity: currentOverlayOpacity, 
-          color: featureStyle.color || '#3388ff'
+          color: baseColor
         });
       });
     }

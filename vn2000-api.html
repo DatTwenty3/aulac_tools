@@ -11,13 +11,38 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #1976d2;
+            --primary-dark: #1565c0;
+            --secondary: #ff9800;
+            --secondary-dark: #e68900;
+            --success: #4caf50;
+            --error: #f44336;
+            --bg: #f5f7fa;
+            --surface: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #6e6e73;
+            --border: rgba(0, 0, 0, 0.1);
+            --shadow: rgba(25, 118, 210, 0.08);
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1a1a;
+            --surface: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: #e3f2fd;
+            background: var(--bg);
             min-height: 100vh;
             padding: 20px;
             position: relative;
             overflow-x: hidden;
+            transition: background 0.3s ease;
         }
 
         body::before {
@@ -27,8 +52,8 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at 20% 50%, rgba(25, 118, 210, 0.05) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(255, 152, 0, 0.05) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 50%, rgba(25, 118, 210, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 152, 0, 0.08) 0%, transparent 50%);
             animation: float 20s ease-in-out infinite;
             pointer-events: none;
             z-index: 0;
@@ -42,25 +67,55 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--surface);
             backdrop-filter: blur(20px) saturate(180%);
             -webkit-backdrop-filter: blur(20px) saturate(180%);
             border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 20px 40px rgba(25, 118, 210, 0.08);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px var(--shadow);
             overflow: hidden;
             position: relative;
             z-index: 1;
+            transition: all 0.3s ease;
         }
 
         .header {
             background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            color: #1d1d1f;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
             padding: 40px 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: scale(1.05);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--text-primary);
         }
 
         .header h1 {
@@ -68,17 +123,17 @@
             font-weight: 600;
             margin-bottom: 8px;
             letter-spacing: -0.5px;
-            background: linear-gradient(90deg, #1976d2, #ff9800);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
         .header p {
-            opacity: 0.6;
+            opacity: 0.7;
             font-size: 15px;
             font-weight: 400;
-            color: #6e6e73;
+            color: var(--text-secondary);
         }
 
         .tabs {
@@ -86,8 +141,13 @@
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--border);
             overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .tab {
@@ -99,20 +159,24 @@
             background: transparent;
             font-size: 14px;
             font-weight: 500;
-            color: #6e6e73;
+            color: var(--text-secondary);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
             min-width: 150px;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .tab:hover {
-            color: #1d1d1f;
+            color: var(--text-primary);
             background: rgba(0, 0, 0, 0.02);
         }
 
         .tab.active {
-            color: #1d1d1f;
+            color: var(--text-primary);
             font-weight: 600;
         }
 
@@ -123,7 +187,13 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, #1976d2, #ff9800);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .tab-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
         }
 
         .content {
@@ -147,41 +217,87 @@
 
         .form-group {
             margin-bottom: 24px;
+            position: relative;
         }
 
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: #1d1d1f;
+            color: var(--text-primary);
             font-size: 13px;
             letter-spacing: -0.1px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .quick-action {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            opacity: 0.6;
+        }
+
+        .input-wrapper .quick-action:hover {
+            opacity: 1;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .input-wrapper .quick-action svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--text-secondary);
         }
 
         input, select {
             width: 100%;
             padding: 14px 16px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border);
             border-radius: 12px;
             font-size: 15px;
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            color: #1d1d1f;
+            color: var(--text-primary);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
         }
 
+        [data-theme="dark"] input,
+        [data-theme="dark"] select {
+            background: rgba(45, 45, 45, 0.8);
+        }
+
         input:focus, select:focus {
             outline: none;
-            border-color: #1976d2;
+            border-color: var(--primary);
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.1);
         }
 
         input::placeholder {
-            color: #86868b;
+            color: var(--text-secondary);
             opacity: 0.6;
+        }
+
+        input:invalid:not(:placeholder-shown) {
+            border-color: var(--error);
+        }
+
+        input:valid:not(:placeholder-shown) {
+            border-color: var(--success);
         }
 
         .input-row {
@@ -191,7 +307,7 @@
         }
 
         button {
-            background: linear-gradient(90deg, #ff9800 60%, #e69500 100%);
+            background: linear-gradient(90deg, var(--secondary) 60%, var(--secondary-dark) 100%);
             color: white;
             border: none;
             padding: 16px 32px;
@@ -203,13 +319,17 @@
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             letter-spacing: -0.1px;
             margin-top: 8px;
-            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.08);
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         button:hover {
-            background: linear-gradient(90deg, #1976d2 60%, #ff9800 100%);
+            background: linear-gradient(90deg, var(--primary) 60%, var(--secondary) 100%);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
         }
 
         button:active {
@@ -223,6 +343,20 @@
             transform: none;
         }
 
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            box-shadow: none;
+            margin-top: 0;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
         .result {
             margin-top: 32px;
             padding: 24px;
@@ -230,15 +364,47 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-radius: 16px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .result h3 {
-            color: #1d1d1f;
-            margin-bottom: 20px;
+            color: var(--text-primary);
+            margin: 0;
             font-size: 18px;
             font-weight: 600;
             letter-spacing: -0.2px;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .result-actions button {
+            width: auto;
+            padding: 8px 12px;
+            margin: 0;
+            font-size: 13px;
+            border-radius: 8px;
         }
 
         .result-item {
@@ -249,19 +415,31 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .result-item:hover {
+            background: rgba(255, 255, 255, 0.7);
+            transform: translateX(4px);
+        }
+
+        .result-item.copyable {
+            position: relative;
         }
 
         .result-label {
             font-weight: 500;
-            color: #6e6e73;
+            color: var(--text-secondary);
             font-size: 14px;
         }
 
         .result-value {
-            color: #1d1d1f;
+            color: var(--text-primary);
             font-weight: 600;
             font-size: 15px;
+            font-family: 'Courier New', monospace;
         }
 
         .error {
@@ -270,18 +448,23 @@
         }
 
         .error h3 {
-            color: #d70015;
+            color: var(--error);
+        }
+
+        .success {
+            background: rgba(245, 255, 245, 0.8);
+            border-color: rgba(76, 175, 80, 0.2);
         }
 
         .loading {
             text-align: center;
             padding: 40px 20px;
-            color: #6e6e73;
+            color: var(--text-secondary);
         }
 
         .spinner {
             border: 2.5px solid rgba(25, 118, 210, 0.1);
-            border-top: 2.5px solid #1976d2;
+            border-top: 2.5px solid var(--primary);
             border-radius: 50%;
             width: 32px;
             height: 32px;
@@ -301,14 +484,90 @@
             padding: 18px 20px;
             border-radius: 12px;
             margin-bottom: 28px;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .info-box-icon {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
         .info-box p {
-            color: #6e6e73;
+            color: var(--text-secondary);
             font-size: 14px;
             line-height: 1.6;
             margin: 0;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--surface);
+            color: var(--text-primary);
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: toastSlideIn 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .history-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .history-item {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history-item:hover {
+            background: rgba(255, 255, 255, 0.5);
         }
 
         @media (max-width: 768px) {
@@ -341,33 +600,70 @@
                 padding: 16px 12px;
                 min-width: 120px;
             }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+            }
+
+            .toast {
+                left: 20px;
+                right: 20px;
+                min-width: auto;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Chuyển đổi chế độ sáng/tối">
+                <svg viewBox="0 0 24 24" id="theme-icon">
+                    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.59 1.59a.75.75 0 001.06 1.06l1.59-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 00-1.061 1.06l1.59 1.59z"/>
+                </svg>
+            </button>
             <h1>VN2000 - Công cụ Tọa độ & Địa chính</h1>
             <p>Công cụ chuyển đổi tọa độ và tra cứu thông tin địa chính Việt Nam</p>
         </div>
 
         <div class="tabs">
-            <button class="tab active" onclick="switchTab(0)">Thông tin địa chính</button>
-            <button class="tab" onclick="switchTab(1)">WGS84 → VN2000</button>
-            <button class="tab" onclick="switchTab(2)">VN2000 → WGS84</button>
-            <button class="tab" onclick="switchTab(3)">Độ cao</button>
+            <button class="tab active" onclick="switchTab(0)">
+                <svg class="tab-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                Thông tin địa chính
+            </button>
+            <button class="tab" onclick="switchTab(1)">
+                <svg class="tab-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                WGS84 → VN2000
+            </button>
+            <button class="tab" onclick="switchTab(2)">
+                <svg class="tab-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                VN2000 → WGS84
+            </button>
+            <button class="tab" onclick="switchTab(3)">
+                <svg class="tab-icon" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/><path d="M5 2h14v20H5z"/></svg>
+                Độ cao
+            </button>
         </div>
 
         <div class="content">
             <!-- Tab 1: Location Info -->
             <div class="tab-content active" id="tab-0">
                 <div class="info-box">
+                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                     <p>Tra cứu thông tin địa chính (xã, huyện, tỉnh) theo tọa độ WGS84. Bao gồm thông tin sau sáp nhập và trước sáp nhập.</p>
                 </div>
                 <form onsubmit="getLocationInfo(event)">
                     <div class="form-group">
                         <label>Hoặc nhập tọa độ (lat, lng)</label>
-                        <input type="text" id="loc_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('loc', this.value, true)" onpaste="setTimeout(() => parseCoordinates('loc', this.value), 10)">
+                        <div class="input-wrapper">
+                            <input type="text" id="loc_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('loc', this.value, true)" onpaste="setTimeout(() => parseCoordinates('loc', this.value), 10)">
+                            <button type="button" class="quick-action" onclick="getCurrentLocation('loc')" title="Lấy vị trí hiện tại">
+                                <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="input-row">
                         <div class="form-group">
@@ -379,7 +675,10 @@
                             <input type="number" id="loc_lng" step="any" placeholder="VD: 107.904724" required>
                         </div>
                     </div>
-                    <button type="submit">Tra cứu thông tin</button>
+                    <button type="submit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                        Tra cứu thông tin
+                    </button>
                 </form>
                 <div id="result-0"></div>
             </div>
@@ -387,12 +686,18 @@
             <!-- Tab 2: WGS84 to VN2000 -->
             <div class="tab-content" id="tab-1">
                 <div class="info-box">
+                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                     <p>Chuyển đổi tọa độ từ hệ WGS84 (GPS) sang hệ tọa độ quốc gia VN2000.</p>
                 </div>
                 <form onsubmit="wgs84ToVn2000(event)">
                     <div class="form-group">
                         <label>Hoặc nhập tọa độ (lat, lng)</label>
-                        <input type="text" id="wgs_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('wgs', this.value, true)" onpaste="setTimeout(() => parseCoordinates('wgs', this.value), 10)">
+                        <div class="input-wrapper">
+                            <input type="text" id="wgs_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('wgs', this.value, true)" onpaste="setTimeout(() => parseCoordinates('wgs', this.value), 10)">
+                            <button type="button" class="quick-action" onclick="getCurrentLocation('wgs')" title="Lấy vị trí hiện tại">
+                                <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="input-row">
                         <div class="form-group">
@@ -483,7 +788,10 @@
                             <input type="hidden" id="wgs_meridian" value="">
                         </div>
                     </div>
-                    <button type="submit">Chuyển đổi</button>
+                    <button type="submit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                        Chuyển đổi
+                    </button>
                 </form>
                 <div id="result-1"></div>
             </div>
@@ -491,6 +799,7 @@
             <!-- Tab 3: VN2000 to WGS84 -->
             <div class="tab-content" id="tab-2">
                 <div class="info-box">
+                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                     <p>Chuyển đổi tọa độ từ hệ VN2000 về hệ WGS84 (GPS).</p>
                 </div>
                 <form onsubmit="vn2000ToWgs84(event)">
@@ -583,7 +892,10 @@
                             <input type="hidden" id="vn_meridian" value="">
                         </div>
                     </div>
-                    <button type="submit">Chuyển đổi</button>
+                    <button type="submit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                        Chuyển đổi
+                    </button>
                 </form>
                 <div id="result-2"></div>
             </div>
@@ -591,12 +903,18 @@
             <!-- Tab 4: Elevation -->
             <div class="tab-content" id="tab-3">
                 <div class="info-box">
+                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                     <p>Tra cứu độ cao (cao độ) theo tọa độ WGS84 tại Việt Nam.</p>
                 </div>
                 <form onsubmit="getElevation(event)">
                     <div class="form-group">
                         <label>Hoặc nhập tọa độ (lat, lng)</label>
-                        <input type="text" id="elev_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('elev', this.value, true)" onpaste="setTimeout(() => parseCoordinates('elev', this.value), 10)">
+                        <div class="input-wrapper">
+                            <input type="text" id="elev_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('elev', this.value, true)" onpaste="setTimeout(() => parseCoordinates('elev', this.value), 10)">
+                            <button type="button" class="quick-action" onclick="getCurrentLocation('elev')" title="Lấy vị trí hiện tại">
+                                <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                            </button>
+                        </div>
                     </div>
                     <div class="input-row">
                         <div class="form-group">
@@ -608,7 +926,10 @@
                             <input type="number" id="elev_lng" step="any" placeholder="VD: 107.904724" required>
                         </div>
                     </div>
-                    <button type="submit">Tra cứu độ cao</button>
+                    <button type="submit">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        Tra cứu độ cao
+                    </button>
                 </form>
                 <div id="result-3"></div>
             </div>
@@ -616,6 +937,80 @@
     </div>
 
     <script>
+        // Theme management
+        function initTheme() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            if (theme === 'dark') {
+                icon.innerHTML = '<path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>';
+            } else {
+                icon.innerHTML = '<path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.59 1.59a.75.75 0 001.06 1.06l1.59-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 00-1.061 1.06l1.59 1.59z"/>';
+            }
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <svg class="toast-icon" viewBox="0 0 24 24">
+                    ${type === 'success' 
+                        ? '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>'
+                        : '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>'}
+                </svg>
+                <span>${message}</span>
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toastSlideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Đã sao chép vào clipboard', 'success');
+            }).catch(() => {
+                showToast('Không thể sao chép', 'error');
+            });
+        }
+
+        // Get current location
+        function getCurrentLocation(type) {
+            if (!navigator.geolocation) {
+                showToast('Trình duyệt không hỗ trợ định vị', 'error');
+                return;
+            }
+
+            showToast('Đang lấy vị trí...', 'success');
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    document.getElementById(`${type}_lat`).value = lat;
+                    document.getElementById(`${type}_lng`).value = lng;
+                    showToast('Đã lấy vị trí thành công', 'success');
+                },
+                (error) => {
+                    showToast('Không thể lấy vị trí: ' + error.message, 'error');
+                }
+            );
+        }
+
         function switchTab(index) {
             const tabs = document.querySelectorAll('.tab');
             const contents = document.querySelectorAll('.tab-content');
@@ -641,28 +1036,43 @@
             resultDiv.innerHTML = `<div class="result error"><h3>Lỗi</h3><p>${message}</p></div>`;
         }
 
-        function showResult(resultId, title, data) {
+        function showResult(resultId, title, data, copyableData = null) {
             const resultDiv = document.getElementById(`result-${resultId}`);
-            resultDiv.innerHTML = `<div class="result"><h3>${title}</h3>${data}</div>`;
+            const copyButton = copyableData ? `
+                <div class="result-actions">
+                    <button class="btn-secondary" onclick="copyToClipboard('${copyableData.replace(/'/g, "\\'")}')" title="Sao chép">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                        Sao chép
+                    </button>
+                </div>
+            ` : '';
+            resultDiv.innerHTML = `
+                <div class="result success">
+                    <div class="result-header">
+                        <h3>${title}</h3>
+                        ${copyButton}
+                    </div>
+                    ${data}
+                </div>
+            `;
+            
+            // Make result items copyable
+            resultDiv.querySelectorAll('.result-item').forEach(item => {
+                item.classList.add('copyable');
+                item.addEventListener('click', () => {
+                    const value = item.querySelector('.result-value')?.textContent;
+                    if (value) copyToClipboard(value.trim());
+                });
+            });
         }
 
         function getZoneWidth(meridian) {
-            // Quy tắc chọn múi chiếu dựa trên kinh độ gốc
-            // Múi 3 độ: thường dùng cho các tỉnh có kinh độ gốc từ 102-109 (phổ biến ở Việt Nam)
-            // Múi 6 độ: thường dùng cho các khu vực rộng lớn hoặc ngoài phạm vi trên
             const meridianValue = parseFloat(meridian);
-            if (isNaN(meridianValue)) return 3; // Mặc định múi 3 độ
-            
-            // Mapping cụ thể cho các tỉnh đặc biệt (nếu có)
-            // Có thể thêm danh sách các tỉnh cần múi 6 độ ở đây nếu cần
-            
-            // Hầu hết các tỉnh ở Việt Nam dùng múi 3 độ
-            // Múi 6 độ thường dùng cho các tỉnh ở biên giới hoặc khu vực rộng lớn
-            // Theo quy định VN2000, hầu hết các tỉnh ở Việt Nam dùng múi 3 độ
+            if (isNaN(meridianValue)) return 3;
             if (meridianValue >= 102 && meridianValue <= 109) {
-                return 3; // Múi 3 độ cho hầu hết các tỉnh
+                return 3;
             } else {
-                return 6; // Múi 6 độ cho các khu vực đặc biệt (hiếm khi dùng ở Việt Nam)
+                return 6;
             }
         }
 
@@ -675,14 +1085,11 @@
                 const meridian = provinceSelect.value;
                 meridianInput.value = meridian;
                 
-                // Tự động chọn múi chiếu dựa trên kinh độ gốc và cập nhật dropdown
                 if (zoneSelect) {
                     if (meridian) {
                         const zoneWidth = getZoneWidth(meridian);
-                        // Cập nhật giá trị dropdown - điều này sẽ tự động cập nhật hiển thị
                         zoneSelect.value = zoneWidth.toString();
                     } else {
-                        // Nếu không chọn tỉnh, reset về mặc định
                         zoneSelect.value = '3';
                     }
                 }
@@ -692,13 +1099,9 @@
         function parseCoordinates(type, value, clearInput = false) {
             if (!value || value.trim() === '') return;
             
-            // Loại bỏ khoảng trắng thừa và tách bằng dấu phẩy hoặc khoảng trắng
             const cleaned = value.trim().replace(/\s+/g, ' ');
-            
-            // Thử tách bằng dấu phẩy trước
             let parts = cleaned.split(',').map(p => p.trim()).filter(p => p);
             
-            // Nếu không có dấu phẩy, thử tách bằng khoảng trắng
             if (parts.length < 2) {
                 parts = cleaned.split(/\s+/).filter(p => p);
             }
@@ -714,7 +1117,6 @@
                     if (latInput) latInput.value = lat;
                     if (lngInput) lngInput.value = lng;
                     
-                    // Xóa giá trị trong input tọa độ nếu clearInput = true (khi blur)
                     if (clearInput) {
                         const coordsInput = document.getElementById(`${type}_coords`);
                         if (coordsInput) coordsInput.value = '';
@@ -738,7 +1140,7 @@
                     const sau = result.data.diachinh_sausapnhap?.properties;
                     const truoc = result.data.diachinh_truocsapnhap?.properties;
                     
-                    let html = '<h4 style="color: #1d1d1f; margin-bottom: 12px; font-weight: 600; font-size: 15px;">Sau sáp nhập</h4>';
+                    let html = '<h4 style="color: var(--text-primary); margin-bottom: 12px; font-weight: 600; font-size: 15px;">Sau sáp nhập</h4>';
                     if (sau) {
                         html += `
                             <div class="result-item"><span class="result-label">Xã/Phường:</span><span class="result-value">${sau.loai} ${sau.ten_xa}</span></div>
@@ -750,7 +1152,7 @@
                     }
                     
                     if (truoc) {
-                        html += '<h4 style="color: #1d1d1f; margin: 24px 0 12px; font-weight: 600; font-size: 15px;">Trước sáp nhập</h4>';
+                        html += '<h4 style="color: var(--text-primary); margin: 24px 0 12px; font-weight: 600; font-size: 15px;">Trước sáp nhập</h4>';
                         html += `
                             <div class="result-item"><span class="result-label">Xã/Phường:</span><span class="result-value">${truoc.loai} ${truoc.ten_xa}</span></div>
                             <div class="result-item"><span class="result-label">Huyện/Quận:</span><span class="result-value">${truoc.ten_huyen}</span></div>
@@ -758,12 +1160,16 @@
                         `;
                     }
                     
-                    showResult(0, 'Thông tin địa chính', html);
+                    const copyData = `${lat}, ${lng}`;
+                    showResult(0, 'Thông tin địa chính', html, copyData);
+                    showToast('Tra cứu thành công', 'success');
                 } else {
                     showError(0, result.message || 'Không thể lấy thông tin');
+                    showToast('Tra cứu thất bại', 'error');
                 }
             } catch (error) {
                 showError(0, 'Lỗi kết nối API: ' + error.message);
+                showToast('Lỗi kết nối', 'error');
             }
         }
 
@@ -793,12 +1199,16 @@
                         <div class="result-item"><span class="result-label">Tỉnh/Thành phố:</span><span class="result-value">${provinceName}</span></div>
                         <div class="result-item"><span class="result-label">Kinh tuyến trục:</span><span class="result-value">${meridian}°</span></div>
                     `;
-                    showResult(1, 'Kết quả chuyển đổi WGS84 → VN2000', html);
+                    const copyData = `X: ${result.data.x} m, Y: ${result.data.y} m`;
+                    showResult(1, 'Kết quả chuyển đổi WGS84 → VN2000', html, copyData);
+                    showToast('Chuyển đổi thành công', 'success');
                 } else {
                     showError(1, result.message || 'Không thể chuyển đổi');
+                    showToast('Chuyển đổi thất bại', 'error');
                 }
             } catch (error) {
                 showError(1, 'Lỗi kết nối API: ' + error.message);
+                showToast('Lỗi kết nối', 'error');
             }
         }
 
@@ -828,12 +1238,16 @@
                         <div class="result-item"><span class="result-label">Tỉnh/Thành phố:</span><span class="result-value">${provinceName}</span></div>
                         <div class="result-item"><span class="result-label">Kinh tuyến trục:</span><span class="result-value">${meridian}°</span></div>
                     `;
-                    showResult(2, 'Kết quả chuyển đổi VN2000 → WGS84', html);
+                    const copyData = `${result.data.lat}, ${result.data.lng}`;
+                    showResult(2, 'Kết quả chuyển đổi VN2000 → WGS84', html, copyData);
+                    showToast('Chuyển đổi thành công', 'success');
                 } else {
                     showError(2, result.message || 'Không thể chuyển đổi');
+                    showToast('Chuyển đổi thất bại', 'error');
                 }
             } catch (error) {
                 showError(2, 'Lỗi kết nối API: ' + error.message);
+                showToast('Lỗi kết nối', 'error');
             }
         }
 
@@ -854,14 +1268,35 @@
                         <div class="result-item"><span class="result-label">Kinh độ:</span><span class="result-value">${result.data.lng}°</span></div>
                         <div class="result-item"><span class="result-label">Độ cao:</span><span class="result-value">${result.data.elevation} ${result.data.unit}</span></div>
                     `;
-                    showResult(3, 'Thông tin độ cao', html);
+                    const copyData = `Độ cao: ${result.data.elevation} ${result.data.unit}`;
+                    showResult(3, 'Thông tin độ cao', html, copyData);
+                    showToast('Tra cứu thành công', 'success');
                 } else {
                     showError(3, result.message || 'Không thể lấy thông tin độ cao');
+                    showToast('Tra cứu thất bại', 'error');
                 }
             } catch (error) {
                 showError(3, 'Lỗi kết nối API: ' + error.message);
+                showToast('Lỗi kết nối', 'error');
             }
         }
+
+        // Initialize theme on load
+        initTheme();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'k') {
+                    e.preventDefault();
+                    const activeTab = document.querySelector('.tab.active');
+                    const tabs = Array.from(document.querySelectorAll('.tab'));
+                    const currentIndex = tabs.indexOf(activeTab);
+                    const nextIndex = (currentIndex + 1) % tabs.length;
+                    switchTab(nextIndex);
+                }
+            }
+        });
     </script>
 </body>
 </html>
