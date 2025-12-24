@@ -387,6 +387,10 @@ function updateMeasureDisplay() {
   
   if (measurePoints.length === 0) {
     if (measureInfo) measureInfo.style.display = 'none';
+    // Ẩn thông tin trong fullscreen panel
+    if (window._fullscreenMeasureInfo) {
+      window._fullscreenMeasureInfo.style.display = 'none';
+    }
     return;
   }
   
@@ -397,9 +401,24 @@ function updateMeasureDisplay() {
     totalDistance += calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
   }
   
+  const distanceText = 'Tổng khoảng cách: ' + formatDistance(totalDistance);
+  const pointsText = 'Số điểm: ' + measurePoints.length;
+  
+  // Cập nhật thông tin ở phần chính
   if (measureInfo) measureInfo.style.display = 'block';
-  if (measureDistance) measureDistance.textContent = 'Tổng khoảng cách: ' + formatDistance(totalDistance);
-  if (measurePointsEl) measurePointsEl.textContent = 'Số điểm: ' + measurePoints.length;
+  if (measureDistance) measureDistance.textContent = distanceText;
+  if (measurePointsEl) measurePointsEl.textContent = pointsText;
+  
+  // Cập nhật thông tin trong fullscreen panel
+  if (window._fullscreenMeasureInfo) {
+    window._fullscreenMeasureInfo.style.display = 'block';
+  }
+  if (window._fullscreenMeasureDistance) {
+    window._fullscreenMeasureDistance.textContent = distanceText;
+  }
+  if (window._fullscreenMeasurePoints) {
+    window._fullscreenMeasurePoints.textContent = pointsText;
+  }
 }
 
 function clearMeasure(map) {
@@ -426,10 +445,20 @@ function clearMeasure(map) {
     measureInfo.style.display = 'none';
   }
   
+  // Ẩn thông tin trong fullscreen panel
+  if (window._fullscreenMeasureInfo) {
+    window._fullscreenMeasureInfo.style.display = 'none';
+  }
+  
   // Ẩn nút xóa
   const clearBtn = document.getElementById('clear-measure-btn');
   if (clearBtn) {
     clearBtn.style.display = 'none';
+  }
+  
+  // Ẩn nút xóa trong fullscreen panel
+  if (window._fullscreenClearBtn) {
+    window._fullscreenClearBtn.style.display = 'none';
   }
 }
 
@@ -595,6 +624,62 @@ function setupFullscreenButton(map) {
     toolsPanel: null
   };
   
+  // Lưu reference đến các phần tử cần ẩn/hiện
+  let fullscreenElements = {
+    header: null,
+    searchBar: null,
+    buttonsDiv: null,
+    measureInfo: null,
+    footer: null
+  };
+  
+  // Khởi tạo các reference một lần
+  function initFullscreenElements() {
+    if (!fullscreenElements.header) {
+      fullscreenElements.header = container.querySelector('header');
+      fullscreenElements.searchBar = container.querySelector('.search-bar-modern');
+      
+      // Tìm div chứa các nút bằng cách tìm parent của locate-btn
+      const locateBtn = document.getElementById('locate-btn');
+      if (locateBtn && locateBtn.parentElement) {
+        fullscreenElements.buttonsDiv = locateBtn.parentElement;
+      } else {
+        // Fallback: tìm div có chứa các nút
+        fullscreenElements.buttonsDiv = Array.from(container.querySelectorAll('div')).find(div => 
+          div.contains(locateBtn) || 
+          (div.querySelector('#locate-btn') && div.querySelector('#measure-btn'))
+        );
+      }
+      
+      fullscreenElements.measureInfo = document.getElementById('measure-info');
+      
+      // Tìm footer bằng cách tìm div chứa link Facebook
+      const allDivs = container.querySelectorAll('div[style*="display: flex"]');
+      fullscreenElements.footer = Array.from(allDivs).find(div => 
+        div.querySelector('a[href*="facebook.com"]')
+      );
+    }
+  }
+  
+  // Hàm cập nhật thông tin đo khoảng cách trong panel fullscreen
+  function updateFullscreenMeasureInfo() {
+    if (window._fullscreenMeasureInfo && window._fullscreenMeasureDistance && window._fullscreenMeasurePoints) {
+      if (measurePoints.length > 0) {
+        let totalDistance = 0;
+        for (let i = 0; i < measurePoints.length - 1; i++) {
+          const p1 = measurePoints[i];
+          const p2 = measurePoints[i + 1];
+          totalDistance += calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+        }
+        window._fullscreenMeasureDistance.textContent = 'Tổng khoảng cách: ' + formatDistance(totalDistance);
+        window._fullscreenMeasurePoints.textContent = 'Số điểm: ' + measurePoints.length;
+        window._fullscreenMeasureInfo.style.display = 'block';
+      } else {
+        window._fullscreenMeasureInfo.style.display = 'none';
+      }
+    }
+  }
+  
   function createFullscreenControls() {
     // Tạo nút thoát fullscreen
     if (!fullscreenControls.exitBtn) {
@@ -653,6 +738,32 @@ function setupFullscreenButton(map) {
           if (clearBtnDom) clearBtnDom.click();
         });
         window._fullscreenClearBtn = clearBtn;
+        
+        // Thông tin đo khoảng cách
+        const measureInfoDiv = L.DomUtil.create('div', 'fullscreen-measure-info', div);
+        measureInfoDiv.style.cssText = 'display: none; background: rgba(76,175,80,0.1); border: 2px solid #4caf50; border-radius: 6px; padding: 8px; margin-top: 4px;';
+        const measureDistanceSpan = L.DomUtil.create('div', 'fullscreen-measure-distance', measureInfoDiv);
+        measureDistanceSpan.style.cssText = 'font-size: 13px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;';
+        measureDistanceSpan.textContent = 'Tổng khoảng cách: 0 m';
+        const measurePointsSpan = L.DomUtil.create('div', 'fullscreen-measure-points', measureInfoDiv);
+        measurePointsSpan.style.cssText = 'font-size: 12px; color: #2e7d32;';
+        measurePointsSpan.textContent = 'Số điểm: 0';
+        window._fullscreenMeasureInfo = measureInfoDiv;
+        window._fullscreenMeasureDistance = measureDistanceSpan;
+        window._fullscreenMeasurePoints = measurePointsSpan;
+        
+        // Nếu đã có điểm đo, cập nhật ngay
+        if (measurePoints.length > 0) {
+          let totalDistance = 0;
+          for (let i = 0; i < measurePoints.length - 1; i++) {
+            const p1 = measurePoints[i];
+            const p2 = measurePoints[i + 1];
+            totalDistance += calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+          }
+          measureDistanceSpan.textContent = 'Tổng khoảng cách: ' + formatDistance(totalDistance);
+          measurePointsSpan.textContent = 'Số điểm: ' + measurePoints.length;
+          measureInfoDiv.style.display = 'block';
+        }
         
         // Thanh tìm kiếm
         const searchDiv = L.DomUtil.create('div', 'fullscreen-search', div);
@@ -745,39 +856,42 @@ function setupFullscreenButton(map) {
   function updateFullscreenState() {
     const isFullscreen = isInFullscreen() || isFullscreenMode;
     
+    // Khởi tạo các reference
+    initFullscreenElements();
+    
+    const { header, searchBar, buttonsDiv, measureInfo, footer } = fullscreenElements;
+    
     if (isFullscreen) {
-      // Ẩn các phần khác nhưng giữ bản đồ
-      const header = container.querySelector('header');
-      const searchBar = container.querySelector('.search-bar-modern');
-      const buttonsDivs = container.querySelectorAll('div[style*="display: flex"]');
-      const measureInfo = document.getElementById('measure-info');
-      
       // Lưu trạng thái display ban đầu
       if (!window._originalDisplayStates) {
         window._originalDisplayStates = {};
       }
       
       if (header) {
-        window._originalDisplayStates.header = header.style.display || '';
+        // Lưu computed style thực tế
+        const computedStyle = window.getComputedStyle(header);
+        window._originalDisplayStates.header = computedStyle.display === 'none' ? '' : computedStyle.display;
         header.style.display = 'none';
       }
       if (searchBar) {
-        window._originalDisplayStates.searchBar = searchBar.style.display || '';
+        const computedStyle = window.getComputedStyle(searchBar);
+        window._originalDisplayStates.searchBar = computedStyle.display === 'none' ? '' : computedStyle.display;
         searchBar.style.display = 'none';
       }
-      
-      // Ẩn các div chứa buttons (trừ search bar)
-      buttonsDivs.forEach((div, index) => {
-        if (!div.classList.contains('search-bar-modern')) {
-          const key = 'buttonsDiv' + index;
-          window._originalDisplayStates[key] = div.style.display || '';
-          div.style.display = 'none';
-        }
-      });
-      
+      if (buttonsDiv) {
+        const computedStyle = window.getComputedStyle(buttonsDiv);
+        window._originalDisplayStates.buttonsDiv = computedStyle.display === 'none' ? '' : computedStyle.display;
+        buttonsDiv.style.display = 'none';
+      }
       if (measureInfo) {
-        window._originalDisplayStates.measureInfo = measureInfo.style.display || '';
+        const computedStyle = window.getComputedStyle(measureInfo);
+        window._originalDisplayStates.measureInfo = computedStyle.display === 'none' ? '' : computedStyle.display;
         measureInfo.style.display = 'none';
+      }
+      if (footer) {
+        const computedStyle = window.getComputedStyle(footer);
+        window._originalDisplayStates.footer = computedStyle.display === 'none' ? '' : computedStyle.display;
+        footer.style.display = 'none';
       }
       
       // Đặt style cho container và map
@@ -804,38 +918,55 @@ function setupFullscreenButton(map) {
       fullscreenBtn.textContent = '⛶ Thoát toàn màn hình';
       fullscreenBtn.classList.add('active');
       
-      // Cập nhật nút xóa đo
-      setTimeout(updateFullscreenClearBtn, 100);
+      // Cập nhật nút xóa đo và thông tin đo khoảng cách
+      setTimeout(() => {
+        updateFullscreenClearBtn();
+        // Cập nhật thông tin đo khoảng cách trong panel fullscreen
+        updateFullscreenMeasureInfo();
+        // Cũng cập nhật thông tin ở phần chính
+        updateMeasureDisplay();
+      }, 100);
     } else {
-      // Hiển thị lại các phần
-      const header = container.querySelector('header');
-      const searchBar = container.querySelector('.search-bar-modern');
-      const buttonsDivs = container.querySelectorAll('div[style*="display: flex"]');
-      const measureInfo = document.getElementById('measure-info');
-      
-      if (window._originalDisplayStates) {
-        if (header && window._originalDisplayStates.header !== undefined) {
-          header.style.display = window._originalDisplayStates.header;
+      // Khôi phục lại các phần tử - luôn hiển thị lại
+      if (header) {
+        if (window._originalDisplayStates && window._originalDisplayStates.header !== undefined) {
+          header.style.display = window._originalDisplayStates.header || 'block';
+        } else {
+          header.style.display = 'block';
         }
-        if (searchBar && window._originalDisplayStates.searchBar !== undefined) {
-          searchBar.style.display = window._originalDisplayStates.searchBar;
+      }
+      if (searchBar) {
+        if (window._originalDisplayStates && window._originalDisplayStates.searchBar !== undefined) {
+          searchBar.style.display = window._originalDisplayStates.searchBar || 'flex';
+        } else {
+          searchBar.style.display = 'flex';
         }
-        
-        buttonsDivs.forEach((div, index) => {
-          if (!div.classList.contains('search-bar-modern')) {
-            const key = 'buttonsDiv' + index;
-            if (window._originalDisplayStates[key] !== undefined) {
-              div.style.display = window._originalDisplayStates[key];
-            }
-          }
-        });
-        
-        if (measureInfo) {
-          if (window._originalDisplayStates.measureInfo !== undefined) {
-            measureInfo.style.display = window._originalDisplayStates.measureInfo;
-          } else if (measurePoints.length > 0) {
-            measureInfo.style.display = 'block';
-          }
+      }
+      if (buttonsDiv) {
+        // Luôn force hiển thị lại div chứa các nút
+        buttonsDiv.style.display = 'flex';
+        // Đảm bảo các nút bên trong cũng hiển thị
+        const locateBtn = document.getElementById('locate-btn');
+        const measureBtn = document.getElementById('measure-btn');
+        const fullscreenBtnEl = document.getElementById('fullscreen-btn');
+        if (locateBtn) locateBtn.style.display = '';
+        if (measureBtn) measureBtn.style.display = '';
+        if (fullscreenBtnEl) fullscreenBtnEl.style.display = '';
+        // clear-measure-btn có thể ẩn nếu không đang đo, đó là bình thường
+      }
+      if (measureInfo) {
+        if (window._originalDisplayStates && window._originalDisplayStates.measureInfo !== undefined) {
+          measureInfo.style.display = window._originalDisplayStates.measureInfo;
+        } else if (measurePoints.length > 0) {
+          measureInfo.style.display = 'block';
+        }
+        // Nếu không có điểm đo, giữ nguyên display: none từ HTML
+      }
+      if (footer) {
+        if (window._originalDisplayStates && window._originalDisplayStates.footer !== undefined) {
+          footer.style.display = window._originalDisplayStates.footer || 'flex';
+        } else {
+          footer.style.display = 'flex';
         }
       }
       
@@ -862,6 +993,29 @@ function setupFullscreenButton(map) {
       removeFullscreenControls();
       fullscreenBtn.textContent = '⛶ Toàn màn hình';
       fullscreenBtn.classList.remove('active');
+      
+      // Đảm bảo các nút luôn hiển thị - force hiển thị lại sau một chút
+      setTimeout(() => {
+        const locateBtn = document.getElementById('locate-btn');
+        const measureBtn = document.getElementById('measure-btn');
+        const fullscreenBtnEl = document.getElementById('fullscreen-btn');
+        const clearBtn = document.getElementById('clear-measure-btn');
+        
+        // Kiểm tra và hiển thị lại nếu bị ẩn
+        if (buttonsDiv && buttonsDiv.style.display === 'none') {
+          buttonsDiv.style.display = 'flex';
+        }
+        if (locateBtn && locateBtn.offsetParent === null) {
+          if (buttonsDiv) buttonsDiv.style.display = 'flex';
+        }
+        if (measureBtn && measureBtn.offsetParent === null) {
+          if (buttonsDiv) buttonsDiv.style.display = 'flex';
+        }
+        if (fullscreenBtnEl && fullscreenBtnEl.offsetParent === null) {
+          if (buttonsDiv) buttonsDiv.style.display = 'flex';
+        }
+        // clearBtn có thể ẩn nếu không đang đo, đó là bình thường
+      }, 200);
     }
     // Điều chỉnh lại kích thước bản đồ
     setTimeout(() => {
