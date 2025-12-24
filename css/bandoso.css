@@ -330,4 +330,228 @@ footer {
 .leaflet-interactive:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* Nút đo khoảng cách */
+.measure-btn-custom {
+  background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 32px;
+  box-shadow: 0 4px 16px rgba(76,175,80,0.13);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  outline: none;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+.measure-btn-custom:hover, .measure-btn-custom:focus {
+  background: linear-gradient(90deg, #66bb6a 0%, #4caf50 100%);
+  box-shadow: 0 8px 24px rgba(76,175,80,0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+.measure-btn-custom.active {
+  background: linear-gradient(90deg, #f44336 0%, #e57373 100%);
+  box-shadow: 0 8px 24px rgba(244,67,54,0.18);
+}
+.measure-btn-custom.active:hover {
+  background: linear-gradient(90deg, #e57373 0%, #f44336 100%);
+}
+
+.clear-measure-btn-custom {
+  background: linear-gradient(90deg, #ff5722 0%, #ff8a65 100%);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 32px;
+  box-shadow: 0 4px 16px rgba(255,87,34,0.13);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  outline: none;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+.clear-measure-btn-custom:hover, .clear-measure-btn-custom:focus {
+  background: linear-gradient(90deg, #ff8a65 0%, #ff5722 100%);
+  box-shadow: 0 8px 24px rgba(255,87,34,0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.fullscreen-btn-custom {
+  background: linear-gradient(90deg, #9c27b0 0%, #ba68c8 100%);
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 32px;
+  box-shadow: 0 4px 16px rgba(156,39,176,0.13);
+  cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+  outline: none;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+.fullscreen-btn-custom:hover, .fullscreen-btn-custom:focus {
+  background: linear-gradient(90deg, #ba68c8 0%, #9c27b0 100%);
+  box-shadow: 0 8px 24px rgba(156,39,176,0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+.fullscreen-btn-custom.active {
+  background: linear-gradient(90deg, #7b1fa2 0%, #9c27b0 100%);
+  box-shadow: 0 8px 24px rgba(156,39,176,0.25);
+}
+
+/* Chế độ toàn màn hình - chỉ bản đồ */
+#map:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  max-width: 100%;
+}
+
+#map:-webkit-full-screen {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  max-width: 100%;
+}
+
+#map:-moz-full-screen {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  max-width: 100%;
+}
+
+#map:-ms-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  border: none;
+  margin: 0;
+  max-width: 100%;
+}
+
+/* Nút thoát fullscreen trên bản đồ */
+.fullscreen-exit-btn {
+  transition: background 0.2s;
+}
+.fullscreen-exit-btn:hover {
+  background: rgba(156,39,176,1) !important;
+}
+
+/* Thông tin đo khoảng cách */
+.measure-info {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 12px 20px;
+  margin: 16px auto 0 auto;
+  max-width: 500px;
+  box-shadow: 0 4px 16px rgba(76,175,80,0.15);
+  border: 2px solid #4caf50;
+}
+.measure-info-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.measure-info-content span {
+  font-size: 1.05em;
+  font-weight: 600;
+  color: #2e7d32;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Marker đo khoảng cách */
+.measure-marker {
+  background: #4caf50;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.measure-line {
+  stroke: #4caf50;
+  stroke-width: 3;
+  stroke-dasharray: 5, 5;
+  fill: none;
+}
+
+/* Tooltip số thứ tự điểm */
+.measure-point-tooltip {
+  background: rgba(76,175,80,0.95) !important;
+  color: white !important;
+  border: 3px solid white !important;
+  border-radius: 50% !important;
+  font-weight: bold !important;
+  font-size: 14px !important;
+  padding: 4px 8px !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4) !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  line-height: 16px !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Label khoảng cách từng đoạn */
+.measure-segment-label {
+  pointer-events: none !important;
+}
+
+.measure-segment-label-content {
+  background: rgba(76,175,80,0.95) !important;
+  color: white !important;
+  border: 2px solid white !important;
+  border-radius: 8px !important;
+  padding: 4px 10px !important;
+  font-weight: bold !important;
+  font-size: 12px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+  white-space: nowrap !important;
+  text-align: center !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+@media (max-width: 600px) {
+  .measure-btn-custom, .clear-measure-btn-custom, .fullscreen-btn-custom {
+    font-size: 1em;
+    padding: 10px 20px;
+    width: 100%;
+    border-radius: 16px;
+    margin: 4px 0;
+  }
+  .measure-info {
+    margin: 12px 8px 0 8px;
+    padding: 10px 16px;
+  }
+  .measure-info-content {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  .measure-info-content span {
+    font-size: 0.95em;
+  }
 } 

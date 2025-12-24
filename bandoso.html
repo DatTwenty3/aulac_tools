@@ -23,8 +23,17 @@
       </button>
     </div>
     <div id="map"></div>
-    <div style="display: flex; justify-content: center; margin: 24px 0 0 0;">
+    <div style="display: flex; justify-content: center; gap: 12px; margin: 24px 0 0 0; flex-wrap: wrap;">
       <button id="locate-btn" class="locate-btn-custom">📍 Xác định vị trí của bạn</button>
+      <button id="measure-btn" class="measure-btn-custom">📏 Đo khoảng cách</button>
+      <button id="clear-measure-btn" class="clear-measure-btn-custom" style="display: none;">🗑️ Xóa đo</button>
+      <button id="fullscreen-btn" class="fullscreen-btn-custom">⛶ Toàn màn hình</button>
+    </div>
+    <div id="measure-info" class="measure-info" style="display: none;">
+      <div class="measure-info-content">
+        <span id="measure-distance">Tổng khoảng cách: 0 m</span>
+        <span id="measure-points">Số điểm: 0</span>
+      </div>
     </div>
     <div style="display: flex; justify-content: center; align-items: center; gap: 18px; margin-top: 32px; margin-bottom: 0;">
       <span style="font-size: 0.98em; color: #444; background: rgba(0,0,0,0.04); border-radius: 18px; padding: 4px 14px; font-weight: 500;">Được phát triển bởi LEDAT 😎</span>
