@@ -37,6 +37,11 @@ let areaPolygon = null;
 let areaClickHandler = null;
 let areaSegmentLabels = []; // Lưu các label hiển thị độ dài từng cạnh
 
+// Biến cho panel thông tin xã/phường
+let infoPanel = null;
+let infoPanelBody = null;
+let infoPanelTitle = null;
+
 // Hàm tắt/bật tương tác với GeoJSON layers
 function toggleGeojsonInteractivity(enable) {
   geojsonLayers.forEach(layer => {
@@ -87,6 +92,54 @@ function createPopupContent(properties) {
   return popupContent;
 }
 
+// Tạo nội dung cho panel thông tin bên phải
+function createInfoPanelContent(properties, isDhlvb = false) {
+  if (isDhlvb) {
+    return `
+      <div class="info-panel-empty">
+        <strong>Dự án: Đường hành lang ven biển</strong><br/>
+        Thông tin chi tiết đang được cập nhật.
+      </div>
+    `;
+  }
+  if (!properties) {
+    return '<div class="info-panel-empty">Không có thông tin cho khu vực này.</div>';
+  }
+  let html = '<table class="info-panel-table">';
+  for (const key in fieldMap) {
+    if (properties[key] !== undefined) {
+      html += `
+        <tr>
+          <td class="label">${fieldMap[key]}</td>
+          <td class="value">${properties[key]}</td>
+        </tr>
+      `;
+    }
+  }
+  html += '</table>';
+  return html;
+}
+
+function openInfoPanel(properties, isDhlvb = false) {
+  if (!infoPanel || !infoPanelBody || !infoPanelTitle) return;
+  const title = properties && properties.ten ? properties.ten : 'Thông tin khu vực';
+  infoPanelTitle.textContent = title;
+  infoPanelBody.innerHTML = createInfoPanelContent(properties, isDhlvb);
+  infoPanel.classList.add('visible');
+}
+
+function setupInfoPanel() {
+  infoPanel = document.getElementById('info-panel');
+  infoPanelBody = document.getElementById('info-panel-body');
+  infoPanelTitle = document.getElementById('info-panel-title');
+  const closeBtn = document.getElementById('info-panel-close');
+  if (closeBtn && infoPanel) {
+    closeBtn.onclick = function() {
+      infoPanel.classList.remove('visible');
+    };
+  }
+}
+
 // ====== KHỞI TẠO BẢN ĐỒ & LỚP NỀN ======
 function initMap() {
   const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -132,12 +185,12 @@ function setupLocateButton(map) {
       watchPositionId = null;
       isTrackingLocation = false;
       locateBtnDom.disabled = false;
-      locateBtnDom.innerText = '📍 Xác định vị trí real-time';
+      locateBtnDom.innerText = '📍 Xác định vị trí';
       locateBtnDom.classList.remove('active');
       return;
     }
     
-    // Bắt đầu theo dõi real-time
+    // Bắt đầu theo dõi vị trí
     locateBtnDom.disabled = true;
     locateBtnDom.innerText = 'Đang xác định vị trí...';
     locateBtnDom.classList.add('active');
@@ -194,7 +247,7 @@ function setupLocateButton(map) {
         const heading = pos.coords.heading ? pos.coords.heading.toFixed(0) + '°' : 'Không xác định';
         currentLocationMarker.bindPopup(
           `<div style="text-align: center;">
-            <strong>📍 Vị trí của bạn (Real-time)</strong><br>
+            <strong>📍 Vị trí của bạn</strong><br>
             <small>Độ chính xác: ${accuracy.toFixed(0)} m</small><br>
             <small>Tốc độ: ${speed}</small><br>
             <small>Hướng: ${heading}</small>
@@ -219,7 +272,7 @@ function setupLocateButton(map) {
           alert('Không thể xác định vị trí: ' + err.message);
         }
         locateBtnDom.disabled = false;
-        locateBtnDom.innerText = '📍 Xác định vị trí real-time';
+        locateBtnDom.innerText = '📍 Xác định vị trí';
         locateBtnDom.classList.remove('active');
         isTrackingLocation = false;
         if (watchPositionId !== null) {
@@ -251,30 +304,18 @@ function addGeojsonToMap(map, data) {
       const featureStyle = feature.properties.style || {};
       const baseColor = isDhlvb ? '#ff0000' : (featureStyle.color || '#3388ff');
       const baseWeight = isDhlvb ? 4 : (featureStyle.weight || 2);
-      const dhlvbPopup = '<div class="popup-info"><div class="popup-title">Dự án</div><div><strong>Đường hành lang ven biển</strong></div></div>';
       // Tooltip tên xã/phường
       if (feature.properties && feature.properties.ten) {
         layer.bindTooltip(feature.properties.ten, {direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip'});
       }
-      // Popup chi tiết khi click
+      // Hiển thị panel chi tiết khi click
       layer.on('click', function() {
         // Không mở popup nếu đang ở chế độ đo khoảng cách
         if (isMeasuring) {
           return;
         }
         layer.setStyle({color: '#2ecc40', weight: 3});
-        if (isDhlvb) {
-          layer.bindPopup(dhlvbPopup).openPopup();
-        } else {
-          layer.bindPopup(createPopupContent(feature.properties)).openPopup();
-        }
-      });
-      // Reset style khi popup đóng
-      layer.on('popupclose', function() {
-        layer.setStyle({
-          color: baseColor, 
-          weight: baseWeight
-        });
+        openInfoPanel(feature.properties, isDhlvb);
       });
       layer.on('mouseover', function() {
         layer.setStyle({fillOpacity: 0.5, color: '#ff7800'});
@@ -339,10 +380,7 @@ function setupSearch(map) {
         map.setView(center, 12);
         let feature = data.features && data.features[0];
         if (feature && feature.properties) {
-          const popup = L.popup()
-            .setLatLng(center)
-            .setContent(createPopupContent(feature.properties));
-          map.openPopup(popup);
+          openInfoPanel(feature.properties, false);
         }
       })
       .catch(() => {
@@ -1570,6 +1608,7 @@ function setupFullscreenButton(map) {
 (function main() {
   const map = initMap();
   window.mapInstance = map; // Lưu instance để dùng trong fullscreen
+  setupInfoPanel();
   setupLocateButton(map);
   loadAllGeojsons(map);
   setupOpacitySliderControl(map);
