@@ -29,6 +29,14 @@ let measurePolyline = null;
 let measureClickHandler = null;
 let measureSegmentLabels = []; // Lưu các label hiển thị khoảng cách từng đoạn
 
+// Biến cho tính năng đo diện tích
+let isMeasuringArea = false;
+let areaPoints = [];
+let areaMarkers = [];
+let areaPolygon = null;
+let areaClickHandler = null;
+let areaSegmentLabels = []; // Lưu các label hiển thị độ dài từng cạnh
+
 // Hàm tắt/bật tương tác với GeoJSON layers
 function toggleGeojsonInteractivity(enable) {
   geojsonLayers.forEach(layer => {
@@ -380,6 +388,349 @@ function formatDistance(meters) {
   }
 }
 
+// ====== TÍNH NĂNG ĐO DIỆN TÍCH ======
+function calculatePolygonArea(points) {
+  if (points.length < 3) return 0;
+  
+  const R = 6371000; // Bán kính Trái Đất tính bằng mét
+  let area = 0;
+  
+  // Chuyển đổi tất cả điểm sang radian
+  const radPoints = points.map(p => ({
+    lat: p.lat * Math.PI / 180,
+    lng: p.lng * Math.PI / 180
+  }));
+  
+  // Tính diện tích sử dụng công thức spherical excess (Girard's theorem)
+  for (let i = 0; i < radPoints.length; i++) {
+    const j = (i + 1) % radPoints.length;
+    const k = (i + 2) % radPoints.length;
+    
+    const p1 = radPoints[i];
+    const p2 = radPoints[j];
+    const p3 = radPoints[k];
+    
+    // Tính các cạnh của tam giác cầu
+    const a = Math.acos(
+      Math.sin(p2.lat) * Math.sin(p3.lat) +
+      Math.cos(p2.lat) * Math.cos(p3.lat) * Math.cos(p3.lng - p2.lng)
+    );
+    const b = Math.acos(
+      Math.sin(p1.lat) * Math.sin(p3.lat) +
+      Math.cos(p1.lat) * Math.cos(p3.lat) * Math.cos(p3.lng - p1.lng)
+    );
+    const c = Math.acos(
+      Math.sin(p1.lat) * Math.sin(p2.lat) +
+      Math.cos(p1.lat) * Math.cos(p2.lat) * Math.cos(p2.lng - p1.lng)
+    );
+    
+    // Tính nửa chu vi
+    const s = (a + b + c) / 2;
+    
+    // Tính spherical excess
+    const tanHalfS = Math.tan(s / 2);
+    const tanHalfSA = Math.tan((s - a) / 2);
+    const tanHalfSB = Math.tan((s - b) / 2);
+    const tanHalfSC = Math.tan((s - c) / 2);
+    
+    const excess = 4 * Math.atan(
+      Math.sqrt(
+        Math.max(0, tanHalfS * tanHalfSA * tanHalfSB * tanHalfSC)
+      )
+    );
+    
+    area += excess;
+  }
+  
+  // Diện tích tính bằng mét vuông
+  area = Math.abs(area) * R * R;
+  
+  return area;
+}
+
+function formatArea(squareMeters) {
+  const squareKm = squareMeters / 1000000;
+  const hectares = squareMeters / 10000;
+  
+  if (squareKm >= 1) {
+    return squareKm.toFixed(4) + ' km²';
+  } else if (hectares >= 1) {
+    return hectares.toFixed(2) + ' ha';
+  } else {
+    return squareMeters.toFixed(2) + ' m²';
+  }
+}
+
+function formatHectares(squareMeters) {
+  const hectares = squareMeters / 10000;
+  return hectares.toFixed(2) + ' ha';
+}
+
+// ====== XỬ LÝ ĐO DIỆN TÍCH ======
+function updateAreaDisplay() {
+  const areaInfo = document.getElementById('area-info');
+  const areaValue = document.getElementById('area-value');
+  const areaHectares = document.getElementById('area-hectares');
+  const areaPointsEl = document.getElementById('area-points');
+  
+  if (areaPoints.length < 3) {
+    if (areaInfo) areaInfo.style.display = 'none';
+    // Ẩn thông tin trong fullscreen panel
+    if (window._fullscreenAreaInfo) {
+      window._fullscreenAreaInfo.style.display = 'none';
+    }
+    return;
+  }
+  
+  const area = calculatePolygonArea(areaPoints);
+  const areaText = 'Diện tích: ' + formatArea(area);
+  const hectaresText = '(' + formatHectares(area) + ')';
+  const pointsText = 'Số điểm: ' + areaPoints.length;
+  
+  // Cập nhật thông tin ở phần chính
+  if (areaInfo) areaInfo.style.display = 'block';
+  if (areaValue) areaValue.textContent = areaText;
+  if (areaHectares) areaHectares.textContent = hectaresText;
+  if (areaPointsEl) areaPointsEl.textContent = pointsText;
+  
+  // Cập nhật thông tin trong fullscreen panel
+  if (window._fullscreenAreaInfo) {
+    window._fullscreenAreaInfo.style.display = 'block';
+  }
+  if (window._fullscreenAreaValue) {
+    window._fullscreenAreaValue.textContent = areaText;
+  }
+  if (window._fullscreenAreaHectares) {
+    window._fullscreenAreaHectares.textContent = hectaresText;
+  }
+  if (window._fullscreenAreaPoints) {
+    window._fullscreenAreaPoints.textContent = pointsText;
+  }
+}
+
+function clearArea(map) {
+  // Xóa tất cả markers
+  areaMarkers.forEach(marker => map.removeLayer(marker));
+  areaMarkers = [];
+  
+  // Xóa tất cả label đoạn
+  areaSegmentLabels.forEach(label => map.removeLayer(label));
+  areaSegmentLabels = [];
+  
+  // Xóa polygon
+  if (areaPolygon) {
+    map.removeLayer(areaPolygon);
+    areaPolygon = null;
+  }
+  
+  // Xóa mảng điểm
+  areaPoints = [];
+  
+  // Ẩn thông tin
+  const areaInfo = document.getElementById('area-info');
+  if (areaInfo) {
+    areaInfo.style.display = 'none';
+  }
+  
+  // Ẩn thông tin trong fullscreen panel
+  if (window._fullscreenAreaInfo) {
+    window._fullscreenAreaInfo.style.display = 'none';
+  }
+  
+  // Ẩn nút xóa
+  const clearBtn = document.getElementById('clear-area-btn');
+  if (clearBtn) {
+    clearBtn.style.display = 'none';
+  }
+  
+  // Ẩn nút xóa trong fullscreen panel
+  if (window._fullscreenClearAreaBtn) {
+    window._fullscreenClearAreaBtn.style.display = 'none';
+  }
+}
+
+function setupAreaButton(map) {
+  const areaBtn = document.getElementById('area-btn');
+  const clearBtn = document.getElementById('clear-area-btn');
+  
+  if (!areaBtn) return;
+  
+  areaBtn.onclick = function() {
+    // Tắt chế độ đo khoảng cách nếu đang bật
+    if (isMeasuring) {
+      const measureBtn = document.getElementById('measure-btn');
+      if (measureBtn) measureBtn.click();
+    }
+    
+    isMeasuringArea = !isMeasuringArea;
+    
+    if (isMeasuringArea) {
+      // Bật chế độ đo diện tích
+      areaBtn.classList.add('active');
+      areaBtn.textContent = '⏹️ Dừng đo';
+      if (clearBtn) clearBtn.style.display = 'inline-block';
+      
+      // Cập nhật nút xóa trong fullscreen panel
+      if (window._fullscreenClearAreaBtn) {
+        window._fullscreenClearAreaBtn.style.display = 'block';
+      }
+      
+      // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
+      toggleGeojsonInteractivity(false);
+      
+      // Thay đổi cursor
+      map.getContainer().style.cursor = 'crosshair';
+      
+      // Thêm sự kiện click
+      areaClickHandler = function(e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+        
+        // Thêm điểm vào mảng
+        areaPoints.push({ lat, lng });
+        
+        // Tạo marker
+        const marker = L.circleMarker([lat, lng], {
+          radius: 10,
+          fillColor: '#ff9800',
+          color: '#fff',
+          weight: 4,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).addTo(map);
+        
+        // Thêm số thứ tự vào marker
+        marker.bindTooltip(areaPoints.length.toString(), {
+          permanent: true,
+          direction: 'center',
+          className: 'area-point-tooltip',
+          offset: [0, 0]
+        });
+        
+        areaMarkers.push(marker);
+        
+        // Xóa polygon và labels cũ để vẽ lại
+        if (areaPolygon) {
+          map.removeLayer(areaPolygon);
+        }
+        areaSegmentLabels.forEach(label => map.removeLayer(label));
+        areaSegmentLabels = [];
+        
+        if (areaPoints.length >= 3) {
+          const latlngs = areaPoints.map(p => [p.lat, p.lng]);
+          // Đóng polygon bằng cách thêm điểm đầu vào cuối
+          latlngs.push([areaPoints[0].lat, areaPoints[0].lng]);
+          
+          areaPolygon = L.polygon(latlngs, {
+            color: '#ff9800',
+            weight: 3,
+            fillColor: '#ff9800',
+            fillOpacity: 0.3
+          }).addTo(map);
+          
+          // Thêm label khoảng cách cho từng cạnh
+          for (let i = 0; i < areaPoints.length; i++) {
+            const p1 = areaPoints[i];
+            const p2 = areaPoints[(i + 1) % areaPoints.length];
+            const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+            
+            // Tính điểm giữa của cạnh
+            const midLat = (p1.lat + p2.lat) / 2;
+            const midLng = (p1.lng + p2.lng) / 2;
+            
+            // Tạo label hiển thị khoảng cách
+            const labelText = formatDistance(segmentDistance);
+            const label = L.marker([midLat, midLng], {
+              icon: L.divIcon({
+                className: 'area-segment-label',
+                html: '<div class="area-segment-label-content">' + labelText + '</div>',
+                iconSize: [100, 30],
+                iconAnchor: [50, 15]
+              }),
+              interactive: false,
+              zIndexOffset: 1000
+            }).addTo(map);
+            
+            areaSegmentLabels.push(label);
+          }
+        } else if (areaPoints.length >= 2) {
+          // Vẽ đường nối khi chưa đủ 3 điểm
+          const latlngs = areaPoints.map(p => [p.lat, p.lng]);
+          areaPolygon = L.polyline(latlngs, {
+            color: '#ff9800',
+            weight: 3,
+            dashArray: '5, 5',
+            opacity: 0.8
+          }).addTo(map);
+          
+          // Thêm label cho đoạn hiện tại
+          const p1 = areaPoints[areaPoints.length - 2];
+          const p2 = areaPoints[areaPoints.length - 1];
+          const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+          
+          const midLat = (p1.lat + p2.lat) / 2;
+          const midLng = (p1.lng + p2.lng) / 2;
+          
+          const labelText = formatDistance(segmentDistance);
+          const label = L.marker([midLat, midLng], {
+            icon: L.divIcon({
+              className: 'area-segment-label',
+              html: '<div class="area-segment-label-content">' + labelText + '</div>',
+              iconSize: [100, 30],
+              iconAnchor: [50, 15]
+            }),
+            interactive: false,
+            zIndexOffset: 1000
+          }).addTo(map);
+          
+          areaSegmentLabels.push(label);
+        }
+        
+        updateAreaDisplay();
+      };
+      
+      map.on('click', areaClickHandler);
+    } else {
+      // Tắt chế độ đo diện tích
+      areaBtn.classList.remove('active');
+      areaBtn.textContent = '📐 Đo diện tích';
+      map.getContainer().style.cursor = '';
+      
+      // Bật lại tương tác với GeoJSON layers
+      toggleGeojsonInteractivity(true);
+      
+      // Xóa sự kiện click
+      if (areaClickHandler) {
+        map.off('click', areaClickHandler);
+        areaClickHandler = null;
+      }
+    }
+  };
+  
+  if (clearBtn) {
+    clearBtn.onclick = function() {
+      clearArea(map);
+      isMeasuringArea = false;
+      areaBtn.classList.remove('active');
+      areaBtn.textContent = '📐 Đo diện tích';
+      map.getContainer().style.cursor = '';
+      
+      // Ẩn nút xóa trong fullscreen panel
+      if (window._fullscreenClearAreaBtn) {
+        window._fullscreenClearAreaBtn.style.display = 'none';
+      }
+      
+      // Bật lại tương tác với GeoJSON layers
+      toggleGeojsonInteractivity(true);
+      
+      if (areaClickHandler) {
+        map.off('click', areaClickHandler);
+        areaClickHandler = null;
+      }
+    };
+  }
+}
+
 function updateMeasureDisplay() {
   const measureInfo = document.getElementById('measure-info');
   const measureDistance = document.getElementById('measure-distance');
@@ -728,6 +1079,16 @@ function setupFullscreenButton(map) {
           if (measureBtnDom) measureBtnDom.click();
         });
         
+        // Nút Đo diện tích
+        const areaBtn = L.DomUtil.create('button', 'fullscreen-area-btn', div);
+        areaBtn.innerHTML = '📐 Đo diện tích';
+        areaBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px;';
+        L.DomEvent.on(areaBtn, 'click', function(e) {
+          L.DomEvent.stopPropagation(e);
+          const areaBtnDom = document.getElementById('area-btn');
+          if (areaBtnDom) areaBtnDom.click();
+        });
+        
         // Nút Xóa đo (sẽ hiển thị khi cần)
         const clearBtn = L.DomUtil.create('button', 'fullscreen-clear-btn', div);
         clearBtn.innerHTML = '🗑️ Xóa đo';
@@ -763,6 +1124,43 @@ function setupFullscreenButton(map) {
           measureDistanceSpan.textContent = 'Tổng khoảng cách: ' + formatDistance(totalDistance);
           measurePointsSpan.textContent = 'Số điểm: ' + measurePoints.length;
           measureInfoDiv.style.display = 'block';
+        }
+        
+        // Nút Xóa vùng (sẽ hiển thị khi cần)
+        const clearAreaBtn = L.DomUtil.create('button', 'fullscreen-clear-area-btn', div);
+        clearAreaBtn.innerHTML = '🗑️ Xóa vùng';
+        clearAreaBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #ff5722 0%, #ff8a65 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px; display: none;';
+        L.DomEvent.on(clearAreaBtn, 'click', function(e) {
+          L.DomEvent.stopPropagation(e);
+          const clearAreaBtnDom = document.getElementById('clear-area-btn');
+          if (clearAreaBtnDom) clearAreaBtnDom.click();
+        });
+        window._fullscreenClearAreaBtn = clearAreaBtn;
+        
+        // Thông tin đo diện tích
+        const areaInfoDiv = L.DomUtil.create('div', 'fullscreen-area-info', div);
+        areaInfoDiv.style.cssText = 'display: none; background: rgba(255,152,0,0.1); border: 2px solid #ff9800; border-radius: 6px; padding: 8px; margin-top: 4px;';
+        const areaValueSpan = L.DomUtil.create('div', 'fullscreen-area-value', areaInfoDiv);
+        areaValueSpan.style.cssText = 'font-size: 13px; font-weight: 600; color: #e65100; margin-bottom: 4px;';
+        areaValueSpan.textContent = 'Diện tích: 0 km²';
+        const areaHectaresSpan = L.DomUtil.create('div', 'fullscreen-area-hectares', areaInfoDiv);
+        areaHectaresSpan.style.cssText = 'font-size: 12px; color: #e65100; margin-bottom: 4px;';
+        areaHectaresSpan.textContent = '(0 ha)';
+        const areaPointsSpan = L.DomUtil.create('div', 'fullscreen-area-points', areaInfoDiv);
+        areaPointsSpan.style.cssText = 'font-size: 12px; color: #e65100;';
+        areaPointsSpan.textContent = 'Số điểm: 0';
+        window._fullscreenAreaInfo = areaInfoDiv;
+        window._fullscreenAreaValue = areaValueSpan;
+        window._fullscreenAreaHectares = areaHectaresSpan;
+        window._fullscreenAreaPoints = areaPointsSpan;
+        
+        // Nếu đã có điểm đo diện tích, cập nhật ngay
+        if (areaPoints.length >= 3) {
+          const area = calculatePolygonArea(areaPoints);
+          areaValueSpan.textContent = 'Diện tích: ' + formatArea(area);
+          areaHectaresSpan.textContent = '(' + formatHectares(area) + ')';
+          areaPointsSpan.textContent = 'Số điểm: ' + areaPoints.length;
+          areaInfoDiv.style.display = 'block';
         }
         
         // Thanh tìm kiếm
@@ -1090,5 +1488,6 @@ function setupFullscreenButton(map) {
   loadAllGeojsons(map);
   setupOpacitySliderControl(map);
   setupMeasureButton(map);
+  setupAreaButton(map);
   setupFullscreenButton(map);
 })(); 
