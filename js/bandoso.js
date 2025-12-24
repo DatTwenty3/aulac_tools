@@ -111,38 +111,124 @@ function initMap() {
   return map;
 }
 
-// ====== XỬ LÝ XÁC ĐỊNH VỊ TRÍ ======
+// ====== XỬ LÝ XÁC ĐỊNH VỊ TRÍ REAL-TIME ======
+let watchPositionId = null;
+let currentLocationMarker = null;
+let isTrackingLocation = false;
+
 function setupLocateButton(map) {
   const locateBtnDom = document.getElementById('locate-btn');
   if (!locateBtnDom) return;
+  
   locateBtnDom.onclick = function() {
     if (!navigator.geolocation) {
       alert('Trình duyệt không hỗ trợ xác định vị trí!');
       return;
     }
+    
+    // Nếu đang theo dõi, dừng lại
+    if (isTrackingLocation && watchPositionId !== null) {
+      navigator.geolocation.clearWatch(watchPositionId);
+      watchPositionId = null;
+      isTrackingLocation = false;
+      locateBtnDom.disabled = false;
+      locateBtnDom.innerText = '📍 Xác định vị trí real-time';
+      locateBtnDom.classList.remove('active');
+      return;
+    }
+    
+    // Bắt đầu theo dõi real-time
     locateBtnDom.disabled = true;
     locateBtnDom.innerText = 'Đang xác định vị trí...';
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      const lat = pos.coords.latitude;
-      const lng = pos.coords.longitude;
-      L.marker([lat, lng], {
-        icon: L.icon({
-          iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
-        })
-      }).addTo(map).bindPopup('Vị trí của bạn').openPopup();
-      map.setView([lat, lng], 15);
-      locateBtnDom.disabled = false;
-      locateBtnDom.innerText = '📍 Xác định vị trí của bạn';
-    }, function(err) {
-      if (err.code !== 1) {
-        alert('Không thể xác định vị trí: ' + err.message);
-      }
-      locateBtnDom.disabled = false;
-      locateBtnDom.innerText = '📍 Xác định vị trí của bạn';
-    });
+    locateBtnDom.classList.add('active');
+    
+    // Xóa marker cũ nếu có
+    if (currentLocationMarker) {
+      map.removeLayer(currentLocationMarker);
+      currentLocationMarker = null;
+    }
+    
+    // Cấu hình options cho watchPosition
+    const options = {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0
+    };
+    
+    watchPositionId = navigator.geolocation.watchPosition(
+      function(pos) {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        
+        // Xóa marker cũ nếu có
+        if (currentLocationMarker) {
+          map.removeLayer(currentLocationMarker);
+        }
+        
+        // Tạo marker mới với icon đặc biệt cho real-time
+        currentLocationMarker = L.marker([lat, lng], {
+          icon: L.icon({
+            iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+          })
+        }).addTo(map);
+        
+        // Thêm circle để hiển thị độ chính xác
+        const accuracy = pos.coords.accuracy;
+        if (currentLocationMarker._accuracyCircle) {
+          map.removeLayer(currentLocationMarker._accuracyCircle);
+        }
+        currentLocationMarker._accuracyCircle = L.circle([lat, lng], {
+          radius: accuracy,
+          color: '#1976d2',
+          fillColor: '#1976d2',
+          fillOpacity: 0.2,
+          weight: 2,
+          dashArray: '5, 5'
+        }).addTo(map);
+        
+        // Cập nhật popup với thông tin real-time
+        const speed = pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(1) + ' km/h' : 'Không xác định';
+        const heading = pos.coords.heading ? pos.coords.heading.toFixed(0) + '°' : 'Không xác định';
+        currentLocationMarker.bindPopup(
+          `<div style="text-align: center;">
+            <strong>📍 Vị trí của bạn (Real-time)</strong><br>
+            <small>Độ chính xác: ${accuracy.toFixed(0)} m</small><br>
+            <small>Tốc độ: ${speed}</small><br>
+            <small>Hướng: ${heading}</small>
+          </div>`
+        );
+        
+        // Cập nhật view của map (chỉ lần đầu hoặc khi zoom quá xa)
+        if (!isTrackingLocation || map.getZoom() < 13) {
+          map.setView([lat, lng], 15);
+        } else {
+          // Chỉ pan đến vị trí mới, không thay đổi zoom
+          map.panTo([lat, lng]);
+        }
+        
+        // Cập nhật trạng thái
+        isTrackingLocation = true;
+        locateBtnDom.disabled = false;
+        locateBtnDom.innerText = '⏹️ Dừng theo dõi';
+      },
+      function(err) {
+        if (err.code !== 1) {
+          alert('Không thể xác định vị trí: ' + err.message);
+        }
+        locateBtnDom.disabled = false;
+        locateBtnDom.innerText = '📍 Xác định vị trí real-time';
+        locateBtnDom.classList.remove('active');
+        isTrackingLocation = false;
+        if (watchPositionId !== null) {
+          navigator.geolocation.clearWatch(watchPositionId);
+          watchPositionId = null;
+        }
+      },
+      options
+    );
   };
 }
 
@@ -1061,7 +1147,7 @@ function setupFullscreenButton(map) {
         
         // Nút Xác định vị trí
         const locateBtn = L.DomUtil.create('button', 'fullscreen-locate-btn', div);
-        locateBtn.innerHTML = '📍 Xác định vị trí';
+        locateBtn.innerHTML = '📍 Xác định vị trí real-time';
         locateBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #1976d2 0%, #ff9800 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px;';
         L.DomEvent.on(locateBtn, 'click', function(e) {
           L.DomEvent.stopPropagation(e);
