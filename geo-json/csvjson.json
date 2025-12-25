@@ -1,0 +1,870 @@
+[
+  {
+    "dvhc": "An Bình",
+    "bi_thu": "Khuyết",
+    "chu_tich": "Phan Thanh Hoàng",
+    "sdt_bt": "0942.546.484",
+    "sdt_ct": "0939.391.050"
+  },
+  {
+    "dvhc": "An Định",
+    "bi_thu": "Đỗ Hoàng Minh",
+    "chu_tich": "Nguyễn Văn Trung",
+    "sdt_bt": "0918 8589 961",
+    "sdt_ct": "0989 217 910"
+  },
+  {
+    "dvhc": "An Hiệp",
+    "bi_thu": "Cao Công Thức",
+    "chu_tich": "Bùi Tuấn An",
+    "sdt_bt": "0987 194 474",
+    "sdt_ct": "0918 254 986"
+  },
+  {
+    "dvhc": "An Hội",
+    "bi_thu": "Bùi Minh Tuấn",
+    "chu_tich": "Lê Xuân Vinh",
+    "sdt_bt": "0918 468 035",
+    "sdt_ct": "0913 886 454"
+  },
+  {
+    "dvhc": "An Ngãi Trung",
+    "bi_thu": "Phạm Thanh Hùng",
+    "chu_tich": "Nguyễn Thành Long",
+    "sdt_bt": "0918 279 264",
+    "sdt_ct": "0963 373 362"
+  },
+  {
+    "dvhc": "An Phú Tân",
+    "bi_thu": "Trần Xuân Sơn",
+    "chu_tich": "Ông Minh Phúc",
+    "sdt_bt": "0917 102 338",
+    "sdt_ct": "0982 716 417"
+  },
+  {
+    "dvhc": "An Qui",
+    "bi_thu": "Trương Thanh Hải",
+    "chu_tich": "Nguyễn Thị Mơ",
+    "sdt_bt": "0919 115 738",
+    "sdt_ct": "0933 011 527"
+  },
+  {
+    "dvhc": "An Trường",
+    "bi_thu": "Nguyễn Văn Triều",
+    "chu_tich": "Nguyễn Văn Á",
+    "sdt_bt": "0986 577 878",
+    "sdt_ct": "0395 896 650"
+  },
+  {
+    "dvhc": "Ba Tri",
+    "bi_thu": "Võ Văn Phú",
+    "chu_tich": "Phạm Văn Dũng",
+    "sdt_bt": "0918 433 689",
+    "sdt_ct": "0918 802 951"
+  },
+  {
+    "dvhc": "Bảo Thạnh",
+    "bi_thu": "La Thành Chiến",
+    "chu_tich": "Võ Văn Tòng",
+    "sdt_bt": "0359 935 879",
+    "sdt_ct": "0946 742 989"
+  },
+  {
+    "dvhc": "Bến Tre",
+    "bi_thu": "Châu Văn Bình",
+    "chu_tich": "Nguyễn Văn Thương",
+    "sdt_bt": "0944 472 926",
+    "sdt_ct": "0911 377 666"
+  },
+  {
+    "dvhc": "Bình Đại",
+    "bi_thu": "Trần Tú Anh",
+    "chu_tich": "Huỳnh Văn Mai",
+    "sdt_bt": "0913 448 489",
+    "sdt_ct": "0914 141 827"
+  },
+  {
+    "dvhc": "Bình Minh",
+    "bi_thu": "Ngô Thị Hồng Gấm",
+    "chu_tich": "Nguyễn Quốc Đoàn",
+    "sdt_bt": "0939.480.280",
+    "sdt_ct": "0918.390.225"
+  },
+  {
+    "dvhc": "Bình Phú",
+    "bi_thu": "Nguyễn Thanh Điền",
+    "chu_tich": "Nguyễn Thanh Hải",
+    "sdt_bt": "0965 555 522",
+    "sdt_ct": "0857 533 111"
+  },
+  {
+    "dvhc": "Bình Phước",
+    "bi_thu": "Lê Thành Phương",
+    "chu_tich": "Trương Chí Thiện",
+    "sdt_bt": "0908.981.435",
+    "sdt_ct": "0979.299.179"
+  },
+  {
+    "dvhc": "Cái Ngang",
+    "bi_thu": "Nguyễn Thụy Yến Phương",
+    "chu_tich": "T)\n- Trần Ngọc Tuấn",
+    "sdt_bt": "0949.505.238",
+    "sdt_ct": "0939.479.630"
+  },
+  {
+    "dvhc": "Cái Nhum",
+    "bi_thu": "Trương Võ Minh Nguyệt",
+    "chu_tich": "Trương Thanh Trà",
+    "sdt_bt": "0942.546.484",
+    "sdt_ct": "0939.483.807"
+  },
+  {
+    "dvhc": "Cái Vồn",
+    "bi_thu": "Ngô Tùng Dũng",
+    "chu_tich": "Nguyễn Thành Phương",
+    "sdt_bt": "0945.743.639",
+    "sdt_ct": "0946.369.694"
+  },
+  {
+    "dvhc": "Càng Long",
+    "bi_thu": "Trần Thị Bích Phượng",
+    "chu_tich": "Dương Vũ Linh",
+    "sdt_bt": "0919 100 719",
+    "sdt_ct": "0985 180 773"
+  },
+  {
+    "dvhc": "Cầu Kè",
+    "bi_thu": "Trần Phong Ba",
+    "chu_tich": "Lê Hoàng Lam",
+    "sdt_bt": "0918 353 032",
+    "sdt_ct": "0939 032 932"
+  },
+  {
+    "dvhc": "Cầu Ngang",
+    "bi_thu": "Trần Thị Kim Chung",
+    "chu_tich": "Đường Quang Thập",
+    "sdt_bt": "0989 623 249",
+    "sdt_ct": "0907 163 364"
+  },
+  {
+    "dvhc": "Châu Hòa",
+    "bi_thu": "Võ Thị Kiều Chinh",
+    "chu_tich": "Nguyễn Minh Tâm",
+    "sdt_bt": "090 648 21 71",
+    "sdt_ct": "098 423 70 13"
+  },
+  {
+    "dvhc": "Châu Hưng",
+    "bi_thu": "Nguyễn Văn Nam",
+    "chu_tich": "Lê Thành",
+    "sdt_bt": "0918 360 777",
+    "sdt_ct": "0906 263 728"
+  },
+  {
+    "dvhc": "Châu Thành",
+    "bi_thu": "Thạch Thị Sa Thy",
+    "chu_tich": "Nguyễn Thị Ngọc Nhi",
+    "sdt_bt": "0374 595 577",
+    "sdt_ct": "0917 858 505"
+  },
+  {
+    "dvhc": "Chợ Lách",
+    "bi_thu": "Lê Thị Hoàng Oanh",
+    "chu_tich": "Nguyễn Việt Thương",
+    "sdt_bt": "0949 589 358",
+    "sdt_ct": "0824 391 768"
+  },
+  {
+    "dvhc": "Duyên Hải",
+    "bi_thu": "Dương Văn Triệu",
+    "chu_tich": "Nguyễn Văn Lánh",
+    "sdt_bt": "0913 684 933",
+    "sdt_ct": "0978 933 366"
+  },
+  {
+    "dvhc": "Đại An",
+    "bi_thu": "Trần Văn Phong",
+    "chu_tich": "Ngô Quốc Thạnh",
+    "sdt_bt": "0979 133 665",
+    "sdt_ct": "0886 404 222"
+  },
+  {
+    "dvhc": "Đại Điền",
+    "bi_thu": "Trần Văn Của",
+    "chu_tich": "Đào Tăng Hùng",
+    "sdt_bt": "0918 510 976",
+    "sdt_ct": "0982 180 446"
+  },
+  {
+    "dvhc": "Đôn Châu",
+    "bi_thu": "Huỳnh Thị Triều",
+    "chu_tich": "Dương Văn Trí",
+    "sdt_bt": "0975 217 106",
+    "sdt_ct": "0397 991 879"
+  },
+  {
+    "dvhc": "Đông Hải",
+    "bi_thu": "Trịnh Minh Thảnh",
+    "chu_tich": "Mai Quốc Vĩnh",
+    "sdt_bt": "0916 093 400",
+    "sdt_ct": "0919 800 646"
+  },
+  {
+    "dvhc": "Đồng Khởi",
+    "bi_thu": "Nguyễn Văn Đảm",
+    "chu_tich": "Nguyễn Thị Thuý Liễu",
+    "sdt_bt": "0913 768 762",
+    "sdt_ct": "0919 379 329"
+  },
+  {
+    "dvhc": "Đông Thành",
+    "bi_thu": "Nguyễn Văn Trung",
+    "chu_tich": "Lê Minh Thọ",
+    "sdt_bt": "0902.020.333",
+    "sdt_ct": "0913.222.287"
+  },
+  {
+    "dvhc": "Giao Long",
+    "bi_thu": "Nguyễn Hữu Kim",
+    "chu_tich": "Hồ Thị Lan Hương",
+    "sdt_bt": "0932 911 933",
+    "sdt_ct": "0912 256 397"
+  },
+  {
+    "dvhc": "Giồng Trôm",
+    "bi_thu": "Nguyễn Thái Bình",
+    "chu_tich": "Nguyễn Vũ Phong",
+    "sdt_bt": "0918 433 698",
+    "sdt_ct": "0942 287 962"
+  },
+  {
+    "dvhc": "Hàm Giang",
+    "bi_thu": "Trần Bé Sáu",
+    "chu_tich": "Lê Thanh Sơn",
+    "sdt_bt": "0919 481 412",
+    "sdt_ct": "0977 139 997"
+  },
+  {
+    "dvhc": "Hiệp Mỹ",
+    "bi_thu": "Dương Văn Thương",
+    "chu_tich": "Cao Thị Ngân",
+    "sdt_bt": "0918 136 167",
+    "sdt_ct": "0913 135 864"
+  },
+  {
+    "dvhc": "Hiếu Phụng",
+    "bi_thu": "Huỳnh Thị Nhanh",
+    "chu_tich": "Lê Hải Việt",
+    "sdt_bt": "0939.854.297",
+    "sdt_ct": "0932.899.694"
+  },
+  {
+    "dvhc": "Hiếu Thành",
+    "bi_thu": "Nguyễn Văn Phước Thiện",
+    "chu_tich": "Trương Thị Hồng Thắm",
+    "sdt_bt": "0987.980.459",
+    "sdt_ct": "0397.081.149"
+  },
+  {
+    "dvhc": "Hòa Bình",
+    "bi_thu": "Nguyễn Văn Hai",
+    "chu_tich": "Nguyễn Chí Hiếu",
+    "sdt_bt": "0939.973.373",
+    "sdt_ct": "0931.613.939"
+  },
+  {
+    "dvhc": "Hòa Hiệp",
+    "bi_thu": "Nguyễn Thị Thu Hiền",
+    "chu_tich": "Phạm Thành Nguyên",
+    "sdt_bt": "0946.681.855",
+    "sdt_ct": "0907.916.100"
+  },
+  {
+    "dvhc": "Hòa Minh",
+    "bi_thu": "Thái Thanh Phong",
+    "chu_tich": "Lê Văn Trí",
+    "sdt_bt": "0979 474 365",
+    "sdt_ct": "0987 971 807"
+  },
+  {
+    "dvhc": "Hòa Thuận",
+    "bi_thu": "Lê Văn Mạnh",
+    "chu_tich": "Nguyễn Bé Sáu",
+    "sdt_bt": "0944 732 727",
+    "sdt_ct": "0919 899 928"
+  },
+  {
+    "dvhc": "Hùng Hòa",
+    "bi_thu": "Nguyễn Thị Ngọc Bích",
+    "chu_tich": "Nguyễn Minh Mẫu",
+    "sdt_bt": "0987 605 454",
+    "sdt_ct": "0988 329 477"
+  },
+  {
+    "dvhc": "Hưng Khánh Trung",
+    "bi_thu": "Võ Tuấn Thông",
+    "chu_tich": "Võ Thanh Hiếu",
+    "sdt_bt": "0395 665 565",
+    "sdt_ct": "0939 239 839"
+  },
+  {
+    "dvhc": "Hưng Mỹ",
+    "bi_thu": "Nguyễn Minh Thuy",
+    "chu_tich": "Phạm Đắc Tâm",
+    "sdt_bt": "0947 366 638",
+    "sdt_ct": "0936 038 254"
+  },
+  {
+    "dvhc": "Hưng Nhượng",
+    "bi_thu": "Đinh Thị Thanh Nhanh",
+    "chu_tich": "Trần Thống Nhất",
+    "sdt_bt": "098 866 52 78",
+    "sdt_ct": "091 360 57 04"
+  },
+  {
+    "dvhc": "Hương Mỹ",
+    "bi_thu": "Trần Thị Thúy",
+    "chu_tich": "Nguyễn Minh Chánh",
+    "sdt_bt": "0918 988 108",
+    "sdt_ct": "0917 102 118"
+  },
+  {
+    "dvhc": "Long Châu",
+    "bi_thu": "Võ Quốc Thanh",
+    "chu_tich": "Đoàn Văn Huệ",
+    "sdt_bt": "0981.170.353",
+    "sdt_ct": "0918.735.570"
+  },
+  {
+    "dvhc": "Long Đức",
+    "bi_thu": "Nguyễn Văn Nhủ",
+    "chu_tich": "Nguyễn Văn Liêu",
+    "sdt_bt": "0945 590 404",
+    "sdt_ct": "0903 759 171"
+  },
+  {
+    "dvhc": "Long Hiệp",
+    "bi_thu": "Trần Văn Mười",
+    "chu_tich": "Nguyễn Khánh Hòa",
+    "sdt_bt": "0913 741 847",
+    "sdt_ct": "0934 032 959"
+  },
+  {
+    "dvhc": "Long Hòa",
+    "bi_thu": "Lê Văn Nhiên",
+    "chu_tich": "Nguyễn Văn Ngoan",
+    "sdt_bt": "0916 093 563",
+    "sdt_ct": "0984 590 963"
+  },
+  {
+    "dvhc": "Long Hồ",
+    "bi_thu": "Trần Ngọc Bá Nhân",
+    "chu_tich": "Mai Hà Phương",
+    "sdt_bt": "0978.860.530",
+    "sdt_ct": "0888.383.079"
+  },
+  {
+    "dvhc": "Long Hữu",
+    "bi_thu": "Lê Văn Nhớ",
+    "chu_tich": "Lê Thành Tâm",
+    "sdt_bt": "0919 328 698",
+    "sdt_ct": "0916 216 240"
+  },
+  {
+    "dvhc": "Long Thành",
+    "bi_thu": "Trương Văn Huy",
+    "chu_tich": "Đào Văn Năng",
+    "sdt_bt": "0977 924 486",
+    "sdt_ct": "0917 858 879"
+  },
+  {
+    "dvhc": "Long Vĩnh",
+    "bi_thu": "Thái Thị Mỹ Dung",
+    "chu_tich": "Sơn Huỳnh Luận",
+    "sdt_bt": "0916 131 298",
+    "sdt_ct": "0916 109 936"
+  },
+  {
+    "dvhc": "Lộc Thuận",
+    "bi_thu": "Huỳnh Khắc Đoàn Cương",
+    "chu_tich": "T)\n- Trần Thanh Hòa",
+    "sdt_bt": "0982 937 299",
+    "sdt_ct": "0918 211 622"
+  },
+  {
+    "dvhc": "Lục Sỹ Thành",
+    "bi_thu": "Nguyễn Hoàng Minh",
+    "chu_tich": "Nguyễn Thành Luân",
+    "sdt_bt": "0979.285.959",
+    "sdt_ct": "0949.694.264"
+  },
+  {
+    "dvhc": "Lương Hòa",
+    "bi_thu": "Lê Văn Tường",
+    "chu_tich": "Phạm Thanh Nam",
+    "sdt_bt": "091 813 67 53",
+    "sdt_ct": "098 223 63 13"
+  },
+  {
+    "dvhc": "Lương Phú",
+    "bi_thu": "Nguyễn Văn Nhân",
+    "chu_tich": "Nguyễn Thái Hùng",
+    "sdt_bt": "091 924 00 25",
+    "sdt_ct": "098 389 23 77"
+  },
+  {
+    "dvhc": "Lưu Nghiệp Anh",
+    "bi_thu": "Ngô Trường Giang",
+    "chu_tich": "Huỳnh Văn Nghị",
+    "sdt_bt": "0987 325 394",
+    "sdt_ct": "0989 522 797"
+  },
+  {
+    "dvhc": "Mỏ Cày",
+    "bi_thu": "Hà Quốc Cường",
+    "chu_tich": "Huỳnh Trung Tính",
+    "sdt_bt": "0913 886 224",
+    "sdt_ct": "0888 100 666"
+  },
+  {
+    "dvhc": "Mỹ Chánh Hòa",
+    "bi_thu": "Dương Văn Chương",
+    "chu_tich": "Đặng Thị Quyên",
+    "sdt_bt": "0907 881 453",
+    "sdt_ct": "0974 217 940"
+  },
+  {
+    "dvhc": "Mỹ Long",
+    "bi_thu": "Trần Minh Bảnh",
+    "chu_tich": "Võ Thị Thúy Hằng",
+    "sdt_bt": "0915 861 200",
+    "sdt_ct": "0329 002 979"
+  },
+  {
+    "dvhc": "Mỹ Thuận",
+    "bi_thu": "Bùi Văn Dai",
+    "chu_tich": "Trần Thanh Sang",
+    "sdt_bt": "0917.138.059",
+    "sdt_ct": "0917.214.910"
+  },
+  {
+    "dvhc": "Ngãi Tứ",
+    "bi_thu": "Lê Minh Hiền",
+    "chu_tich": "Lê Hoàng An",
+    "sdt_bt": "0986.364.445",
+    "sdt_ct": "0969.771.199"
+  },
+  {
+    "dvhc": "Ngũ Lạc",
+    "bi_thu": "Lê Vũ Phương",
+    "chu_tich": "Nguyễn Văn Giới",
+    "sdt_bt": "0913 659 424",
+    "sdt_ct": "0919 896 616"
+  },
+  {
+    "dvhc": "Nguyệt Hóa",
+    "bi_thu": "Nguyễn Quốc Phương",
+    "chu_tich": "Lâm Quốc Thống",
+    "sdt_bt": "0913 633 626",
+    "sdt_ct": "0939 898 098"
+  },
+  {
+    "dvhc": "Nhị Long",
+    "bi_thu": "Trần Minh Thanh",
+    "chu_tich": "Nguyễn Thanh Bình",
+    "sdt_bt": "0913 188 190",
+    "sdt_ct": "0907 481 195"
+  },
+  {
+    "dvhc": "Nhị Trường",
+    "bi_thu": "Nguyễn Văn Ngà",
+    "chu_tich": "Trần Văn An",
+    "sdt_bt": "0918 378 554",
+    "sdt_ct": "0986 842 118"
+  },
+  {
+    "dvhc": "Nhơn Phú",
+    "bi_thu": "Nguyễn Huỳnh Thu",
+    "chu_tich": "Nguyễn Hùng Phú",
+    "sdt_bt": "0939.141.838",
+    "sdt_ct": "0988.394.665"
+  },
+  {
+    "dvhc": "Nhuận Phú Tân",
+    "bi_thu": "Phạm Thanh Truyền",
+    "chu_tich": "Nguyễn Văn Vũ",
+    "sdt_bt": "0985 432 526",
+    "sdt_ct": "0828 843 839"
+  },
+  {
+    "dvhc": "Phong Thạnh",
+    "bi_thu": "Diêu Hùng Thắng",
+    "chu_tich": "Nguyễn Thị Nhiền",
+    "sdt_bt": "0902 849 750",
+    "sdt_ct": "0965 124 455"
+  },
+  {
+    "dvhc": "Phú Khương",
+    "bi_thu": "Huỳnh Vĩnh Khánh",
+    "chu_tich": "Hồ Phước Hưng",
+    "sdt_bt": "0913 965 029",
+    "sdt_ct": "0919 063 899"
+  },
+  {
+    "dvhc": "Phú Phụng",
+    "bi_thu": "Trần Văn Đém",
+    "chu_tich": "Trương Văn Phúc",
+    "sdt_bt": "0979 330 349",
+    "sdt_ct": "0945 680 898"
+  },
+  {
+    "dvhc": "Phú Quới",
+    "bi_thu": "Đặng Hữu Dứt",
+    "chu_tich": "Võ Trung Sơn",
+    "sdt_bt": "0918.822.589",
+    "sdt_ct": "0908.481.315"
+  },
+  {
+    "dvhc": "Phú Tân",
+    "bi_thu": "Vũ Thanh Hà",
+    "chu_tich": "Nguyễn Minh Phương",
+    "sdt_bt": "0916 383 999",
+    "sdt_ct": "0918 948 789"
+  },
+  {
+    "dvhc": "Phú Túc",
+    "bi_thu": "Phan Song Toàn",
+    "chu_tich": "Thái Hoàng Thi",
+    "sdt_bt": "0913 796 618",
+    "sdt_ct": "0939 545 477"
+  },
+  {
+    "dvhc": "Phú Thuận",
+    "bi_thu": "Nguyễn Văn Lớn",
+    "chu_tich": "Bùi Phúc Hậu",
+    "sdt_bt": "0919 826 384",
+    "sdt_ct": "0918 249 802"
+  },
+  {
+    "dvhc": "Phước Hậu",
+    "bi_thu": "Nguyễn Thị Hồng Hoa",
+    "chu_tich": "Nguyễn Thành Lâm",
+    "sdt_bt": "0399.737.217",
+    "sdt_ct": "0909.563.764"
+  },
+  {
+    "dvhc": "Phước Long",
+    "bi_thu": "Trần Dương Thuấn",
+    "chu_tich": "Lê Văn Trung",
+    "sdt_bt": "091 847 37 57",
+    "sdt_ct": "091 831 56 04"
+  },
+  {
+    "dvhc": "Phước Mỹ Trung",
+    "bi_thu": "Phạm Thị Thanh Thảo",
+    "chu_tich": "Nguyễn Văn Ngoạn",
+    "sdt_bt": "0912 323 056",
+    "sdt_ct": "0909 565 956"
+  },
+  {
+    "dvhc": "Quới An",
+    "bi_thu": "Lê Thị Thanh Vân",
+    "chu_tich": "Nguyễn Văn Móm Em",
+    "sdt_bt": "0398.312.839",
+    "sdt_ct": "0939.453.367"
+  },
+  {
+    "dvhc": "Quới Điền",
+    "bi_thu": "Huỳnh Thị Cẩm",
+    "chu_tich": "Mai Hoàng Nhựt",
+    "sdt_bt": "0918 917 785",
+    "sdt_ct": "0972 175 726"
+  },
+  {
+    "dvhc": "Quới Thiện",
+    "bi_thu": "Nguyễn Thị Diệu Hiền",
+    "chu_tich": "Nguyễn Phú Quốc",
+    "sdt_bt": "0988.481.234",
+    "sdt_ct": "0939.859.901"
+  },
+  {
+    "dvhc": "Song Lộc",
+    "bi_thu": "Tô Thị Thu Hồng",
+    "chu_tich": "Ngô Hồng Thanh",
+    "sdt_bt": "0934 107 999",
+    "sdt_ct": "0909 567 805"
+  },
+  {
+    "dvhc": "Song Phú",
+    "bi_thu": "Đinh Quang Huy",
+    "chu_tich": "Lê Trí Hùng",
+    "sdt_bt": "0937.896.663",
+    "sdt_ct": "0972.088.778"
+  },
+  {
+    "dvhc": "Sơn Đông",
+    "bi_thu": "Trần Quốc Huân",
+    "chu_tich": "Nguyễn Văn Được",
+    "sdt_bt": "0944 191 315",
+    "sdt_ct": "0985 518 178"
+  },
+  {
+    "dvhc": "Tam Bình",
+    "bi_thu": "Lê Ngọc Đức",
+    "chu_tich": "Nguyễn Văn Thắng",
+    "sdt_bt": "0903.133.903",
+    "sdt_ct": "0988.988.513"
+  },
+  {
+    "dvhc": "Tam Ngãi",
+    "bi_thu": "Trần Thanh Bình",
+    "chu_tich": "Lê Thị Hoàng",
+    "sdt_bt": "0919 329 459",
+    "sdt_ct": "0939 366 177"
+  },
+  {
+    "dvhc": "Tân An",
+    "bi_thu": "Trần Thị Xí Lìne",
+    "chu_tich": "Đinh Thanh Quân",
+    "sdt_bt": "0978 486 061",
+    "sdt_ct": "0939 910 025"
+  },
+  {
+    "dvhc": "Tân Hạnh",
+    "bi_thu": "Nguyễn Thanh Hà",
+    "chu_tich": "Đặng Văn Đức",
+    "sdt_bt": "0909.254.278",
+    "sdt_ct": "0387.378.710"
+  },
+  {
+    "dvhc": "Tân Hào",
+    "bi_thu": "Đặng Hồng Sơn",
+    "chu_tich": "Nguyễn Thành Nghĩa",
+    "sdt_bt": "091 825 24 20",
+    "sdt_ct": "091 713 02 69"
+  },
+  {
+    "dvhc": "Tân Hòa",
+    "bi_thu": "Nguyễn Minh Thành",
+    "chu_tich": "Triệu Văn Dày",
+    "sdt_bt": "0978 554 557",
+    "sdt_ct": "0916 132 012"
+  },
+  {
+    "dvhc": "Tân Long Hội",
+    "bi_thu": "Ngô Hùng Nhân",
+    "chu_tich": "Phạm Phương Nam",
+    "sdt_bt": "0985.513.508",
+    "sdt_ct": "0983.840.243"
+  },
+  {
+    "dvhc": "Tân Lược",
+    "bi_thu": "Nguyễn Văn Tập",
+    "chu_tich": "Võ Ngọc Thơ",
+    "sdt_bt": "0917.139.394",
+    "sdt_ct": "0945.459.479"
+  },
+  {
+    "dvhc": "Tân Ngãi",
+    "bi_thu": "Hồ Vũ Nam",
+    "chu_tich": "Trương Minh Trí",
+    "sdt_bt": "0983.833.646",
+    "sdt_ct": "0939.990.047"
+  },
+  {
+    "dvhc": "Tân Phú",
+    "bi_thu": "Phạm Văn Sang",
+    "chu_tich": "Võ Thanh Tùng",
+    "sdt_bt": "0918 592 800",
+    "sdt_ct": "0914 292 929"
+  },
+  {
+    "dvhc": "Tân Quới",
+    "bi_thu": "Đào Anh Xuân Nhựt",
+    "chu_tich": "Đinh Văn Lạc",
+    "sdt_bt": "0947.680.039",
+    "sdt_ct": "0919.356.383"
+  },
+  {
+    "dvhc": "Tân Thành Bình",
+    "bi_thu": "Lê Văn Nhiên",
+    "chu_tich": "Phan Văn Thới",
+    "sdt_bt": "0909 326 667",
+    "sdt_ct": "0918 764 860"
+  },
+  {
+    "dvhc": "Tân Thủy",
+    "bi_thu": "Bùi Thành Dương",
+    "chu_tich": "Trần Văn Chận",
+    "sdt_bt": "0833 999 079",
+    "sdt_ct": "0393 839 479"
+  },
+  {
+    "dvhc": "Tân Xuân",
+    "bi_thu": "Phạm Thị Cúc",
+    "chu_tich": "Nguyễn Đại Thắng",
+    "sdt_bt": "0916 928 080",
+    "sdt_ct": "0394 040 285"
+  },
+  {
+    "dvhc": "Tập Ngãi",
+    "bi_thu": "Lê Chí Thảo",
+    "chu_tich": "Trần Thanh Quyển",
+    "sdt_bt": "0907 996 156",
+    "sdt_ct": "0978 111 217"
+  },
+  {
+    "dvhc": "Tập Sơn",
+    "bi_thu": "Tăng Thị Thắm",
+    "chu_tich": "Thái Hoàng Giang",
+    "sdt_bt": "0912 384 448",
+    "sdt_ct": "0989 874 699"
+  },
+  {
+    "dvhc": "Tiên Thủy",
+    "bi_thu": "Huỳnh Thanh Tuấn",
+    "chu_tich": "Nguyễn Văn Khiêm",
+    "sdt_bt": "0977 385 390",
+    "sdt_ct": "0939 725 790"
+  },
+  {
+    "dvhc": "Tiểu Cần",
+    "bi_thu": "Nguyễn Văn Tám",
+    "chu_tich": "Hồ Như Biển",
+    "sdt_bt": "0916 652 814",
+    "sdt_ct": "0918 283 818"
+  },
+  {
+    "dvhc": "Thanh Đức",
+    "bi_thu": "Đặng Văn Lượng",
+    "chu_tich": "Trương Thị Cẩm Vân",
+    "sdt_bt": "0913.671.781",
+    "sdt_ct": "0939.112.464"
+  },
+  {
+    "dvhc": "Thạnh Hải",
+    "bi_thu": "Lê Văn Tiến",
+    "chu_tich": "Phan Văn Bình",
+    "sdt_bt": "0919 240 002",
+    "sdt_ct": "0934 056 319"
+  },
+  {
+    "dvhc": "Thạnh Phong",
+    "bi_thu": "Nguyễn Thanh Nghị",
+    "chu_tich": "Phạm Văn Hùng",
+    "sdt_bt": "0919 239 556",
+    "sdt_ct": "0918 982 104"
+  },
+  {
+    "dvhc": "Thạnh Phú",
+    "bi_thu": "Nguyễn Ngọc Tân",
+    "chu_tich": "Trần Văn Lược",
+    "sdt_bt": "0919 088 692",
+    "sdt_ct": "0962 973 425"
+  },
+  {
+    "dvhc": "Thạnh Phước",
+    "bi_thu": "Phạm Thanh Hùng",
+    "chu_tich": "Nguyễn Luân Vũ",
+    "sdt_bt": "0918 249 881",
+    "sdt_ct": "0919 239 697"
+  },
+  {
+    "dvhc": "Thành Thới",
+    "bi_thu": "Nguyễn Quốc Hưng",
+    "chu_tich": "Trần Quốc Cường",
+    "sdt_bt": "0918 988 108",
+    "sdt_ct": "0915 370 808"
+  },
+  {
+    "dvhc": "Thạnh Trị",
+    "bi_thu": "Bùi Thị Huyền Trang",
+    "chu_tich": "Nguyễn Hồng Hải",
+    "sdt_bt": "0984 300 229",
+    "sdt_ct": "0917 131 535"
+  },
+  {
+    "dvhc": "Thới Thuận",
+    "bi_thu": "Nguyễn Thanh Phong",
+    "chu_tich": "Võ Trịnh Quốc Toàn",
+    "sdt_bt": "0819.717.379",
+    "sdt_ct": "0918.312.132"
+  },
+  {
+    "dvhc": "Trà Côn",
+    "bi_thu": "Nguyễn Thị Tuyền",
+    "chu_tich": "Hà Văn Thanh Khương",
+    "sdt_bt": "0908.909.030",
+    "sdt_ct": "0939.973.373"
+  },
+  {
+    "dvhc": "Trà Cú",
+    "bi_thu": "Lê Thanh Bình",
+    "chu_tich": "Huỳnh Văn Danh",
+    "sdt_bt": "0888 238 881",
+    "sdt_ct": "0918 842 649"
+  },
+  {
+    "dvhc": "Trà Ôn",
+    "bi_thu": "Nguyễn Văn Trạng",
+    "chu_tich": "Nguyễn Hoàng Khang",
+    "sdt_bt": "0949.694.243",
+    "sdt_ct": "0939.189.449"
+  },
+  {
+    "dvhc": "Trà Vinh",
+    "bi_thu": "Dương Hiền Hải Đăng",
+    "chu_tich": "Nguyễn Văn Bình",
+    "sdt_bt": "0834 500 404",
+    "sdt_ct": "0918 428 066"
+  },
+  {
+    "dvhc": "Trung Hiệp",
+    "bi_thu": "Phạm Minh Hoàng",
+    "chu_tich": "Lê Văn Khái",
+    "sdt_bt": "0938.090.669",
+    "sdt_ct": "0983.995.675"
+  },
+  {
+    "dvhc": "Trung Ngãi",
+    "bi_thu": "Trần Trung Dũng",
+    "chu_tich": "Võ Minh Hoàng",
+    "sdt_bt": "0989.850.159",
+    "sdt_ct": "0907.960.444"
+  },
+  {
+    "dvhc": "Trung Thành",
+    "bi_thu": "Bùi Tấn Đảm",
+    "chu_tich": "Tô Thị Liễu Châu",
+    "sdt_bt": "0986.858.220",
+    "sdt_ct": "0907.247.289"
+  },
+  {
+    "dvhc": "Trường Long Hòa",
+    "bi_thu": "Nguyễn Trọng Nhân",
+    "chu_tich": "Nguyễn Hoàng Hải",
+    "sdt_bt": "0913 187 656",
+    "sdt_ct": "0915 990 460"
+  },
+  {
+    "dvhc": "Vinh Kim",
+    "bi_thu": "Nguyễn Minh Cảnh",
+    "chu_tich": "Đường Thế Biền",
+    "sdt_bt": "0918 137 496",
+    "sdt_ct": "0917 404 714"
+  },
+  {
+    "dvhc": "Vĩnh Thành",
+    "bi_thu": "Nguyễn Văn Liêm",
+    "chu_tich": "Phạm Hồng Sơn",
+    "sdt_bt": "0942 249 339",
+    "sdt_ct": "0916 384 078"
+  },
+  {
+    "dvhc": "Vĩnh Xuân",
+    "bi_thu": "Đặng Thị Bé Sáu",
+    "chu_tich": "Lưu Chí Thương",
+    "sdt_bt": "0917.825.699",
+    "sdt_ct": "0917.419.366"
+  }
+]
