@@ -93,11 +93,19 @@ function createPopupContent(properties) {
 }
 
 // Tạo nội dung cho panel thông tin bên phải
-function createInfoPanelContent(properties, isDhlvb = false) {
+function createInfoPanelContent(properties, isDhlvb = false, isProject = false, projectName = '') {
   if (isDhlvb) {
     return `
       <div class="info-panel-empty">
         <strong>Dự án: Đường hành lang ven biển</strong><br/>
+        Thông tin chi tiết đang được cập nhật.
+      </div>
+    `;
+  }
+  if (isProject && projectName) {
+    return `
+      <div class="info-panel-empty">
+        <strong>Dự án: ${projectName}</strong><br/>
         Thông tin chi tiết đang được cập nhật.
       </div>
     `;
@@ -120,11 +128,16 @@ function createInfoPanelContent(properties, isDhlvb = false) {
   return html;
 }
 
-function openInfoPanel(properties, isDhlvb = false) {
+function openInfoPanel(properties, isDhlvb = false, isProject = false, projectName = '') {
   if (!infoPanel || !infoPanelBody || !infoPanelTitle) return;
-  const title = properties && properties.ten ? properties.ten : 'Thông tin khu vực';
+  let title = 'Thông tin khu vực';
+  if (isProject && projectName) {
+    title = projectName;
+  } else if (properties && properties.ten) {
+    title = properties.ten;
+  }
   infoPanelTitle.textContent = title;
-  infoPanelBody.innerHTML = createInfoPanelContent(properties, isDhlvb);
+  infoPanelBody.innerHTML = createInfoPanelContent(properties, isDhlvb, isProject, projectName);
   infoPanel.classList.add('visible');
 }
 
@@ -332,6 +345,81 @@ function addGeojsonToMap(map, data) {
   return layer;
 }
 
+// ====== FORMAT TÊN DỰ ÁN ======
+function formatProjectName(filename) {
+  const nameMap = {
+    'CaoTocTraVinh-HongNgu_1': 'Cao tốc Trà Vinh - Hồng Ngự',
+    'CaoTocHCM-TienGiang-TraVinh-SocTrang_1': 'Cao tốc HCM - Tiền Giang - Trà Vinh - Sóc Trăng',
+    'DuongTinh911_1': 'Đường tỉnh 911',
+    'DuongTinh914B_1': 'Đường tỉnh 914B'
+  };
+  const baseName = filename.replace('.geojson', '');
+  return nameMap[baseName] || baseName;
+}
+
+// ====== THÊM DỰ ÁN VỚI MÀU SẮC CỤ THỂ ======
+function addProjectToMap(map, filename, color, weight = 6, displayName = '') {
+  fetch('geo-json/' + encodeURIComponent(filename))
+    .then(res => res.json())
+    .then(data => {
+      // Tạo pane riêng cho các dự án nếu chưa có
+      if (!map._projectPane) {
+        map._projectPane = map.createPane('projectPane');
+        map._projectPane.style.zIndex = 650; // Cao hơn overlayPane (z-index 400)
+      }
+      
+      // Lấy tên dự án đã format
+      const projectName = displayName || formatProjectName(filename);
+      
+      const layer = L.geoJSON(data, {
+        style: function(feature) {
+          return {
+            color: color,
+            weight: weight,
+            fillColor: color,
+            fillOpacity: 0.5,
+            opacity: 1.0
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          // Tooltip tên dự án
+          layer.bindTooltip(projectName, {
+            direction: 'top', 
+            sticky: true, 
+            offset: [0, -8], 
+            className: 'custom-tooltip'
+          });
+          // Hiển thị panel chi tiết khi click
+          layer.on('click', function() {
+            if (isMeasuring || isMeasuringArea) {
+              return;
+            }
+            layer.setStyle({color: '#2ecc40', weight: weight + 2});
+            openInfoPanel(null, false, true, projectName);
+          });
+          layer.on('mouseover', function() {
+            layer.setStyle({fillOpacity: 0.7, color: '#ff7800', weight: weight + 2});
+          });
+          layer.on('mouseout', function() {
+            layer.setStyle({
+              fillOpacity: 0.5, 
+              color: color,
+              weight: weight
+            });
+          });
+        },
+        // Sử dụng pane riêng để đảm bảo nằm phía trên
+        pane: 'projectPane'
+      });
+      
+      layer.addTo(map);
+      // Đưa toàn bộ layer lên phía trên
+      layer.bringToFront();
+      geojsonLayers.push(layer);
+    })
+    .catch(err => console.error('Lỗi tải dự án', filename, err));
+}
+
 // ====== TẢI DANH SÁCH GEOJSON & HIỂN THỊ LÊN BẢN ĐỒ ======
 function loadAllGeojsons(map) {
   fetch('geo-json/list.json')
@@ -350,6 +438,21 @@ function loadAllGeojsons(map) {
     .catch(err => {
       console.error('Không thể tải danh sách geojson:', err);
     });
+}
+
+// ====== TẢI CÁC DỰ ÁN VỚI MÀU SẮC KHÁC NHAU ======
+function loadProjects(map) {
+  // Cao tốc Trà Vinh - Hồng Ngự: màu đỏ đậm
+  addProjectToMap(map, 'CaoTocTraVinh-HongNgu_1.geojson', '#B22222', 6, 'Cao tốc Trà Vinh - Hồng Ngự');
+  
+  // Cao tốc HCM - Tiền Giang - Trà Vinh - Sóc Trăng: màu xanh dương đậm
+  addProjectToMap(map, 'CaoTocHCM-TienGiang-TraVinh-SocTrang_1.geojson', '#0066CC', 6, 'Cao tốc HCM - Tiền Giang - Trà Vinh - Sóc Trăng');
+  
+  // Đường tỉnh 911: màu xanh lá đậm
+  addProjectToMap(map, 'DuongTinh911_1.geojson', '#228B22', 6, 'Đường tỉnh 911');
+  
+  // Đường tỉnh 914B: màu cam đậm
+  addProjectToMap(map, 'DuongTinh914B_1.geojson', '#FF6600', 6, 'Đường tỉnh 914B');
 }
 
 // ====== XỬ LÝ TÌM KIẾM ======
@@ -599,10 +702,6 @@ function updateAreaDisplay() {
   
   if (areaPoints.length < 3) {
     if (areaInfo) areaInfo.style.display = 'none';
-    // Ẩn thông tin trong fullscreen panel
-    if (window._fullscreenAreaInfo) {
-      window._fullscreenAreaInfo.style.display = 'none';
-    }
     return;
   }
   
@@ -616,20 +715,6 @@ function updateAreaDisplay() {
   if (areaValue) areaValue.textContent = areaText;
   if (areaHectares) areaHectares.textContent = hectaresText;
   if (areaPointsEl) areaPointsEl.textContent = pointsText;
-  
-  // Cập nhật thông tin trong fullscreen panel
-  if (window._fullscreenAreaInfo) {
-    window._fullscreenAreaInfo.style.display = 'block';
-  }
-  if (window._fullscreenAreaValue) {
-    window._fullscreenAreaValue.textContent = areaText;
-  }
-  if (window._fullscreenAreaHectares) {
-    window._fullscreenAreaHectares.textContent = hectaresText;
-  }
-  if (window._fullscreenAreaPoints) {
-    window._fullscreenAreaPoints.textContent = pointsText;
-  }
 }
 
 function clearArea(map) {
@@ -656,20 +741,10 @@ function clearArea(map) {
     areaInfo.style.display = 'none';
   }
   
-  // Ẩn thông tin trong fullscreen panel
-  if (window._fullscreenAreaInfo) {
-    window._fullscreenAreaInfo.style.display = 'none';
-  }
-  
   // Ẩn nút xóa
   const clearBtn = document.getElementById('clear-area-btn');
   if (clearBtn) {
     clearBtn.style.display = 'none';
-  }
-  
-  // Ẩn nút xóa trong fullscreen panel
-  if (window._fullscreenClearAreaBtn) {
-    window._fullscreenClearAreaBtn.style.display = 'none';
   }
 }
 
@@ -693,11 +768,6 @@ function setupAreaButton(map) {
       areaBtn.classList.add('active');
       areaBtn.textContent = '⏹️ Dừng đo';
       if (clearBtn) clearBtn.style.display = 'inline-block';
-      
-      // Cập nhật nút xóa trong fullscreen panel
-      if (window._fullscreenClearAreaBtn) {
-        window._fullscreenClearAreaBtn.style.display = 'block';
-      }
       
       // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
       toggleGeojsonInteractivity(false);
@@ -839,11 +909,6 @@ function setupAreaButton(map) {
       areaBtn.textContent = '📐 Đo diện tích';
       map.getContainer().style.cursor = '';
       
-      // Ẩn nút xóa trong fullscreen panel
-      if (window._fullscreenClearAreaBtn) {
-        window._fullscreenClearAreaBtn.style.display = 'none';
-      }
-      
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
       
@@ -862,10 +927,6 @@ function updateMeasureDisplay() {
   
   if (measurePoints.length === 0) {
     if (measureInfo) measureInfo.style.display = 'none';
-    // Ẩn thông tin trong fullscreen panel
-    if (window._fullscreenMeasureInfo) {
-      window._fullscreenMeasureInfo.style.display = 'none';
-    }
     return;
   }
   
@@ -883,17 +944,6 @@ function updateMeasureDisplay() {
   if (measureInfo) measureInfo.style.display = 'block';
   if (measureDistance) measureDistance.textContent = distanceText;
   if (measurePointsEl) measurePointsEl.textContent = pointsText;
-  
-  // Cập nhật thông tin trong fullscreen panel
-  if (window._fullscreenMeasureInfo) {
-    window._fullscreenMeasureInfo.style.display = 'block';
-  }
-  if (window._fullscreenMeasureDistance) {
-    window._fullscreenMeasureDistance.textContent = distanceText;
-  }
-  if (window._fullscreenMeasurePoints) {
-    window._fullscreenMeasurePoints.textContent = pointsText;
-  }
 }
 
 function clearMeasure(map) {
@@ -920,20 +970,10 @@ function clearMeasure(map) {
     measureInfo.style.display = 'none';
   }
   
-  // Ẩn thông tin trong fullscreen panel
-  if (window._fullscreenMeasureInfo) {
-    window._fullscreenMeasureInfo.style.display = 'none';
-  }
-  
   // Ẩn nút xóa
   const clearBtn = document.getElementById('clear-measure-btn');
   if (clearBtn) {
     clearBtn.style.display = 'none';
-  }
-  
-  // Ẩn nút xóa trong fullscreen panel
-  if (window._fullscreenClearBtn) {
-    window._fullscreenClearBtn.style.display = 'none';
   }
 }
 
@@ -951,11 +991,6 @@ function setupMeasureButton(map) {
       measureBtn.classList.add('active');
       measureBtn.textContent = '⏹️ Dừng đo';
       if (clearBtn) clearBtn.style.display = 'inline-block';
-      
-      // Cập nhật nút xóa trong fullscreen panel
-      if (window._fullscreenClearBtn) {
-        window._fullscreenClearBtn.style.display = 'block';
-      }
       
       // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
       toggleGeojsonInteractivity(false);
@@ -1063,11 +1098,6 @@ function setupMeasureButton(map) {
       measureBtn.textContent = '📏 Đo khoảng cách';
       map.getContainer().style.cursor = '';
       
-      // Ẩn nút xóa trong fullscreen panel
-      if (window._fullscreenClearBtn) {
-        window._fullscreenClearBtn.style.display = 'none';
-      }
-      
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
       
@@ -1079,530 +1109,6 @@ function setupMeasureButton(map) {
   }
 }
 
-// ====== TÍNH NĂNG TOÀN MÀN HÌNH ======
-function setupFullscreenButton(map) {
-  const fullscreenBtn = document.getElementById('fullscreen-btn');
-  if (!fullscreenBtn) return;
-  
-  const mapContainer = document.getElementById('map');
-  const container = document.querySelector('.container');
-  
-  // Kiểm tra hỗ trợ Fullscreen API
-  const isFullscreenSupported = document.fullscreenEnabled || 
-                                 document.webkitFullscreenEnabled || 
-                                 document.mozFullScreenEnabled || 
-                                 document.msFullscreenEnabled;
-  
-  // Tạo các control trên bản đồ cho fullscreen
-  let fullscreenControls = {
-    exitBtn: null,
-    toolsPanel: null
-  };
-  
-  // Lưu reference đến các phần tử cần ẩn/hiện
-  let fullscreenElements = {
-    header: null,
-    searchBar: null,
-    buttonsDiv: null,
-    measureInfo: null,
-    footer: null
-  };
-  
-  // Khởi tạo các reference một lần
-  function initFullscreenElements() {
-    if (!fullscreenElements.header) {
-      fullscreenElements.header = container.querySelector('header');
-      fullscreenElements.searchBar = container.querySelector('.search-bar-modern');
-      
-      // Tìm div chứa các nút bằng cách tìm parent của locate-btn
-      const locateBtn = document.getElementById('locate-btn');
-      if (locateBtn && locateBtn.parentElement) {
-        fullscreenElements.buttonsDiv = locateBtn.parentElement;
-      } else {
-        // Fallback: tìm div có chứa các nút
-        fullscreenElements.buttonsDiv = Array.from(container.querySelectorAll('div')).find(div => 
-          div.contains(locateBtn) || 
-          (div.querySelector('#locate-btn') && div.querySelector('#measure-btn'))
-        );
-      }
-      
-      fullscreenElements.measureInfo = document.getElementById('measure-info');
-      
-      // Tìm footer bằng cách tìm div chứa link Facebook
-      const allDivs = container.querySelectorAll('div[style*="display: flex"]');
-      fullscreenElements.footer = Array.from(allDivs).find(div => 
-        div.querySelector('a[href*="facebook.com"]')
-      );
-    }
-  }
-  
-  // Hàm cập nhật thông tin đo khoảng cách trong panel fullscreen
-  function updateFullscreenMeasureInfo() {
-    if (window._fullscreenMeasureInfo && window._fullscreenMeasureDistance && window._fullscreenMeasurePoints) {
-      if (measurePoints.length > 0) {
-        let totalDistance = 0;
-        for (let i = 0; i < measurePoints.length - 1; i++) {
-          const p1 = measurePoints[i];
-          const p2 = measurePoints[i + 1];
-          totalDistance += calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
-        }
-        window._fullscreenMeasureDistance.textContent = 'Tổng khoảng cách: ' + formatDistance(totalDistance);
-        window._fullscreenMeasurePoints.textContent = 'Số điểm: ' + measurePoints.length;
-        window._fullscreenMeasureInfo.style.display = 'block';
-      } else {
-        window._fullscreenMeasureInfo.style.display = 'none';
-      }
-    }
-  }
-  
-  function createFullscreenControls() {
-    // Tạo nút thoát fullscreen
-    if (!fullscreenControls.exitBtn) {
-      fullscreenControls.exitBtn = L.control({position: 'topright'});
-      fullscreenControls.exitBtn.onAdd = function() {
-        const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-        const btn = L.DomUtil.create('a', 'fullscreen-exit-btn', div);
-        btn.href = '#';
-        btn.title = 'Thoát toàn màn hình (ESC)';
-        btn.innerHTML = '⛶';
-        btn.style.cssText = 'background: rgba(156,39,176,0.9); color: white; font-size: 18px; font-weight: bold; width: 36px; height: 36px; line-height: 36px; text-align: center; border-radius: 4px;';
-        L.DomEvent.on(btn, 'click', function(e) {
-          L.DomEvent.stopPropagation(e);
-          L.DomEvent.preventDefault(e);
-          exitFullscreen();
-        });
-        return div;
-      };
-      fullscreenControls.exitBtn.addTo(map);
-    }
-    
-    // Tạo panel chứa các nút chức năng
-    if (!fullscreenControls.toolsPanel) {
-      fullscreenControls.toolsPanel = L.control({position: 'bottomleft'});
-      fullscreenControls.toolsPanel.onAdd = function() {
-        const div = L.DomUtil.create('div', 'fullscreen-tools-panel');
-        div.style.cssText = 'background: rgba(255,255,255,0.95); padding: 8px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; flex-direction: column; gap: 6px;';
-        
-        // Nút Xác định vị trí
-        const locateBtn = L.DomUtil.create('button', 'fullscreen-locate-btn', div);
-        locateBtn.innerHTML = '📍 Xác định vị trí real-time';
-        locateBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #1976d2 0%, #ff9800 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px;';
-        L.DomEvent.on(locateBtn, 'click', function(e) {
-          L.DomEvent.stopPropagation(e);
-          const locateBtnDom = document.getElementById('locate-btn');
-          if (locateBtnDom) locateBtnDom.click();
-        });
-        
-        // Nút Đo khoảng cách
-        const measureBtn = L.DomUtil.create('button', 'fullscreen-measure-btn', div);
-        measureBtn.innerHTML = '📏 Đo khoảng cách';
-        measureBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #4caf50 0%, #66bb6a 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px;';
-        L.DomEvent.on(measureBtn, 'click', function(e) {
-          L.DomEvent.stopPropagation(e);
-          const measureBtnDom = document.getElementById('measure-btn');
-          if (measureBtnDom) measureBtnDom.click();
-        });
-        
-        // Nút Đo diện tích
-        const areaBtn = L.DomUtil.create('button', 'fullscreen-area-btn', div);
-        areaBtn.innerHTML = '📐 Đo diện tích';
-        areaBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px;';
-        L.DomEvent.on(areaBtn, 'click', function(e) {
-          L.DomEvent.stopPropagation(e);
-          const areaBtnDom = document.getElementById('area-btn');
-          if (areaBtnDom) areaBtnDom.click();
-        });
-        
-        // Nút Xóa đo (sẽ hiển thị khi cần)
-        const clearBtn = L.DomUtil.create('button', 'fullscreen-clear-btn', div);
-        clearBtn.innerHTML = '🗑️ Xóa đo';
-        clearBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #ff5722 0%, #ff8a65 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px; display: none;';
-        L.DomEvent.on(clearBtn, 'click', function(e) {
-          L.DomEvent.stopPropagation(e);
-          const clearBtnDom = document.getElementById('clear-measure-btn');
-          if (clearBtnDom) clearBtnDom.click();
-        });
-        window._fullscreenClearBtn = clearBtn;
-        
-        // Thông tin đo khoảng cách
-        const measureInfoDiv = L.DomUtil.create('div', 'fullscreen-measure-info', div);
-        measureInfoDiv.style.cssText = 'display: none; background: rgba(76,175,80,0.1); border: 2px solid #4caf50; border-radius: 6px; padding: 8px; margin-top: 4px;';
-        const measureDistanceSpan = L.DomUtil.create('div', 'fullscreen-measure-distance', measureInfoDiv);
-        measureDistanceSpan.style.cssText = 'font-size: 13px; font-weight: 600; color: #2e7d32; margin-bottom: 4px;';
-        measureDistanceSpan.textContent = 'Tổng khoảng cách: 0 m';
-        const measurePointsSpan = L.DomUtil.create('div', 'fullscreen-measure-points', measureInfoDiv);
-        measurePointsSpan.style.cssText = 'font-size: 12px; color: #2e7d32;';
-        measurePointsSpan.textContent = 'Số điểm: 0';
-        window._fullscreenMeasureInfo = measureInfoDiv;
-        window._fullscreenMeasureDistance = measureDistanceSpan;
-        window._fullscreenMeasurePoints = measurePointsSpan;
-        
-        // Nếu đã có điểm đo, cập nhật ngay
-        if (measurePoints.length > 0) {
-          let totalDistance = 0;
-          for (let i = 0; i < measurePoints.length - 1; i++) {
-            const p1 = measurePoints[i];
-            const p2 = measurePoints[i + 1];
-            totalDistance += calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
-          }
-          measureDistanceSpan.textContent = 'Tổng khoảng cách: ' + formatDistance(totalDistance);
-          measurePointsSpan.textContent = 'Số điểm: ' + measurePoints.length;
-          measureInfoDiv.style.display = 'block';
-        }
-        
-        // Nút Xóa vùng (sẽ hiển thị khi cần)
-        const clearAreaBtn = L.DomUtil.create('button', 'fullscreen-clear-area-btn', div);
-        clearAreaBtn.innerHTML = '🗑️ Xóa vùng';
-        clearAreaBtn.style.cssText = 'padding: 8px 16px; border: none; border-radius: 6px; background: linear-gradient(90deg, #ff5722 0%, #ff8a65 100%); color: white; font-weight: 600; cursor: pointer; font-size: 13px; display: none;';
-        L.DomEvent.on(clearAreaBtn, 'click', function(e) {
-          L.DomEvent.stopPropagation(e);
-          const clearAreaBtnDom = document.getElementById('clear-area-btn');
-          if (clearAreaBtnDom) clearAreaBtnDom.click();
-        });
-        window._fullscreenClearAreaBtn = clearAreaBtn;
-        
-        // Thông tin đo diện tích
-        const areaInfoDiv = L.DomUtil.create('div', 'fullscreen-area-info', div);
-        areaInfoDiv.style.cssText = 'display: none; background: rgba(255,152,0,0.1); border: 2px solid #ff9800; border-radius: 6px; padding: 8px; margin-top: 4px;';
-        const areaValueSpan = L.DomUtil.create('div', 'fullscreen-area-value', areaInfoDiv);
-        areaValueSpan.style.cssText = 'font-size: 13px; font-weight: 600; color: #e65100; margin-bottom: 4px;';
-        areaValueSpan.textContent = 'Diện tích: 0 km²';
-        const areaHectaresSpan = L.DomUtil.create('div', 'fullscreen-area-hectares', areaInfoDiv);
-        areaHectaresSpan.style.cssText = 'font-size: 12px; color: #e65100; margin-bottom: 4px;';
-        areaHectaresSpan.textContent = '(0 ha)';
-        const areaPointsSpan = L.DomUtil.create('div', 'fullscreen-area-points', areaInfoDiv);
-        areaPointsSpan.style.cssText = 'font-size: 12px; color: #e65100;';
-        areaPointsSpan.textContent = 'Số điểm: 0';
-        window._fullscreenAreaInfo = areaInfoDiv;
-        window._fullscreenAreaValue = areaValueSpan;
-        window._fullscreenAreaHectares = areaHectaresSpan;
-        window._fullscreenAreaPoints = areaPointsSpan;
-        
-        // Nếu đã có điểm đo diện tích, cập nhật ngay
-        if (areaPoints.length >= 3) {
-          const area = calculatePolygonArea(areaPoints);
-          areaValueSpan.textContent = 'Diện tích: ' + formatArea(area);
-          areaHectaresSpan.textContent = '(' + formatHectares(area) + ')';
-          areaPointsSpan.textContent = 'Số điểm: ' + areaPoints.length;
-          areaInfoDiv.style.display = 'block';
-        }
-        
-        // Thanh tìm kiếm
-        const searchDiv = L.DomUtil.create('div', 'fullscreen-search', div);
-        searchDiv.style.cssText = 'display: flex; gap: 4px; margin-top: 4px;';
-        const searchInput = L.DomUtil.create('input', 'fullscreen-search-input', searchDiv);
-        searchInput.type = 'text';
-        searchInput.placeholder = 'Tìm xã/phường...';
-        searchInput.style.cssText = 'padding: 6px 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; flex: 1;';
-        const searchBtn = L.DomUtil.create('button', 'fullscreen-search-btn', searchDiv);
-        searchBtn.innerHTML = '🔍';
-        searchBtn.style.cssText = 'padding: 6px 12px; border: none; border-radius: 4px; background: #1877f2; color: white; cursor: pointer;';
-        L.DomEvent.on(searchBtn, 'click', function(e) {
-          L.DomEvent.stopPropagation(e);
-          const searchBtnDom = document.getElementById('search-btn');
-          if (searchBtnDom && searchInput.value) {
-            document.getElementById('search-input').value = searchInput.value;
-            searchBtnDom.click();
-          }
-        });
-        
-        L.DomEvent.disableClickPropagation(div);
-        return div;
-      };
-      fullscreenControls.toolsPanel.addTo(map);
-    }
-  }
-  
-  function removeFullscreenControls() {
-    if (fullscreenControls.exitBtn) {
-      map.removeControl(fullscreenControls.exitBtn);
-      fullscreenControls.exitBtn = null;
-    }
-    if (fullscreenControls.toolsPanel) {
-      map.removeControl(fullscreenControls.toolsPanel);
-      fullscreenControls.toolsPanel = null;
-    }
-    window._fullscreenClearBtn = null;
-  }
-  
-  // Cập nhật nút xóa đo trong panel
-  function updateFullscreenClearBtn() {
-    if (window._fullscreenClearBtn) {
-      const clearBtnDom = document.getElementById('clear-measure-btn');
-      if (clearBtnDom && clearBtnDom.style.display !== 'none') {
-        window._fullscreenClearBtn.style.display = 'block';
-      } else {
-        window._fullscreenClearBtn.style.display = 'none';
-      }
-    }
-  }
-  
-  function enterFullscreen() {
-    // Thử dùng Fullscreen API trước
-    if (mapContainer.requestFullscreen) {
-      mapContainer.requestFullscreen().catch(err => {
-        console.log('Fullscreen API không khả dụng, dùng CSS fallback');
-        updateFullscreenState();
-      });
-    } else if (mapContainer.webkitRequestFullscreen) {
-      mapContainer.webkitRequestFullscreen();
-    } else if (mapContainer.mozRequestFullScreen) {
-      mapContainer.mozRequestFullScreen();
-    } else if (mapContainer.msRequestFullscreen) {
-      mapContainer.msRequestFullscreen();
-    } else {
-      // Fallback: dùng CSS để mô phỏng fullscreen
-      updateFullscreenState();
-    }
-  }
-  
-  function exitFullscreen() {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-  }
-  
-  function isInFullscreen() {
-    return !!(document.fullscreenElement || 
-              document.webkitFullscreenElement || 
-              document.mozFullScreenElement || 
-              document.msFullscreenElement);
-  }
-  
-  function updateFullscreenState() {
-    const isFullscreen = isInFullscreen() || isFullscreenMode;
-    
-    // Khởi tạo các reference
-    initFullscreenElements();
-    
-    const { header, searchBar, buttonsDiv, measureInfo, footer } = fullscreenElements;
-    
-    if (isFullscreen) {
-      // Lưu trạng thái display ban đầu
-      if (!window._originalDisplayStates) {
-        window._originalDisplayStates = {};
-      }
-      
-      if (header) {
-        // Lưu computed style thực tế
-        const computedStyle = window.getComputedStyle(header);
-        window._originalDisplayStates.header = computedStyle.display === 'none' ? '' : computedStyle.display;
-        header.style.display = 'none';
-      }
-      if (searchBar) {
-        const computedStyle = window.getComputedStyle(searchBar);
-        window._originalDisplayStates.searchBar = computedStyle.display === 'none' ? '' : computedStyle.display;
-        searchBar.style.display = 'none';
-      }
-      if (buttonsDiv) {
-        const computedStyle = window.getComputedStyle(buttonsDiv);
-        window._originalDisplayStates.buttonsDiv = computedStyle.display === 'none' ? '' : computedStyle.display;
-        buttonsDiv.style.display = 'none';
-      }
-      if (measureInfo) {
-        const computedStyle = window.getComputedStyle(measureInfo);
-        window._originalDisplayStates.measureInfo = computedStyle.display === 'none' ? '' : computedStyle.display;
-        measureInfo.style.display = 'none';
-      }
-      if (footer) {
-        const computedStyle = window.getComputedStyle(footer);
-        window._originalDisplayStates.footer = computedStyle.display === 'none' ? '' : computedStyle.display;
-        footer.style.display = 'none';
-      }
-      
-      // Đặt style cho container và map
-      container.style.position = 'fixed';
-      container.style.top = '0';
-      container.style.left = '0';
-      container.style.width = '100vw';
-      container.style.height = '100vh';
-      container.style.margin = '0';
-      container.style.padding = '0';
-      container.style.borderRadius = '0';
-      container.style.maxWidth = '100%';
-      container.style.zIndex = '9999';
-      container.style.background = '#fff';
-      
-      mapContainer.style.width = '100vw';
-      mapContainer.style.height = '100vh';
-      mapContainer.style.margin = '0';
-      mapContainer.style.borderRadius = '0';
-      mapContainer.style.border = 'none';
-      
-      // Hiển thị các control trên bản đồ
-      createFullscreenControls();
-      fullscreenBtn.textContent = '⛶ Thoát toàn màn hình';
-      fullscreenBtn.classList.add('active');
-      
-      // Cập nhật nút xóa đo và thông tin đo khoảng cách
-      setTimeout(() => {
-        updateFullscreenClearBtn();
-        // Cập nhật thông tin đo khoảng cách trong panel fullscreen
-        updateFullscreenMeasureInfo();
-        // Cũng cập nhật thông tin ở phần chính
-        updateMeasureDisplay();
-      }, 100);
-    } else {
-      // Khôi phục lại các phần tử - luôn hiển thị lại
-      if (header) {
-        if (window._originalDisplayStates && window._originalDisplayStates.header !== undefined) {
-          header.style.display = window._originalDisplayStates.header || 'block';
-        } else {
-          header.style.display = 'block';
-        }
-      }
-      if (searchBar) {
-        if (window._originalDisplayStates && window._originalDisplayStates.searchBar !== undefined) {
-          searchBar.style.display = window._originalDisplayStates.searchBar || 'flex';
-        } else {
-          searchBar.style.display = 'flex';
-        }
-      }
-      if (buttonsDiv) {
-        // Luôn force hiển thị lại div chứa các nút
-        buttonsDiv.style.display = 'flex';
-        // Đảm bảo các nút bên trong cũng hiển thị
-        const locateBtn = document.getElementById('locate-btn');
-        const measureBtn = document.getElementById('measure-btn');
-        const fullscreenBtnEl = document.getElementById('fullscreen-btn');
-        if (locateBtn) locateBtn.style.display = '';
-        if (measureBtn) measureBtn.style.display = '';
-        if (fullscreenBtnEl) fullscreenBtnEl.style.display = '';
-        // clear-measure-btn có thể ẩn nếu không đang đo, đó là bình thường
-      }
-      if (measureInfo) {
-        if (window._originalDisplayStates && window._originalDisplayStates.measureInfo !== undefined) {
-          measureInfo.style.display = window._originalDisplayStates.measureInfo;
-        } else if (measurePoints.length > 0) {
-          measureInfo.style.display = 'block';
-        }
-        // Nếu không có điểm đo, giữ nguyên display: none từ HTML
-      }
-      if (footer) {
-        if (window._originalDisplayStates && window._originalDisplayStates.footer !== undefined) {
-          footer.style.display = window._originalDisplayStates.footer || 'flex';
-        } else {
-          footer.style.display = 'flex';
-        }
-      }
-      
-      // Khôi phục style cho container và map
-      container.style.position = '';
-      container.style.top = '';
-      container.style.left = '';
-      container.style.width = '';
-      container.style.height = '';
-      container.style.margin = '';
-      container.style.padding = '';
-      container.style.borderRadius = '';
-      container.style.maxWidth = '';
-      container.style.zIndex = '';
-      container.style.background = '';
-      
-      mapContainer.style.width = '';
-      mapContainer.style.height = '';
-      mapContainer.style.margin = '';
-      mapContainer.style.borderRadius = '';
-      mapContainer.style.border = '';
-      
-      // Xóa các control
-      removeFullscreenControls();
-      fullscreenBtn.textContent = '⛶ Toàn màn hình';
-      fullscreenBtn.classList.remove('active');
-      
-      // Đảm bảo các nút luôn hiển thị - force hiển thị lại sau một chút
-      setTimeout(() => {
-        const locateBtn = document.getElementById('locate-btn');
-        const measureBtn = document.getElementById('measure-btn');
-        const fullscreenBtnEl = document.getElementById('fullscreen-btn');
-        const clearBtn = document.getElementById('clear-measure-btn');
-        
-        // Kiểm tra và hiển thị lại nếu bị ẩn
-        if (buttonsDiv && buttonsDiv.style.display === 'none') {
-          buttonsDiv.style.display = 'flex';
-        }
-        if (locateBtn && locateBtn.offsetParent === null) {
-          if (buttonsDiv) buttonsDiv.style.display = 'flex';
-        }
-        if (measureBtn && measureBtn.offsetParent === null) {
-          if (buttonsDiv) buttonsDiv.style.display = 'flex';
-        }
-        if (fullscreenBtnEl && fullscreenBtnEl.offsetParent === null) {
-          if (buttonsDiv) buttonsDiv.style.display = 'flex';
-        }
-        // clearBtn có thể ẩn nếu không đang đo, đó là bình thường
-      }, 200);
-    }
-    // Điều chỉnh lại kích thước bản đồ
-    setTimeout(() => {
-      if (window.mapInstance) {
-        window.mapInstance.invalidateSize();
-      }
-    }, 100);
-  }
-  
-  // Biến để theo dõi trạng thái fullscreen (cho fallback)
-  let isFullscreenMode = false;
-  
-  fullscreenBtn.onclick = function() {
-    if (isInFullscreen() || isFullscreenMode) {
-      exitFullscreen();
-      isFullscreenMode = false;
-    } else {
-      enterFullscreen();
-      // Nếu không có Fullscreen API, dùng CSS fallback
-      if (!isFullscreenSupported) {
-        isFullscreenMode = true;
-        updateFullscreenState();
-      }
-    }
-  };
-  
-  // Lắng nghe sự kiện thay đổi fullscreen
-  if (isFullscreenSupported) {
-    document.addEventListener('fullscreenchange', function() {
-      if (!isInFullscreen()) {
-        isFullscreenMode = false;
-      }
-      updateFullscreenState();
-    });
-    document.addEventListener('webkitfullscreenchange', function() {
-      if (!isInFullscreen()) {
-        isFullscreenMode = false;
-      }
-      updateFullscreenState();
-    });
-    document.addEventListener('mozfullscreenchange', function() {
-      if (!isInFullscreen()) {
-        isFullscreenMode = false;
-      }
-      updateFullscreenState();
-    });
-    document.addEventListener('MSFullscreenChange', function() {
-      if (!isInFullscreen()) {
-        isFullscreenMode = false;
-      }
-      updateFullscreenState();
-    });
-  }
-  
-  // Lắng nghe phím ESC để thoát fullscreen
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && (isInFullscreen() || isFullscreenMode)) {
-      exitFullscreen();
-      if (isFullscreenMode) {
-        isFullscreenMode = false;
-        updateFullscreenState();
-      }
-    }
-  });
-}
 
 // ====== MAIN ======
 (function main() {
@@ -1611,8 +1117,11 @@ function setupFullscreenButton(map) {
   setupInfoPanel();
   setupLocateButton(map);
   loadAllGeojsons(map);
+  // Tải các dự án sau một khoảng thời gian ngắn để đảm bảo chúng nằm phía trên các layer khác
+  setTimeout(() => {
+    loadProjects(map); // Tải các dự án với màu sắc khác nhau
+  }, 500);
   setupOpacitySliderControl(map);
   setupMeasureButton(map);
   setupAreaButton(map);
-  setupFullscreenButton(map);
 })(); 
