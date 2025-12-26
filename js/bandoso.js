@@ -585,12 +585,25 @@ function setupToolsPanelControls(map) {
     // Cập nhật trạng thái ban đầu
     const icon = toggleOverlayBtn.querySelector('.toggle-icon');
     const text = toggleOverlayBtn.querySelector('.toggle-text');
+    
+    // Icon hiển thị (mắt mở)
+    const visibleIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+      <circle cx="12" cy="12" r="3"></circle>
+    </svg>`;
+    
+    // Icon ẩn (mắt đóng với gạch chéo)
+    const hiddenIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+      <line x1="1" y1="1" x2="23" y2="23"></line>
+    </svg>`;
+    
     if (geojsonVisible) {
-      icon.textContent = '👁️';
+      icon.innerHTML = visibleIcon;
       text.textContent = 'Hiển thị ranh giới';
       toggleOverlayBtn.classList.add('active');
     } else {
-      icon.textContent = '🙈';
+      icon.innerHTML = hiddenIcon;
       text.textContent = 'Ẩn ranh giới';
       toggleOverlayBtn.classList.remove('active');
     }
@@ -605,11 +618,11 @@ function setupToolsPanelControls(map) {
         }
       });
       if (geojsonVisible) {
-        icon.textContent = '👁️';
+        icon.innerHTML = visibleIcon;
         text.textContent = 'Hiển thị ranh giới';
         toggleOverlayBtn.classList.add('active');
       } else {
-        icon.textContent = '🙈';
+        icon.innerHTML = hiddenIcon;
         text.textContent = 'Ẩn ranh giới';
         toggleOverlayBtn.classList.remove('active');
       }
