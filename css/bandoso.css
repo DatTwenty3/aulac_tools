@@ -283,6 +283,16 @@ h1 {
     cursor: pointer;
 }
 
+/* Đảm bảo tooltip luôn hiển thị trên các layer dự án */
+.leaflet-tooltip-pane {
+    z-index: 800 !important;
+}
+
+.custom-tooltip {
+    z-index: 800 !important;
+    pointer-events: none !important;
+}
+
 .locate-btn-custom {
     background: linear-gradient(120deg, #0ea5e9 0%, #22c55e 50%, #eab308 100%);
     color: #fff;

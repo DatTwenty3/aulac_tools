@@ -235,13 +235,26 @@ function createInfoPanelContent(properties, isDhlvb = false, isProject = false, 
                            'quyMo', 'capKyThuat', 'loaiQuyHoach', 'quyHoachBatDau', 'quyHoachKetThuc', 'nguon'];
     const displayedFields = new Set();
     
+    // Danh sách các trường cần ẩn khi không có dữ liệu
+    const fieldsToHideIfEmpty = ['chieuDai', 'Shape_Length', 'quyMo', 'capKyThuat'];
+    
     // Hiển thị các trường ưu tiên trước
     priorityFields.forEach(key => {
-      if (properties[key] !== undefined && properties[key] !== null) {
+      const value = properties[key];
+      // Kiểm tra nếu trường này cần ẩn khi không có dữ liệu
+      if (fieldsToHideIfEmpty.includes(key)) {
+        // Bỏ qua nếu giá trị là null, undefined, hoặc rỗng
+        if (value === null || value === undefined || value === '') {
+          displayedFields.add(key);
+          return;
+        }
+      }
+      
+      if (value !== undefined && value !== null) {
         html += `
           <tr>
             <td class="label">${formatFieldName(key)}</td>
-            <td class="value">${formatValue(properties[key], key)}</td>
+            <td class="value">${formatValue(value, key)}</td>
           </tr>
         `;
         displayedFields.add(key);
@@ -421,6 +434,12 @@ function initMap() {
     zoom: 10,
     layers: [osmLayer]
   });
+
+  // Tạo pane riêng cho tooltip với z-index cao hơn các layer dự án (700)
+  // TooltipPane mặc định của Leaflet có z-index 650, cần tăng lên để không bị che
+  if (map.getPane('tooltipPane')) {
+    map.getPane('tooltipPane').style.zIndex = 800;
+  }
 
   // Lưu các layer để dùng sau
   map._baseLayers = {
