@@ -21,6 +21,20 @@ let geojsonLayers = [];
 let geojsonVisible = true;
 let currentOverlayOpacity = 0.4;
 
+// Biến cho quản lý các file DuAn
+let duanLayers = {}; // Lưu các layer theo tên file
+let duanFiles = []; // Danh sách các file trong folder DuAn
+let duanConfig = {}; // Cấu hình màu và độ dày nét cho từng file
+let selectedDuanFeatureLayer = null; // Layer đang được chọn
+let selectedDuanFeatureStyle = null; // Style gốc của layer đang được chọn
+
+// ====== MAPPING TÊN HIỂN THỊ TIẾNG VIỆT CHO CÁC FILE DUAN ======
+// Tên hiển thị sẽ được đọc từ file list.json trong folder DuAn
+// Fallback mapping nếu list.json không có displayName
+const duanDisplayNames = {
+  // Có thể thêm fallback ở đây nếu cần
+};
+
 // Biến cho tính năng đo khoảng cách
 let isMeasuring = false;
 let measurePoints = [];
@@ -96,8 +110,103 @@ function createPopupContent(properties) {
   return popupContent;
 }
 
+// Hàm format giá trị cho hiển thị
+function formatValue(value, key = '') {
+  if (value === null || value === undefined) {
+    return '<span style="color: #94a3b8; font-style: italic;">Chưa có dữ liệu</span>';
+  }
+  
+  // Format số
+  if (typeof value === 'number') {
+    // Format năm (nếu là số như 2.025 thì chuyển thành 2025)
+    if (key === 'nam') {
+      // Nếu số có phần thập phân (ví dụ: 2.025), chuyển thành số nguyên
+      if (value % 1 !== 0) {
+        // Chuyển thành string để xử lý
+        const strValue = value.toString();
+        const parts = strValue.split('.');
+        if (parts.length === 2) {
+          // Nối phần nguyên và phần thập phân (bỏ dấu chấm)
+          // Ví dụ: "2.025" -> "2" + "025" -> "2025"
+          const yearStr = parts[0] + parts[1];
+          // Chuyển về số để loại bỏ số 0 đầu nếu có, sau đó chuyển lại thành string
+          const yearNum = parseInt(yearStr, 10);
+          return yearNum.toString();
+        }
+      }
+      // Nếu là số nguyên, làm tròn và hiển thị
+      return Math.round(value).toString();
+    }
+    
+    // Format độ dài với đơn vị
+    if (key === 'Shape_Length' || key === 'chieuDai') {
+      if (value >= 1000) {
+        return `${(value / 1000).toFixed(2)} km (${value.toLocaleString('vi-VN')} m)`;
+      }
+      return `${value.toFixed(2)} m`;
+    }
+    
+    // Format số lớn với dấu phẩy
+    if (value >= 1000) {
+      return value.toLocaleString('vi-VN');
+    }
+    
+    // Format số nguyên
+    return Math.round(value).toString();
+  }
+  
+  // Format ngày tháng
+  if (typeof value === 'string' && (value.includes('T') || value.includes('Z'))) {
+    try {
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString('vi-VN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit'
+        });
+      }
+    } catch (e) {
+      // Không phải ngày hợp lệ
+    }
+  }
+  
+  // Format loại quy hoạch
+  if (key === 'loaiQuyHoach') {
+    const loaiMap = {
+      1: 'Quy hoạch',
+      2: 'Hiện trạng',
+      3: 'Định hướng'
+    };
+    return loaiMap[value] || value;
+  }
+  
+  return value;
+}
+
+// Hàm format tên trường cho hiển thị
+function formatFieldName(key) {
+  const fieldNames = {
+    'OBJECTID': 'ID',
+    'maDoiTuong': 'Mã đối tượng',
+    'ten': 'Tên',
+    'phanLoai': 'Phân loại',
+    'chieuDai': 'Chiều dài (m)',
+    'quyMo': 'Quy mô',
+    'capKyThuat': 'Cấp kỹ thuật',
+    'loaiQuyHoach': 'Loại quy hoạch',
+    'loaiHienTrang': 'Loại hiện trạng',
+    'quyHoachBatDau': 'Quy hoạch bắt đầu',
+    'quyHoachKetThuc': 'Quy hoạch kết thúc',
+    'nguon': 'Nguồn',
+    'nam': 'Năm',
+    'Shape_Length': 'Độ dài (m)'
+  };
+  return fieldNames[key] || key;
+}
+
 // Tạo nội dung cho panel thông tin bên phải
-function createInfoPanelContent(properties, isDhlvb = false, isProject = false, projectName = '') {
+function createInfoPanelContent(properties, isDhlvb = false, isProject = false, projectName = '', isDuanFeature = false) {
   if (isDhlvb) {
     return `
       <div class="info-panel-empty">
@@ -106,7 +215,7 @@ function createInfoPanelContent(properties, isDhlvb = false, isProject = false, 
       </div>
     `;
   }
-  if (isProject && projectName) {
+  if (isProject && projectName && !isDuanFeature) {
     return `
       <div class="info-panel-empty">
         <strong>Dự án: ${projectName}</strong><br/>
@@ -117,6 +226,45 @@ function createInfoPanelContent(properties, isDhlvb = false, isProject = false, 
   if (!properties) {
     return '<div class="info-panel-empty">Không có thông tin cho khu vực này.</div>';
   }
+  
+  // Nếu là feature từ DuAn, hiển thị thông tin chi tiết
+  if (isDuanFeature) {
+    let html = '<table class="info-panel-table">';
+    // Sắp xếp các trường theo thứ tự ưu tiên
+    const priorityFields = ['ten', 'phanLoai', 'maDoiTuong', 'OBJECTID', 'chieuDai', 'Shape_Length', 
+                           'quyMo', 'capKyThuat', 'loaiQuyHoach', 'quyHoachBatDau', 'quyHoachKetThuc', 'nguon'];
+    const displayedFields = new Set();
+    
+    // Hiển thị các trường ưu tiên trước
+    priorityFields.forEach(key => {
+      if (properties[key] !== undefined && properties[key] !== null) {
+        html += `
+          <tr>
+            <td class="label">${formatFieldName(key)}</td>
+            <td class="value">${formatValue(properties[key], key)}</td>
+          </tr>
+        `;
+        displayedFields.add(key);
+      }
+    });
+    
+    // Hiển thị các trường còn lại
+    for (const key in properties) {
+      if (!displayedFields.has(key) && key !== 'style') {
+        html += `
+          <tr>
+            <td class="label">${formatFieldName(key)}</td>
+            <td class="value">${formatValue(properties[key], key)}</td>
+          </tr>
+        `;
+      }
+    }
+    
+    html += '</table>';
+    return html;
+  }
+  
+  // Hiển thị thông tin xã/phường (code cũ)
   let html = '<table class="info-panel-table">';
   for (const key in fieldMap) {
     if (properties[key] !== undefined) {
@@ -132,16 +280,28 @@ function createInfoPanelContent(properties, isDhlvb = false, isProject = false, 
   return html;
 }
 
-function openInfoPanel(properties, isDhlvb = false, isProject = false, projectName = '') {
+function openInfoPanel(properties, isDhlvb = false, isProject = false, projectName = '', isDuanFeature = false) {
   if (!infoPanel || !infoPanelBody || !infoPanelTitle) return;
   let title = 'Thông tin khu vực';
-  if (isProject && projectName) {
+  if (isDuanFeature && properties) {
+    // Lấy tên từ properties, ưu tiên 'ten', sau đó 'phanLoai', cuối cùng là projectName
+    if (properties.ten) {
+      title = properties.ten;
+      if (properties.phanLoai) {
+        title += ` - ${properties.phanLoai}`;
+      }
+    } else if (properties.phanLoai) {
+      title = properties.phanLoai;
+    } else if (projectName) {
+      title = projectName;
+    }
+  } else if (isProject && projectName) {
     title = projectName;
   } else if (properties && properties.ten) {
     title = properties.ten;
   }
   infoPanelTitle.textContent = title;
-  infoPanelBody.innerHTML = createInfoPanelContent(properties, isDhlvb, isProject, projectName);
+  infoPanelBody.innerHTML = createInfoPanelContent(properties, isDhlvb, isProject, projectName, isDuanFeature);
   infoPanel.classList.add('visible');
 }
 
@@ -155,6 +315,43 @@ function setupInfoPanel() {
       infoPanel.classList.remove('visible');
     };
   }
+}
+
+// Hàm ẩn/hiện thẻ thông tin
+function toggleInfoCard(show) {
+  const infoCard = document.getElementById('info-card');
+  if (!infoCard) return;
+  if (show) {
+    infoCard.classList.remove('hidden');
+  } else {
+    infoCard.classList.add('hidden');
+  }
+}
+
+// Hàm thiết lập thẻ thông tin
+function setupInfoCard() {
+  const infoToggleBtn = document.getElementById('info-toggle-btn');
+  const infoCard = document.getElementById('info-card');
+  const closeBtn = document.getElementById('info-card-close');
+  
+  if (infoToggleBtn && infoCard) {
+    infoToggleBtn.onclick = function() {
+      if (infoCard.classList.contains('hidden')) {
+        toggleInfoCard(true);
+      } else {
+        toggleInfoCard(false);
+      }
+    };
+  }
+  
+  if (closeBtn && infoCard) {
+    closeBtn.onclick = function() {
+      toggleInfoCard(false);
+    };
+  }
+  
+  // Mặc định hiện khi load trang
+  toggleInfoCard(true);
 }
 
 // Hàm ẩn/hiện hộp công cụ
@@ -257,12 +454,9 @@ function setupLocateButton(map) {
       locateBtnDom.disabled = false;
       locateBtnDom.innerText = '📍 Xác định vị trí';
       locateBtnDom.classList.remove('active');
-      // Xóa marker và circle
+      // Xóa marker
       if (currentLocationMarker) {
         map.removeLayer(currentLocationMarker);
-        if (currentLocationMarker._accuracyCircle) {
-          map.removeLayer(currentLocationMarker._accuracyCircle);
-        }
         currentLocationMarker = null;
       }
       // Hiện lại hộp công cụ khi dừng
@@ -301,39 +495,37 @@ function setupLocateButton(map) {
           map.removeLayer(currentLocationMarker);
         }
         
-        // Tạo marker mới với icon đặc biệt cho real-time
-        currentLocationMarker = L.marker([lat, lng], {
-          icon: L.icon({
-            iconUrl: 'https://cdn.jsdelivr.net/gh/pointhi/leaflet-color-markers@master/img/marker-icon-blue.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-          })
-        }).addTo(map);
-        
-        // Thêm circle để hiển thị độ chính xác
+        // Tạo marker mới với icon hiện đại cho real-time
         const accuracy = pos.coords.accuracy;
-        if (currentLocationMarker._accuracyCircle) {
-          map.removeLayer(currentLocationMarker._accuracyCircle);
-        }
-        currentLocationMarker._accuracyCircle = L.circle([lat, lng], {
-          radius: accuracy,
-          color: '#1976d2',
-          fillColor: '#1976d2',
-          fillOpacity: 0.2,
-          weight: 2,
-          dashArray: '5, 5'
+        currentLocationMarker = L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: 'custom-location-marker',
+            html: `
+              <div class="location-marker-container">
+                <div class="location-marker-pulse"></div>
+                <div class="location-marker-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="8" fill="#ef4444" stroke="white" stroke-width="2"/>
+                    <circle cx="12" cy="12" r="4" fill="white"/>
+                  </svg>
+                </div>
+              </div>
+            `,
+            iconSize: [32, 32],
+            iconAnchor: [16, 16],
+            popupAnchor: [0, -16]
+          })
         }).addTo(map);
         
         // Cập nhật popup với thông tin real-time
         const speed = pos.coords.speed ? (pos.coords.speed * 3.6).toFixed(1) + ' km/h' : 'Không xác định';
         const heading = pos.coords.heading ? pos.coords.heading.toFixed(0) + '°' : 'Không xác định';
         currentLocationMarker.bindPopup(
-          `<div style="text-align: center;">
-            <strong>📍 Vị trí của bạn</strong><br>
-            <small>Độ chính xác: ${accuracy.toFixed(0)} m</small><br>
-            <small>Tốc độ: ${speed}</small><br>
-            <small>Hướng: ${heading}</small>
+          `<div style="text-align: center; padding: 4px;">
+            <strong style="color: #ef4444; font-size: 14px;">📍 Vị trí của bạn</strong><br>
+            <small style="color: #666;">Độ chính xác: ${accuracy.toFixed(0)} m</small><br>
+            <small style="color: #666;">Tốc độ: ${speed}</small><br>
+            <small style="color: #666;">Hướng: ${heading}</small>
           </div>`
         );
         
@@ -524,6 +716,375 @@ function loadProjects(map) {
   
   // Đường tỉnh 914B: màu cam đậm
   addProjectToMap(map, 'DuongTinh914B_1.geojson', '#FF6600', 6, 'Đường tỉnh 914B');
+}
+
+// ====== QUẢN LÝ CÁC FILE DUAN ======
+// Biến lưu danh sách file và tên hiển thị từ list.json
+let duanFilesList = [];
+
+// Hàm tải danh sách file GeoJSON từ folder DuAn
+async function loadDuanFilesList() {
+  try {
+    // Thử đọc file list.json nếu có
+    const response = await fetch('geo-json/DuAn/list.json');
+    if (response.ok) {
+      const list = await response.json();
+      
+      // Kiểm tra format mới (array of objects) hoặc format cũ (array of strings)
+      if (Array.isArray(list) && list.length > 0) {
+        if (typeof list[0] === 'object' && list[0].filename) {
+          // Format mới: [{filename: "...", displayName: "..."}, ...]
+          duanFilesList = list;
+          return list.map(item => item.filename);
+        } else if (typeof list[0] === 'string') {
+          // Format cũ: ["file1.geojson", "file2.geojson", ...]
+          duanFilesList = list.map(filename => ({
+            filename: filename,
+            displayName: duanDisplayNames[filename] || filename.replace('.geojson', '')
+          }));
+          return list.filter(f => f.endsWith('.geojson'));
+        }
+      }
+    }
+  } catch (e) {
+    console.log('Không tìm thấy list.json trong folder DuAn, sử dụng danh sách mặc định');
+  }
+  
+  // Danh sách file mặc định (nếu không có list.json)
+  const defaultFiles = [
+    'Hien Trang Mang Luoi Duong Bo.geojson',
+    'Dinh Huong Phat Trien Mang Luoi Duong Bo.geojson'
+  ];
+  duanFilesList = defaultFiles.map(filename => ({
+    filename: filename,
+    displayName: duanDisplayNames[filename] || filename.replace('.geojson', '')
+  }));
+  return defaultFiles;
+}
+
+// Hàm lấy tên hiển thị từ danh sách đã load
+function getDuanDisplayName(filename) {
+  const fileInfo = duanFilesList.find(item => item.filename === filename);
+  if (fileInfo && fileInfo.displayName) {
+    return fileInfo.displayName;
+  }
+  // Fallback
+  return duanDisplayNames[filename] || filename.replace('.geojson', '');
+}
+
+// Hàm tải cấu hình từ localStorage
+function loadDuanConfig() {
+  const saved = localStorage.getItem('duanConfig');
+  if (saved) {
+    try {
+      duanConfig = JSON.parse(saved);
+    } catch (e) {
+      console.error('Lỗi đọc cấu hình:', e);
+      duanConfig = {};
+    }
+  }
+}
+
+// Hàm lưu cấu hình vào localStorage
+function saveDuanConfig() {
+  localStorage.setItem('duanConfig', JSON.stringify(duanConfig));
+}
+
+// Hàm tạo màu mặc định cho file
+function getDefaultColor(index) {
+  const colors = ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080'];
+  return colors[index % colors.length];
+}
+
+// Hàm thêm file DuAn lên bản đồ
+function addDuanFileToMap(map, filename, color, weight = 4) {
+  // Tạo pane riêng cho các file DuAn nếu chưa có (z-index cao nhất)
+  if (!map._duanPane) {
+    map._duanPane = map.createPane('duanPane');
+    map._duanPane.style.zIndex = 700; // Cao hơn projectPane (650) và overlayPane (400)
+  }
+  
+  // Nếu layer đã tồn tại, xóa nó trước
+  if (duanLayers[filename]) {
+    map.removeLayer(duanLayers[filename]);
+    delete duanLayers[filename];
+  }
+  
+  const filepath = 'geo-json/DuAn/' + encodeURIComponent(filename);
+  // Lấy tên hiển thị từ list.json hoặc fallback
+  const displayName = getDuanDisplayName(filename);
+  
+  fetch(filepath)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      const layer = L.geoJSON(data, {
+        style: function(feature) {
+          return {
+            color: color,
+            weight: weight,
+            fillColor: color,
+            fillOpacity: 0.3,
+            opacity: 1.0
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          // Lấy tên hiển thị cho tooltip (ưu tiên tên đường, sau đó là tên file)
+          const tooltipText = (feature.properties && feature.properties.ten) 
+            ? `${feature.properties.ten}${feature.properties.phanLoai ? ' - ' + feature.properties.phanLoai : ''}`
+            : displayName;
+          
+          // Tooltip với thông tin đường
+          layer.bindTooltip(tooltipText, {
+            direction: 'top', 
+            sticky: true, 
+            offset: [0, -8], 
+            className: 'custom-tooltip'
+          });
+          
+          // Hiển thị panel chi tiết khi click
+          layer.on('click', function() {
+            if (isMeasuring || isMeasuringArea) {
+              return;
+            }
+            
+            // Khôi phục style của layer trước đó nếu có
+            if (selectedDuanFeatureLayer && selectedDuanFeatureLayer !== layer) {
+              if (selectedDuanFeatureStyle) {
+                selectedDuanFeatureLayer.setStyle(selectedDuanFeatureStyle);
+              }
+            }
+            
+            // Lưu style gốc của layer hiện tại
+            selectedDuanFeatureStyle = {
+              color: color,
+              weight: weight,
+              fillOpacity: 0.3
+            };
+            selectedDuanFeatureLayer = layer;
+            
+            // Highlight đường được chọn
+            layer.setStyle({color: '#2ecc40', weight: weight + 2});
+            
+            // Hiển thị thông tin chi tiết từ properties
+            openInfoPanel(feature.properties, false, true, displayName, true);
+          });
+          
+          layer.on('mouseover', function() {
+            layer.setStyle({fillOpacity: 0.5, color: '#ff7800', weight: weight + 2});
+          });
+          
+          layer.on('mouseout', function() {
+            // Khôi phục style ban đầu (trừ khi đang được chọn)
+            if (selectedDuanFeatureLayer !== layer) {
+              layer.setStyle({
+                fillOpacity: 0.3, 
+                color: color,
+                weight: weight
+              });
+            }
+          });
+        },
+        // Sử dụng pane riêng để đảm bảo nằm phía trên cùng
+        pane: 'duanPane'
+      });
+      
+      layer.addTo(map);
+      // Đưa toàn bộ layer lên phía trên cùng
+      layer.bringToFront();
+      
+      // Lưu layer vào object
+      duanLayers[filename] = layer;
+      
+      // Đảm bảo layer luôn ở trên cùng khi có layer mới được thêm
+      setTimeout(() => {
+        if (duanLayers[filename]) {
+          duanLayers[filename].bringToFront();
+        }
+      }, 100);
+    })
+    .catch(err => {
+      console.error('Lỗi tải file DuAn', filename, err);
+      // Ẩn checkbox nếu file không tải được
+      const checkbox = document.querySelector(`input[data-filename="${filename}"]`);
+      if (checkbox) {
+        checkbox.disabled = true;
+        checkbox.parentElement.style.opacity = '0.5';
+      }
+    });
+}
+
+// Hàm cập nhật style của layer
+function updateDuanLayerStyle(filename, color, weight) {
+  if (duanLayers[filename]) {
+    // Reset layer đang được chọn nếu nó thuộc file này
+    if (selectedDuanFeatureLayer) {
+      const layerGroup = duanLayers[filename];
+      layerGroup.eachLayer(function(layer) {
+        if (layer === selectedDuanFeatureLayer) {
+          selectedDuanFeatureLayer = null;
+          selectedDuanFeatureStyle = null;
+        }
+      });
+    }
+    
+    // Cập nhật style cho tất cả các feature trong layer
+    duanLayers[filename].eachLayer(function(layer) {
+      layer.setStyle({
+        color: color,
+        weight: weight,
+        fillColor: color,
+        fillOpacity: 0.3
+      });
+    });
+  }
+}
+
+// Hàm tạo UI cho từng file DuAn
+function createDuanFileUI(filename, index) {
+  // Lấy tên hiển thị từ list.json hoặc fallback
+  const displayName = getDuanDisplayName(filename);
+  const defaultColor = getDefaultColor(index);
+  const defaultWeight = 4;
+  
+  // Lấy cấu hình đã lưu hoặc dùng mặc định
+  const config = duanConfig[filename] || {
+    color: defaultColor,
+    weight: defaultWeight,
+    visible: true
+  };
+  
+  // Cập nhật lại config nếu chưa có
+  if (!duanConfig[filename]) {
+    duanConfig[filename] = config;
+    saveDuanConfig();
+  }
+  
+  const fileItem = document.createElement('div');
+  fileItem.className = 'duan-file-item';
+  fileItem.innerHTML = `
+    <div class="duan-file-header">
+      <label class="duan-file-checkbox">
+        <input type="checkbox" data-filename="${filename}" ${config.visible ? 'checked' : ''}>
+        <span class="duan-file-name">${displayName}</span>
+      </label>
+    </div>
+    <div class="duan-file-controls">
+      <div class="duan-control-group">
+        <label class="duan-control-label">Màu:</label>
+        <input type="color" class="duan-color-picker" data-filename="${filename}" value="${config.color}">
+      </div>
+      <div class="duan-control-group">
+        <label class="duan-control-label">Độ dày:</label>
+        <input type="range" class="duan-weight-slider" data-filename="${filename}" 
+               min="1" max="10" step="0.5" value="${config.weight}">
+        <span class="duan-weight-value">${config.weight}</span>
+      </div>
+    </div>
+  `;
+  
+  return fileItem;
+}
+
+// Hàm tải và hiển thị các file DuAn
+async function loadDuanFiles(map) {
+  // Tải danh sách file
+  duanFiles = await loadDuanFilesList();
+  
+  // Tải cấu hình đã lưu
+  loadDuanConfig();
+  
+  // Tạo UI cho từng file
+  const container = document.getElementById('duan-files-container');
+  if (!container) return;
+  
+  container.innerHTML = '';
+  
+  duanFiles.forEach((filename, index) => {
+    const fileItem = createDuanFileUI(filename, index);
+    container.appendChild(fileItem);
+    
+    // Lấy cấu hình
+    const config = duanConfig[filename] || {
+      color: getDefaultColor(index),
+      weight: 4,
+      visible: true
+    };
+    
+    // Tải và hiển thị file nếu visible
+    if (config.visible) {
+      addDuanFileToMap(map, filename, config.color, config.weight);
+    }
+  });
+  
+  // Thiết lập event listeners
+  setupDuanFileControls(map);
+}
+
+// Hàm thiết lập các control cho file DuAn
+function setupDuanFileControls(map) {
+  // Xử lý checkbox ẩn/hiện
+  document.querySelectorAll('input[type="checkbox"][data-filename]').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const filename = this.getAttribute('data-filename');
+      const config = duanConfig[filename] || {};
+      config.visible = this.checked;
+      duanConfig[filename] = config;
+      saveDuanConfig();
+      
+      if (this.checked) {
+        // Hiển thị layer nếu chưa có
+        if (!duanLayers[filename]) {
+          const color = config.color || getDefaultColor(duanFiles.indexOf(filename));
+          const weight = config.weight || 4;
+          addDuanFileToMap(map, filename, color, weight);
+        } else {
+          map.addLayer(duanLayers[filename]);
+        }
+      } else {
+        // Ẩn layer
+        if (duanLayers[filename]) {
+          map.removeLayer(duanLayers[filename]);
+        }
+      }
+    });
+  });
+  
+  // Xử lý color picker
+  document.querySelectorAll('.duan-color-picker').forEach(picker => {
+    picker.addEventListener('change', function() {
+      const filename = this.getAttribute('data-filename');
+      const color = this.value;
+      const config = duanConfig[filename] || {};
+      config.color = color;
+      duanConfig[filename] = config;
+      saveDuanConfig();
+      
+      updateDuanLayerStyle(filename, color, config.weight || 4);
+    });
+  });
+  
+  // Xử lý weight slider
+  document.querySelectorAll('.duan-weight-slider').forEach(slider => {
+    slider.addEventListener('input', function() {
+      const filename = this.getAttribute('data-filename');
+      const weight = parseFloat(this.value);
+      const config = duanConfig[filename] || {};
+      config.weight = weight;
+      duanConfig[filename] = config;
+      saveDuanConfig();
+      
+      // Cập nhật hiển thị giá trị
+      const valueSpan = this.parentElement.querySelector('.duan-weight-value');
+      if (valueSpan) {
+        valueSpan.textContent = weight;
+      }
+      
+      updateDuanLayerStyle(filename, config.color || getDefaultColor(duanFiles.indexOf(filename)), weight);
+    });
+  });
 }
 
 // ====== XỬ LÝ TÌM KIẾM ======
@@ -1183,12 +1744,15 @@ function setupMeasureButton(map) {
   const map = initMap();
   window.mapInstance = map; // Lưu instance để dùng trong fullscreen
   setupInfoPanel();
+  setupInfoCard(); // Thiết lập thẻ thông tin
   setupToolsPanel(); // Thiết lập hộp công cụ
   setupLocateButton(map);
   loadAllGeojsons(map);
   // Tải các dự án sau một khoảng thời gian ngắn để đảm bảo chúng nằm phía trên các layer khác
   setTimeout(() => {
     loadProjects(map); // Tải các dự án với màu sắc khác nhau
+    // Tải các file DuAn (nằm trên cùng)
+    loadDuanFiles(map);
     // Thiết lập các control trong hộp công cụ sau khi load xong
     setupToolsPanelControls(map);
   }, 500);
