@@ -27,6 +27,8 @@ let duanFiles = []; // Danh sách các file trong folder DuAn
 let duanConfig = {}; // Cấu hình màu và độ dày nét cho từng file
 let selectedDuanFeatureLayer = null; // Layer đang được chọn
 let selectedDuanFeatureStyle = null; // Style gốc của layer đang được chọn
+let duanFeaturesCache = {}; // Cache các feature từ DuAn theo "ten" để tìm kiếm: {ten: [{feature, filename, displayName}, ...]}
+let searchResultMarkers = []; // Lưu tất cả các marker kết quả tìm kiếm
 
 // ====== MAPPING TÊN HIỂN THỊ TIẾNG VIỆT CHO CÁC FILE DUAN ======
 // Tên hiển thị sẽ được đọc từ file list.json trong folder DuAn
@@ -42,6 +44,9 @@ let measureMarkers = [];
 let measurePolyline = null;
 let measureClickHandler = null;
 let measureSegmentLabels = []; // Lưu các label hiển thị khoảng cách từng đoạn
+
+// Biến cho marker kết quả tìm kiếm
+let searchResultMarker = null;
 
 // Biến cho tính năng đo diện tích
 let isMeasuringArea = false;
@@ -439,6 +444,12 @@ function initMap() {
   // TooltipPane mặc định của Leaflet có z-index 650, cần tăng lên để không bị che
   if (map.getPane('tooltipPane')) {
     map.getPane('tooltipPane').style.zIndex = 800;
+  }
+  
+  // Đảm bảo popupPane có z-index cao hơn duanPane (700) để popup không bị che
+  const popupPane = map.getPane('popupPane');
+  if (popupPane) {
+    popupPane.style.zIndex = 900; // Cao hơn duanPane (700) và tooltipPane (800)
   }
 
   // Lưu các layer để dùng sau
@@ -851,6 +862,24 @@ function addDuanFileToMap(map, filename, color, weight = 4) {
       return res.json();
     })
     .then(data => {
+      // Cache các feature theo "ten" để hỗ trợ tìm kiếm (lưu tất cả các feature cùng tên)
+      if (data.features && Array.isArray(data.features)) {
+        data.features.forEach(feature => {
+          if (feature.properties && feature.properties.ten) {
+            const ten = feature.properties.ten.toString().toLowerCase();
+            // Lưu feature vào mảng nếu chưa có, hoặc thêm vào mảng nếu đã có
+            if (!duanFeaturesCache[ten]) {
+              duanFeaturesCache[ten] = [];
+            }
+            duanFeaturesCache[ten].push({
+              feature: feature,
+              filename: filename,
+              displayName: displayName
+            });
+          }
+        });
+      }
+      
       const layer = L.geoJSON(data, {
         style: function(feature) {
           return {
@@ -1122,37 +1151,782 @@ function setupDuanFileControls(map) {
 function setupSearch(map) {
   const searchInput = document.getElementById('search-input');
   const searchBtn = document.getElementById('search-btn');
+  const suggestionsContainer = document.getElementById('search-suggestions');
   if (!searchBtn || !searchInput) return;
+  
+  let selectedSuggestionIndex = -1;
+  let currentSuggestions = [];
 
-  searchBtn.onclick = function() {
-    const keyword = removeVietnameseTones(searchInput.value.trim().toLowerCase());
-    if (!keyword) {
-      alert('Vui lòng nhập tên xã/phường!');
+  // Hàm tìm kiếm và trả về danh sách gợi ý
+  function getSearchSuggestions(keyword) {
+    if (!keyword || keyword.length < 1) {
+      return [];
+    }
+    
+    const normalizedKeyword = removeVietnameseTones(keyword.toLowerCase());
+    const suggestions = [];
+    
+    // Tìm trong các file GeoJSON thông thường
+    cachedGeojsonFiles.forEach(filename => {
+      const name = removeVietnameseTones(filename.replace('.geojson', '').toLowerCase());
+      if (name.includes(normalizedKeyword)) {
+        suggestions.push({
+          type: 'xaphuong',
+          title: filename.replace('.geojson', ''),
+          subtitle: 'Xã/Phường',
+          value: filename.replace('.geojson', ''),
+          isFile: true,
+          filename: filename
+        });
+      }
+    });
+    
+    // Tìm trong các feature của DuAn (chỉ hiển thị 1 lần cho mỗi tên, kèm số lượng)
+    Object.keys(duanFeaturesCache).forEach(key => {
+      const normalizedKey = removeVietnameseTones(key.toLowerCase());
+      if (normalizedKey.includes(normalizedKeyword)) {
+        const cachedDataArray = duanFeaturesCache[key];
+        // Chỉ thêm 1 lần vào suggestions, không lặp lại
+        if (cachedDataArray.length > 0) {
+          const firstFeature = cachedDataArray[0].feature;
+          const ten = firstFeature.properties && firstFeature.properties.ten ? firstFeature.properties.ten : '';
+          const phanLoai = firstFeature.properties && firstFeature.properties.phanLoai ? firstFeature.properties.phanLoai : '';
+          
+          const title = cachedDataArray.length > 1 
+            ? `${ten} (${cachedDataArray.length} kết quả)`
+            : ten;
+          
+          suggestions.push({
+            type: 'duan',
+            title: title,
+            subtitle: phanLoai || 'Đường',
+            value: ten,
+            isFile: false,
+            feature: firstFeature,
+            cachedData: cachedDataArray[0],
+            totalCount: cachedDataArray.length,
+            allFeatures: cachedDataArray.length > 1 ? cachedDataArray : null
+          });
+        }
+      }
+    });
+    
+    // Giới hạn số lượng gợi ý
+    return suggestions.slice(0, 10);
+  }
+  
+  // Hàm hiển thị gợi ý
+  function showSuggestions(suggestions) {
+    currentSuggestions = suggestions;
+    selectedSuggestionIndex = -1;
+    
+    if (suggestions.length === 0) {
+      suggestionsContainer.classList.remove('show');
       return;
     }
+    
+    suggestionsContainer.innerHTML = '';
+    
+    suggestions.forEach((suggestion, index) => {
+      const item = document.createElement('div');
+      item.className = 'search-suggestion-item';
+      item.dataset.index = index;
+      
+      const icon = suggestion.type === 'xaphuong' 
+        ? '<svg class="search-suggestion-icon" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/></svg>'
+        : '<svg class="search-suggestion-icon" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>';
+      
+      item.innerHTML = `
+        ${icon}
+        <div class="search-suggestion-content">
+          <div class="search-suggestion-title">${suggestion.title}</div>
+          <div class="search-suggestion-subtitle">${suggestion.subtitle}</div>
+        </div>
+        <span class="search-suggestion-type">${suggestion.type === 'xaphuong' ? 'Xã/Phường' : 'Dự án'}</span>
+      `;
+      
+      item.addEventListener('click', () => {
+        selectSuggestion(suggestion);
+      });
+      
+      item.addEventListener('mouseenter', () => {
+        selectedSuggestionIndex = index;
+        updateSuggestionHighlight();
+      });
+      
+      suggestionsContainer.appendChild(item);
+    });
+    
+    suggestionsContainer.classList.add('show');
+  }
+  
+  // Hàm cập nhật highlight cho gợi ý
+  function updateSuggestionHighlight() {
+    const items = suggestionsContainer.querySelectorAll('.search-suggestion-item');
+    items.forEach((item, index) => {
+      if (index === selectedSuggestionIndex) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+  
+  // Hàm chọn gợi ý
+  function selectSuggestion(suggestion) {
+    searchInput.value = suggestion.title;
+    suggestionsContainer.classList.remove('show');
+    performSearch(suggestion);
+  }
+  
+  // Hàm thực hiện tìm kiếm
+  function performSearch(suggestion = null) {
+    const keyword = removeVietnameseTones(searchInput.value.trim().toLowerCase());
+    if (!keyword) {
+      alert('Vui lòng nhập từ khóa tìm kiếm!');
+      return;
+    }
+    
+    // Nếu có suggestion được chọn, sử dụng nó
+    if (suggestion) {
+      if (suggestion.isFile) {
+        // Tìm file GeoJSON
+        fetch('geo-json/' + encodeURIComponent(suggestion.filename))
+          .then(res => res.json())
+          .then(data => {
+            let bounds = L.geoJSON(data).getBounds();
+            let center = bounds.getCenter();
+            
+            if (searchResultMarker) {
+              map.removeLayer(searchResultMarker);
+              searchResultMarker = null;
+            }
+            
+            searchResultMarker = createSearchResultMarker(map, center, suggestion.title);
+            searchResultMarker.addTo(map);
+            
+            map.flyTo(center, 12, {
+              animate: true,
+              duration: 1.0
+            });
+            
+            setTimeout(() => {
+              searchResultMarker.openPopup();
+              const popup = searchResultMarker.getPopup();
+              if (popup && popup.getElement()) {
+                popup.getElement().style.zIndex = '1000';
+              }
+            }, 500);
+            
+            let feature = data.features && data.features[0];
+            if (feature && feature.properties) {
+              openInfoPanel(feature.properties, false);
+            }
+            
+            showSearchNotification('Đã tìm thấy: ' + suggestion.title, 'success');
+          })
+          .catch(() => {
+            alert('Lỗi khi tải dữ liệu!');
+          });
+        return;
+      } else {
+        // Tìm feature DuAn
+        const cachedData = suggestion.cachedData;
+        const feature = suggestion.feature;
+        
+        // Nếu có nhiều feature cùng tên, hiển thị tất cả
+        if (suggestion.allFeatures && suggestion.allFeatures.length > 1) {
+          const ten = feature.properties && feature.properties.ten 
+            ? feature.properties.ten.toString().toLowerCase() 
+            : '';
+          const foundFeatureKeys = [ten];
+          showAllMatchingFeatures(map, foundFeatureKeys, ten);
+          return;
+        }
+        
+        if (!duanLayers[cachedData.filename]) {
+          const config = duanConfig[cachedData.filename] || {
+            color: getDefaultColor(duanFiles.indexOf(cachedData.filename)),
+            weight: 4,
+            visible: true
+          };
+          if (config.visible) {
+            addDuanFileToMap(map, cachedData.filename, config.color, config.weight);
+            setTimeout(() => {
+              zoomToDuanFeature(map, feature, cachedData);
+            }, 500);
+            return;
+          }
+        }
+        
+        zoomToDuanFeature(map, feature, cachedData);
+        return;
+      }
+    }
+    
+    // Nếu không có suggestion, tìm kiếm như bình thường
     const foundFile = cachedGeojsonFiles.find(f => {
       const name = removeVietnameseTones(f.replace('.geojson','').toLowerCase());
       return name.includes(keyword);
     });
-    if (!foundFile) {
-      alert('Không tìm thấy xã/phường phù hợp!');
+    
+    if (foundFile) {
+      fetch('geo-json/' + encodeURIComponent(foundFile))
+        .then(res => res.json())
+        .then(data => {
+          let bounds = L.geoJSON(data).getBounds();
+          let center = bounds.getCenter();
+          
+          if (searchResultMarker) {
+            map.removeLayer(searchResultMarker);
+            searchResultMarker = null;
+          }
+          
+          searchResultMarker = createSearchResultMarker(map, center, foundFile.replace('.geojson', ''));
+          searchResultMarker.addTo(map);
+          
+          map.flyTo(center, 12, {
+            animate: true,
+            duration: 1.0
+          });
+          
+          setTimeout(() => {
+            searchResultMarker.openPopup();
+            const popup = searchResultMarker.getPopup();
+            if (popup && popup.getElement()) {
+              popup.getElement().style.zIndex = '1000';
+            }
+          }, 500);
+          
+          let feature = data.features && data.features[0];
+          if (feature && feature.properties) {
+            openInfoPanel(feature.properties, false);
+          }
+          
+          showSearchNotification('Đã tìm thấy: ' + foundFile.replace('.geojson', ''), 'success');
+        })
+        .catch(() => {
+          alert('Lỗi khi tải dữ liệu!');
+        });
       return;
     }
-    fetch('geo-json/' + encodeURIComponent(foundFile))
-      .then(res => res.json())
-      .then(data => {
-        let bounds = L.geoJSON(data).getBounds();
-        let center = bounds.getCenter();
-        map.setView(center, 12);
-        let feature = data.features && data.features[0];
-        if (feature && feature.properties) {
-          openInfoPanel(feature.properties, false);
+    
+    // Tìm tất cả các feature trùng tên
+    const foundFeatureKeys = Object.keys(duanFeaturesCache).filter(key => {
+      const normalizedKey = removeVietnameseTones(key);
+      return normalizedKey.includes(keyword);
+    });
+    
+    if (foundFeatureKeys.length > 0) {
+      // Hiển thị tất cả các feature trùng tên
+      showAllMatchingFeatures(map, foundFeatureKeys, keyword);
+      return;
+    }
+    
+    showSearchNotification('Không tìm thấy kết quả phù hợp!', 'error');
+  }
+  
+  // Hàm hiển thị tất cả các feature trùng tên
+  function showAllMatchingFeatures(map, foundFeatureKeys, keyword) {
+    // Xóa tất cả các marker cũ
+    clearAllSearchMarkers(map);
+    
+    const allFeatures = [];
+    const allBounds = [];
+    
+    // Thu thập tất cả các feature trùng tên
+    foundFeatureKeys.forEach(key => {
+      const cachedDataArray = duanFeaturesCache[key];
+      cachedDataArray.forEach(cachedData => {
+        allFeatures.push({
+          feature: cachedData.feature,
+          cachedData: cachedData,
+          ten: cachedData.feature.properties && cachedData.feature.properties.ten 
+            ? cachedData.feature.properties.ten 
+            : 'Đường'
+        });
+        
+        // Đảm bảo file DuAn được hiển thị
+        if (!duanLayers[cachedData.filename]) {
+          const config = duanConfig[cachedData.filename] || {
+            color: getDefaultColor(duanFiles.indexOf(cachedData.filename)),
+            weight: 4,
+            visible: true
+          };
+          if (config.visible) {
+            addDuanFileToMap(map, cachedData.filename, config.color, config.weight);
+          }
         }
-      })
-      .catch(() => {
-        alert('Lỗi khi tải dữ liệu xã/phường!');
       });
+    });
+    
+    if (allFeatures.length === 0) {
+      showSearchNotification('Không tìm thấy kết quả phù hợp!', 'error');
+      return;
+    }
+    
+    // Tạo marker cho mỗi feature và highlight
+    const markers = [];
+    const highlightedLayers = [];
+    
+    allFeatures.forEach((item, index) => {
+      const feature = item.feature;
+      const cachedData = item.cachedData;
+      const markerPoint = getBestPointForMarker(feature);
+      
+      // Tạo marker
+      const ten = item.ten;
+      const phanLoai = feature.properties && feature.properties.phanLoai 
+        ? feature.properties.phanLoai 
+        : '';
+      const displayText = `${ten}${phanLoai ? ' - ' + phanLoai : ''}${allFeatures.length > 1 ? ` (${index + 1}/${allFeatures.length})` : ''}`;
+      
+      const marker = createSearchResultMarker(map, markerPoint, displayText);
+      marker.addTo(map);
+      markers.push(marker);
+      
+      // Lưu bounds để zoom
+      const tempLayer = L.geoJSON(feature);
+      allBounds.push(tempLayer.getBounds());
+      
+      // Highlight feature
+      const duanLayer = duanLayers[cachedData.filename];
+      if (duanLayer) {
+        duanLayer.eachLayer(function(layer) {
+          if (layer.feature === feature) {
+            const currentStyle = layer.options;
+            layer.setStyle({
+              color: '#2ecc40',
+              weight: (currentStyle.weight || 4) + 2
+            });
+            layer.bringToFront();
+            highlightedLayers.push({ layer: layer, originalStyle: currentStyle });
+          }
+        });
+      }
+    });
+    
+    // Lưu các marker để có thể xóa sau
+    searchResultMarkers = markers;
+    
+    // Zoom để hiển thị tất cả các feature
+    if (allBounds.length > 0) {
+      const groupBounds = L.latLngBounds(allBounds);
+      map.flyToBounds(groupBounds, {
+        padding: [50, 50],
+        maxZoom: 15,
+        animate: true,
+        duration: 1.0
+      });
+    }
+    
+    // Mở popup của marker đầu tiên sau khi zoom
+    if (markers.length > 0) {
+      setTimeout(() => {
+        markers[0].openPopup();
+        const popup = markers[0].getPopup();
+        if (popup && popup.getElement()) {
+          popup.getElement().style.zIndex = '1000';
+        }
+      }, 600);
+    }
+    
+    // Hiển thị thông báo
+    const countText = allFeatures.length > 1 
+      ? `Đã tìm thấy ${allFeatures.length} kết quả trùng tên: ${allFeatures[0].ten}`
+      : `Đã tìm thấy: ${allFeatures[0].ten}`;
+    showSearchNotification(countText, 'success');
+    
+    // Hiển thị panel danh sách kết quả nếu có nhiều hơn 1
+    if (allFeatures.length > 1) {
+      showSearchResultsPanel(allFeatures, markers);
+    }
+  }
+  
+  // Hàm xóa tất cả các marker kết quả tìm kiếm
+  function clearAllSearchMarkers(map) {
+    if (searchResultMarker) {
+      map.removeLayer(searchResultMarker);
+      searchResultMarker = null;
+    }
+    searchResultMarkers.forEach(marker => {
+      if (marker && marker._map) {
+        map.removeLayer(marker);
+      }
+    });
+    searchResultMarkers = [];
+  }
+  
+  // Hàm hiển thị panel danh sách kết quả
+  function showSearchResultsPanel(features, markers) {
+    // Xóa panel cũ nếu có
+    const oldPanel = document.getElementById('search-results-panel');
+    if (oldPanel) {
+      oldPanel.remove();
+    }
+    
+    // Tạo panel mới
+    const panel = document.createElement('div');
+    panel.id = 'search-results-panel';
+    panel.className = 'search-results-panel';
+    panel.innerHTML = `
+      <div class="search-results-panel-header">
+        <h3>Tìm thấy ${features.length} kết quả</h3>
+        <button class="search-results-close" onclick="document.getElementById('search-results-panel').remove()">×</button>
+      </div>
+      <div class="search-results-list">
+        ${features.map((item, index) => {
+          const phanLoai = item.feature.properties && item.feature.properties.phanLoai 
+            ? item.feature.properties.phanLoai 
+            : 'Đường';
+          return `
+            <div class="search-result-item" data-index="${index}">
+              <div class="search-result-item-number">${index + 1}</div>
+              <div class="search-result-item-content">
+                <div class="search-result-item-title">${item.ten}</div>
+                <div class="search-result-item-subtitle">${phanLoai}</div>
+              </div>
+              <button class="search-result-item-btn" data-index="${index}">Xem</button>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+    
+    document.body.appendChild(panel);
+    
+    // Xử lý click vào các item
+    panel.querySelectorAll('.search-result-item, .search-result-item-btn').forEach(element => {
+      element.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const index = parseInt(this.dataset.index || this.closest('.search-result-item').dataset.index);
+        if (index >= 0 && index < markers.length) {
+          // Đóng tất cả popup
+          markers.forEach(m => m.closePopup());
+          // Mở popup của marker được chọn
+          markers[index].openPopup();
+          // Zoom đến marker đó
+          map.setView(markers[index].getLatLng(), map.getZoom(), { animate: true });
+        }
+      });
+    });
+  }
+
+  // Xử lý khi người dùng gõ
+  searchInput.addEventListener('input', function(e) {
+    const keyword = e.target.value.trim();
+    if (keyword.length >= 1) {
+      const suggestions = getSearchSuggestions(keyword);
+      showSuggestions(suggestions);
+    } else {
+      suggestionsContainer.classList.remove('show');
+    }
+  });
+  
+  // Xử lý khi người dùng nhấn phím
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentSuggestions.length > 0) {
+        selectedSuggestionIndex = Math.min(selectedSuggestionIndex + 1, currentSuggestions.length - 1);
+        updateSuggestionHighlight();
+        const items = suggestionsContainer.querySelectorAll('.search-suggestion-item');
+        if (items[selectedSuggestionIndex]) {
+          items[selectedSuggestionIndex].scrollIntoView({ block: 'nearest' });
+        }
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentSuggestions.length > 0) {
+        selectedSuggestionIndex = Math.max(selectedSuggestionIndex - 1, -1);
+        updateSuggestionHighlight();
+        if (selectedSuggestionIndex >= 0) {
+          const items = suggestionsContainer.querySelectorAll('.search-suggestion-item');
+          if (items[selectedSuggestionIndex]) {
+            items[selectedSuggestionIndex].scrollIntoView({ block: 'nearest' });
+          }
+        }
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedSuggestionIndex >= 0 && currentSuggestions[selectedSuggestionIndex]) {
+        selectSuggestion(currentSuggestions[selectedSuggestionIndex]);
+      } else {
+        performSearch();
+      }
+    } else if (e.key === 'Escape') {
+      suggestionsContainer.classList.remove('show');
+      selectedSuggestionIndex = -1;
+    }
+  });
+  
+  // Ẩn gợi ý khi click ra ngoài
+  document.addEventListener('click', function(e) {
+    if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
+      suggestionsContainer.classList.remove('show');
+    }
+  });
+
+  searchBtn.onclick = function() {
+    performSearch();
   };
+}
+
+// Hàm tạo marker kết quả tìm kiếm với icon đặc biệt
+function createSearchResultMarker(map, latlng, title) {
+  // Xóa marker cũ nếu có
+  if (searchResultMarker) {
+    if (searchResultMarker._map) {
+      searchResultMarker._map.removeLayer(searchResultMarker);
+    }
+  }
+  
+  // Tạo pane riêng cho search results với z-index cao hơn DuAn (700)
+  if (!map._searchResultPane) {
+    map._searchResultPane = map.createPane('searchResultPane');
+    map._searchResultPane.style.zIndex = 800; // Cao hơn duanPane (700)
+  }
+  
+  // Đảm bảo popupPane có z-index cao hơn duanPane
+  const popupPane = map.getPane('popupPane');
+  if (popupPane) {
+    popupPane.style.zIndex = 900; // Cao hơn searchResultPane (800) và duanPane (700)
+  }
+  
+  const marker = L.marker(latlng, {
+    icon: L.divIcon({
+      className: 'search-result-marker',
+      html: `
+        <div class="search-marker-container">
+          <div class="search-marker-pulse"></div>
+          <div class="search-marker-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#ff4444"/>
+              <circle cx="12" cy="9" r="3" fill="white"/>
+            </svg>
+          </div>
+        </div>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 40],
+      popupAnchor: [0, -45]
+    }),
+    pane: 'searchResultPane',
+    zIndexOffset: 1000
+  });
+  
+  // Tạo popup với thông tin
+  const popupContent = `
+    <div class="search-result-popup">
+      <div class="search-result-popup-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align: middle; margin-right: 8px;">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#ff4444"/>
+        </svg>
+        <strong>Đã tìm thấy</strong>
+      </div>
+      <div class="search-result-popup-content">${title}</div>
+    </div>
+  `;
+  
+  marker.bindPopup(popupContent, {
+    className: 'search-result-popup-container',
+    closeButton: true,
+    autoClose: false,
+    autoPan: true,
+    offset: [0, -10]
+  });
+  
+  return marker;
+}
+
+// Hàm lấy điểm tốt nhất trên geometry để đặt marker
+function getBestPointForMarker(feature) {
+  const geom = feature.geometry;
+  
+  if (geom.type === 'Point') {
+    return L.latLng(geom.coordinates[1], geom.coordinates[0]);
+  }
+  
+  if (geom.type === 'LineString') {
+    const coords = geom.coordinates;
+    const midIndex = Math.floor(coords.length / 2);
+    return L.latLng(coords[midIndex][1], coords[midIndex][0]);
+  }
+  
+  if (geom.type === 'MultiLineString') {
+    // Lấy điểm giữa của line đầu tiên
+    const firstLine = geom.coordinates[0];
+    const midIndex = Math.floor(firstLine.length / 2);
+    return L.latLng(firstLine[midIndex][1], firstLine[midIndex][0]);
+  }
+  
+  if (geom.type === 'Polygon' || geom.type === 'MultiPolygon') {
+    // Lấy center của bounds
+    const tempLayer = L.geoJSON(feature);
+    return tempLayer.getBounds().getCenter();
+  }
+  
+  // Fallback: lấy center của bounds
+  const tempLayer = L.geoJSON(feature);
+  return tempLayer.getBounds().getCenter();
+}
+
+// Hàm zoom đến feature DuAn và hiển thị thông tin
+function zoomToDuanFeature(map, feature, cachedData) {
+  if (!feature || !feature.geometry) {
+    alert('Không tìm thấy dữ liệu địa lý!');
+    return;
+  }
+  
+  // Tạo layer tạm để lấy bounds
+  const tempLayer = L.geoJSON(feature);
+  const bounds = tempLayer.getBounds();
+  
+  // Lấy điểm tốt nhất để đặt marker (điểm giữa của đường thay vì center của bounds)
+  const markerPoint = getBestPointForMarker(feature);
+  
+  // Xóa marker kết quả cũ nếu có
+  if (searchResultMarker) {
+    map.removeLayer(searchResultMarker);
+    searchResultMarker = null;
+  }
+  
+  // Tạo marker tại vị trí tìm thấy
+  const ten = feature.properties && feature.properties.ten ? feature.properties.ten : 'Đường';
+  const displayText = `${ten}${feature.properties && feature.properties.phanLoai ? ' - ' + feature.properties.phanLoai : ''}`;
+  searchResultMarker = createSearchResultMarker(map, markerPoint, displayText);
+  searchResultMarker.addTo(map);
+  
+  // Zoom đến feature với animation
+  map.flyToBounds(bounds, {
+    padding: [50, 50],
+    maxZoom: 15,
+    animate: true,
+    duration: 1.0
+  });
+  
+  // Tìm layer tương ứng với feature này
+  let foundLayer = null;
+  const duanLayer = duanLayers[cachedData.filename];
+  if (duanLayer) {
+    duanLayer.eachLayer(function(layer) {
+      if (layer.feature === feature) {
+        foundLayer = layer;
+      }
+    });
+  }
+  
+  // Highlight feature nếu tìm thấy layer
+  if (foundLayer) {
+    // Khôi phục style của layer trước đó nếu có
+    if (selectedDuanFeatureLayer && selectedDuanFeatureLayer !== foundLayer) {
+      if (selectedDuanFeatureStyle) {
+        selectedDuanFeatureLayer.setStyle(selectedDuanFeatureStyle);
+      }
+    }
+    
+    // Lưu style gốc
+    const currentStyle = foundLayer.options;
+    selectedDuanFeatureStyle = {
+      color: currentStyle.color,
+      weight: currentStyle.weight,
+      fillOpacity: currentStyle.fillOpacity
+    };
+    selectedDuanFeatureLayer = foundLayer;
+    
+    // Highlight với animation
+    foundLayer.setStyle({
+      color: '#2ecc40',
+      weight: (currentStyle.weight || 4) + 2
+    });
+    
+    // Đảm bảo layer được hiển thị
+    foundLayer.bringToFront();
+    if (duanLayer) {
+      duanLayer.bringToFront();
+    }
+    
+    // Thêm hiệu ứng nhấp nháy
+    let flashCount = 0;
+    const flashInterval = setInterval(() => {
+      if (flashCount < 3) {
+        foundLayer.setStyle({
+          color: flashCount % 2 === 0 ? '#ff4444' : '#2ecc40',
+          weight: (currentStyle.weight || 4) + 2
+        });
+        flashCount++;
+      } else {
+        clearInterval(flashInterval);
+        foundLayer.setStyle({
+          color: '#2ecc40',
+          weight: (currentStyle.weight || 4) + 2
+        });
+      }
+    }, 200);
+  }
+  
+  // Mở popup sau khi zoom và đảm bảo nó ở trên cùng
+  setTimeout(() => {
+    searchResultMarker.openPopup();
+    // Đảm bảo popup được hiển thị trên cùng
+    const popup = searchResultMarker.getPopup();
+    if (popup && popup.getElement()) {
+      popup.getElement().style.zIndex = '1000';
+      // Đảm bảo popup tip cũng có z-index cao
+      const popupTip = popup.getElement().parentElement?.querySelector('.leaflet-popup-tip');
+      if (popupTip) {
+        popupTip.style.zIndex = '1000';
+      }
+    }
+  }, 600);
+  
+  // Hiển thị thông tin
+  if (feature.properties) {
+    openInfoPanel(feature.properties, false, true, cachedData.displayName, true);
+  }
+  
+  // Hiển thị thông báo thành công
+  showSearchNotification(`Đã tìm thấy: ${displayText}`, 'success');
+}
+
+// Hàm hiển thị thông báo tìm kiếm
+function showSearchNotification(message, type = 'success') {
+  // Xóa thông báo cũ nếu có
+  const oldNotification = document.getElementById('search-notification');
+  if (oldNotification) {
+    oldNotification.remove();
+  }
+  
+  // Tạo thông báo mới
+  const notification = document.createElement('div');
+  notification.id = 'search-notification';
+  notification.className = `search-notification search-notification-${type}`;
+  notification.innerHTML = `
+    <div class="search-notification-content">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="vertical-align: middle; margin-right: 8px;">
+        ${type === 'success' 
+          ? '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/>'
+          : '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>'
+        }
+      </svg>
+      <span>${message}</span>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Hiển thị với animation
+  setTimeout(() => {
+    notification.classList.add('show');
+  }, 10);
+  
+  // Tự động ẩn sau 4 giây
+  setTimeout(() => {
+    notification.classList.remove('show');
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 4000);
 }
 
 // ====== Thiết lập các control trong hộp công cụ ======

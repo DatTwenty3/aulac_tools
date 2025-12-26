@@ -76,7 +76,10 @@
         <div class="tools-tab-content active" id="tab-tools">
           <!-- Thanh tìm kiếm -->
           <div class="search-bar-modern">
-            <input id="search-input" class="search-input-modern" type="text" placeholder="Nhập tên xã/phường...">
+            <div class="search-input-wrapper">
+              <input id="search-input" class="search-input-modern" type="text" placeholder="Nhập tên xã/phường hoặc tên đường..." autocomplete="off">
+              <div id="search-suggestions" class="search-suggestions"></div>
+            </div>
             <button id="search-btn" class="search-btn-modern">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="vertical-align: middle; margin-right: 4px;"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/><line x1="14.4142" y1="14" x2="18" y2="17.5858" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
               <span>Tìm kiếm</span>
