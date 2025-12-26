@@ -1566,12 +1566,21 @@ function setupSearch(map) {
         duanLayer.eachLayer(function(layer) {
           if (layer.feature === feature) {
             const currentStyle = layer.options;
+            // Lưu style gốc đầy đủ trước khi highlight
+            const originalStyle = {
+              color: currentStyle.color || '#3388ff',
+              weight: currentStyle.weight || 4,
+              fillOpacity: currentStyle.fillOpacity !== undefined ? currentStyle.fillOpacity : 0.3,
+              opacity: currentStyle.opacity !== undefined ? currentStyle.opacity : 1.0
+            };
             layer.setStyle({
               color: '#2ecc40',
-              weight: (currentStyle.weight || 4) + 2
+              weight: (currentStyle.weight || 4) + 2,
+              fillOpacity: currentStyle.fillOpacity !== undefined ? currentStyle.fillOpacity : 0.3,
+              opacity: 1.0
             });
             layer.bringToFront();
-            highlightedLayers.push({ layer: layer, originalStyle: currentStyle });
+            highlightedLayers.push({ layer: layer, originalStyle: originalStyle });
           }
         });
       }
@@ -1613,8 +1622,8 @@ function setupSearch(map) {
       showSearchResultsPanel(allFeatures, markers);
     }
     
-    // Tự động xóa tất cả markers sau 3 giây
-    autoRemoveAllMarkers(map, markers, 3000);
+    // Tự động xóa tất cả markers sau 3 giây và khôi phục highlight
+    autoRemoveAllMarkers(map, markers, 3000, highlightedLayers);
   }
   
   // Hàm xóa tất cả các marker kết quả tìm kiếm
@@ -1637,15 +1646,25 @@ function setupSearch(map) {
     searchResultMarkers = [];
   }
   
-  // Hàm tự động xóa marker sau 3 giây
-  function autoRemoveMarker(map, marker, delay = 3000) {
+  // Hàm tự động xóa marker sau 3 giây và khôi phục highlight
+  function autoRemoveMarker(map, marker, delay = 3000, highlightedLayer = null) {
     // Xóa timeout cũ nếu có
     if (searchResultMarkerTimeout) {
       clearTimeout(searchResultMarkerTimeout);
     }
     
-    // Tạo timeout mới để xóa marker sau 3 giây
+    // Tạo timeout mới để xóa marker sau 3 giây và khôi phục style
     searchResultMarkerTimeout = setTimeout(() => {
+      // Khôi phục style của layer đã highlight nếu có
+      if (highlightedLayer && highlightedLayer.layer && highlightedLayer.originalStyle) {
+        highlightedLayer.layer.setStyle(highlightedLayer.originalStyle);
+        // Reset selectedDuanFeatureLayer nếu đây là layer đang được chọn
+        if (selectedDuanFeatureLayer === highlightedLayer.layer) {
+          selectedDuanFeatureLayer = null;
+          selectedDuanFeatureStyle = null;
+        }
+      }
+      
       if (marker && marker._map) {
         // Đóng popup trước khi xóa marker
         if (marker.getPopup && marker.getPopup()) {
@@ -1660,15 +1679,35 @@ function setupSearch(map) {
     }, delay);
   }
   
-  // Hàm tự động xóa tất cả markers sau 3 giây
-  function autoRemoveAllMarkers(map, markers, delay = 3000) {
+  // Hàm tự động xóa tất cả markers sau 3 giây và khôi phục highlight
+  function autoRemoveAllMarkers(map, markers, delay = 3000, highlightedLayers = []) {
     // Xóa timeout cũ nếu có
     if (searchResultMarkerTimeout) {
       clearTimeout(searchResultMarkerTimeout);
     }
     
-    // Tạo timeout mới để xóa tất cả markers sau 3 giây
+    // Tạo timeout mới để xóa tất cả markers sau 3 giây và khôi phục style
     searchResultMarkerTimeout = setTimeout(() => {
+      // Khôi phục style của các layer đã highlight
+      highlightedLayers.forEach(({ layer, originalStyle }) => {
+        if (layer && layer.setStyle && originalStyle) {
+          // Đảm bảo khôi phục đầy đủ các thuộc tính
+          layer.setStyle({
+            color: originalStyle.color || '#3388ff',
+            weight: originalStyle.weight || 4,
+            fillOpacity: originalStyle.fillOpacity !== undefined ? originalStyle.fillOpacity : 0.3,
+            opacity: originalStyle.opacity !== undefined ? originalStyle.opacity : 1.0
+          });
+        }
+      });
+      
+      // Reset selectedDuanFeatureLayer nếu có
+      if (selectedDuanFeatureLayer) {
+        selectedDuanFeatureLayer = null;
+        selectedDuanFeatureStyle = null;
+      }
+      
+      // Xóa markers
       markers.forEach(marker => {
         if (marker && marker._map) {
           // Đóng popup trước khi xóa marker
@@ -1947,6 +1986,7 @@ function zoomToDuanFeature(map, feature, cachedData) {
   }
   
   // Highlight feature nếu tìm thấy layer
+  let flashIntervalId = null;
   if (foundLayer) {
     // Khôi phục style của layer trước đó nếu có
     if (selectedDuanFeatureLayer && selectedDuanFeatureLayer !== foundLayer) {
@@ -1955,19 +1995,23 @@ function zoomToDuanFeature(map, feature, cachedData) {
       }
     }
     
-    // Lưu style gốc
+    // Lưu style gốc TRƯỚC KHI highlight (lấy từ options gốc)
     const currentStyle = foundLayer.options;
-    selectedDuanFeatureStyle = {
-      color: currentStyle.color,
-      weight: currentStyle.weight,
-      fillOpacity: currentStyle.fillOpacity
+    const originalStyle = {
+      color: currentStyle.color || '#3388ff',
+      weight: currentStyle.weight || 4,
+      fillOpacity: currentStyle.fillOpacity !== undefined ? currentStyle.fillOpacity : 0.3,
+      opacity: currentStyle.opacity !== undefined ? currentStyle.opacity : 1.0
     };
+    selectedDuanFeatureStyle = originalStyle;
     selectedDuanFeatureLayer = foundLayer;
     
     // Highlight với animation
     foundLayer.setStyle({
       color: '#2ecc40',
-      weight: (currentStyle.weight || 4) + 2
+      weight: (currentStyle.weight || 4) + 2,
+      fillOpacity: currentStyle.fillOpacity !== undefined ? currentStyle.fillOpacity : 0.3,
+      opacity: 1.0
     });
     
     // Đảm bảo layer được hiển thị
@@ -1978,18 +2022,23 @@ function zoomToDuanFeature(map, feature, cachedData) {
     
     // Thêm hiệu ứng nhấp nháy
     let flashCount = 0;
-    const flashInterval = setInterval(() => {
+    flashIntervalId = setInterval(() => {
       if (flashCount < 3) {
         foundLayer.setStyle({
           color: flashCount % 2 === 0 ? '#ff4444' : '#2ecc40',
-          weight: (currentStyle.weight || 4) + 2
+          weight: (currentStyle.weight || 4) + 2,
+          fillOpacity: currentStyle.fillOpacity !== undefined ? currentStyle.fillOpacity : 0.3,
+          opacity: 1.0
         });
         flashCount++;
       } else {
-        clearInterval(flashInterval);
+        clearInterval(flashIntervalId);
+        flashIntervalId = null;
         foundLayer.setStyle({
           color: '#2ecc40',
-          weight: (currentStyle.weight || 4) + 2
+          weight: (currentStyle.weight || 4) + 2,
+          fillOpacity: currentStyle.fillOpacity !== undefined ? currentStyle.fillOpacity : 0.3,
+          opacity: 1.0
         });
       }
     }, 200);
@@ -2010,8 +2059,28 @@ function zoomToDuanFeature(map, feature, cachedData) {
     }
   }, 600);
   
-  // Tự động xóa marker sau 3 giây
+  // Tự động xóa marker và khôi phục highlight sau 3 giây
   setTimeout(() => {
+    // Dừng flash interval nếu đang chạy
+    if (flashIntervalId) {
+      clearInterval(flashIntervalId);
+      flashIntervalId = null;
+    }
+    
+    // Khôi phục style của layer đã highlight
+    if (foundLayer && selectedDuanFeatureStyle) {
+      // Đảm bảo khôi phục đầy đủ các thuộc tính
+      foundLayer.setStyle({
+        color: selectedDuanFeatureStyle.color || '#3388ff',
+        weight: selectedDuanFeatureStyle.weight || 4,
+        fillOpacity: selectedDuanFeatureStyle.fillOpacity !== undefined ? selectedDuanFeatureStyle.fillOpacity : 0.3,
+        opacity: selectedDuanFeatureStyle.opacity !== undefined ? selectedDuanFeatureStyle.opacity : 1.0
+      });
+      selectedDuanFeatureLayer = null;
+      selectedDuanFeatureStyle = null;
+    }
+    
+    // Xóa marker
     if (searchResultMarker && searchResultMarker._map) {
       if (searchResultMarker.getPopup && searchResultMarker.getPopup()) {
         searchResultMarker.closePopup();
