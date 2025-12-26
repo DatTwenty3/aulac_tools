@@ -1320,6 +1320,91 @@ function formatHectares(squareMeters) {
 }
 
 // ====== XỬ LÝ ĐO DIỆN TÍCH ======
+// Hàm cập nhật lại polygon và labels khi di chuyển marker
+function updateAreaPolygonAndLabels(map) {
+  // Xóa polygon và labels cũ
+  if (areaPolygon) {
+    map.removeLayer(areaPolygon);
+    areaPolygon = null;
+  }
+  areaSegmentLabels.forEach(label => map.removeLayer(label));
+  areaSegmentLabels = [];
+  
+  // Vẽ lại polygon và labels
+  if (areaPoints.length >= 3) {
+    const latlngs = areaPoints.map(p => [p.lat, p.lng]);
+    // Đóng polygon bằng cách thêm điểm đầu vào cuối
+    latlngs.push([areaPoints[0].lat, areaPoints[0].lng]);
+    
+    areaPolygon = L.polygon(latlngs, {
+      color: '#ff9800',
+      weight: 3,
+      fillColor: '#ff9800',
+      fillOpacity: 0.3
+    }).addTo(map);
+    
+    // Thêm label khoảng cách cho từng cạnh
+    for (let i = 0; i < areaPoints.length; i++) {
+      const p1 = areaPoints[i];
+      const p2 = areaPoints[(i + 1) % areaPoints.length];
+      const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+      
+      // Tính điểm giữa của cạnh
+      const midLat = (p1.lat + p2.lat) / 2;
+      const midLng = (p1.lng + p2.lng) / 2;
+      
+      // Tạo label hiển thị khoảng cách
+      const labelText = formatDistance(segmentDistance);
+      const label = L.marker([midLat, midLng], {
+        icon: L.divIcon({
+          className: 'area-segment-label',
+          html: '<div class="area-segment-label-content">' + labelText + '</div>',
+          iconSize: [100, 30],
+          iconAnchor: [50, 15]
+        }),
+        interactive: false,
+        zIndexOffset: 1000
+      }).addTo(map);
+      
+      areaSegmentLabels.push(label);
+    }
+  } else if (areaPoints.length >= 2) {
+    // Vẽ đường nối khi chưa đủ 3 điểm
+    const latlngs = areaPoints.map(p => [p.lat, p.lng]);
+    areaPolygon = L.polyline(latlngs, {
+      color: '#ff9800',
+      weight: 3,
+      dashArray: '5, 5',
+      opacity: 0.8
+    }).addTo(map);
+    
+    // Thêm label cho đoạn hiện tại
+    const p1 = areaPoints[areaPoints.length - 2];
+    const p2 = areaPoints[areaPoints.length - 1];
+    const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+    
+    const midLat = (p1.lat + p2.lat) / 2;
+    const midLng = (p1.lng + p2.lng) / 2;
+    
+    const labelText = formatDistance(segmentDistance);
+    const label = L.marker([midLat, midLng], {
+      icon: L.divIcon({
+        className: 'area-segment-label',
+        html: '<div class="area-segment-label-content">' + labelText + '</div>',
+        iconSize: [100, 30],
+        iconAnchor: [50, 15]
+      }),
+      interactive: false,
+      zIndexOffset: 1000
+    }).addTo(map);
+    
+    areaSegmentLabels.push(label);
+  }
+  
+  // Cập nhật hiển thị thông tin
+  updateAreaDisplay();
+}
+
 function updateAreaDisplay() {
   const areaInfo = document.getElementById('area-info');
   const areaValue = document.getElementById('area-value');
@@ -1412,15 +1497,19 @@ function setupAreaButton(map) {
         // Thêm điểm vào mảng
         areaPoints.push({ lat, lng });
         
-        // Tạo marker
-        const marker = L.circleMarker([lat, lng], {
-          radius: 10,
-          fillColor: '#ff9800',
-          color: '#fff',
-          weight: 4,
-          opacity: 1,
-          fillOpacity: 0.9
+        // Tạo marker có thể kéo được với icon tròn
+        const marker = L.marker([lat, lng], {
+          draggable: true,
+          icon: L.divIcon({
+            className: 'draggable-area-marker',
+            html: '<div class="draggable-marker-circle" style="width: 20px; height: 20px; border-radius: 50%; background-color: #ff9800; border: 4px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+          })
         }).addTo(map);
+        
+        // Lưu index của marker trong mảng
+        const pointIndex = areaPoints.length - 1;
         
         // Thêm số thứ tự vào marker
         marker.bindTooltip(areaPoints.length.toString(), {
@@ -1428,6 +1517,18 @@ function setupAreaButton(map) {
           direction: 'center',
           className: 'area-point-tooltip',
           offset: [0, 0]
+        });
+        
+        // Xử lý khi marker được di chuyển
+        marker.on('dragend', function(e) {
+          const newLat = e.target.getLatLng().lat;
+          const newLng = e.target.getLatLng().lng;
+          
+          // Cập nhật vị trí điểm trong mảng
+          areaPoints[pointIndex] = { lat: newLat, lng: newLng };
+          
+          // Cập nhật lại polygon và labels
+          updateAreaPolygonAndLabels(map);
         });
         
         areaMarkers.push(marker);
@@ -1555,6 +1656,57 @@ function setupAreaButton(map) {
   }
 }
 
+// Hàm cập nhật lại polyline và labels khi di chuyển marker
+function updateMeasurePolylineAndLabels(map) {
+  // Xóa polyline và labels cũ
+  if (measurePolyline) {
+    map.removeLayer(measurePolyline);
+    measurePolyline = null;
+  }
+  measureSegmentLabels.forEach(label => map.removeLayer(label));
+  measureSegmentLabels = [];
+  
+  // Vẽ lại polyline và labels
+  if (measurePoints.length > 1) {
+    const latlngs = measurePoints.map(p => [p.lat, p.lng]);
+    measurePolyline = L.polyline(latlngs, {
+      color: '#4caf50',
+      weight: 3,
+      dashArray: '5, 5',
+      opacity: 0.8
+    }).addTo(map);
+    
+    // Thêm label khoảng cách cho từng đoạn
+    for (let i = 0; i < measurePoints.length - 1; i++) {
+      const p1 = measurePoints[i];
+      const p2 = measurePoints[i + 1];
+      const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+      
+      // Tính điểm giữa của đoạn
+      const midLat = (p1.lat + p2.lat) / 2;
+      const midLng = (p1.lng + p2.lng) / 2;
+      
+      // Tạo label hiển thị khoảng cách
+      const labelText = formatDistance(segmentDistance);
+      const label = L.marker([midLat, midLng], {
+        icon: L.divIcon({
+          className: 'measure-segment-label',
+          html: '<div class="measure-segment-label-content">' + labelText + '</div>',
+          iconSize: [100, 30],
+          iconAnchor: [50, 15]
+        }),
+        interactive: false,
+        zIndexOffset: 1000
+      }).addTo(map);
+      
+      measureSegmentLabels.push(label);
+    }
+  }
+  
+  // Cập nhật hiển thị thông tin
+  updateMeasureDisplay();
+}
+
 function updateMeasureDisplay() {
   const measureInfo = document.getElementById('measure-info');
   const measureDistance = document.getElementById('measure-distance');
@@ -1644,15 +1796,19 @@ function setupMeasureButton(map) {
         // Thêm điểm vào mảng
         measurePoints.push({ lat, lng });
         
-        // Tạo marker với kích thước lớn hơn
-        const marker = L.circleMarker([lat, lng], {
-          radius: 10,
-          fillColor: '#4caf50',
-          color: '#fff',
-          weight: 4,
-          opacity: 1,
-          fillOpacity: 0.9
+        // Tạo marker với kích thước lớn hơn, có thể kéo được với icon tròn
+        const marker = L.marker([lat, lng], {
+          draggable: true,
+          icon: L.divIcon({
+            className: 'draggable-measure-marker',
+            html: '<div class="draggable-marker-circle" style="width: 20px; height: 20px; border-radius: 50%; background-color: #4caf50; border: 4px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10]
+          })
         }).addTo(map);
+        
+        // Lưu index của marker trong mảng
+        const pointIndex = measurePoints.length - 1;
         
         // Thêm số thứ tự vào marker với style rõ ràng hơn
         marker.bindTooltip(measurePoints.length.toString(), {
@@ -1660,6 +1816,18 @@ function setupMeasureButton(map) {
           direction: 'center',
           className: 'measure-point-tooltip',
           offset: [0, 0]
+        });
+        
+        // Xử lý khi marker được di chuyển
+        marker.on('dragend', function(e) {
+          const newLat = e.target.getLatLng().lat;
+          const newLng = e.target.getLatLng().lng;
+          
+          // Cập nhật vị trí điểm trong mảng
+          measurePoints[pointIndex] = { lat: newLat, lng: newLng };
+          
+          // Cập nhật lại polyline và labels
+          updateMeasurePolylineAndLabels(map);
         });
         
         measureMarkers.push(marker);

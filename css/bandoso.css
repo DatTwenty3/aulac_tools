@@ -1469,7 +1469,7 @@ h1 {
 .area-info {
   position: absolute;
   left: 18px;
-  bottom: 156px;
+  top: 18px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 14px;
   padding: 10px 16px;
@@ -1712,7 +1712,7 @@ h1 {
 .measure-info {
   position: absolute;
   left: 18px;
-  bottom: 90px;
+  top: 18px;
   background: rgba(255, 255, 255, 0.95);
   border-radius: 14px;
   padding: 10px 16px;
@@ -1750,6 +1750,24 @@ h1 {
   stroke-width: 3;
   stroke-dasharray: 5, 5;
   fill: none;
+}
+
+/* Marker có thể kéo được */
+.draggable-area-marker,
+.draggable-measure-marker {
+  cursor: move !important;
+}
+
+.draggable-area-marker .draggable-marker-circle,
+.draggable-measure-marker .draggable-marker-circle {
+  cursor: move !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.draggable-area-marker:hover .draggable-marker-circle,
+.draggable-measure-marker:hover .draggable-marker-circle {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
 }
 
 /* Tooltip số thứ tự điểm */
@@ -1794,7 +1812,8 @@ h1 {
   .measure-info {
     left: 8px;
     right: 8px;
-    bottom: 80px;
+    top: 8px;
+    bottom: auto;
     max-width: calc(100vw - 16px);
     padding: 8px 12px;
     font-size: 0.9rem;
@@ -1811,7 +1830,8 @@ h1 {
   .area-info {
     left: 8px;
     right: 8px;
-    bottom: 140px;
+    top: 8px;
+    bottom: auto;
     max-width: calc(100vw - 16px);
     padding: 8px 12px;
     font-size: 0.9rem;
@@ -1829,7 +1849,8 @@ h1 {
 
 @media (max-width: 480px) {
   .measure-info {
-    bottom: 70px;
+    top: 8px;
+    bottom: auto;
     padding: 6px 10px;
     font-size: 0.85rem;
   }
@@ -1837,7 +1858,8 @@ h1 {
     font-size: 0.85em;
   }
   .area-info {
-    bottom: 120px;
+    top: 8px;
+    bottom: auto;
     padding: 6px 10px;
     font-size: 0.85rem;
   }
