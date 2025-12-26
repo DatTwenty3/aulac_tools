@@ -792,6 +792,8 @@ h1 {
   display: flex;
   align-items: center;
   gap: 10px;
+  width: 100%;
+  flex-wrap: nowrap;
 }
 
 .duan-control-label {
@@ -799,6 +801,7 @@ h1 {
   color: #64748b;
   font-weight: 500;
   min-width: 60px;
+  flex-shrink: 0;
 }
 
 .duan-color-picker {
@@ -809,10 +812,12 @@ h1 {
   cursor: pointer;
   padding: 2px;
   background: white;
+  flex-shrink: 0;
 }
 
 .duan-weight-slider {
   flex: 1;
+  min-width: 0;
   height: 6px;
   border-radius: 3px;
   background: rgba(148,163,184,0.3);
@@ -857,6 +862,7 @@ h1 {
 
 .duan-weight-value {
   min-width: 35px;
+  max-width: 50px;
   text-align: center;
   font-size: 0.85rem;
   font-weight: 600;
@@ -864,6 +870,10 @@ h1 {
   background: rgba(37,99,235,0.1);
   padding: 4px 8px;
   border-radius: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #opacity-value-text {
@@ -1333,16 +1343,25 @@ h1 {
   .duan-control-label {
     min-width: 50px;
     font-size: 0.8rem;
+    flex-shrink: 0;
   }
   
   .duan-color-picker {
     width: 45px;
     height: 30px;
+    flex-shrink: 0;
+  }
+  
+  .duan-weight-slider {
+    min-width: 80px;
   }
   
   .duan-weight-value {
     font-size: 0.8rem;
     padding: 3px 6px;
+    min-width: 30px;
+    max-width: 45px;
+    flex-shrink: 0;
   }
 }
 
