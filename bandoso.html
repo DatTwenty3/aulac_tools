@@ -22,25 +22,95 @@
       </div>
     </header>
 
-    <div class="search-bar-modern">
-      <input id="search-input" class="search-input-modern" type="text" placeholder="Nhập tên xã/phường...">
-      <button id="search-btn" class="search-btn-modern">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="vertical-align: middle; margin-right: 4px;"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/><line x1="14.4142" y1="14" x2="18" y2="17.5858" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <span>Tìm kiếm</span>
-      </button>
-    </div>
-
     <!-- Bản đồ chiếm trọn màn hình -->
     <div id="map"></div>
 
-    <!-- Thanh công cụ nổi trên bản đồ -->
-    <div class="map-tools-bar">
-      <button id="locate-btn" class="locate-btn-custom">📍 Xác định vị trí</button>
-      <button id="measure-btn" class="measure-btn-custom">📏 Đo khoảng cách</button>
-      <button id="clear-measure-btn" class="clear-measure-btn-custom" style="display: none;">🗑️ Xóa đo</button>
-      <button id="area-btn" class="area-btn-custom">📐 Đo diện tích</button>
-      <button id="clear-area-btn" class="clear-area-btn-custom" style="display: none;">🗑️ Xóa vùng</button>
-    </div>
+    <!-- Nút toggle hộp công cụ -->
+    <button id="tools-toggle-btn" class="tools-toggle-btn" title="Mở công cụ">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+    </button>
+
+    <!-- Hộp công cụ ẩn bên phải -->
+    <aside id="tools-panel" class="tools-panel">
+      <div class="tools-panel-header">
+        <div>
+          <div class="tools-panel-label">CÔNG CỤ</div>
+          <h2 class="tools-panel-title">Công cụ bản đồ</h2>
+        </div>
+        <button id="tools-panel-close" class="tools-panel-close-btn" title="Đóng">
+          ×
+        </button>
+      </div>
+      <!-- Tab navigation -->
+      <div class="tools-panel-tabs">
+        <button class="tools-tab-btn active" data-tab="tools">Công cụ</button>
+        <button class="tools-tab-btn" data-tab="settings">Cài đặt</button>
+      </div>
+
+      <div class="tools-panel-body">
+        <!-- Ngăn Công cụ -->
+        <div class="tools-tab-content active" id="tab-tools">
+          <!-- Thanh tìm kiếm -->
+          <div class="search-bar-modern">
+            <input id="search-input" class="search-input-modern" type="text" placeholder="Nhập tên xã/phường...">
+            <button id="search-btn" class="search-btn-modern">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="vertical-align: middle; margin-right: 4px;"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/><line x1="14.4142" y1="14" x2="18" y2="17.5858" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>Tìm kiếm</span>
+            </button>
+          </div>
+
+          <!-- Các nút công cụ -->
+          <div class="map-tools-bar">
+            <button id="locate-btn" class="locate-btn-custom">📍 Xác định vị trí</button>
+            <button id="measure-btn" class="measure-btn-custom">📏 Đo khoảng cách</button>
+            <button id="clear-measure-btn" class="clear-measure-btn-custom" style="display: none;">🗑️ Xóa đo</button>
+            <button id="area-btn" class="area-btn-custom">📐 Đo diện tích</button>
+            <button id="clear-area-btn" class="clear-area-btn-custom" style="display: none;">🗑️ Xóa vùng</button>
+          </div>
+        </div>
+
+        <!-- Ngăn Cài đặt -->
+        <div class="tools-tab-content" id="tab-settings">
+          <!-- Lựa chọn bản đồ nền -->
+          <div class="settings-section">
+            <div class="settings-section-title">Bản đồ nền</div>
+            <div class="layer-control-custom">
+              <label class="layer-radio">
+                <input type="radio" name="base-layer" value="osm" checked>
+                <span>Bản đồ OSM</span>
+              </label>
+              <label class="layer-radio">
+                <input type="radio" name="base-layer" value="satellite">
+                <span>Vệ tinh (Satellite)</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Ẩn/Hiện ranh giới -->
+          <div class="settings-section">
+            <div class="settings-section-title">Ranh giới xã/phường</div>
+            <button id="toggle-overlay-btn-custom" class="toggle-overlay-btn-custom">
+              <span class="toggle-icon">👁️</span>
+              <span class="toggle-text">Hiển thị ranh giới</span>
+            </button>
+          </div>
+
+          <!-- Độ trong suốt -->
+          <div class="settings-section">
+            <div class="settings-section-title">Độ trong suốt</div>
+            <div class="opacity-control-custom">
+              <input type="range" id="opacity-slider-custom" min="0" max="1" step="0.05" value="0.4" class="opacity-slider">
+              <div class="opacity-value">
+                <span id="opacity-value-text">0.40</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
     <div id="measure-info" class="measure-info" style="display: none;">
       <div class="measure-info-content">
         <span id="measure-distance">Tổng khoảng cách: 0 m</span>

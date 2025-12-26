@@ -42,6 +42,10 @@ let infoPanel = null;
 let infoPanelBody = null;
 let infoPanelTitle = null;
 
+// Biến cho hộp công cụ
+let toolsPanel = null;
+let toolsToggleBtn = null;
+
 // Hàm tắt/bật tương tác với GeoJSON layers
 function toggleGeojsonInteractivity(enable) {
   geojsonLayers.forEach(layer => {
@@ -153,6 +157,59 @@ function setupInfoPanel() {
   }
 }
 
+// Hàm ẩn/hiện hộp công cụ
+function toggleToolsPanel(show) {
+  if (!toolsPanel) return;
+  if (show) {
+    toolsPanel.classList.add('visible');
+    toolsPanel.classList.remove('hidden');
+  } else {
+    toolsPanel.classList.remove('visible');
+    toolsPanel.classList.add('hidden');
+  }
+}
+
+// Hàm thiết lập hộp công cụ
+function setupToolsPanel() {
+  toolsPanel = document.getElementById('tools-panel');
+  toolsToggleBtn = document.getElementById('tools-toggle-btn');
+  const closeBtn = document.getElementById('tools-panel-close');
+  
+  if (toolsToggleBtn && toolsPanel) {
+    toolsToggleBtn.onclick = function() {
+      if (toolsPanel.classList.contains('visible')) {
+        toggleToolsPanel(false);
+      } else {
+        toggleToolsPanel(true);
+      }
+    };
+  }
+  
+  if (closeBtn && toolsPanel) {
+    closeBtn.onclick = function() {
+      toggleToolsPanel(false);
+    };
+  }
+  
+  // Xử lý tab switching
+  const tabButtons = document.querySelectorAll('.tools-tab-btn');
+  const tabContents = document.querySelectorAll('.tools-tab-content');
+  
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const targetTab = this.getAttribute('data-tab');
+      
+      // Xóa active class từ tất cả tabs
+      tabButtons.forEach(b => b.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+      
+      // Thêm active class cho tab được chọn
+      this.classList.add('active');
+      document.getElementById(`tab-${targetTab}`).classList.add('active');
+    });
+  });
+}
+
 // ====== KHỞI TẠO BẢN ĐỒ & LỚP NỀN ======
 function initMap() {
   const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -168,11 +225,11 @@ function initMap() {
     layers: [osmLayer]
   });
 
-  const baseLayers = {
-    "Bản đồ OSM": osmLayer,
-    "Vệ tinh (Satellite)": satelliteLayer
+  // Lưu các layer để dùng sau
+  map._baseLayers = {
+    osm: osmLayer,
+    satellite: satelliteLayer
   };
-  L.control.layers(baseLayers, null, {position: 'topright', collapsed: false}).addTo(map);
 
   return map;
 }
@@ -200,6 +257,16 @@ function setupLocateButton(map) {
       locateBtnDom.disabled = false;
       locateBtnDom.innerText = '📍 Xác định vị trí';
       locateBtnDom.classList.remove('active');
+      // Xóa marker và circle
+      if (currentLocationMarker) {
+        map.removeLayer(currentLocationMarker);
+        if (currentLocationMarker._accuracyCircle) {
+          map.removeLayer(currentLocationMarker._accuracyCircle);
+        }
+        currentLocationMarker = null;
+      }
+      // Hiện lại hộp công cụ khi dừng
+      toggleToolsPanel(true);
       return;
     }
     
@@ -207,6 +274,9 @@ function setupLocateButton(map) {
     locateBtnDom.disabled = true;
     locateBtnDom.innerText = 'Đang xác định vị trí...';
     locateBtnDom.classList.add('active');
+    
+    // Ẩn hộp công cụ khi bắt đầu sử dụng
+    toggleToolsPanel(false);
     
     // Xóa marker cũ nếu có
     if (currentLocationMarker) {
@@ -288,6 +358,8 @@ function setupLocateButton(map) {
         locateBtnDom.innerText = '📍 Xác định vị trí';
         locateBtnDom.classList.remove('active');
         isTrackingLocation = false;
+        // Hiện lại hộp công cụ khi có lỗi
+        toggleToolsPanel(true);
         if (watchPositionId !== null) {
           navigator.geolocation.clearWatch(watchPositionId);
           watchPositionId = null;
@@ -433,7 +505,6 @@ function loadAllGeojsons(map) {
           .catch(err => console.error('Lỗi tải file', filename, err));
       });
       setupSearch(map);
-      setupToggleOverlayBtn(map); // Thêm hàm này sau khi load xong
     })
     .catch(err => {
       console.error('Không thể tải danh sách geojson:', err);
@@ -492,108 +563,74 @@ function setupSearch(map) {
   };
 }
 
-// ====== Thêm hàm tạo nút ẩn/hiện overlay ======
-function setupToggleOverlayBtn(map) {
-  // Nếu đã có control thì không thêm nữa
-  if (map._toggleOverlayControl) return;
-  // Tạo custom control
-  const ToggleOverlayControl = L.Control.extend({
-    options: { position: 'topright' },
-    onAdd: function() {
-      const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-      const btn = L.DomUtil.create('a', '', container);
-      btn.id = 'toggle-overlay-btn';
-      btn.href = '#';
-      btn.title = 'Ẩn/Hiện ranh giới các xã/phường';
-      btn.style.background = 'transparent';
-      btn.style.fontWeight = 'bold';
-      btn.style.fontSize = '20px';
-      btn.style.width = '36px';
-      btn.style.height = '36px';
-      btn.style.lineHeight = '36px';
-      btn.style.borderRadius = '50%';
-      btn.style.margin = '6px 0 0 0';
-      btn.style.display = 'flex';
-      btn.style.alignItems = 'center';
-      btn.style.justifyContent = 'center';
-      btn.style.textAlign = 'center';
-      btn.innerHTML = '👁️';
-      L.DomEvent.on(btn, 'click', function(e) {
-        L.DomEvent.stopPropagation(e);
-        L.DomEvent.preventDefault(e);
-        geojsonVisible = !geojsonVisible;
-        geojsonLayers.forEach(layer => {
-          if (geojsonVisible) {
-            map.addLayer(layer);
-          } else {
-            map.removeLayer(layer);
-          }
-        });
-        btn.innerHTML = geojsonVisible ? '👁️' : '🙈';
-      });
-      return container;
-    }
+// ====== Thiết lập các control trong hộp công cụ ======
+function setupToolsPanelControls(map) {
+  // Thiết lập layer control (OSM/Vệ tinh)
+  const layerRadios = document.querySelectorAll('input[name="base-layer"]');
+  layerRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.value === 'osm') {
+        map.removeLayer(map._baseLayers.satellite);
+        map.addLayer(map._baseLayers.osm);
+      } else if (this.value === 'satellite') {
+        map.removeLayer(map._baseLayers.osm);
+        map.addLayer(map._baseLayers.satellite);
+      }
+    });
   });
-  const control = new ToggleOverlayControl();
-  map.addControl(control);
-  map._toggleOverlayControl = control;
+  
+  // Thiết lập nút ẩn/hiện overlay
+  const toggleOverlayBtn = document.getElementById('toggle-overlay-btn-custom');
+  if (toggleOverlayBtn) {
+    // Cập nhật trạng thái ban đầu
+    const icon = toggleOverlayBtn.querySelector('.toggle-icon');
+    const text = toggleOverlayBtn.querySelector('.toggle-text');
+    if (geojsonVisible) {
+      icon.textContent = '👁️';
+      text.textContent = 'Hiển thị ranh giới';
+      toggleOverlayBtn.classList.add('active');
+    } else {
+      icon.textContent = '🙈';
+      text.textContent = 'Ẩn ranh giới';
+      toggleOverlayBtn.classList.remove('active');
+    }
+    
+    toggleOverlayBtn.onclick = function() {
+      geojsonVisible = !geojsonVisible;
+      geojsonLayers.forEach(layer => {
+        if (geojsonVisible) {
+          map.addLayer(layer);
+        } else {
+          map.removeLayer(layer);
+        }
+      });
+      if (geojsonVisible) {
+        icon.textContent = '👁️';
+        text.textContent = 'Hiển thị ranh giới';
+        toggleOverlayBtn.classList.add('active');
+      } else {
+        icon.textContent = '🙈';
+        text.textContent = 'Ẩn ranh giới';
+        toggleOverlayBtn.classList.remove('active');
+      }
+    };
+  }
+  
+  // Thiết lập opacity slider
+  const opacitySlider = document.getElementById('opacity-slider-custom');
+  const opacityValueText = document.getElementById('opacity-value-text');
+  if (opacitySlider && opacityValueText) {
+    opacitySlider.addEventListener('input', function() {
+      const val = parseFloat(this.value);
+      opacityValueText.textContent = val.toFixed(2);
+      currentOverlayOpacity = val;
+      geojsonLayers.forEach(layer => {
+        layer.setStyle({ fillOpacity: currentOverlayOpacity });
+      });
+    });
+  }
 }
 
-function setupOpacitySliderControl(map) {
-  if (map._opacitySliderControl) return;
-  const OpacitySliderControl = L.Control.extend({
-    options: { position: 'topright' },
-    onAdd: function() {
-      const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
-      container.style.background = 'rgba(255,255,255,0.95)';
-      container.style.padding = '6px 10px 2px 10px';
-      container.style.borderRadius = '8px';
-      container.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
-      container.style.display = 'flex';
-      container.style.flexDirection = 'column';
-      container.style.alignItems = 'center';
-      // Label
-      const label = L.DomUtil.create('label', '', container);
-      label.innerText = 'Độ trong suốt';
-      label.style.fontSize = '12px';
-      label.style.color = '#333';
-      label.style.marginBottom = '2px';
-      // Slider
-      const slider = L.DomUtil.create('input', '', container);
-      slider.type = 'range';
-      slider.min = '0';
-      slider.max = '1';
-      slider.step = '0.05';
-      slider.value = '0.4';
-      slider.title = 'Điều chỉnh độ trong suốt lớp ranh giới';
-      slider.style.width = '70px';
-      slider.style.margin = '0 0 2px 0';
-      slider.style.cursor = 'pointer';
-      // Giá trị
-      const valueSpan = L.DomUtil.create('span', '', container);
-      valueSpan.innerText = '0.40';
-      valueSpan.style.fontSize = '11px';
-      valueSpan.style.color = '#1976d2';
-      valueSpan.style.marginTop = '0px';
-      // Ngăn sự kiện ảnh hưởng map
-      L.DomEvent.disableClickPropagation(container);
-      L.DomEvent.disableScrollPropagation(container);
-      // Sự kiện thay đổi opacity
-      slider.addEventListener('input', function() {
-        const val = parseFloat(slider.value);
-        valueSpan.innerText = val.toFixed(2);
-        currentOverlayOpacity = val;
-        geojsonLayers.forEach(layer => {
-          layer.setStyle({ fillOpacity: currentOverlayOpacity });
-        });
-      });
-      return container;
-    }
-  });
-  const control = new OpacitySliderControl();
-  map.addControl(control);
-  map._opacitySliderControl = control;
-}
 
 // ====== TÍNH NĂNG ĐO KHOẢNG CÁCH ======
 function calculateDistance(lat1, lng1, lat2, lng2) {
@@ -769,6 +806,9 @@ function setupAreaButton(map) {
       areaBtn.textContent = '⏹️ Dừng đo';
       if (clearBtn) clearBtn.style.display = 'inline-block';
       
+      // Ẩn hộp công cụ khi bắt đầu sử dụng
+      toggleToolsPanel(false);
+      
       // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
       toggleGeojsonInteractivity(false);
       
@@ -890,6 +930,9 @@ function setupAreaButton(map) {
       areaBtn.textContent = '📐 Đo diện tích';
       map.getContainer().style.cursor = '';
       
+      // Hiện lại hộp công cụ khi dừng
+      toggleToolsPanel(true);
+      
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
       
@@ -908,6 +951,9 @@ function setupAreaButton(map) {
       areaBtn.classList.remove('active');
       areaBtn.textContent = '📐 Đo diện tích';
       map.getContainer().style.cursor = '';
+      
+      // Hiện lại hộp công cụ khi xóa
+      toggleToolsPanel(true);
       
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
@@ -991,6 +1037,9 @@ function setupMeasureButton(map) {
       measureBtn.classList.add('active');
       measureBtn.textContent = '⏹️ Dừng đo';
       if (clearBtn) clearBtn.style.display = 'inline-block';
+      
+      // Ẩn hộp công cụ khi bắt đầu sử dụng
+      toggleToolsPanel(false);
       
       // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
       toggleGeojsonInteractivity(false);
@@ -1079,6 +1128,9 @@ function setupMeasureButton(map) {
       measureBtn.textContent = '📏 Đo khoảng cách';
       map.getContainer().style.cursor = '';
       
+      // Hiện lại hộp công cụ khi dừng
+      toggleToolsPanel(true);
+      
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
       
@@ -1098,6 +1150,9 @@ function setupMeasureButton(map) {
       measureBtn.textContent = '📏 Đo khoảng cách';
       map.getContainer().style.cursor = '';
       
+      // Hiện lại hộp công cụ khi xóa
+      toggleToolsPanel(true);
+      
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
       
@@ -1115,13 +1170,20 @@ function setupMeasureButton(map) {
   const map = initMap();
   window.mapInstance = map; // Lưu instance để dùng trong fullscreen
   setupInfoPanel();
+  setupToolsPanel(); // Thiết lập hộp công cụ
   setupLocateButton(map);
   loadAllGeojsons(map);
   // Tải các dự án sau một khoảng thời gian ngắn để đảm bảo chúng nằm phía trên các layer khác
   setTimeout(() => {
     loadProjects(map); // Tải các dự án với màu sắc khác nhau
+    // Thiết lập các control trong hộp công cụ sau khi load xong
+    setupToolsPanelControls(map);
   }, 500);
-  setupOpacitySliderControl(map);
   setupMeasureButton(map);
   setupAreaButton(map);
+  
+  // Mở hộp công cụ khi khởi động (tùy chọn)
+  setTimeout(() => {
+    toggleToolsPanel(true);
+  }, 300);
 })(); 
