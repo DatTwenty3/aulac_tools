@@ -47,6 +47,7 @@ let measureSegmentLabels = []; // Lưu các label hiển thị khoảng cách t�
 
 // Biến cho marker kết quả tìm kiếm
 let searchResultMarker = null;
+let searchResultMarkerTimeout = null; // Timeout để tự động xóa marker
 
 // Biến cho tính năng đo diện tích
 let isMeasuringArea = false;
@@ -838,6 +839,58 @@ function getDefaultColor(index) {
   return colors[index % colors.length];
 }
 
+// Hàm xóa cache của một file DuAn
+function removeDuanFileFromCache(filename) {
+  // Xóa tất cả các feature của file này khỏi cache
+  Object.keys(duanFeaturesCache).forEach(key => {
+    duanFeaturesCache[key] = duanFeaturesCache[key].filter(item => item.filename !== filename);
+    // Xóa key nếu không còn feature nào
+    if (duanFeaturesCache[key].length === 0) {
+      delete duanFeaturesCache[key];
+    }
+  });
+}
+
+// Hàm tải lại cache của một file DuAn
+function reloadDuanFileToCache(map, filename) {
+  const filepath = 'geo-json/DuAn/' + encodeURIComponent(filename);
+  const displayName = getDuanDisplayName(filename);
+  
+  fetch(filepath)
+    .then(res => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
+    .then(data => {
+      // Cache các feature từ file đang được hiển thị
+      if (data.features && Array.isArray(data.features)) {
+        data.features.forEach(feature => {
+          if (feature.properties && feature.properties.ten) {
+            const ten = feature.properties.ten.toString().toLowerCase();
+            if (!duanFeaturesCache[ten]) {
+              duanFeaturesCache[ten] = [];
+            }
+            // Kiểm tra xem feature đã có trong cache chưa (tránh trùng lặp)
+            const exists = duanFeaturesCache[ten].some(item => 
+              item.filename === filename && 
+              item.feature === feature
+            );
+            if (!exists) {
+              duanFeaturesCache[ten].push({
+                feature: feature,
+                filename: filename,
+                displayName: displayName
+              });
+            }
+          }
+        });
+      }
+    })
+    .catch(err => {
+      console.error('Lỗi tải lại cache file DuAn', filename, err);
+    });
+}
+
 // Hàm thêm file DuAn lên bản đồ
 function addDuanFileToMap(map, filename, color, weight = 4) {
   // Tạo pane riêng cho các file DuAn nếu chưa có (z-index cao nhất)
@@ -862,22 +915,27 @@ function addDuanFileToMap(map, filename, color, weight = 4) {
       return res.json();
     })
     .then(data => {
-      // Cache các feature theo "ten" để hỗ trợ tìm kiếm (lưu tất cả các feature cùng tên)
-      if (data.features && Array.isArray(data.features)) {
-        data.features.forEach(feature => {
-          if (feature.properties && feature.properties.ten) {
-            const ten = feature.properties.ten.toString().toLowerCase();
-            // Lưu feature vào mảng nếu chưa có, hoặc thêm vào mảng nếu đã có
-            if (!duanFeaturesCache[ten]) {
-              duanFeaturesCache[ten] = [];
+      // Chỉ cache các feature từ file đang được hiển thị
+      // Kiểm tra xem file có đang visible không
+      const config = duanConfig[filename] || {};
+      if (config.visible !== false) {
+        // Cache các feature theo "ten" để hỗ trợ tìm kiếm (lưu tất cả các feature cùng tên)
+        if (data.features && Array.isArray(data.features)) {
+          data.features.forEach(feature => {
+            if (feature.properties && feature.properties.ten) {
+              const ten = feature.properties.ten.toString().toLowerCase();
+              // Lưu feature vào mảng nếu chưa có, hoặc thêm vào mảng nếu đã có
+              if (!duanFeaturesCache[ten]) {
+                duanFeaturesCache[ten] = [];
+              }
+              duanFeaturesCache[ten].push({
+                feature: feature,
+                filename: filename,
+                displayName: displayName
+              });
             }
-            duanFeaturesCache[ten].push({
-              feature: feature,
-              filename: filename,
-              displayName: displayName
-            });
-          }
-        });
+          });
+        }
       }
       
       const layer = L.geoJSON(data, {
@@ -1062,6 +1120,9 @@ async function loadDuanFiles(map) {
   
   container.innerHTML = '';
   
+  // Xóa cache cũ trước khi tải lại
+  duanFeaturesCache = {};
+  
   duanFiles.forEach((filename, index) => {
     const fileItem = createDuanFileUI(filename, index);
     container.appendChild(fileItem);
@@ -1073,7 +1134,7 @@ async function loadDuanFiles(map) {
       visible: true
     };
     
-    // Tải và hiển thị file nếu visible
+    // Tải và hiển thị file nếu visible (chỉ cache các file visible)
     if (config.visible) {
       addDuanFileToMap(map, filename, config.color, config.weight);
     }
@@ -1102,12 +1163,16 @@ function setupDuanFileControls(map) {
           addDuanFileToMap(map, filename, color, weight);
         } else {
           map.addLayer(duanLayers[filename]);
+          // Thêm lại vào cache khi hiển thị
+          reloadDuanFileToCache(map, filename);
         }
       } else {
         // Ẩn layer
         if (duanLayers[filename]) {
           map.removeLayer(duanLayers[filename]);
         }
+        // Xóa khỏi cache khi ẩn
+        removeDuanFileFromCache(filename);
       }
     });
   });
@@ -1318,6 +1383,9 @@ function setupSearch(map) {
               }
             }, 500);
             
+            // Tự động xóa marker sau 3 giây
+            autoRemoveMarker(map, searchResultMarker, 3000);
+            
             let feature = data.features && data.features[0];
             if (feature && feature.properties) {
               openInfoPanel(feature.properties, false);
@@ -1397,6 +1465,9 @@ function setupSearch(map) {
               popup.getElement().style.zIndex = '1000';
             }
           }, 500);
+          
+          // Tự động xóa marker sau 3 giây
+          autoRemoveMarker(map, searchResultMarker, 3000);
           
           let feature = data.features && data.features[0];
           if (feature && feature.properties) {
@@ -1541,10 +1612,19 @@ function setupSearch(map) {
     if (allFeatures.length > 1) {
       showSearchResultsPanel(allFeatures, markers);
     }
+    
+    // Tự động xóa tất cả markers sau 3 giây
+    autoRemoveAllMarkers(map, markers, 3000);
   }
   
   // Hàm xóa tất cả các marker kết quả tìm kiếm
   function clearAllSearchMarkers(map) {
+    // Xóa timeout nếu có
+    if (searchResultMarkerTimeout) {
+      clearTimeout(searchResultMarkerTimeout);
+      searchResultMarkerTimeout = null;
+    }
+    
     if (searchResultMarker) {
       map.removeLayer(searchResultMarker);
       searchResultMarker = null;
@@ -1555,6 +1635,56 @@ function setupSearch(map) {
       }
     });
     searchResultMarkers = [];
+  }
+  
+  // Hàm tự động xóa marker sau 3 giây
+  function autoRemoveMarker(map, marker, delay = 3000) {
+    // Xóa timeout cũ nếu có
+    if (searchResultMarkerTimeout) {
+      clearTimeout(searchResultMarkerTimeout);
+    }
+    
+    // Tạo timeout mới để xóa marker sau 3 giây
+    searchResultMarkerTimeout = setTimeout(() => {
+      if (marker && marker._map) {
+        // Đóng popup trước khi xóa marker
+        if (marker.getPopup && marker.getPopup()) {
+          marker.closePopup();
+        }
+        map.removeLayer(marker);
+        if (marker === searchResultMarker) {
+          searchResultMarker = null;
+        }
+      }
+      searchResultMarkerTimeout = null;
+    }, delay);
+  }
+  
+  // Hàm tự động xóa tất cả markers sau 3 giây
+  function autoRemoveAllMarkers(map, markers, delay = 3000) {
+    // Xóa timeout cũ nếu có
+    if (searchResultMarkerTimeout) {
+      clearTimeout(searchResultMarkerTimeout);
+    }
+    
+    // Tạo timeout mới để xóa tất cả markers sau 3 giây
+    searchResultMarkerTimeout = setTimeout(() => {
+      markers.forEach(marker => {
+        if (marker && marker._map) {
+          // Đóng popup trước khi xóa marker
+          if (marker.getPopup && marker.getPopup()) {
+            marker.closePopup();
+          }
+          map.removeLayer(marker);
+        }
+      });
+      if (searchResultMarker) {
+        map.removeLayer(searchResultMarker);
+        searchResultMarker = null;
+      }
+      searchResultMarkers = [];
+      searchResultMarkerTimeout = null;
+    }, delay);
   }
   
   // Hàm hiển thị panel danh sách kết quả
@@ -1879,6 +2009,17 @@ function zoomToDuanFeature(map, feature, cachedData) {
       }
     }
   }, 600);
+  
+  // Tự động xóa marker sau 3 giây
+  setTimeout(() => {
+    if (searchResultMarker && searchResultMarker._map) {
+      if (searchResultMarker.getPopup && searchResultMarker.getPopup()) {
+        searchResultMarker.closePopup();
+      }
+      map.removeLayer(searchResultMarker);
+      searchResultMarker = null;
+    }
+  }, 3000);
   
   // Hiển thị thông tin
   if (feature.properties) {
