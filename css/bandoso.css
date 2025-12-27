@@ -5,11 +5,13 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     background: #f5f5f7;
     min-height: 100vh;
-    color: #111827;
+    color: #1d1d1f;
     overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .container {
@@ -39,35 +41,37 @@ body {
 /* Nút toggle thông tin */
 .info-toggle-btn {
   position: absolute;
-  bottom: 22px;
-  left: 22px;
+  bottom: 24px;
+  left: 24px;
   z-index: 1200;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-              0 2px 8px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 0.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1),
+              0 4px 12px rgba(0, 0, 0, 0.06),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #1d1d1f;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  animation: fadeInScale 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
 }
 
 .info-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
-              0 4px 12px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  transform: scale(1.08) translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12),
+              0 6px 16px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  transform: scale(1.05) translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .info-toggle-btn:active {
@@ -89,24 +93,25 @@ body {
 /* Khối thông tin có thể ẩn/hiện */
 .info-card {
   position: absolute;
-  bottom: 22px;
-  left: 22px;
+  bottom: 24px;
+  left: 24px;
   z-index: 1200;
-  max-width: 400px;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
-              0 8px 24px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  border: 0.5px solid rgba(255, 255, 255, 0.18);
-  border-radius: 20px;
-  padding: 24px;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12),
+              0 12px 32px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  padding: 28px;
   transform: translateY(0);
   opacity: 1;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: auto;
-  animation: slideUpFade 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+  animation: slideUpFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
 }
 
 .info-card.hidden {
@@ -128,22 +133,22 @@ body {
 
 .info-card-close-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 20px;
+  right: 20px;
   border: none;
   background: rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(10px);
-  width: 32px;
-  height: 32px;
+  backdrop-filter: blur(20px);
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: #6b7280;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  border: 0.5px solid rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 0;
 }
 
@@ -162,13 +167,13 @@ body {
 .info-card-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 .info-card .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   padding: 0;
   border-radius: 0;
   background: transparent;
@@ -180,35 +185,34 @@ body {
 .info-card-footer {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(226,232,240,0.8);
+  gap: 14px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .info-footer-badge {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 0.9rem;
-  color: #1e40af;
-  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
-  letter-spacing: 0.3px;
+  color: #007aff;
+  letter-spacing: -0.01em;
 }
 
 .info-footer-link {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  border-radius: 12px;
-  background: rgba(0, 122, 255, 0.1);
-  backdrop-filter: blur(10px);
+  gap: 10px;
+  padding: 12px 20px;
+  border-radius: 14px;
+  background: rgba(0, 122, 255, 0.08);
+  backdrop-filter: blur(20px);
   color: #007aff;
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border: 0.5px solid rgba(0, 122, 255, 0.2);
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 122, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .info-footer-link:hover {
@@ -225,11 +229,12 @@ body {
 }
 
 .brand-logo {
-    height: 40px;
-    width: 40px;
+    height: 44px;
+    width: 44px;
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: 0 0 0 1px rgba(148,163,184,0.4);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 
 .brand-text {
@@ -243,25 +248,25 @@ body {
 }
 
 h1 {
-    font-size: 1.6rem;
-    font-weight: 750;
-    margin: 0 0 2px 0;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #f97316;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-    text-shadow: 0 1px 3px rgba(249, 115, 22, 0.3);
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.02em;
+    text-transform: none;
+    color: #1d1d1f;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.2;
 }
 
 .subtitle {
-    color: #6b7280;
-    font-size: 0.86rem;
+    color: #86868b;
+    font-size: 0.875rem;
     font-weight: 400;
     margin: 0;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    opacity: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    opacity: 0.95;
+    line-height: 1.4;
 }
 
 #map {
@@ -282,16 +287,17 @@ h1 {
 
 /* Popup hiện đại */
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(60px) saturate(200%);
+    -webkit-backdrop-filter: blur(60px) saturate(200%);
     color: #1d1d1f;
     font-size: 15px;
-    border-radius: 18px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
-                0 4px 16px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
+                0 6px 20px rgba(0, 0, 0, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.35);
 }
 .popup-info {
     min-width: 240px;
@@ -339,30 +345,32 @@ h1 {
 }
 
 .locate-btn-custom {
-    background: rgba(0, 122, 255, 0.9);
-    backdrop-filter: blur(20px);
+    background: #007aff;
+    backdrop-filter: blur(30px);
     color: #fff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     font-size: 1.1em;
     font-weight: 600;
-    border: 0.5px solid rgba(255, 255, 255, 0.2);
-    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
     padding: 14px 32px;
-    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.25),
-                0 2px 8px rgba(0, 122, 255, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.25),
+                0 3px 10px rgba(0, 122, 255, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     outline: none;
     margin-bottom: 0;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
     display: inline-block;
 }
 .locate-btn-custom:hover, .locate-btn-custom:focus {
-    background: rgba(0, 122, 255, 1);
-    box-shadow: 0 6px 24px rgba(0, 122, 255, 0.3),
-                0 4px 12px rgba(0, 122, 255, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    background: #0051d5;
+    box-shadow: 0 8px 28px rgba(0, 122, 255, 0.3),
+                0 4px 14px rgba(0, 122, 255, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
 .locate-btn-custom:active {
@@ -396,35 +404,37 @@ h1 {
 .tools-toggle-btn {
   position: absolute;
   top: 50%;
-  right: 20px;
+  right: 24px;
   transform: translateY(-50%);
   z-index: 1200;
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
-              0 2px 8px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border: 0.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1),
+              0 4px 12px rgba(0, 0, 0, 0.06),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #1d1d1f;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  animation: fadeInScale 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
 }
 
 .tools-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
-              0 4px 12px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  transform: translateY(-50%) scale(1.08) translateX(-2px);
-  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12),
+              0 6px 16px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  transform: translateY(-50%) scale(1.05) translateX(-2px);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .tools-toggle-btn:active {
@@ -438,18 +448,19 @@ h1 {
   top: 0;
   right: 0;
   height: 100%;
-  width: 380px;
+  width: 400px;
   max-width: 90vw;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.15),
-              -8px 0 24px rgba(0, 0, 0, 0.1),
-              inset 1px 0 0 rgba(255, 255, 255, 0.5);
-  border-left: 0.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  box-shadow: -24px 0 64px rgba(0, 0, 0, 0.12),
+              -12px 0 32px rgba(0, 0, 0, 0.08),
+              inset 1px 0 0 rgba(255, 255, 255, 0.6),
+              inset -1px 0 0 rgba(0, 0, 0, 0.05);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
   transform: translateX(100%);
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1300;
   display: flex;
   flex-direction: column;
@@ -481,10 +492,10 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px 16px 24px;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px);
+  padding: 24px 28px 20px 28px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(30px);
 }
 
 .tools-panel-label {
@@ -534,11 +545,11 @@ h1 {
 
 .tools-panel-tabs {
   display: flex;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-  padding: 0 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 0 28px;
   gap: 0;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(20px);
 }
 
 .tools-tab-btn {
@@ -583,11 +594,11 @@ h1 {
 }
 
 .tools-panel-body {
-  padding: 24px;
+  padding: 28px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   flex: 1;
 }
 
@@ -643,25 +654,27 @@ h1 {
 
 .tools-panel .search-input-modern {
   width: 100%;
-  padding: 12px 18px;
-  border-radius: 12px;
-  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  padding: 14px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   font-size: 1em;
   outline: none;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(30px);
   color: #1d1d1f;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
 .tools-panel .search-input-modern:focus {
-  border-color: rgba(0, 122, 255, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.15),
-              0 0 0 3px rgba(0, 122, 255, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 122, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.12),
+              0 0 0 4px rgba(0, 122, 255, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.85);
   transform: translateY(-1px);
 }
 
@@ -670,27 +683,29 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 12px 18px;
-  border-radius: 12px;
-  background: rgba(0, 122, 255, 0.9);
-  backdrop-filter: blur(20px);
+  gap: 8px;
+  padding: 14px 20px;
+  border-radius: 14px;
+  background: #007aff;
+  backdrop-filter: blur(30px);
   color: #fff;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 1em;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.25),
-              0 2px 8px rgba(0, 122, 255, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.25),
+              0 3px 10px rgba(0, 122, 255, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tools-panel .search-btn-modern:hover, .tools-panel .search-btn-modern:focus {
-  background: rgba(0, 122, 255, 1);
-  box-shadow: 0 6px 24px rgba(0, 122, 255, 0.3),
-              0 4px 12px rgba(0, 122, 255, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: #0051d5;
+  box-shadow: 0 8px 28px rgba(0, 122, 255, 0.3),
+              0 4px 14px rgba(0, 122, 255, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   transform: translateY(-2px);
 }
 
@@ -701,20 +716,22 @@ h1 {
 
 /* Ngăn Cài đặt */
 .settings-section {
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  border: 0.5px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(30px);
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .settings-section:hover {
-  background: rgba(255, 255, 255, 0.6);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
 .settings-section-title {
@@ -736,15 +753,16 @@ h1 {
 .layer-radio {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  border: 0.5px solid rgba(0, 0, 0, 0.1);
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
 .layer-radio:hover {
@@ -784,11 +802,11 @@ h1 {
 /* Toggle overlay button custom */
 .toggle-overlay-btn-custom {
   width: 100%;
-  padding: 14px 18px;
-  border-radius: 12px;
-  border: 0.5px solid rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
+  padding: 16px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
   color: #1d1d1f;
   font-size: 0.95rem;
   font-weight: 600;
@@ -796,10 +814,11 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
 .toggle-overlay-btn-custom:hover {
@@ -893,13 +912,14 @@ h1 {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  border: 0.5px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
 /* DuAn files container */
@@ -931,21 +951,23 @@ h1 {
 }
 
 .duan-file-item {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(20px);
-  border-radius: 14px;
-  border: 0.5px solid rgba(0, 0, 0, 0.1);
-  padding: 16px;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(30px);
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 18px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
 }
 
 .duan-file-item:hover {
-  border-color: rgba(0, 122, 255, 0.3);
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 4px 16px rgba(0, 122, 255, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border-color: rgba(0, 122, 255, 0.25);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.12),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
   transform: translateY(-2px);
 }
 
@@ -1241,22 +1263,23 @@ h1 {
 
 /* Nút đo khoảng cách */
 .measure-btn-custom {
-  background: rgba(52, 199, 89, 0.9);
-  backdrop-filter: blur(20px);
+  background: #34c759;
+  backdrop-filter: blur(30px);
   color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
   padding: 14px 32px;
-  box-shadow: 0 4px 16px rgba(52, 199, 89, 0.25),
-              0 2px 8px rgba(52, 199, 89, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(52, 199, 89, 0.25),
+              0 3px 10px rgba(52, 199, 89, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   display: inline-block;
 }
 .measure-btn-custom:hover, .measure-btn-custom:focus {
@@ -1284,22 +1307,23 @@ h1 {
 }
 
 .clear-measure-btn-custom {
-  background: rgba(255, 59, 48, 0.9);
-  backdrop-filter: blur(20px);
+  background: #ff3b30;
+  backdrop-filter: blur(30px);
   color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
   padding: 14px 32px;
-  box-shadow: 0 4px 16px rgba(255, 59, 48, 0.25),
-              0 2px 8px rgba(255, 59, 48, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 59, 48, 0.25),
+              0 3px 10px rgba(255, 59, 48, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   display: inline-block;
 }
 .clear-measure-btn-custom:hover, .clear-measure-btn-custom:focus {
@@ -1316,22 +1340,23 @@ h1 {
 
 /* Nút đo diện tích */
 .area-btn-custom {
-  background: rgba(255, 149, 0, 0.9);
-  backdrop-filter: blur(20px);
+  background: #ff9500;
+  backdrop-filter: blur(30px);
   color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
   padding: 14px 32px;
-  box-shadow: 0 4px 16px rgba(255, 149, 0, 0.25),
-              0 2px 8px rgba(255, 149, 0, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 149, 0, 0.25),
+              0 3px 10px rgba(255, 149, 0, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   display: inline-block;
 }
 .area-btn-custom:hover, .area-btn-custom:focus {
@@ -1353,22 +1378,23 @@ h1 {
 }
 
 .clear-area-btn-custom {
-  background: rgba(255, 59, 48, 0.9);
-  backdrop-filter: blur(20px);
+  background: #ff3b30;
+  backdrop-filter: blur(30px);
   color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
-  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
   padding: 14px 32px;
-  box-shadow: 0 4px 16px rgba(255, 59, 48, 0.25),
-              0 2px 8px rgba(255, 59, 48, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(255, 59, 48, 0.25),
+              0 3px 10px rgba(255, 59, 48, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
   display: inline-block;
 }
 .clear-area-btn-custom:hover, .clear-area-btn-custom:focus {
@@ -1743,20 +1769,21 @@ h1 {
 /* Thông tin đo diện tích */
 .area-info {
   position: absolute;
-  left: 18px;
-  top: 18px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border-radius: 16px;
-  padding: 14px 20px;
+  left: 24px;
+  top: 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  border-radius: 18px;
+  padding: 16px 24px;
   max-width: 420px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
-              0 4px 16px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  border: 0.5px solid rgba(255, 149, 0, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
+              0 6px 20px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 149, 0, 0.25);
   z-index: 1200;
-  animation: fadeInDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fadeInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 .area-info-content {
   display: flex;
@@ -1778,18 +1805,19 @@ h1 {
   top: 0;
   right: 0;
   height: 100%;
-  width: 380px;
+  width: 400px;
   max-width: 90vw;
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.15),
-              -8px 0 24px rgba(0, 0, 0, 0.1),
-              inset 1px 0 0 rgba(255, 255, 255, 0.5);
-  border-left: 0.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  box-shadow: -24px 0 64px rgba(0, 0, 0, 0.12),
+              -12px 0 32px rgba(0, 0, 0, 0.08),
+              inset 1px 0 0 rgba(255, 255, 255, 0.6),
+              inset -1px 0 0 rgba(0, 0, 0, 0.05);
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
   transform: translateX(100%);
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1300;
   display: flex;
   flex-direction: column;
@@ -1805,10 +1833,10 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px 16px 24px;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px);
+  padding: 24px 28px 20px 28px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(30px);
 }
 
 .info-panel-label {
@@ -1857,7 +1885,7 @@ h1 {
 }
 
 .info-panel-body {
-  padding: 12px 20px 20px 20px;
+  padding: 16px 28px 28px 28px;
   overflow-y: auto;
 }
 
@@ -2005,20 +2033,21 @@ h1 {
 /* Thông tin đo khoảng cách */
 .measure-info {
   position: absolute;
-  left: 18px;
-  top: 18px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border-radius: 16px;
-  padding: 14px 20px;
+  left: 24px;
+  top: 24px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  border-radius: 18px;
+  padding: 16px 24px;
   max-width: 420px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
-              0 4px 16px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  border: 0.5px solid rgba(52, 199, 89, 0.3);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
+              0 6px 20px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(52, 199, 89, 0.25);
   z-index: 1200;
-  animation: fadeInDown 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: fadeInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 .measure-info-content {
   display: flex;
@@ -2317,23 +2346,24 @@ h1 {
 /* Search notification */
 .search-notification {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 24px;
+  right: 24px;
   z-index: 2000;
   min-width: 300px;
   max-width: 500px;
-  padding: 18px 24px;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
-              0 4px 16px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(30px) saturate(180%);
-  -webkit-backdrop-filter: blur(30px) saturate(180%);
-  border: 0.5px solid rgba(255, 255, 255, 0.3);
+  padding: 20px 28px;
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
+              0 6px 20px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   transform: translateX(400px);
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
 }
 
@@ -2386,21 +2416,22 @@ h1 {
 .search-results-panel {
   position: fixed;
   top: 80px;
-  right: 20px;
-  width: 360px;
+  right: 24px;
+  width: 380px;
   max-height: 500px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: 20px;
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15),
-              0 6px 24px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  border: 0.5px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border-radius: 22px;
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.12),
+              0 8px 28px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   z-index: 2000;
   display: flex;
   flex-direction: column;
-  animation: slideInRight 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
   overflow: hidden;
 }
 
@@ -2416,13 +2447,13 @@ h1 {
 }
 
 .search-results-panel-header {
-  padding: 20px 24px;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+  padding: 24px 28px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(30px);
 }
 
 .search-results-panel-header h3 {
@@ -2434,18 +2465,18 @@ h1 {
 
 .search-results-close {
   background: rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(10px);
-  border: 0.5px solid rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   color: #6b7280;
   cursor: pointer;
   padding: 0;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .search-results-close svg {
@@ -2470,14 +2501,14 @@ h1 {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px;
-  border-radius: 12px;
+  padding: 16px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  margin-bottom: 6px;
-  background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .search-result-item:hover {
@@ -2488,11 +2519,11 @@ h1 {
 }
 
 .search-result-item-number {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: rgba(0, 122, 255, 0.9);
-  backdrop-filter: blur(10px);
+  background: #007aff;
+  backdrop-filter: blur(20px);
   color: white;
   display: flex;
   align-items: center;
@@ -2500,9 +2531,10 @@ h1 {
   font-weight: 600;
   font-size: 13px;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .search-result-item-content {
@@ -2523,25 +2555,27 @@ h1 {
 }
 
 .search-result-item-btn {
-  padding: 8px 18px;
-  border-radius: 10px;
-  background: rgba(0, 122, 255, 0.9);
-  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: #007aff;
+  backdrop-filter: blur(20px);
   color: white;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.3),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
 }
 
 .search-result-item-btn:hover {
-  background: rgba(0, 122, 255, 1);
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3),
-              inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  background: #0051d5;
+  box-shadow: 0 6px 16px rgba(0, 122, 255, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   transform: translateY(-1px);
 }
 
@@ -2561,19 +2595,20 @@ h1 {
   top: 100%;
   left: 0;
   right: 0;
-  margin-top: 6px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border-radius: 14px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15),
-              0 4px 16px rgba(0, 0, 0, 0.1),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(60px) saturate(200%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
+              0 6px 20px rgba(0, 0, 0, 0.08),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
   max-height: 300px;
   overflow-y: auto;
   z-index: 10000;
   display: none;
-  border: 0.5px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .search-suggestions.show {
@@ -2593,10 +2628,10 @@ h1 {
 }
 
 .search-suggestion-item {
-  padding: 14px 18px;
+  padding: 16px 20px;
   cursor: pointer;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   gap: 12px;
@@ -2608,13 +2643,13 @@ h1 {
 }
 
 .search-suggestion-item:hover {
-  background: rgba(0, 122, 255, 0.08);
+  background: rgba(0, 122, 255, 0.06);
   transform: translateX(4px);
 }
 
 .search-suggestion-item.active {
-  background: rgba(0, 122, 255, 0.12);
-  border-left: 3px solid rgba(0, 122, 255, 0.5);
+  background: rgba(0, 122, 255, 0.1);
+  border-left: 3px solid #007aff;
 }
 
 .search-suggestion-icon {
