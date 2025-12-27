@@ -484,7 +484,13 @@ function setupLocateButton(map) {
       watchPositionId = null;
       isTrackingLocation = false;
       locateBtnDom.disabled = false;
-      locateBtnDom.innerText = '📍 Xác định vị trí';
+      locateBtnDom.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>Xác định vị trí</span>
+      `;
       locateBtnDom.classList.remove('active');
       // Xóa marker
       if (currentLocationMarker) {
@@ -498,7 +504,13 @@ function setupLocateButton(map) {
     
     // Bắt đầu theo dõi vị trí
     locateBtnDom.disabled = true;
-    locateBtnDom.innerText = 'Đang xác định vị trí...';
+    locateBtnDom.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <span>Đang xác định vị trí...</span>
+    `;
     locateBtnDom.classList.add('active');
     
     // Ẩn hộp công cụ khi bắt đầu sử dụng
@@ -527,6 +539,12 @@ function setupLocateButton(map) {
           map.removeLayer(currentLocationMarker);
         }
         
+        // Tạo pane riêng cho location marker với z-index cao hơn duanPane (700)
+        if (!map._locationPane) {
+          map._locationPane = map.createPane('locationPane');
+          map._locationPane.style.zIndex = 850; // Cao hơn duanPane (700) nhưng thấp hơn searchResultPane (800) và popupPane (900)
+        }
+        
         // Tạo marker mới với icon hiện đại cho real-time
         const accuracy = pos.coords.accuracy;
         currentLocationMarker = L.marker([lat, lng], {
@@ -546,7 +564,9 @@ function setupLocateButton(map) {
             iconSize: [32, 32],
             iconAnchor: [16, 16],
             popupAnchor: [0, -16]
-          })
+          }),
+          pane: 'locationPane',
+          zIndexOffset: 1000
         }).addTo(map);
         
         // Cập nhật popup với thông tin real-time
@@ -554,7 +574,13 @@ function setupLocateButton(map) {
         const heading = pos.coords.heading ? pos.coords.heading.toFixed(0) + '°' : 'Không xác định';
         currentLocationMarker.bindPopup(
           `<div style="text-align: center; padding: 4px;">
-            <strong style="color: #ef4444; font-size: 14px;">📍 Vị trí của bạn</strong><br>
+            <strong style="color: #ef4444; font-size: 14px; display: inline-flex; align-items: center; gap: 6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              Vị trí của bạn
+            </strong><br>
             <small style="color: #666;">Độ chính xác: ${accuracy.toFixed(0)} m</small><br>
             <small style="color: #666;">Tốc độ: ${speed}</small><br>
             <small style="color: #666;">Hướng: ${heading}</small>
@@ -572,14 +598,25 @@ function setupLocateButton(map) {
         // Cập nhật trạng thái
         isTrackingLocation = true;
         locateBtnDom.disabled = false;
-        locateBtnDom.innerText = '⏹️ Dừng theo dõi';
+        locateBtnDom.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+          </svg>
+          <span>Dừng theo dõi</span>
+        `;
       },
       function(err) {
         if (err.code !== 1) {
           alert('Không thể xác định vị trí: ' + err.message);
         }
         locateBtnDom.disabled = false;
-        locateBtnDom.innerText = '📍 Xác định vị trí';
+        locateBtnDom.innerHTML = `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          <span>Xác định vị trí</span>
+        `;
         locateBtnDom.classList.remove('active');
         isTrackingLocation = false;
         // Hiện lại hộp công cụ khi có lỗi
@@ -635,26 +672,63 @@ function areFeaturesAdjacent(feature1, feature2) {
   }
 }
 
+// Hàm tạo 124 màu khác nhau phân bố đều trên vòng tròn màu
+// Sử dụng cả hue, saturation và lightness để tạo sự khác biệt rõ ràng
+function generate124Colors() {
+  const totalColors = 124;
+  const colors = [];
+  
+  // Phân bố màu trên nhiều lớp để tăng sự khác biệt
+  // Sử dụng 4 mức saturation và 4 mức lightness = 16 nhóm
+  // Mỗi nhóm có khoảng 8 màu hue khác nhau
+  const saturationLevels = [75, 80, 85, 90]; // 4 mức saturation
+  const lightnessLevels = [65, 70, 75, 80]; // 4 mức lightness
+  
+  let colorIndex = 0;
+  for (let s = 0; s < saturationLevels.length && colorIndex < totalColors; s++) {
+    for (let l = 0; l < lightnessLevels.length && colorIndex < totalColors; l++) {
+      // Mỗi nhóm có khoảng 8 màu hue, phân bố đều trên 360 độ
+      const huesPerGroup = Math.ceil((totalColors - colorIndex) / ((saturationLevels.length - s) * (lightnessLevels.length - l)));
+      const hueStep = 360 / huesPerGroup;
+      
+      for (let h = 0; h < huesPerGroup && colorIndex < totalColors; h++) {
+        const hue = (h * hueStep) % 360;
+        colors.push({
+          hue: Math.round(hue),
+          saturation: saturationLevels[s],
+          lightness: lightnessLevels[l]
+        });
+        colorIndex++;
+      }
+    }
+  }
+  
+  return colors;
+}
+
+// Mảng 124 màu được tạo sẵn
+const colorPalette124 = generate124Colors();
+
 // Hàm tạo màu cho feature đảm bảo không trùng với các feature lân cận
 function assignColorToFeature(feature, allFeatures, assignedColors, index) {
-  // Tạo màu cơ bản từ tên hoặc mã
-  let baseHue;
+  // Tạo màu cơ bản từ tên hoặc mã, sử dụng 124 màu có sẵn
+  let baseColorIndex;
   if (feature.properties && feature.properties.ten) {
     const name = feature.properties.ten;
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
       hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-    baseHue = Math.abs(hash % 360);
+    baseColorIndex = Math.abs(hash % 124);
   } else if (feature.properties && feature.properties.ma) {
     const ma = feature.properties.ma;
     let hash = 0;
     for (let i = 0; i < ma.length; i++) {
       hash = ma.charCodeAt(i) + ((hash << 5) - hash);
     }
-    baseHue = Math.abs(hash % 360);
+    baseColorIndex = Math.abs(hash % 124);
   } else {
-    baseHue = (index * 137.508) % 360; // Golden angle để phân bố đều
+    baseColorIndex = index % 124;
   }
   
   // Tìm các feature lân cận
@@ -666,20 +740,38 @@ function assignColorToFeature(feature, allFeatures, assignedColors, index) {
   }
   
   // Tìm màu không trùng với các feature lân cận
-  let hue = baseHue;
+  // Kiểm tra cả hue, saturation và lightness để đảm bảo khác biệt rõ ràng
+  let colorIndex = baseColorIndex;
   let attempts = 0;
-  const minHueDiff = 30; // Chênh lệch tối thiểu giữa các màu lân cận (độ)
+  const minHueDiff = 25; // Chênh lệch tối thiểu về hue (độ) - tăng lên để màu khác biệt hơn
   
-  while (attempts < 360) {
+  while (attempts < 124) {
     let conflict = false;
+    const currentColor = colorPalette124[colorIndex];
+    
     for (const adjIndex of adjacentFeatures) {
       if (assignedColors[adjIndex] !== null) {
-        const adjHue = assignedColors[adjIndex];
-        const diff = Math.min(
-          Math.abs(hue - adjHue),
-          360 - Math.abs(hue - adjHue)
+        const adjColor = assignedColors[adjIndex];
+        
+        // Kiểm tra chênh lệch hue
+        const hueDiff = Math.min(
+          Math.abs(currentColor.hue - adjColor.hue),
+          360 - Math.abs(currentColor.hue - adjColor.hue)
         );
-        if (diff < minHueDiff) {
+        
+        // Kiểm tra chênh lệch saturation và lightness
+        const satDiff = Math.abs(currentColor.saturation - adjColor.saturation);
+        const lightDiff = Math.abs(currentColor.lightness - adjColor.lightness);
+        
+        // Màu được coi là quá gần nếu:
+        // - Hue quá gần (< 25 độ) VÀ (saturation hoặc lightness quá gần)
+        // - Hoặc cả 3 đều quá gần
+        if (hueDiff < minHueDiff && (satDiff < 10 || lightDiff < 5)) {
+          conflict = true;
+          break;
+        }
+        // Nếu hue quá gần (< 15 độ) thì cũng coi là conflict
+        if (hueDiff < 15) {
           conflict = true;
           break;
         }
@@ -687,16 +779,16 @@ function assignColorToFeature(feature, allFeatures, assignedColors, index) {
     }
     
     if (!conflict) {
-      return hue;
+      return currentColor;
     }
     
-    // Thử màu tiếp theo
-    hue = (hue + minHueDiff) % 360;
+    // Thử màu tiếp theo trong 124 màu, nhảy cách xa hơn
+    colorIndex = (colorIndex + 10) % 124;
     attempts++;
   }
   
   // Nếu không tìm được màu phù hợp, dùng màu cơ bản
-  return baseHue;
+  return colorPalette124[baseColorIndex];
 }
 
 // ====== HIỂN THỊ GEOJSON LÊN BẢN ĐỒ ======
@@ -710,12 +802,12 @@ function addGeojsonToMap(map, data) {
   
   // Gán màu cho từng feature
   allFeatures.forEach((feature, index) => {
-    const hue = assignColorToFeature(feature, allFeatures, assignedColors, index);
-    assignedColors[index] = hue;
+    const colorObj = assignColorToFeature(feature, allFeatures, assignedColors, index);
+    assignedColors[index] = colorObj;
     
-    // Lưu màu vào feature để sử dụng sau
+    // Lưu màu vào feature để sử dụng sau (sử dụng cả saturation và lightness)
     const featureId = feature.properties?.ten || feature.properties?.ma || `feature_${index}`;
-    featureColors[featureId] = `hsl(${hue}, 70%, 80%)`;
+    featureColors[featureId] = `hsl(${colorObj.hue}, ${colorObj.saturation}%, ${colorObj.lightness}%)`;
   });
   
   const layer = L.geoJSON(data, {
@@ -726,17 +818,24 @@ function addGeojsonToMap(map, data) {
       
       // Fallback nếu không tìm thấy màu đã gán
       if (!fillColor) {
+        let colorIndex = 0;
         if (feature.properties && feature.properties.ten) {
           const name = feature.properties.ten;
           let hash = 0;
           for (let i = 0; i < name.length; i++) {
             hash = name.charCodeAt(i) + ((hash << 5) - hash);
           }
-          const hue = Math.abs(hash % 360);
-          fillColor = `hsl(${hue}, 70%, 80%)`;
-        } else {
-          fillColor = '#3388ff';
+          colorIndex = Math.abs(hash % 124);
+        } else if (feature.properties && feature.properties.ma) {
+          const ma = feature.properties.ma;
+          let hash = 0;
+          for (let i = 0; i < ma.length; i++) {
+            hash = ma.charCodeAt(i) + ((hash << 5) - hash);
+          }
+          colorIndex = Math.abs(hash % 124);
         }
+        const colorObj = colorPalette124[colorIndex];
+        fillColor = `hsl(${colorObj.hue}, ${colorObj.saturation}%, ${colorObj.lightness}%)`;
       }
       
       // Sử dụng màu từ GeoJSON nếu có, nếu không thì dùng màu đã gán
@@ -759,22 +858,25 @@ function addGeojsonToMap(map, data) {
       
       // Fallback nếu không tìm thấy màu đã gán
       if (!baseFillColor) {
+        let colorIndex = 0;
         if (feature.properties && feature.properties.ten) {
           const name = feature.properties.ten;
           let hash = 0;
           for (let i = 0; i < name.length; i++) {
             hash = name.charCodeAt(i) + ((hash << 5) - hash);
           }
-          const hue = Math.abs(hash % 360);
-          baseFillColor = `hsl(${hue}, 70%, 80%)`;
+          colorIndex = Math.abs(hash % 124);
         } else if (feature.properties && feature.properties.ma) {
           const ma = feature.properties.ma;
           let hash = 0;
           for (let i = 0; i < ma.length; i++) {
             hash = ma.charCodeAt(i) + ((hash << 5) - hash);
           }
-          const hue = Math.abs(hash % 360);
-          baseFillColor = `hsl(${hue}, 70%, 80%)`;
+          colorIndex = Math.abs(hash % 124);
+        }
+        if (colorIndex > 0 || (feature.properties && (feature.properties.ten || feature.properties.ma))) {
+          const colorObj = colorPalette124[colorIndex];
+          baseFillColor = `hsl(${colorObj.hue}, ${colorObj.saturation}%, ${colorObj.lightness}%)`;
         } else {
           baseFillColor = featureStyle.fillColor || '#3388ff';
         }
@@ -1976,7 +2078,12 @@ function setupSearch(map) {
     panel.innerHTML = `
       <div class="search-results-panel-header">
         <h3>Tìm thấy ${features.length} kết quả</h3>
-        <button class="search-results-close" onclick="document.getElementById('search-results-panel').remove()">×</button>
+        <button class="search-results-close" onclick="document.getElementById('search-results-panel').remove()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       <div class="search-results-list">
         ${features.map((item, index) => {
@@ -2812,7 +2919,12 @@ function setupAreaButton(map) {
     if (isMeasuringArea) {
       // Bật chế độ đo diện tích
       areaBtn.classList.add('active');
-      areaBtn.textContent = '⏹️ Dừng đo';
+      areaBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+        </svg>
+        <span>Dừng đo</span>
+      `;
       if (clearBtn) clearBtn.style.display = 'inline-block';
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
@@ -2952,7 +3064,12 @@ function setupAreaButton(map) {
     } else {
       // Tắt chế độ đo diện tích
       areaBtn.classList.remove('active');
-      areaBtn.textContent = '📐 Đo diện tích';
+      areaBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+        </svg>
+        <span>Đo diện tích</span>
+      `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi dừng
@@ -2974,7 +3091,12 @@ function setupAreaButton(map) {
       clearArea(map);
       isMeasuringArea = false;
       areaBtn.classList.remove('active');
-      areaBtn.textContent = '📐 Đo diện tích';
+      areaBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+        </svg>
+        <span>Đo diện tích</span>
+      `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi xóa
@@ -3111,7 +3233,12 @@ function setupMeasureButton(map) {
     if (isMeasuring) {
       // Bật chế độ đo
       measureBtn.classList.add('active');
-      measureBtn.textContent = '⏹️ Dừng đo';
+      measureBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+        </svg>
+        <span>Dừng đo</span>
+      `;
       if (clearBtn) clearBtn.style.display = 'inline-block';
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
@@ -3217,7 +3344,15 @@ function setupMeasureButton(map) {
     } else {
       // Tắt chế độ đo
       measureBtn.classList.remove('active');
-      measureBtn.textContent = '📏 Đo khoảng cách';
+      measureBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="3" x2="21" y2="21"></line>
+          <path d="M9 9l3 3-3 3"></path>
+          <path d="M15 15l-3-3 3-3"></path>
+          <line x1="21" y1="3" x2="3" y2="21"></line>
+        </svg>
+        <span>Đo khoảng cách</span>
+      `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi dừng
@@ -3239,7 +3374,15 @@ function setupMeasureButton(map) {
       clearMeasure(map);
       isMeasuring = false;
       measureBtn.classList.remove('active');
-      measureBtn.textContent = '📏 Đo khoảng cách';
+      measureBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="3" x2="21" y2="21"></line>
+          <path d="M9 9l3 3-3 3"></path>
+          <path d="M15 15l-3-3 3-3"></path>
+          <line x1="21" y1="3" x2="3" y2="21"></line>
+        </svg>
+        <span>Đo khoảng cách</span>
+      `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi xóa
