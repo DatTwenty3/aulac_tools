@@ -106,7 +106,7 @@ body {
               inset 0 -1px 0 rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 24px;
-  padding: 28px;
+  padding: 18px 28px;
   transform: translateY(0);
   opacity: 1;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -167,13 +167,13 @@ body {
 .info-card-content {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .info-card .brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   padding: 0;
   border-radius: 0;
   background: transparent;
@@ -185,8 +185,8 @@ body {
 .info-card-footer {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding-top: 16px;
+  gap: 10px;
+  padding-top: 10px;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -229,8 +229,8 @@ body {
 }
 
 .brand-logo {
-    height: 44px;
-    width: 44px;
+    height: 36px;
+    width: 36px;
     border-radius: 999px;
     object-fit: cover;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
@@ -242,15 +242,20 @@ body {
     flex-direction: column;
 }
 
+.brand-text h1 {
+    color: #FF9800;
+    text-transform: uppercase;
+}
+
 @keyframes fadeInDown {
     from { opacity: 0; transform: translateY(-40px); }
     to { opacity: 1; transform: none; }
 }
 
 h1 {
-    font-size: 1.65rem;
+    font-size: 1.4rem;
     font-weight: 700;
-    margin: 0 0 4px 0;
+    margin: 0 0 2px 0;
     letter-spacing: -0.02em;
     text-transform: none;
     color: #1d1d1f;
@@ -259,13 +264,13 @@ h1 {
 }
 
 .subtitle {
-    color: #86868b;
-    font-size: 0.875rem;
-    font-weight: 400;
+    color: #4a4a4a;
+    font-size: 0.88rem;
+    font-weight: 500;
     margin: 0;
     letter-spacing: -0.01em;
     text-transform: none;
-    opacity: 0.95;
+    opacity: 1;
     line-height: 1.4;
 }
 
@@ -1227,6 +1232,10 @@ h1 {
   .brand-text {
     min-width: 0;
     flex: 1;
+  }
+  .brand-text h1 {
+    color: #FF9800;
+    text-transform: uppercase;
   }
   h1 {
     font-size: 1rem;

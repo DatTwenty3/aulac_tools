@@ -352,7 +352,6 @@ function toggleInfoCard(show) {
 function setupInfoCard() {
   const infoToggleBtn = document.getElementById('info-toggle-btn');
   const infoCard = document.getElementById('info-card');
-  const closeBtn = document.getElementById('info-card-close');
   
   if (infoToggleBtn && infoCard) {
     infoToggleBtn.onclick = function() {
@@ -361,12 +360,6 @@ function setupInfoCard() {
       } else {
         toggleInfoCard(false);
       }
-    };
-  }
-  
-  if (closeBtn && infoCard) {
-    closeBtn.onclick = function() {
-      toggleInfoCard(false);
     };
   }
   
@@ -944,45 +937,46 @@ function addGeojsonToMap(map, data) {
         openInfoPanel(feature.properties, isDhlvb);
       });
       
-      layer.on('mouseover', function() {
-        // Nếu đang ẩn ranh giới (geojsonVisible = false), không hiển thị màu khi hover
-        if (geojsonVisible) {
-          // Chỉ thay đổi border và opacity khi hover, giữ nguyên fillColor
-          layer.setStyle({
-            fillOpacity: 0.5,
-            color: '#ff7800',
-            fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-          });
-        } else {
-          // Chỉ thay đổi màu đường viền, không thay đổi fillOpacity và fillColor
-          layer.setStyle({
-            color: '#ff7800',
-            fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-          });
-        }
-      });
+      // Đã loại bỏ hiệu ứng hover (mouseover/mouseout) để không tô đậm màu các xã khi rê chuột
+      // layer.on('mouseover', function() {
+      //   // Nếu đang ẩn ranh giới (geojsonVisible = false), không hiển thị màu khi hover
+      //   if (geojsonVisible) {
+      //     // Chỉ thay đổi border và opacity khi hover, giữ nguyên fillColor
+      //     layer.setStyle({
+      //       fillOpacity: 0.5,
+      //       color: '#ff7800',
+      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
+      //     });
+      //   } else {
+      //     // Chỉ thay đổi màu đường viền, không thay đổi fillOpacity và fillColor
+      //     layer.setStyle({
+      //       color: '#ff7800',
+      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
+      //     });
+      //   }
+      // });
       
-      layer.on('mouseout', function() {
-        // Không khôi phục nếu đang được chọn (highlight)
-        if (selectedGeojsonLayer === layer) {
-          return;
-        }
-        
-        // Nếu đang ẩn ranh giới, giữ fillOpacity = 0
-        if (geojsonVisible) {
-          layer.setStyle({
-            fillOpacity: originalStyle.fillOpacity,
-            color: originalStyle.color,
-            fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-          });
-        } else {
-          // Chỉ khôi phục màu đường viền và fillColor
-          layer.setStyle({
-            color: originalStyle.color,
-            fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-          });
-        }
-      });
+      // layer.on('mouseout', function() {
+      //   // Không khôi phục nếu đang được chọn (highlight)
+      //   if (selectedGeojsonLayer === layer) {
+      //     return;
+      //   }
+      //   
+      //   // Nếu đang ẩn ranh giới, giữ fillOpacity = 0
+      //   if (geojsonVisible) {
+      //     layer.setStyle({
+      //       fillOpacity: originalStyle.fillOpacity,
+      //       color: originalStyle.color,
+      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
+      //     });
+      //   } else {
+      //     // Chỉ khôi phục màu đường viền và fillColor
+      //     layer.setStyle({
+      //       color: originalStyle.color,
+      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
+      //     });
+      //   }
+      // });
     }
   }).addTo(map);
   geojsonLayers.push(layer);
