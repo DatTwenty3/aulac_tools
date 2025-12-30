@@ -1675,13 +1675,91 @@ function setupSearch(map) {
     performSearch(suggestion);
   }
   
+  // Hàm kiểm tra và parse tọa độ
+  function parseCoordinates(input) {
+    const trimmed = input.trim();
+    // Regex để tìm pattern: số, có thể có dấu phẩy hoặc khoảng trắng, số
+    const coordPattern = /^(-?\d+\.?\d*)\s*[,，]\s*(-?\d+\.?\d*)$/;
+    const match = trimmed.match(coordPattern);
+    
+    if (!match) return null;
+    
+    const first = parseFloat(match[1]);
+    const second = parseFloat(match[2]);
+    
+    // Kiểm tra phạm vi hợp lệ cho tọa độ Việt Nam
+    // Latitude: khoảng 8-24 (Bắc)
+    // Longitude: khoảng 102-110 (Đông)
+    
+    // Nếu số đầu tiên trong khoảng 102-110, đó là longitude (lng, lat)
+    if (first >= 102 && first <= 110 && second >= 8 && second <= 24) {
+      return { lat: second, lng: first };
+    }
+    // Nếu số đầu tiên trong khoảng 8-24, đó là latitude (lat, lng)
+    else if (first >= 8 && first <= 24 && second >= 102 && second <= 110) {
+      return { lat: first, lng: second };
+    }
+    // Nếu không rõ, thử cả hai cách (ưu tiên lat, lng)
+    else if (Math.abs(first) <= 90 && Math.abs(second) <= 180) {
+      // Nếu số đầu nhỏ hơn hoặc bằng 90, có thể là lat
+      if (Math.abs(first) <= 90) {
+        return { lat: first, lng: second };
+      } else {
+        return { lat: second, lng: first };
+      }
+    }
+    
+    return null;
+  }
+
   // Hàm thực hiện tìm kiếm
   function performSearch(suggestion = null) {
-    const keyword = removeVietnameseTones(searchInput.value.trim().toLowerCase());
-    if (!keyword) {
-      alert('Vui lòng nhập từ khóa tìm kiếm!');
+    const inputValue = searchInput.value.trim();
+    if (!inputValue) {
+      alert('Vui lòng nhập từ khóa tìm kiếm hoặc tọa độ!');
       return;
     }
+    
+    // Kiểm tra xem input có phải là tọa độ không
+    const coordinates = parseCoordinates(inputValue);
+    if (coordinates) {
+      const { lat, lng } = coordinates;
+      
+      // Xóa marker cũ nếu có
+      if (searchResultMarker) {
+        map.removeLayer(searchResultMarker);
+        searchResultMarker = null;
+      }
+      
+      // Tạo marker tại vị trí tọa độ
+      const latlng = L.latLng(lat, lng);
+      const coordText = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      searchResultMarker = createSearchResultMarker(map, latlng, `Tọa độ: ${coordText}`);
+      searchResultMarker.addTo(map);
+      
+      // Di chuyển bản đồ đến vị trí tọa độ
+      map.flyTo(latlng, 15, {
+        animate: true,
+        duration: 1.0
+      });
+      
+      // Mở popup sau khi di chuyển
+      setTimeout(() => {
+        searchResultMarker.openPopup();
+        const popup = searchResultMarker.getPopup();
+        if (popup && popup.getElement()) {
+          popup.getElement().style.zIndex = '1000';
+        }
+      }, 500);
+      
+      // Tự động xóa marker sau 5 giây
+      autoRemoveMarker(map, searchResultMarker, 5000);
+      
+      showSearchNotification(`Đã tìm thấy tọa độ: ${coordText}`, 'success');
+      return;
+    }
+    
+    const keyword = removeVietnameseTones(inputValue.toLowerCase());
     
     // Nếu có suggestion được chọn, sử dụng nó
     if (suggestion) {
