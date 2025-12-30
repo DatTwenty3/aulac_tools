@@ -1303,6 +1303,13 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
               return;
             }
             
+            // Lấy giá trị hiện tại từ config để đảm bảo luôn đúng với cài đặt mới nhất
+            const currentConfig = duanConfig[filename] || {};
+            const currentWeight = currentConfig.weight || weight;
+            const currentColor = currentConfig.color || color;
+            const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
+            const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
+            
             // Khôi phục style của layer trước đó nếu có
             if (selectedDuanFeatureLayer && selectedDuanFeatureLayer !== layer) {
               if (selectedDuanFeatureStyle) {
@@ -1311,15 +1318,15 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
             }
             
             // Tính scaledDashArray cho weight + 2 (khi highlight)
-            const highlightWeight = weight + 2;
-            const highlightDashArray = dashArray ? scaleDashArray(dashArray, highlightWeight) : null;
+            const highlightWeight = currentWeight + 2;
+            const highlightDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, highlightWeight) : null;
             
             // Lưu style gốc của layer hiện tại
             selectedDuanFeatureStyle = {
-              color: color,
-              weight: weight,
+              color: currentColor,
+              weight: currentWeight,
               fillOpacity: 0.3,
-              dashArray: scaledDashArray
+              dashArray: currentScaledDashArray
             };
             selectedDuanFeatureLayer = layer;
             
@@ -1331,28 +1338,42 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
           });
           
           layer.on('mouseover', function() {
+            // Lấy giá trị hiện tại từ config để đảm bảo luôn đúng với cài đặt mới nhất
+            const currentConfig = duanConfig[filename] || {};
+            const currentWeight = currentConfig.weight || weight;
+            const currentColor = currentConfig.color || color;
+            const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
+            const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
+            
             // Giữ nguyên weight và dashArray như cài đặt, chỉ thay đổi màu và opacity
             layer.setStyle({
               fillOpacity: 0.5, 
               color: '#ff7800', 
-              weight: weight,
-              dashArray: scaledDashArray
+              weight: currentWeight,
+              dashArray: currentScaledDashArray
             });
           });
           
           layer.on('mouseout', function() {
+            // Lấy giá trị hiện tại từ config để đảm bảo luôn đúng với cài đặt mới nhất
+            const currentConfig = duanConfig[filename] || {};
+            const currentWeight = currentConfig.weight || weight;
+            const currentColor = currentConfig.color || color;
+            const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
+            const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
+            
             // Khôi phục style ban đầu (trừ khi đang được chọn)
             if (selectedDuanFeatureLayer !== layer) {
               layer.setStyle({
                 fillOpacity: 0.3, 
-                color: color,
-                weight: weight,
-                dashArray: scaledDashArray
+                color: currentColor,
+                weight: currentWeight,
+                dashArray: currentScaledDashArray
               });
             } else {
               // Nếu đang được chọn, giữ style highlight nhưng với weight và dashArray đúng
-              const highlightWeight = weight + 2;
-              const highlightDashArray = dashArray ? scaleDashArray(dashArray, highlightWeight) : null;
+              const highlightWeight = currentWeight + 2;
+              const highlightDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, highlightWeight) : null;
               layer.setStyle({
                 color: '#2ecc40', 
                 weight: highlightWeight,
