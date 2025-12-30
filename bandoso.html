@@ -67,8 +67,23 @@
       </div>
       <!-- Tab navigation -->
       <div class="tools-panel-tabs">
-        <button class="tools-tab-btn active" data-tab="tools">Công cụ</button>
-        <button class="tools-tab-btn" data-tab="settings">Cài đặt</button>
+        <button class="tools-tab-btn active" data-tab="tools" title="Công cụ bản đồ">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+          <span>Công cụ</span>
+        </button>
+        <button class="tools-tab-btn" data-tab="settings" title="Cài đặt bản đồ">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+            <circle cx="6" cy="6" r="1.5"/>
+            <circle cx="6" cy="12" r="1.5"/>
+            <circle cx="6" cy="18" r="1.5"/>
+          </svg>
+          <span>Cài đặt</span>
+        </button>
       </div>
 
       <div class="tools-panel-body">
@@ -87,47 +102,73 @@
           </div>
 
           <!-- Các nút công cụ -->
-          <div class="map-tools-bar">
-            <button id="locate-btn" class="locate-btn-custom">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              <span>Xác định vị trí</span>
-            </button>
-            <button id="measure-btn" class="measure-btn-custom">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="3" y1="3" x2="21" y2="21"></line>
-                <path d="M9 9l3 3-3 3"></path>
-                <path d="M15 15l-3-3 3-3"></path>
-                <line x1="21" y1="3" x2="3" y2="21"></line>
-              </svg>
-              <span>Đo khoảng cách</span>
-            </button>
-            <button id="clear-measure-btn" class="clear-measure-btn-custom" style="display: none;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-              <span>Xóa đo</span>
-            </button>
-            <button id="area-btn" class="area-btn-custom">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
-              </svg>
-              <span>Đo diện tích</span>
-            </button>
-            <button id="clear-area-btn" class="clear-area-btn-custom" style="display: none;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                <line x1="10" y1="11" x2="10" y2="17"></line>
-                <line x1="14" y1="11" x2="14" y2="17"></line>
-              </svg>
-              <span>Xóa vùng</span>
-            </button>
+          <div class="map-tools-container">
+            <!-- Nhóm Vị trí -->
+            <div class="tool-group">
+              <div class="tool-group-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span class="tool-group-title">Vị trí</span>
+              </div>
+              <div class="tool-group-content">
+                <button id="locate-btn" class="tool-btn locate-btn-custom" title="Xác định vị trí hiện tại của bạn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <span>Xác định vị trí</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Nhóm Đo lường -->
+            <div class="tool-group">
+              <div class="tool-group-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="3" y1="3" x2="21" y2="21"/>
+                  <path d="M9 9l3 3-3 3"/>
+                  <path d="M15 15l-3-3 3-3"/>
+                </svg>
+                <span class="tool-group-title">Đo lường</span>
+              </div>
+              <div class="tool-group-content">
+                <button id="measure-btn" class="tool-btn measure-btn-custom" title="Đo khoảng cách giữa các điểm">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="3" x2="21" y2="21"></line>
+                    <path d="M9 9l3 3-3 3"></path>
+                    <path d="M15 15l-3-3 3-3"></path>
+                    <line x1="21" y1="3" x2="3" y2="21"></line>
+                  </svg>
+                  <span>Đo khoảng cách</span>
+                </button>
+                <button id="clear-measure-btn" class="tool-btn clear-measure-btn-custom" style="display: none;" title="Xóa kết quả đo khoảng cách">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                  <span>Xóa đo</span>
+                </button>
+                <button id="area-btn" class="tool-btn area-btn-custom" title="Đo diện tích vùng">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                  </svg>
+                  <span>Đo diện tích</span>
+                </button>
+                <button id="clear-area-btn" class="tool-btn clear-area-btn-custom" style="display: none;" title="Xóa kết quả đo diện tích">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                  <span>Xóa vùng</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 

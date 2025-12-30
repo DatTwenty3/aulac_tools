@@ -570,6 +570,37 @@ h1 {
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   text-align: center;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tools-tab-btn span {
+  display: inline-block;
+}
+
+.tools-tab-btn svg {
+  flex-shrink: 0;
+  display: block;
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  stroke: currentColor;
+  fill: none;
+}
+
+.tools-tab-btn:hover svg {
+  transform: scale(1.1);
+}
+
+.tools-tab-btn.active svg {
+  color: #007aff;
+  stroke: #007aff;
+}
+
+.tools-tab-btn:hover svg {
+  stroke: currentColor;
 }
 
 .tools-tab-btn::after {
@@ -1418,7 +1449,119 @@ h1 {
   transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Thanh công cụ nổi trên bản đồ */
+/* Container công cụ với nhóm */
+.map-tools-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Nhóm công cụ */
+.tool-group {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.tool-group:hover {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.tool-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(0, 122, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 122, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.tool-group-header svg {
+  color: #007aff;
+  flex-shrink: 0;
+}
+
+.tool-group-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #007aff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tool-group-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+/* Nút công cụ trong nhóm */
+.tool-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.tool-btn:hover::before {
+  left: 100%;
+}
+
+.tool-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tool-btn:hover svg {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.tool-btn span {
+  flex: 1;
+  text-align: left;
+}
+
+/* Thanh công cụ nổi trên bản đồ (legacy) */
 .map-tools-bar {
   position: relative;
   display: flex;
@@ -1455,15 +1598,16 @@ h1 {
 .tools-panel .area-btn-custom,
 .tools-panel .clear-area-btn-custom {
   width: 100%;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 1em;
-  text-align: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  text-align: left;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 0;
 }
 
 .locate-btn-custom,
@@ -1534,10 +1678,24 @@ h1 {
   .tools-panel .measure-btn-custom,
   .tools-panel .clear-measure-btn-custom,
   .tools-panel .area-btn-custom,
-  .tools-panel .clear-area-btn-custom {
-    font-size: 0.95em;
-    padding: 12px 16px;
+  .tools-panel .clear-area-btn-custom,
+  .tool-btn {
+    font-size: 0.9em;
+    padding: 10px 14px;
     min-height: 44px;
+  }
+  
+  .tool-group-header {
+    padding: 10px 12px;
+  }
+  
+  .tool-group-title {
+    font-size: 0.8rem;
+  }
+  
+  .tool-group-content {
+    padding: 10px;
+    gap: 6px;
   }
   
   .settings-section {
@@ -1598,10 +1756,42 @@ h1 {
   .tools-panel .measure-btn-custom,
   .tools-panel .clear-measure-btn-custom,
   .tools-panel .area-btn-custom,
-  .tools-panel .clear-area-btn-custom {
-    font-size: 0.9em;
-    padding: 10px 14px;
+  .tools-panel .clear-area-btn-custom,
+  .tool-btn {
+    font-size: 0.85em;
+    padding: 8px 12px;
     min-height: 44px;
+  }
+  
+  .tool-group {
+    border-radius: 12px;
+  }
+  
+  .tool-group-header {
+    padding: 8px 10px;
+  }
+  
+  .tool-group-title {
+    font-size: 0.75rem;
+  }
+  
+  .tool-group-content {
+    padding: 8px;
+    gap: 6px;
+  }
+  
+  .tools-tab-btn {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+  
+  .tools-tab-btn svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    stroke: currentColor;
+    fill: none;
   }
   
   .settings-section {
