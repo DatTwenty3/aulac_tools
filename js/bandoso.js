@@ -1269,6 +1269,9 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
         }
       }
       
+      // Scale dashArray dựa trên weight nếu có
+      const scaledDashArray = dashArray ? scaleDashArray(dashArray, weight) : null;
+      
       const layer = L.geoJSON(data, {
         style: function(feature) {
           return {
@@ -1277,7 +1280,7 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
             fillColor: color,
             fillOpacity: 0.3,
             opacity: 1.0,
-            dashArray: dashArray
+            dashArray: scaledDashArray
           };
         },
         onEachFeature: function (feature, layer) {
@@ -1307,28 +1310,33 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
               }
             }
             
+            // Tính scaledDashArray cho weight + 2 (khi highlight)
+            const highlightWeight = weight + 2;
+            const highlightDashArray = dashArray ? scaleDashArray(dashArray, highlightWeight) : null;
+            
             // Lưu style gốc của layer hiện tại
             selectedDuanFeatureStyle = {
               color: color,
               weight: weight,
               fillOpacity: 0.3,
-              dashArray: dashArray
+              dashArray: scaledDashArray
             };
             selectedDuanFeatureLayer = layer;
             
             // Highlight đường được chọn
-            layer.setStyle({color: '#2ecc40', weight: weight + 2, dashArray: dashArray});
+            layer.setStyle({color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray});
             
             // Hiển thị thông tin chi tiết từ properties
             openInfoPanel(feature.properties, false, true, displayName, true);
           });
           
           layer.on('mouseover', function() {
+            // Giữ nguyên weight và dashArray như cài đặt, chỉ thay đổi màu và opacity
             layer.setStyle({
               fillOpacity: 0.5, 
               color: '#ff7800', 
-              weight: weight + 2,
-              dashArray: dashArray
+              weight: weight,
+              dashArray: scaledDashArray
             });
           });
           
@@ -1339,14 +1347,16 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
                 fillOpacity: 0.3, 
                 color: color,
                 weight: weight,
-                dashArray: dashArray
+                dashArray: scaledDashArray
               });
             } else {
-              // Nếu đang được chọn, giữ style highlight nhưng với dashArray đúng
+              // Nếu đang được chọn, giữ style highlight nhưng với weight và dashArray đúng
+              const highlightWeight = weight + 2;
+              const highlightDashArray = dashArray ? scaleDashArray(dashArray, highlightWeight) : null;
               layer.setStyle({
                 color: '#2ecc40', 
-                weight: weight + 2,
-                dashArray: dashArray
+                weight: highlightWeight,
+                dashArray: highlightDashArray
               });
             }
           });
@@ -1380,6 +1390,26 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
     });
 }
 
+// Hàm tính toán dashArray dựa trên weight để đảm bảo tỷ lệ phù hợp
+// weight chuẩn là 4 (mặc định), dashArray sẽ được scale theo tỷ lệ weight/4
+function scaleDashArray(dashArrayPattern, weight, baseWeight = 4) {
+  if (!dashArrayPattern || dashArrayPattern === '') {
+    return null;
+  }
+  
+  // Tính tỷ lệ scale
+  const scale = weight / baseWeight;
+  
+  // Chuyển đổi pattern thành mảng các số
+  const parts = dashArrayPattern.split(',').map(part => parseFloat(part.trim()));
+  
+  // Scale từng phần
+  const scaledParts = parts.map(part => Math.max(1, Math.round(part * scale)));
+  
+  // Chuyển lại thành chuỗi
+  return scaledParts.join(', ');
+}
+
 // Hàm cập nhật style của layer
 function updateDuanLayerStyle(filename, color, weight, dashArray = null) {
   if (duanLayers[filename]) {
@@ -1394,6 +1424,9 @@ function updateDuanLayerStyle(filename, color, weight, dashArray = null) {
       });
     }
     
+    // Scale dashArray dựa trên weight nếu có
+    const scaledDashArray = dashArray ? scaleDashArray(dashArray, weight) : null;
+    
     // Cập nhật style cho tất cả các feature trong layer
     duanLayers[filename].eachLayer(function(layer) {
       layer.setStyle({
@@ -1401,7 +1434,7 @@ function updateDuanLayerStyle(filename, color, weight, dashArray = null) {
         weight: weight,
         fillColor: color,
         fillOpacity: 0.3,
-        dashArray: dashArray
+        dashArray: scaledDashArray
       });
     });
   }
