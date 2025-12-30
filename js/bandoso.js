@@ -1223,7 +1223,7 @@ function reloadDuanFileToCache(map, filename) {
 }
 
 // Hàm thêm file DuAn lên bản đồ
-function addDuanFileToMap(map, filename, color, weight = 4) {
+function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
   // Tạo pane riêng cho các file DuAn nếu chưa có (z-index cao nhất)
   if (!map._duanPane) {
     map._duanPane = map.createPane('duanPane');
@@ -1276,7 +1276,8 @@ function addDuanFileToMap(map, filename, color, weight = 4) {
             weight: weight,
             fillColor: color,
             fillOpacity: 0.3,
-            opacity: 1.0
+            opacity: 1.0,
+            dashArray: dashArray
           };
         },
         onEachFeature: function (feature, layer) {
@@ -1310,19 +1311,25 @@ function addDuanFileToMap(map, filename, color, weight = 4) {
             selectedDuanFeatureStyle = {
               color: color,
               weight: weight,
-              fillOpacity: 0.3
+              fillOpacity: 0.3,
+              dashArray: dashArray
             };
             selectedDuanFeatureLayer = layer;
             
             // Highlight đường được chọn
-            layer.setStyle({color: '#2ecc40', weight: weight + 2});
+            layer.setStyle({color: '#2ecc40', weight: weight + 2, dashArray: dashArray});
             
             // Hiển thị thông tin chi tiết từ properties
             openInfoPanel(feature.properties, false, true, displayName, true);
           });
           
           layer.on('mouseover', function() {
-            layer.setStyle({fillOpacity: 0.5, color: '#ff7800', weight: weight + 2});
+            layer.setStyle({
+              fillOpacity: 0.5, 
+              color: '#ff7800', 
+              weight: weight + 2,
+              dashArray: dashArray
+            });
           });
           
           layer.on('mouseout', function() {
@@ -1331,7 +1338,15 @@ function addDuanFileToMap(map, filename, color, weight = 4) {
               layer.setStyle({
                 fillOpacity: 0.3, 
                 color: color,
-                weight: weight
+                weight: weight,
+                dashArray: dashArray
+              });
+            } else {
+              // Nếu đang được chọn, giữ style highlight nhưng với dashArray đúng
+              layer.setStyle({
+                color: '#2ecc40', 
+                weight: weight + 2,
+                dashArray: dashArray
               });
             }
           });
@@ -1366,7 +1381,7 @@ function addDuanFileToMap(map, filename, color, weight = 4) {
 }
 
 // Hàm cập nhật style của layer
-function updateDuanLayerStyle(filename, color, weight) {
+function updateDuanLayerStyle(filename, color, weight, dashArray = null) {
   if (duanLayers[filename]) {
     // Reset layer đang được chọn nếu nó thuộc file này
     if (selectedDuanFeatureLayer) {
@@ -1385,7 +1400,8 @@ function updateDuanLayerStyle(filename, color, weight) {
         color: color,
         weight: weight,
         fillColor: color,
-        fillOpacity: 0.3
+        fillOpacity: 0.3,
+        dashArray: dashArray
       });
     });
   }
@@ -1402,6 +1418,7 @@ function createDuanFileUI(filename, index) {
   const config = duanConfig[filename] || {
     color: defaultColor,
     weight: defaultWeight,
+    dashArray: null,
     visible: true
   };
   
@@ -1410,6 +1427,24 @@ function createDuanFileUI(filename, index) {
     duanConfig[filename] = config;
     saveDuanConfig();
   }
+  
+  // Đảm bảo dashArray có giá trị mặc định nếu chưa có
+  if (config.dashArray === undefined) {
+    config.dashArray = null;
+  }
+  
+  // Tạo options cho dropdown loại nét
+  const dashArrayOptions = [
+    { value: '', label: 'Nét liền' },
+    { value: '5, 5', label: 'Nét gạch' },
+    { value: '10, 5', label: 'Nét gạch dài' },
+    { value: '2, 2', label: 'Nét chấm' },
+    { value: '10, 5, 2, 5', label: 'Nét gạch-chấm' },
+    { value: '5, 2, 2, 2', label: 'Nét gạch-chấm ngắn' }
+  ];
+  
+  // Chuyển đổi dashArray thành giá trị cho select (null hoặc '' thành '')
+  const dashArrayValue = config.dashArray === null || config.dashArray === '' ? '' : config.dashArray;
   
   const fileItem = document.createElement('div');
   fileItem.className = 'duan-file-item';
@@ -1430,6 +1465,14 @@ function createDuanFileUI(filename, index) {
         <input type="range" class="duan-weight-slider" data-filename="${filename}" 
                min="1" max="10" step="0.5" value="${config.weight}">
         <span class="duan-weight-value">${config.weight}</span>
+      </div>
+      <div class="duan-control-group">
+        <label class="duan-control-label">Loại nét:</label>
+        <select class="duan-dasharray-select" data-filename="${filename}">
+          ${dashArrayOptions.map(opt => 
+            `<option value="${opt.value}" ${dashArrayValue === opt.value ? 'selected' : ''}>${opt.label}</option>`
+          ).join('')}
+        </select>
       </div>
     </div>
   `;
@@ -1467,7 +1510,8 @@ async function loadDuanFiles(map) {
     
     // Tải và hiển thị file nếu visible (chỉ cache các file visible)
     if (config.visible) {
-      addDuanFileToMap(map, filename, config.color, config.weight);
+      const dashArray = config.dashArray === '' ? null : config.dashArray;
+      addDuanFileToMap(map, filename, config.color, config.weight, dashArray);
     }
   });
   
@@ -1491,7 +1535,8 @@ function setupDuanFileControls(map) {
         if (!duanLayers[filename]) {
           const color = config.color || getDefaultColor(duanFiles.indexOf(filename));
           const weight = config.weight || 4;
-          addDuanFileToMap(map, filename, color, weight);
+          const dashArray = config.dashArray === '' ? null : config.dashArray;
+          addDuanFileToMap(map, filename, color, weight, dashArray);
         } else {
           map.addLayer(duanLayers[filename]);
           // Thêm lại vào cache khi hiển thị
@@ -1518,7 +1563,8 @@ function setupDuanFileControls(map) {
       duanConfig[filename] = config;
       saveDuanConfig();
       
-      updateDuanLayerStyle(filename, color, config.weight || 4);
+      const dashArray = config.dashArray === '' ? null : config.dashArray;
+      updateDuanLayerStyle(filename, color, config.weight || 4, dashArray);
     });
   });
   
@@ -1538,7 +1584,24 @@ function setupDuanFileControls(map) {
         valueSpan.textContent = weight;
       }
       
-      updateDuanLayerStyle(filename, config.color || getDefaultColor(duanFiles.indexOf(filename)), weight);
+      const dashArray = config.dashArray === '' ? null : config.dashArray;
+      updateDuanLayerStyle(filename, config.color || getDefaultColor(duanFiles.indexOf(filename)), weight, dashArray);
+    });
+  });
+  
+  // Xử lý dashArray select
+  document.querySelectorAll('.duan-dasharray-select').forEach(select => {
+    select.addEventListener('change', function() {
+      const filename = this.getAttribute('data-filename');
+      const dashArrayValue = this.value;
+      const config = duanConfig[filename] || {};
+      // Lưu '' thay vì null để dễ xử lý trong JSON
+      config.dashArray = dashArrayValue === '' ? null : dashArrayValue;
+      duanConfig[filename] = config;
+      saveDuanConfig();
+      
+      const dashArray = config.dashArray === '' || config.dashArray === null ? null : config.dashArray;
+      updateDuanLayerStyle(filename, config.color || getDefaultColor(duanFiles.indexOf(filename)), config.weight || 4, dashArray);
     });
   });
 }
@@ -1825,10 +1888,12 @@ function setupSearch(map) {
           const config = duanConfig[cachedData.filename] || {
             color: getDefaultColor(duanFiles.indexOf(cachedData.filename)),
             weight: 4,
+            dashArray: null,
             visible: true
           };
           if (config.visible) {
-            addDuanFileToMap(map, cachedData.filename, config.color, config.weight);
+            const dashArray = config.dashArray === '' ? null : config.dashArray;
+            addDuanFileToMap(map, cachedData.filename, config.color, config.weight, dashArray);
             setTimeout(() => {
               zoomToDuanFeature(map, feature, cachedData);
             }, 500);
@@ -1931,10 +1996,12 @@ function setupSearch(map) {
           const config = duanConfig[cachedData.filename] || {
             color: getDefaultColor(duanFiles.indexOf(cachedData.filename)),
             weight: 4,
+            dashArray: null,
             visible: true
           };
           if (config.visible) {
-            addDuanFileToMap(map, cachedData.filename, config.color, config.weight);
+            const dashArray = config.dashArray === '' ? null : config.dashArray;
+            addDuanFileToMap(map, cachedData.filename, config.color, config.weight, dashArray);
           }
         }
       });

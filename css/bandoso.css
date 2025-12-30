@@ -1127,6 +1127,36 @@ h1 {
   text-overflow: ellipsis;
 }
 
+.duan-dasharray-select {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid rgba(148,163,184,0.4);
+  border-radius: 6px;
+  background: white;
+  font-size: 0.85rem;
+  color: #1e293b;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%231e40af' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 30px;
+}
+
+.duan-dasharray-select:hover {
+  border-color: rgba(30,64,175,0.6);
+  background-color: rgba(239,246,255,0.5);
+}
+
+.duan-dasharray-select:focus {
+  border-color: #1e40af;
+  box-shadow: 0 0 0 3px rgba(30,64,175,0.1);
+  background-color: white;
+}
+
 #opacity-value-text {
   font-size: 1rem;
   font-weight: 600;
@@ -1862,6 +1892,12 @@ h1 {
     min-width: 30px;
     max-width: 45px;
     flex-shrink: 0;
+  }
+  
+  .duan-dasharray-select {
+    font-size: 0.8rem;
+    padding: 5px 8px;
+    padding-right: 28px;
   }
 }
 
