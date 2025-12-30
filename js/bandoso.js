@@ -2657,10 +2657,17 @@ function formatHectares(squareMeters) {
 function updateAreaPolygonAndLabels(map) {
   // Xóa polygon và labels cũ
   if (areaPolygon) {
-    map.removeLayer(areaPolygon);
+    if (map.hasLayer(areaPolygon)) {
+      map.removeLayer(areaPolygon);
+    }
     areaPolygon = null;
   }
-  areaSegmentLabels.forEach(label => map.removeLayer(label));
+  // Xóa tất cả labels một cách an toàn
+  areaSegmentLabels.forEach(label => {
+    if (label && map.hasLayer(label)) {
+      map.removeLayer(label);
+    }
+  });
   areaSegmentLabels = [];
   
   // Vẽ lại polygon và labels
@@ -2763,16 +2770,26 @@ function updateAreaDisplay() {
 
 function clearArea(map) {
   // Xóa tất cả markers
-  areaMarkers.forEach(marker => map.removeLayer(marker));
+  areaMarkers.forEach(marker => {
+    if (marker && map.hasLayer(marker)) {
+      map.removeLayer(marker);
+    }
+  });
   areaMarkers = [];
   
   // Xóa tất cả label đoạn
-  areaSegmentLabels.forEach(label => map.removeLayer(label));
+  areaSegmentLabels.forEach(label => {
+    if (label && map.hasLayer(label)) {
+      map.removeLayer(label);
+    }
+  });
   areaSegmentLabels = [];
   
   // Xóa polygon
   if (areaPolygon) {
-    map.removeLayer(areaPolygon);
+    if (map.hasLayer(areaPolygon)) {
+      map.removeLayer(areaPolygon);
+    }
     areaPolygon = null;
   }
   
@@ -2873,9 +2890,17 @@ function setupAreaButton(map) {
         
         // Xóa polygon và labels cũ để vẽ lại
         if (areaPolygon) {
-          map.removeLayer(areaPolygon);
+          if (map.hasLayer(areaPolygon)) {
+            map.removeLayer(areaPolygon);
+          }
+          areaPolygon = null;
         }
-        areaSegmentLabels.forEach(label => map.removeLayer(label));
+        // Xóa tất cả labels một cách an toàn
+        areaSegmentLabels.forEach(label => {
+          if (label && map.hasLayer(label)) {
+            map.removeLayer(label);
+          }
+        });
         areaSegmentLabels = [];
         
         if (areaPoints.length >= 3) {
@@ -3008,10 +3033,17 @@ function setupAreaButton(map) {
 function updateMeasurePolylineAndLabels(map) {
   // Xóa polyline và labels cũ
   if (measurePolyline) {
-    map.removeLayer(measurePolyline);
+    if (map.hasLayer(measurePolyline)) {
+      map.removeLayer(measurePolyline);
+    }
     measurePolyline = null;
   }
-  measureSegmentLabels.forEach(label => map.removeLayer(label));
+  // Xóa tất cả labels một cách an toàn
+  measureSegmentLabels.forEach(label => {
+    if (label && map.hasLayer(label)) {
+      map.removeLayer(label);
+    }
+  });
   measureSegmentLabels = [];
   
   // Vẽ lại polyline và labels
@@ -3083,16 +3115,26 @@ function updateMeasureDisplay() {
 
 function clearMeasure(map) {
   // Xóa tất cả markers
-  measureMarkers.forEach(marker => map.removeLayer(marker));
+  measureMarkers.forEach(marker => {
+    if (marker && map.hasLayer(marker)) {
+      map.removeLayer(marker);
+    }
+  });
   measureMarkers = [];
   
   // Xóa tất cả label đoạn
-  measureSegmentLabels.forEach(label => map.removeLayer(label));
+  measureSegmentLabels.forEach(label => {
+    if (label && map.hasLayer(label)) {
+      map.removeLayer(label);
+    }
+  });
   measureSegmentLabels = [];
   
   // Xóa polyline
   if (measurePolyline) {
-    map.removeLayer(measurePolyline);
+    if (map.hasLayer(measurePolyline)) {
+      map.removeLayer(measurePolyline);
+    }
     measurePolyline = null;
   }
   
@@ -3187,9 +3229,17 @@ function setupMeasureButton(map) {
         
         // Xóa polyline và labels cũ để vẽ lại
         if (measurePolyline) {
-          map.removeLayer(measurePolyline);
+          if (map.hasLayer(measurePolyline)) {
+            map.removeLayer(measurePolyline);
+          }
+          measurePolyline = null;
         }
-        measureSegmentLabels.forEach(label => map.removeLayer(label));
+        // Xóa tất cả labels một cách an toàn
+        measureSegmentLabels.forEach(label => {
+          if (label && map.hasLayer(label)) {
+            map.removeLayer(label);
+          }
+        });
         measureSegmentLabels = [];
         
         if (measurePoints.length > 1) {
