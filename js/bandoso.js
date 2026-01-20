@@ -1,5 +1,6 @@
 // ====== CẤU HÌNH CHUNG ======
 const fieldMap = {
+  // Định dạng cũ
   ma: 'Mã xã/phường',
   ten: 'Tên xã/phường',
   sap_nhap: 'Sáp nhập',
@@ -12,7 +13,15 @@ const fieldMap = {
   bi_thu: 'Bí thư',
   sdt_bt: 'SĐT Bí thư',
   chu_tich: 'Chủ tịch',
-  sdt_ct: 'SĐT Chủ tịch'
+  sdt_ct: 'SĐT Chủ tịch',
+  // Định dạng mới (từ file có hậu tố " (phường xã) - 34")
+  ma_xa: 'Mã xã/phường',
+  ten_xa: 'Tên xã/phường',
+  dtich_km2: 'Diện tích (km²)',
+  matdo_km2: 'Mật độ (người/km²)',
+  ma_tinh: 'Mã tỉnh',
+  ten_tinh: 'Tên tỉnh',
+  tru_so: 'Trụ sở'
 };
 
 let cachedGeojsonFiles = [];
@@ -197,6 +206,14 @@ function formatFieldName(key) {
     'OBJECTID': 'ID',
     'maDoiTuong': 'Mã đối tượng',
     'ten': 'Tên',
+    'ten_xa': 'Tên xã/phường',
+    'ma_xa': 'Mã xã/phường',
+    'ma_tinh': 'Mã tỉnh',
+    'ten_tinh': 'Tên tỉnh',
+    'dtich_km2': 'Diện tích (km²)',
+    'matdo_km2': 'Mật độ (người/km²)',
+    'tru_so': 'Trụ sở',
+    'sap_nhap': 'Sáp nhập',
     'phanLoai': 'Phân loại',
     'chieuDai': 'Chiều dài (m)',
     'quyMo': 'Quy mô',
@@ -284,18 +301,38 @@ function createInfoPanelContent(properties, isDhlvb = false, isProject = false, 
     return html;
   }
   
-  // Hiển thị thông tin xã/phường (code cũ)
+  // Hiển thị thông tin xã/phường
   let html = '<table class="info-panel-table">';
+  const displayedKeys = new Set();
+  
+  // Hiển thị các trường trong fieldMap trước (có nhãn đẹp)
   for (const key in fieldMap) {
-    if (properties[key] !== undefined) {
+    if (properties[key] !== undefined && properties[key] !== null && properties[key] !== '') {
       html += `
         <tr>
           <td class="label">${fieldMap[key]}</td>
-          <td class="value">${properties[key]}</td>
+          <td class="value">${formatValue(properties[key], key)}</td>
         </tr>
       `;
+      displayedKeys.add(key);
     }
   }
+  
+  // Hiển thị các trường còn lại không có trong fieldMap
+  for (const key in properties) {
+    if (!displayedKeys.has(key) && key !== 'style') {
+      const value = properties[key];
+      if (value !== undefined && value !== null && value !== '') {
+        html += `
+          <tr>
+            <td class="label">${formatFieldName(key)}</td>
+            <td class="value">${formatValue(value, key)}</td>
+          </tr>
+        `;
+      }
+    }
+  }
+  
   html += '</table>';
   return html;
 }
@@ -317,8 +354,11 @@ function openInfoPanel(properties, isDhlvb = false, isProject = false, projectNa
     }
   } else if (isProject && projectName) {
     title = projectName;
-  } else if (properties && properties.ten) {
-    title = properties.ten;
+  } else if (properties) {
+    const featureName = getFeatureName(properties);
+    if (featureName) {
+      title = featureName;
+    }
   }
   infoPanelTitle.textContent = title;
   infoPanelBody.innerHTML = createInfoPanelContent(properties, isDhlvb, isProject, projectName, isDuanFeature);
@@ -706,22 +746,26 @@ const colorPalette124 = generate124Colors();
 function assignColorToFeature(feature, allFeatures, assignedColors, index) {
   // Tạo màu cơ bản từ tên hoặc mã, sử dụng 124 màu có sẵn
   let baseColorIndex;
-  if (feature.properties && feature.properties.ten) {
-    const name = feature.properties.ten;
+  const featureName = getFeatureName(feature.properties);
+  if (featureName) {
+    const name = featureName;
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
       hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
     baseColorIndex = Math.abs(hash % 124);
-  } else if (feature.properties && feature.properties.ma) {
-    const ma = feature.properties.ma;
-    let hash = 0;
-    for (let i = 0; i < ma.length; i++) {
-      hash = ma.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    baseColorIndex = Math.abs(hash % 124);
   } else {
-    baseColorIndex = index % 124;
+    const featureCode = getFeatureCode(feature.properties);
+    if (featureCode) {
+      const ma = featureCode;
+      let hash = 0;
+      for (let i = 0; i < ma.length; i++) {
+        hash = ma.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      baseColorIndex = Math.abs(hash % 124);
+    } else {
+      baseColorIndex = index % 124;
+    }
   }
   
   // Tìm các feature lân cận
@@ -784,6 +828,18 @@ function assignColorToFeature(feature, allFeatures, assignedColors, index) {
   return colorPalette124[baseColorIndex];
 }
 
+// ====== HELPER FUNCTION: LẤY TÊN VÀ MÃ TỪ PROPERTIES ======
+// Hỗ trợ cả định dạng cũ (ten, ma) và mới (ten_xa, ma_xa)
+function getFeatureName(properties) {
+  if (!properties) return null;
+  return properties.ten_xa || properties.ten || null;
+}
+
+function getFeatureCode(properties) {
+  if (!properties) return null;
+  return properties.ma_xa || properties.ma || null;
+}
+
 // ====== HIỂN THỊ GEOJSON LÊN BẢN ĐỒ ======
 function addGeojsonToMap(map, data) {
   const isDhlvb = data && data.name === 'DHLVB';
@@ -812,15 +868,17 @@ function addGeojsonToMap(map, data) {
       // Fallback nếu không tìm thấy màu đã gán
       if (!fillColor) {
         let colorIndex = 0;
-        if (feature.properties && feature.properties.ten) {
-          const name = feature.properties.ten;
+        const featureName = getFeatureName(feature.properties);
+        const featureCode = getFeatureCode(feature.properties);
+        if (featureName) {
+          const name = featureName;
           let hash = 0;
           for (let i = 0; i < name.length; i++) {
             hash = name.charCodeAt(i) + ((hash << 5) - hash);
           }
           colorIndex = Math.abs(hash % 124);
-        } else if (feature.properties && feature.properties.ma) {
-          const ma = feature.properties.ma;
+        } else if (featureCode) {
+          const ma = featureCode;
           let hash = 0;
           for (let i = 0; i < ma.length; i++) {
             hash = ma.charCodeAt(i) + ((hash << 5) - hash);
@@ -846,28 +904,30 @@ function addGeojsonToMap(map, data) {
       const baseWeight = isDhlvb ? 4 : (featureStyle.weight || 2);
       
       // Lấy màu đã được gán (đảm bảo không trùng với các feature lân cận)
-      const featureId = feature.properties?.ten || feature.properties?.ma || '';
+      const featureName = getFeatureName(feature.properties);
+      const featureCode = getFeatureCode(feature.properties);
+      const featureId = featureName || featureCode || '';
       let baseFillColor = featureColors[featureId];
       
       // Fallback nếu không tìm thấy màu đã gán
       if (!baseFillColor) {
         let colorIndex = 0;
-        if (feature.properties && feature.properties.ten) {
-          const name = feature.properties.ten;
+        if (featureName) {
+          const name = featureName;
           let hash = 0;
           for (let i = 0; i < name.length; i++) {
             hash = name.charCodeAt(i) + ((hash << 5) - hash);
           }
           colorIndex = Math.abs(hash % 124);
-        } else if (feature.properties && feature.properties.ma) {
-          const ma = feature.properties.ma;
+        } else if (featureCode) {
+          const ma = featureCode;
           let hash = 0;
           for (let i = 0; i < ma.length; i++) {
             hash = ma.charCodeAt(i) + ((hash << 5) - hash);
           }
           colorIndex = Math.abs(hash % 124);
         }
-        if (colorIndex > 0 || (feature.properties && (feature.properties.ten || feature.properties.ma))) {
+        if (colorIndex > 0 || featureName || featureCode) {
           const colorObj = colorPalette124[colorIndex];
           baseFillColor = `hsl(${colorObj.hue}, ${colorObj.saturation}%, ${colorObj.lightness}%)`;
         } else {
@@ -886,8 +946,9 @@ function addGeojsonToMap(map, data) {
       layer._originalGeojsonStyle = originalStyle;
       
       // Tooltip tên xã/phường
-      if (feature.properties && feature.properties.ten) {
-        layer.bindTooltip(feature.properties.ten, {direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip'});
+      const tooltipName = getFeatureName(feature.properties);
+      if (tooltipName) {
+        layer.bindTooltip(tooltipName, {direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip'});
       }
       
       // Hiển thị panel chi tiết khi click
