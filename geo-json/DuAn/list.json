@@ -1,11 +1,19 @@
 [
   {
-    "filename": "Hien Trang Mang Luoi Duong Bo.geojson",
-    "displayName": "Hiện Trạng Mạng Lưới Đường Bộ"
+    "filename": "VL-Hien Trang Mang Luoi Duong Bo.geojson",
+    "displayName": "Vĩnh Long - Hiện Trạng Mạng Lưới Đường Bộ"
   },
   {
-    "filename": "Dinh Huong Phat Trien Mang Luoi Duong Bo.geojson",
-    "displayName": "Định Hướng Phát Triển Mạng Lưới Đường Bộ"
+    "filename": "VL-Dinh Huong Phat Trien Mang Luoi Duong Bo.geojson",
+    "displayName": "Vĩnh Long - Định Hướng Phát Triển Mạng Lưới Đường Bộ"
+  },
+  {
+    "filename": "CT-Hien Trang Mang Luoi Duong Bo.geojson",
+    "displayName": "Cần Thơ - Hiện Trạng Mạng Lưới Đường Bộ"
+  },
+  {
+    "filename": "CT-Dinh Huong Phat Trien Mang Luoi Duong Bo.geojson",
+    "displayName": "Cần Thơ - Định Hướng Phát Triển Mạng Lưới Đường Bộ"
   }
 ]
 
