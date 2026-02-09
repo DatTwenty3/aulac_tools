@@ -349,7 +349,8 @@ h1 {
     pointer-events: none !important;
 }
 
-.locate-btn-custom {
+.locate-btn-custom,
+.copy-coordinate-btn-custom {
     background: #007aff;
     backdrop-filter: blur(30px);
     color: #fff;
@@ -370,7 +371,8 @@ h1 {
     letter-spacing: 0.3px;
     display: inline-block;
 }
-.locate-btn-custom:hover, .locate-btn-custom:focus {
+.locate-btn-custom:hover, .locate-btn-custom:focus,
+.copy-coordinate-btn-custom:hover, .copy-coordinate-btn-custom:focus {
     background: #0051d5;
     box-shadow: 0 8px 28px rgba(0, 122, 255, 0.3),
                 0 4px 14px rgba(0, 122, 255, 0.2),
@@ -378,16 +380,19 @@ h1 {
                 inset 0 -1px 0 rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
-.locate-btn-custom:active {
+.locate-btn-custom:active,
+.copy-coordinate-btn-custom:active {
     transform: translateY(0);
     transition: all 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.locate-btn-custom:disabled {
+.locate-btn-custom:disabled,
+.copy-coordinate-btn-custom:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     background: rgba(0, 122, 255, 0.5);
 }
-.locate-btn-custom.active {
+.locate-btn-custom.active,
+.copy-coordinate-btn-custom.active {
     background: rgba(255, 59, 48, 0.9);
     box-shadow: 0 4px 16px rgba(255, 59, 48, 0.25),
                 0 2px 8px rgba(255, 59, 48, 0.15),
@@ -1233,7 +1238,7 @@ h1 {
 /* Tối ưu cho touch devices */
 @media (hover: none) and (pointer: coarse) {
   /* Tăng kích thước touch targets */
-  button, .locate-btn-custom, .measure-btn-custom, 
+  button, .locate-btn-custom, .copy-coordinate-btn-custom, .measure-btn-custom, 
   .area-btn-custom,
   .clear-measure-btn-custom, .clear-area-btn-custom {
     min-height: 44px;
@@ -1242,6 +1247,7 @@ h1 {
   
   /* Loại bỏ hover effects trên mobile */
   .locate-btn-custom:hover,
+  .copy-coordinate-btn-custom:hover,
   .measure-btn-custom:hover,
   .area-btn-custom:hover,
   .clear-measure-btn-custom:hover,
@@ -1623,6 +1629,7 @@ h1 {
 }
 
 .tools-panel .locate-btn-custom,
+.tools-panel .copy-coordinate-btn-custom,
 .tools-panel .measure-btn-custom,
 .tools-panel .clear-measure-btn-custom,
 .tools-panel .area-btn-custom,
@@ -1641,6 +1648,7 @@ h1 {
 }
 
 .locate-btn-custom,
+.copy-coordinate-btn-custom,
 .measure-btn-custom,
 .clear-measure-btn-custom,
 .area-btn-custom,
@@ -1652,6 +1660,7 @@ h1 {
 }
 
 .locate-btn-custom svg,
+.copy-coordinate-btn-custom svg,
 .measure-btn-custom svg,
 .clear-measure-btn-custom svg,
 .area-btn-custom svg,
@@ -1705,6 +1714,7 @@ h1 {
   }
   
   .tools-panel .locate-btn-custom,
+  .tools-panel .copy-coordinate-btn-custom,
   .tools-panel .measure-btn-custom,
   .tools-panel .clear-measure-btn-custom,
   .tools-panel .area-btn-custom,
@@ -1783,6 +1793,7 @@ h1 {
   }
   
   .tools-panel .locate-btn-custom,
+  .tools-panel .copy-coordinate-btn-custom,
   .tools-panel .measure-btn-custom,
   .tools-panel .clear-measure-btn-custom,
   .tools-panel .area-btn-custom,

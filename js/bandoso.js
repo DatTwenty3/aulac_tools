@@ -67,6 +67,10 @@ let areaPolygon = null;
 let areaClickHandler = null;
 let areaSegmentLabels = []; // Lưu các label hiển thị độ dài từng cạnh
 
+// Biến cho tính năng sao chép tọa độ
+let isCopyingCoordinate = false;
+let copyCoordinateClickHandler = null;
+
 // Biến cho panel thông tin xã/phường
 let infoPanel = null;
 let infoPanelBody = null;
@@ -3082,6 +3086,12 @@ function setupAreaButton(map) {
       if (measureBtn) measureBtn.click();
     }
     
+    // Tắt chế độ sao chép tọa độ nếu đang bật
+    if (isCopyingCoordinate) {
+      const copyBtn = document.getElementById('copy-coordinate-btn');
+      if (copyBtn) copyBtn.click();
+    }
+    
     isMeasuringArea = !isMeasuringArea;
     
     if (isMeasuringArea) {
@@ -3421,6 +3431,18 @@ function setupMeasureButton(map) {
   if (!measureBtn) return;
   
   measureBtn.onclick = function() {
+    // Tắt chế độ đo diện tích nếu đang bật
+    if (isMeasuringArea) {
+      const areaBtn = document.getElementById('area-btn');
+      if (areaBtn) areaBtn.click();
+    }
+    
+    // Tắt chế độ sao chép tọa độ nếu đang bật
+    if (isCopyingCoordinate) {
+      const copyBtn = document.getElementById('copy-coordinate-btn');
+      if (copyBtn) copyBtn.click();
+    }
+    
     isMeasuring = !isMeasuring;
     
     if (isMeasuring) {
@@ -3600,6 +3622,114 @@ function setupMeasureButton(map) {
   }
 }
 
+// ====== XỬ LÝ SAO CHÉP TỌA ĐỘ ======
+function setupCopyCoordinateButton(map) {
+  const copyBtn = document.getElementById('copy-coordinate-btn');
+  
+  if (!copyBtn) return;
+  
+  copyBtn.onclick = function() {
+    // Tắt chế độ đo khoảng cách nếu đang bật
+    if (isMeasuring) {
+      const measureBtn = document.getElementById('measure-btn');
+      if (measureBtn) measureBtn.click();
+    }
+    
+    // Tắt chế độ đo diện tích nếu đang bật
+    if (isMeasuringArea) {
+      const areaBtn = document.getElementById('area-btn');
+      if (areaBtn) areaBtn.click();
+    }
+    
+    isCopyingCoordinate = !isCopyingCoordinate;
+    
+    if (isCopyingCoordinate) {
+      // Bật chế độ sao chép tọa độ
+      copyBtn.classList.add('active');
+      copyBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+        </svg>
+        <span>Dừng sao chép</span>
+      `;
+      
+      // Ẩn hộp công cụ khi bắt đầu sử dụng
+      toggleToolsPanel(false);
+      
+      // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
+      toggleGeojsonInteractivity(false);
+      
+      // Thay đổi cursor
+      map.getContainer().style.cursor = 'crosshair';
+      
+      // Thêm sự kiện click
+      copyCoordinateClickHandler = function(e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+        
+        // Format tọa độ theo yêu cầu: "lat, lng"
+        const coordinateText = `${lat}, ${lng}`;
+        
+        // Copy vào clipboard
+        navigator.clipboard.writeText(coordinateText).then(function() {
+          // Hiển thị thông báo tạm thời
+          const notification = L.popup({
+            closeButton: false,
+            autoClose: 2000,
+            className: 'coordinate-copy-notification'
+          })
+          .setLatLng([lat, lng])
+          .setContent(`<div style="text-align: center; padding: 8px;"><strong>Đã sao chép!</strong><br>${coordinateText}</div>`)
+          .openOn(map);
+          
+          // Tạo marker tạm thời để đánh dấu điểm đã chọn
+          const tempMarker = L.marker([lat, lng], {
+            icon: L.divIcon({
+              className: 'coordinate-copy-marker',
+              html: '<div style="width: 16px; height: 16px; border-radius: 50%; background-color: #2196F3; border: 3px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.3);"></div>',
+              iconSize: [16, 16],
+              iconAnchor: [8, 8]
+            })
+          }).addTo(map);
+          
+          // Xóa marker sau 3 giây
+          setTimeout(function() {
+            map.removeLayer(tempMarker);
+          }, 3000);
+        }).catch(function(err) {
+          console.error('Lỗi khi sao chép tọa độ:', err);
+          alert('Không thể sao chép tọa độ. Vui lòng thử lại.');
+        });
+      };
+      
+      map.on('click', copyCoordinateClickHandler);
+    } else {
+      // Tắt chế độ sao chép tọa độ
+      copyBtn.classList.remove('active');
+      copyBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        <span>Sao chép tọa độ</span>
+      `;
+      map.getContainer().style.cursor = '';
+      
+      // Hiện lại hộp công cụ khi dừng
+      toggleToolsPanel(true);
+      
+      // Bật lại tương tác với GeoJSON layers
+      toggleGeojsonInteractivity(true);
+      
+      // Xóa sự kiện click
+      if (copyCoordinateClickHandler) {
+        map.off('click', copyCoordinateClickHandler);
+        copyCoordinateClickHandler = null;
+      }
+    }
+  };
+}
+
 
 // ====== MAIN ======
 (function main() {
@@ -3620,6 +3750,7 @@ function setupMeasureButton(map) {
   }, 500);
   setupMeasureButton(map);
   setupAreaButton(map);
+  setupCopyCoordinateButton(map);
   
   // Mở hộp công cụ khi khởi động (tùy chọn)
   setTimeout(() => {
