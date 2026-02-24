@@ -120,30 +120,78 @@
                   </svg>
                   <span>Xác định vị trí</span>
                 </button>
-                <button id="copy-coordinate-btn" class="tool-btn copy-coordinate-btn-custom" title="Sao chép tọa độ tại điểm chọn">
+                <button id="copy-coordinate-btn" class="tool-btn copy-coordinate-btn-custom" title="Xác định tọa độ tại điểm chọn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="2" x2="12" y2="6"></line>
+                    <line x1="12" y1="18" x2="12" y2="22"></line>
+                    <line x1="2" y1="12" x2="6" y2="12"></line>
+                    <line x1="18" y1="12" x2="22" y2="12"></line>
                   </svg>
-                  <span>Sao chép tọa độ</span>
+                  <span>Xác định tọa độ</span>
                 </button>
+                <!-- Tùy chọn hệ tọa độ -->
                 <div class="coordinate-system-selector">
-                  <label class="coordinate-system-label">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <line x1="2" y1="12" x2="22" y2="12"></line>
-                      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    Hệ tọa độ
-                  </label>
-                  <div class="coordinate-system-select-wrapper">
-                    <select id="coordinate-system-select" class="coordinate-system-select">
-                      <option value="WGS84">🌍 WGS84 (lat, lng)</option>
-                      <option value="VN2000">📍 VN2000 (x, y)</option>
+                  <div class="coordinate-select-wrapper">
+                    <label class="coordinate-label">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                      </svg>
+                      Hệ tọa độ
+                    </label>
+                    <select id="coordinate-system-select" class="coordinate-select">
+                      <option value="WGS84">🌍 WGS84 (Lat, Lng)</option>
+                      <option value="VN2000">📍 VN2000 (X, Y)</option>
                     </select>
-                    <svg class="coordinate-system-select-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <polyline points="6 9 12 15 18 9"></polyline>
-                    </svg>
+                  </div>
+                  
+                  <div id="province-selector" class="province-selector-wrapper">
+                    <label class="coordinate-label">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                      </svg>
+                      Tỉnh/Thành phố
+                    </label>
+                    <select id="province-select" class="coordinate-select province-select">
+                      <option value="">-- Chọn tỉnh/thành phố --</option>
+                      <option value="An Giang">An Giang (104°45')</option>
+                      <option value="Bắc Ninh">Bắc Ninh (107°00')</option>
+                      <option value="Cà Mau">Cà Mau (104°30')</option>
+                      <option value="Cao Bằng">Cao Bằng (105°45')</option>
+                      <option value="Đắk Lắk">Đắk Lắk (108°30')</option>
+                      <option value="Điện Biên">Điện Biên (103°00')</option>
+                      <option value="Đồng Nai">Đồng Nai (107°45')</option>
+                      <option value="Đồng Tháp">Đồng Tháp (105°00')</option>
+                      <option value="Gia Lai">Gia Lai (108°15')</option>
+                      <option value="Hà Tĩnh">Hà Tĩnh (105°30')</option>
+                      <option value="Hưng Yên">Hưng Yên (105°30')</option>
+                      <option value="Khánh Hòa">Khánh Hòa (108°15')</option>
+                      <option value="Lai Châu">Lai Châu (104°45')</option>
+                      <option value="Lạng Sơn">Lạng Sơn (107°15')</option>
+                      <option value="Lào Cai">Lào Cai (104°45')</option>
+                      <option value="Lâm Đồng">Lâm Đồng (107°45')</option>
+                      <option value="Nghệ An">Nghệ An (104°45')</option>
+                      <option value="Ninh Bình">Ninh Bình (105°00')</option>
+                      <option value="Phú Thọ">Phú Thọ (104°45')</option>
+                      <option value="Quảng Ngãi">Quảng Ngãi (108°00')</option>
+                      <option value="Quảng Ninh">Quảng Ninh (107°45')</option>
+                      <option value="Quảng Trị">Quảng Trị (106°00')</option>
+                      <option value="Sơn La">Sơn La (104°00')</option>
+                      <option value="Tây Ninh">Tây Ninh (105°45')</option>
+                      <option value="Thái Nguyên">Thái Nguyên (106°30')</option>
+                      <option value="Thanh Hóa">Thanh Hóa (105°00')</option>
+                      <option value="Thành phố Cần Thơ">Thành phố Cần Thơ (105°00')</option>
+                      <option value="Thành phố Đà Nẵng">Thành phố Đà Nẵng (107°45')</option>
+                      <option value="Thành phố Hà Nội">Thành phố Hà Nội (105°00')</option>
+                      <option value="Thành phố Hải Phòng">Thành phố Hải Phòng (105°45')</option>
+                      <option value="Thành phố Hồ Chí Minh">Thành phố Hồ Chí Minh (105°45')</option>
+                      <option value="Thành phố Huế">Thành phố Huế (107°00')</option>
+                      <option value="Tuyên Quang">Tuyên Quang (106°00')</option>
+                      <option value="Vĩnh Long">Vĩnh Long (105°30')</option>
+                    </select>
                   </div>
                 </div>
               </div>

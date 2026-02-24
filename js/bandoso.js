@@ -67,10 +67,70 @@ let areaPolygon = null;
 let areaClickHandler = null;
 let areaSegmentLabels = []; // Lưu các label hiển thị độ dài từng cạnh
 
-// Biến cho tính năng sao chép tọa độ
+// Biến cho tính năng xác định tọa độ
 let isCopyingCoordinate = false;
 let copyCoordinateClickHandler = null;
-let coordinateSystem = 'WGS84'; // Hệ tọa độ mặc định: 'WGS84' hoặc 'VN2000'
+let selectedCoordinateSystem = 'WGS84'; // 'WGS84' hoặc 'VN2000'
+let selectedProvince = null;
+
+// Dữ liệu kinh tuyến trục của các tỉnh (định dạng thập phân)
+const provinceCentralMeridians = {
+  'An Giang': 104.75,
+  'Bắc Ninh': 107.00,
+  'Cà Mau': 104.50,
+  'Cao Bằng': 105.75,
+  'Đắk Lắk': 108.50,
+  'Điện Biên': 103.00,
+  'Đồng Nai': 107.75,
+  'Đồng Tháp': 105.00,
+  'Gia Lai': 108.25,
+  'Hà Tĩnh': 105.50,
+  'Hưng Yên': 105.50,
+  'Khánh Hòa': 108.25,
+  'Lai Châu': 104.75,
+  'Lạng Sơn': 107.25,
+  'Lào Cai': 104.75,
+  'Lâm Đồng': 107.75,
+  'Nghệ An': 104.75,
+  'Ninh Bình': 105.00,
+  'Phú Thọ': 104.75,
+  'Quảng Ngãi': 108.00,
+  'Quảng Ninh': 107.75,
+  'Quảng Trị': 106.00,
+  'Sơn La': 104.00,
+  'Tây Ninh': 105.75,
+  'Thái Nguyên': 106.50,
+  'Thanh Hóa': 105.00,
+  'Thành phố Cần Thơ': 105.00,
+  'Thành phố Đà Nẵng': 107.75,
+  'Thành phố Hà Nội': 105.00,
+  'Thành phố Hải Phòng': 105.75,
+  'Thành phố Hồ Chí Minh': 105.75,
+  'Thành phố Huế': 107.00,
+  'Tuyên Quang': 106.00,
+  'Vĩnh Long': 105.50
+};
+
+// Hàm chuyển đổi tọa độ từ WGS84 sang VN2000
+async function convertWGS84toVN2000(lat, lng, centralMeridian) {
+  try {
+    const url = `https://vn2000.vn/api/wgs84tovn2000?lat=${lat}&lng=${lng}&zone_width=3&central_meridian=${centralMeridian}`;
+    const response = await fetch(url);
+    const result = await response.json();
+    
+    if (result.success && result.data) {
+      return {
+        x: result.data.x,
+        y: result.data.y
+      };
+    } else {
+      throw new Error(result.message || 'Lỗi chuyển đổi tọa độ');
+    }
+  } catch (error) {
+    console.error('Lỗi khi chuyển đổi tọa độ:', error);
+    throw error;
+  }
+}
 
 // Biến cho panel thông tin xã/phường
 let infoPanel = null;
@@ -3087,7 +3147,7 @@ function setupAreaButton(map) {
       if (measureBtn) measureBtn.click();
     }
     
-    // Tắt chế độ sao chép tọa độ nếu đang bật
+    // Tắt chế độ xác định tọa độ nếu đang bật
     if (isCopyingCoordinate) {
       const copyBtn = document.getElementById('copy-coordinate-btn');
       if (copyBtn) copyBtn.click();
@@ -3438,7 +3498,7 @@ function setupMeasureButton(map) {
       if (areaBtn) areaBtn.click();
     }
     
-    // Tắt chế độ sao chép tọa độ nếu đang bật
+    // Tắt chế độ xác định tọa độ nếu đang bật
     if (isCopyingCoordinate) {
       const copyBtn = document.getElementById('copy-coordinate-btn');
       if (copyBtn) copyBtn.click();
@@ -3623,40 +3683,37 @@ function setupMeasureButton(map) {
   }
 }
 
-// ====== XỬ LÝ SAO CHÉP TỌA ĐỘ ======
-// Hàm chuyển đổi tọa độ từ WGS84 sang VN2000
-async function convertWGS84ToVN2000(lat, lng) {
-  try {
-    // Sử dụng zone_width=3 và central_meridian=107.75 theo mặc định
-    const url = `https://vn2000.vn/api/wgs84tovn2000?lat=${lat}&lng=${lng}&zone_width=3&central_meridian=107.75`;
-    const response = await fetch(url);
-    const result = await response.json();
-    
-    if (result.success && result.data) {
-      return {
-        x: result.data.x,
-        y: result.data.y
-      };
-    } else {
-      throw new Error(result.message || 'Lỗi chuyển đổi tọa độ');
-    }
-  } catch (error) {
-    console.error('Lỗi khi gọi API chuyển đổi tọa độ:', error);
-    throw error;
-  }
-}
-
+// ====== XỬ LÝ XÁC ĐỊNH TỌA ĐỘ ======
 function setupCopyCoordinateButton(map) {
   const copyBtn = document.getElementById('copy-coordinate-btn');
   const coordinateSystemSelect = document.getElementById('coordinate-system-select');
+  const provinceSelector = document.getElementById('province-selector');
+  const provinceSelect = document.getElementById('province-select');
   
   if (!copyBtn) return;
   
-  // Lắng nghe sự kiện thay đổi hệ tọa độ
+  // Xử lý thay đổi hệ tọa độ
   if (coordinateSystemSelect) {
-    coordinateSystemSelect.addEventListener('change', function(e) {
-      coordinateSystem = e.target.value;
-      console.log('Hệ tọa độ đã chuyển sang:', coordinateSystem);
+    coordinateSystemSelect.addEventListener('change', function() {
+      selectedCoordinateSystem = this.value;
+      
+      // Hiện/ẩn dropdown chọn tỉnh khi chọn VN2000 với animation mượt
+      if (provinceSelector) {
+        if (selectedCoordinateSystem === 'VN2000') {
+          provinceSelector.style.display = 'block';
+          // Trigger reflow để animation hoạt động
+          provinceSelector.offsetHeight;
+        } else {
+          provinceSelector.style.display = 'none';
+        }
+      }
+    });
+  }
+  
+  // Xử lý thay đổi tỉnh
+  if (provinceSelect) {
+    provinceSelect.addEventListener('change', function() {
+      selectedProvince = this.value;
     });
   }
   
@@ -3676,13 +3733,18 @@ function setupCopyCoordinateButton(map) {
     isCopyingCoordinate = !isCopyingCoordinate;
     
     if (isCopyingCoordinate) {
-      // Bật chế độ sao chép tọa độ
+      // Bật chế độ xác định tọa độ
       copyBtn.classList.add('active');
       copyBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="12" x2="12" y2="16"></line>
+          <line x1="8" y1="12" x2="12" y2="12"></line>
+          <line x1="12" y1="12" x2="16" y2="12"></line>
+          <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
         </svg>
-        <span>Dừng sao chép</span>
+        <span>Dừng xác định</span>
       `;
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
@@ -3703,39 +3765,57 @@ function setupCopyCoordinateButton(map) {
         let displayText = '';
         
         try {
-          if (coordinateSystem === 'VN2000') {
-            // Chuyển đổi sang VN2000
+          if (selectedCoordinateSystem === 'WGS84') {
+            // Format tọa độ WGS84: "lat, lng"
+            coordinateText = `${lat}, ${lng}`;
+            displayText = `<strong>Đã xác định tọa độ!</strong><br>WGS84: ${coordinateText}`;
+          } else if (selectedCoordinateSystem === 'VN2000') {
+            // Kiểm tra xem đã chọn tỉnh chưa
+            if (!selectedProvince) {
+              alert('Vui lòng chọn tỉnh/thành phố để sử dụng hệ tọa độ VN2000!');
+              return;
+            }
+            
+            // Lấy kinh tuyến trục của tỉnh đã chọn
+            const centralMeridian = provinceCentralMeridians[selectedProvince];
+            
+            if (!centralMeridian) {
+              alert('Không tìm thấy kinh tuyến trục cho tỉnh đã chọn!');
+              return;
+            }
+            
+            // Hiển thị thông báo đang chuyển đổi
             const loadingPopup = L.popup({
               closeButton: false,
               autoClose: false,
               className: 'coordinate-copy-notification'
             })
             .setLatLng([lat, lng])
-            .setContent('<div style="text-align: center; padding: 8px;">Đang chuyển đổi...</div>')
+            .setContent('<div style="text-align: center; padding: 8px;"><strong>Đang chuyển đổi...</strong></div>')
             .openOn(map);
             
-            const vn2000Coords = await convertWGS84ToVN2000(lat, lng);
+            // Chuyển đổi tọa độ sang VN2000
+            const vn2000Coords = await convertWGS84toVN2000(lat, lng, centralMeridian);
+            
+            // Đóng popup loading
             map.closePopup(loadingPopup);
             
+            // Format tọa độ VN2000: "x, y"
             coordinateText = `${vn2000Coords.x}, ${vn2000Coords.y}`;
-            displayText = `X: ${vn2000Coords.x}<br>Y: ${vn2000Coords.y}`;
-          } else {
-            // WGS84
-            coordinateText = `${lat}, ${lng}`;
-            displayText = `Lat: ${lat}<br>Lng: ${lng}`;
+            displayText = `<strong>Đã xác định tọa độ!</strong><br>VN2000: ${coordinateText}<br><small>(${selectedProvince})</small>`;
           }
           
           // Copy vào clipboard
           await navigator.clipboard.writeText(coordinateText);
           
-          // Hiển thị thông báo tạm thời
+          // Hiển thị thông báo thành công
           const notification = L.popup({
             closeButton: false,
             autoClose: 3000,
             className: 'coordinate-copy-notification'
           })
           .setLatLng([lat, lng])
-          .setContent(`<div style="text-align: center; padding: 8px;"><strong>Đã sao chép!</strong><br>${displayText}</div>`)
+          .setContent(`<div style="text-align: center; padding: 8px;">${displayText}</div>`)
           .openOn(map);
           
           // Tạo marker tạm thời để đánh dấu điểm đã chọn
@@ -3752,22 +3832,26 @@ function setupCopyCoordinateButton(map) {
           setTimeout(function() {
             map.removeLayer(tempMarker);
           }, 3000);
+          
         } catch (err) {
-          console.error('Lỗi khi sao chép tọa độ:', err);
-          alert(`Không thể sao chép tọa độ${coordinateSystem === 'VN2000' ? ' (lỗi chuyển đổi sang VN2000)' : ''}. Vui lòng thử lại.`);
+          console.error('Lỗi khi xác định tọa độ:', err);
+          alert('Không thể xác định tọa độ. Vui lòng thử lại.\n\nLỗi: ' + err.message);
         }
       };
       
       map.on('click', copyCoordinateClickHandler);
     } else {
-      // Tắt chế độ sao chép tọa độ
+      // Tắt chế độ xác định tọa độ
       copyBtn.classList.remove('active');
       copyBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="2" x2="12" y2="6"></line>
+          <line x1="12" y1="18" x2="12" y2="22"></line>
+          <line x1="2" y1="12" x2="6" y2="12"></line>
+          <line x1="18" y1="12" x2="22" y2="12"></line>
         </svg>
-        <span>Sao chép tọa độ</span>
+        <span>Xác định tọa độ</span>
       `;
       map.getContainer().style.cursor = '';
       

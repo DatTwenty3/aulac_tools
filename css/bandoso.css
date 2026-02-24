@@ -2951,102 +2951,140 @@ h1 {
   background: #94a3b8;
 }
 
-/* ====== COORDINATE SYSTEM SELECTOR STYLES ====== */
+/* ====== Styling cho phần chọn hệ tọa độ ====== */
 .coordinate-system-selector {
   margin-top: 12px;
-  padding: 12px;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(14, 165, 233, 0.05) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
 }
 
-.coordinate-system-label {
+.coordinate-system-selector:hover {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(14, 165, 233, 0.08) 100%);
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.1);
+}
+
+.coordinate-select-wrapper,
+.province-selector-wrapper {
+  margin-bottom: 12px;
+}
+
+.province-selector-wrapper {
+  margin-bottom: 0;
+  display: none;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.coordinate-label {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #475569;
   margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #0369a1;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.coordinate-system-label svg {
-  color: #3b82f6;
+.coordinate-label svg {
+  color: #0ea5e9;
   flex-shrink: 0;
 }
 
-.coordinate-system-select-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.coordinate-system-select {
+.coordinate-select {
   width: 100%;
-  padding: 10px 36px 10px 12px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #1e293b;
-  background: white;
-  border: 2px solid #cbd5e1;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 2px solid rgba(14, 165, 233, 0.2);
   border-radius: 8px;
-  outline: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
   cursor: pointer;
   transition: all 0.3s ease;
+  outline: none;
   appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5' stroke='%230ea5e9' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 
-.coordinate-system-select:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.coordinate-select:hover {
+  border-color: rgba(14, 165, 233, 0.4);
+  background-color: #f0f9ff;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
 }
 
-.coordinate-system-select:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+.coordinate-select:focus {
+  border-color: #0ea5e9;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1),
+              0 2px 8px rgba(14, 165, 233, 0.15);
+  transform: translateY(-1px);
 }
 
-.coordinate-system-select option {
+.coordinate-select option {
   padding: 10px;
-  font-size: 14px;
   font-weight: 500;
 }
 
-.coordinate-system-select-arrow {
-  position: absolute;
-  right: 12px;
-  pointer-events: none;
-  color: #64748b;
-  transition: transform 0.3s ease, color 0.3s ease;
+.province-select {
+  max-height: 200px;
 }
 
-.coordinate-system-select-wrapper:hover .coordinate-system-select-arrow {
-  color: #3b82f6;
-}
-
-.coordinate-system-select-wrapper:focus-within .coordinate-system-select-arrow {
-  transform: rotate(180deg);
-  color: #3b82f6;
-}
-
-/* Animation cho selector khi active */
-@keyframes selectPulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .coordinate-system-selector {
+    padding: 12px;
+    border-radius: 10px;
   }
-  70% {
-    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+
+  .coordinate-label {
+    font-size: 0.75rem;
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+
+  .coordinate-select {
+    padding: 10px;
+    font-size: 0.8rem;
   }
 }
 
-.coordinate-system-select:active {
-  animation: selectPulse 0.6s ease-out;
+@media (max-width: 480px) {
+  .coordinate-system-selector {
+    padding: 10px;
+  }
+
+  .coordinate-label {
+    font-size: 0.7rem;
+    gap: 4px;
+  }
+
+  .coordinate-label svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .coordinate-select {
+    padding: 9px 10px;
+    font-size: 0.75rem;
+    background-position: right 10px center;
+    padding-right: 32px;
+  }
 } 
