@@ -2949,4 +2949,104 @@ h1 {
 
 .search-suggestions::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* ====== COORDINATE SYSTEM SELECTOR STYLES ====== */
+.coordinate-system-selector {
+  margin-top: 12px;
+  padding: 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.coordinate-system-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.coordinate-system-label svg {
+  color: #3b82f6;
+  flex-shrink: 0;
+}
+
+.coordinate-system-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.coordinate-system-select {
+  width: 100%;
+  padding: 10px 36px 10px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  background: white;
+  border: 2px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.coordinate-system-select:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.coordinate-system-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.coordinate-system-select option {
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.coordinate-system-select-arrow {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #64748b;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.coordinate-system-select-wrapper:hover .coordinate-system-select-arrow {
+  color: #3b82f6;
+}
+
+.coordinate-system-select-wrapper:focus-within .coordinate-system-select-arrow {
+  transform: rotate(180deg);
+  color: #3b82f6;
+}
+
+/* Animation cho selector khi active */
+@keyframes selectPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.coordinate-system-select:active {
+  animation: selectPulse 0.6s ease-out;
 } 

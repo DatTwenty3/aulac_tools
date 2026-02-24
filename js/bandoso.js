@@ -70,6 +70,7 @@ let areaSegmentLabels = []; // Lưu các label hiển thị độ dài từng c�
 // Biến cho tính năng sao chép tọa độ
 let isCopyingCoordinate = false;
 let copyCoordinateClickHandler = null;
+let coordinateSystem = 'WGS84'; // Hệ tọa độ mặc định: 'WGS84' hoặc 'VN2000'
 
 // Biến cho panel thông tin xã/phường
 let infoPanel = null;
@@ -3623,10 +3624,41 @@ function setupMeasureButton(map) {
 }
 
 // ====== XỬ LÝ SAO CHÉP TỌA ĐỘ ======
+// Hàm chuyển đổi tọa độ từ WGS84 sang VN2000
+async function convertWGS84ToVN2000(lat, lng) {
+  try {
+    // Sử dụng zone_width=3 và central_meridian=107.75 theo mặc định
+    const url = `https://vn2000.vn/api/wgs84tovn2000?lat=${lat}&lng=${lng}&zone_width=3&central_meridian=107.75`;
+    const response = await fetch(url);
+    const result = await response.json();
+    
+    if (result.success && result.data) {
+      return {
+        x: result.data.x,
+        y: result.data.y
+      };
+    } else {
+      throw new Error(result.message || 'Lỗi chuyển đổi tọa độ');
+    }
+  } catch (error) {
+    console.error('Lỗi khi gọi API chuyển đổi tọa độ:', error);
+    throw error;
+  }
+}
+
 function setupCopyCoordinateButton(map) {
   const copyBtn = document.getElementById('copy-coordinate-btn');
+  const coordinateSystemSelect = document.getElementById('coordinate-system-select');
   
   if (!copyBtn) return;
+  
+  // Lắng nghe sự kiện thay đổi hệ tọa độ
+  if (coordinateSystemSelect) {
+    coordinateSystemSelect.addEventListener('change', function(e) {
+      coordinateSystem = e.target.value;
+      console.log('Hệ tọa độ đã chuyển sang:', coordinateSystem);
+    });
+  }
   
   copyBtn.onclick = function() {
     // Tắt chế độ đo khoảng cách nếu đang bật
@@ -3663,23 +3695,47 @@ function setupCopyCoordinateButton(map) {
       map.getContainer().style.cursor = 'crosshair';
       
       // Thêm sự kiện click
-      copyCoordinateClickHandler = function(e) {
+      copyCoordinateClickHandler = async function(e) {
         const lat = e.latlng.lat;
         const lng = e.latlng.lng;
         
-        // Format tọa độ theo yêu cầu: "lat, lng"
-        const coordinateText = `${lat}, ${lng}`;
+        let coordinateText = '';
+        let displayText = '';
         
-        // Copy vào clipboard
-        navigator.clipboard.writeText(coordinateText).then(function() {
+        try {
+          if (coordinateSystem === 'VN2000') {
+            // Chuyển đổi sang VN2000
+            const loadingPopup = L.popup({
+              closeButton: false,
+              autoClose: false,
+              className: 'coordinate-copy-notification'
+            })
+            .setLatLng([lat, lng])
+            .setContent('<div style="text-align: center; padding: 8px;">Đang chuyển đổi...</div>')
+            .openOn(map);
+            
+            const vn2000Coords = await convertWGS84ToVN2000(lat, lng);
+            map.closePopup(loadingPopup);
+            
+            coordinateText = `${vn2000Coords.x}, ${vn2000Coords.y}`;
+            displayText = `X: ${vn2000Coords.x}<br>Y: ${vn2000Coords.y}`;
+          } else {
+            // WGS84
+            coordinateText = `${lat}, ${lng}`;
+            displayText = `Lat: ${lat}<br>Lng: ${lng}`;
+          }
+          
+          // Copy vào clipboard
+          await navigator.clipboard.writeText(coordinateText);
+          
           // Hiển thị thông báo tạm thời
           const notification = L.popup({
             closeButton: false,
-            autoClose: 2000,
+            autoClose: 3000,
             className: 'coordinate-copy-notification'
           })
           .setLatLng([lat, lng])
-          .setContent(`<div style="text-align: center; padding: 8px;"><strong>Đã sao chép!</strong><br>${coordinateText}</div>`)
+          .setContent(`<div style="text-align: center; padding: 8px;"><strong>Đã sao chép!</strong><br>${displayText}</div>`)
           .openOn(map);
           
           // Tạo marker tạm thời để đánh dấu điểm đã chọn
@@ -3696,10 +3752,10 @@ function setupCopyCoordinateButton(map) {
           setTimeout(function() {
             map.removeLayer(tempMarker);
           }, 3000);
-        }).catch(function(err) {
+        } catch (err) {
           console.error('Lỗi khi sao chép tọa độ:', err);
-          alert('Không thể sao chép tọa độ. Vui lòng thử lại.');
-        });
+          alert(`Không thể sao chép tọa độ${coordinateSystem === 'VN2000' ? ' (lỗi chuyển đổi sang VN2000)' : ''}. Vui lòng thử lại.`);
+        }
       };
       
       map.on('click', copyCoordinateClickHandler);
