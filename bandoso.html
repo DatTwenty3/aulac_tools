@@ -248,6 +248,72 @@
                 </button>
               </div>
             </div>
+
+            <!-- Nhóm Chia sẻ tọa độ -->
+            <div class="tool-group">
+              <div class="tool-group-header">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="18" cy="5" r="3"/>
+                  <circle cx="6" cy="12" r="3"/>
+                  <circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+                <span class="tool-group-title">Chia sẻ tọa độ</span>
+              </div>
+              <div class="tool-group-content">
+                <button id="select-points-btn" class="tool-btn select-points-btn-custom" title="Chọn các điểm trên bản đồ">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <span>Chọn điểm</span>
+                </button>
+                <div class="point-naming-option" style="margin-top: 8px; padding: 8px 12px; background: rgba(139, 92, 246, 0.05); border-radius: 8px; display: none;" id="point-naming-option">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; color: #6b7280;">
+                    <input type="checkbox" id="auto-name-checkbox" checked style="cursor: pointer; width: 16px; height: 16px; accent-color: #8b5cf6;">
+                    <span>Tự động đặt tên điểm</span>
+                  </label>
+                </div>
+                <div id="selected-points-info" class="selected-points-info" style="display: none;">
+                  <div class="points-count">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span id="points-count-text">Đã chọn: 0 điểm</span>
+                  </div>
+                  <div class="points-list" id="points-list">
+                    <!-- Danh sách điểm sẽ được thêm động -->
+                  </div>
+                </div>
+                <button id="export-kml-btn" class="tool-btn export-btn-custom" style="display: none;" title="Xuất file KML">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Xuất KML</span>
+                </button>
+                <button id="export-kmz-btn" class="tool-btn export-btn-custom" style="display: none;" title="Xuất file KMZ (nén)">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>Xuất KMZ</span>
+                </button>
+                <button id="clear-points-btn" class="tool-btn clear-points-btn-custom" style="display: none;" title="Xóa tất cả các điểm đã chọn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                  </svg>
+                  <span>Xóa điểm</span>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -338,6 +404,7 @@
 
   </div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="js/bandoso.js"></script>
 </body>
 </html> 

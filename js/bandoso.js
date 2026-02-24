@@ -73,6 +73,12 @@ let copyCoordinateClickHandler = null;
 let selectedCoordinateSystem = 'WGS84'; // 'WGS84' hoặc 'VN2000'
 let selectedProvince = null;
 
+// Biến cho tính năng chia sẻ tọa độ
+let isSelectingPoints = false;
+let selectedPoints = []; // Mảng lưu các điểm đã chọn: {id, lat, lng, name, marker}
+let selectPointsClickHandler = null;
+let pointIdCounter = 1;
+
 // Dữ liệu kinh tuyến trục của các tỉnh (định dạng thập phân)
 const provinceCentralMeridians = {
   'An Giang': 104.75,
@@ -3870,6 +3876,807 @@ function setupCopyCoordinateButton(map) {
   };
 }
 
+// ====== XỬ LÝ CHIA SẺ TỌA ĐỘ ======
+
+// Hỏi tên điểm từ người dùng
+function promptForPointName(pointNumber) {
+  return new Promise((resolve) => {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.2s ease;
+    `;
+    
+    modal.innerHTML = `
+      <div style="
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 90%;
+        animation: slideUp 0.3s ease;
+      ">
+        <h3 style="
+          margin: 0 0 16px 0;
+          font-size: 1.2rem;
+          color: #1f2937;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+            <circle cx="12" cy="10" r="3"></circle>
+          </svg>
+          Đặt tên điểm
+        </h3>
+        <input 
+          type="text" 
+          id="new-point-name-input" 
+          value="Điểm ${pointNumber}"
+          placeholder="Nhập tên điểm..."
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+          "
+          onfocus="this.style.borderColor='#8b5cf6'; this.style.boxShadow='0 0 0 3px rgba(139, 92, 246, 0.1)';"
+          onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"
+        />
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button 
+            id="cancel-new-point-btn"
+            style="
+              padding: 10px 20px;
+              border: none;
+              border-radius: 8px;
+              background: #f3f4f6;
+              color: #6b7280;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.2s ease;
+            "
+            onmouseover="this.style.background='#e5e7eb'"
+            onmouseout="this.style.background='#f3f4f6'"
+          >
+            Hủy
+          </button>
+          <button 
+            id="save-new-point-btn"
+            style="
+              padding: 10px 20px;
+              border: none;
+              border-radius: 8px;
+              background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+              color: white;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.2s ease;
+            "
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.4)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+          >
+            Tạo điểm
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    const input = document.getElementById('new-point-name-input');
+    const saveBtn = document.getElementById('save-new-point-btn');
+    const cancelBtn = document.getElementById('cancel-new-point-btn');
+    
+    // Focus vào input và select text
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 100);
+    
+    // Xử lý lưu tên
+    const saveName = () => {
+      const newName = input.value.trim();
+      document.body.removeChild(modal);
+      resolve(newName || `Điểm ${pointNumber}`);
+    };
+    
+    // Xử lý hủy
+    const cancel = () => {
+      document.body.removeChild(modal);
+      resolve(null);
+    };
+    
+    // Event listeners
+    saveBtn.onclick = saveName;
+    cancelBtn.onclick = cancel;
+    
+    // Enter để lưu, Escape để hủy
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        saveName();
+      } else if (e.key === 'Escape') {
+        cancel();
+      }
+    };
+    
+    // Click outside để hủy
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        cancel();
+      }
+    };
+  });
+}
+
+// Cập nhật danh sách điểm đã chọn
+function updatePointsList() {
+  const pointsCountText = document.getElementById('points-count-text');
+  const pointsList = document.getElementById('points-list');
+  const selectedPointsInfo = document.getElementById('selected-points-info');
+  const exportKmlBtn = document.getElementById('export-kml-btn');
+  const exportKmzBtn = document.getElementById('export-kmz-btn');
+  const clearPointsBtn = document.getElementById('clear-points-btn');
+  
+  if (!pointsCountText || !pointsList) return;
+  
+  // Cập nhật số lượng điểm
+  pointsCountText.textContent = `Đã chọn: ${selectedPoints.length} điểm`;
+  
+  // Hiển thị/ẩn thông tin và các nút
+  if (selectedPoints.length > 0) {
+    selectedPointsInfo.style.display = 'block';
+    exportKmlBtn.style.display = 'block';
+    exportKmzBtn.style.display = 'block';
+    clearPointsBtn.style.display = 'block';
+  } else {
+    selectedPointsInfo.style.display = 'none';
+    exportKmlBtn.style.display = 'none';
+    exportKmzBtn.style.display = 'none';
+    clearPointsBtn.style.display = 'none';
+  }
+  
+  // Xóa danh sách cũ
+  pointsList.innerHTML = '';
+  
+  // Thêm các điểm vào danh sách
+  selectedPoints.forEach((point, index) => {
+    const pointItem = document.createElement('div');
+    pointItem.className = 'point-item';
+    pointItem.innerHTML = `
+      <div class="point-item-content" onclick="editPointName(${index})" style="cursor: pointer;" title="Click để đổi tên">
+        <div class="point-item-name">${point.name}</div>
+        <div class="point-item-coords">${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}</div>
+      </div>
+      <div class="point-item-actions">
+        <button class="point-item-btn" onclick="editPointName(${index})" title="Đổi tên điểm">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+        <button class="point-item-btn" onclick="flyToPoint(${index})" title="Bay đến điểm này">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 16 16 12 12 8"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+        </button>
+        <button class="point-item-btn delete" onclick="removePoint(${index})" title="Xóa điểm này">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    `;
+    pointsList.appendChild(pointItem);
+  });
+}
+
+// Đổi tên điểm
+window.editPointName = function editPointName(index) {
+  if (index >= 0 && index < selectedPoints.length) {
+    const point = selectedPoints[index];
+    const currentName = point.name;
+    
+    // Tạo modal để nhập tên mới
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      animation: fadeIn 0.2s ease;
+    `;
+    
+    modal.innerHTML = `
+      <div style="
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 90%;
+        animation: slideUp 0.3s ease;
+      ">
+        <h3 style="
+          margin: 0 0 16px 0;
+          font-size: 1.2rem;
+          color: #1f2937;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        ">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Đổi tên điểm
+        </h3>
+        <input 
+          type="text" 
+          id="point-name-input" 
+          value="${currentName.replace(/"/g, '&quot;')}"
+          placeholder="Nhập tên điểm..."
+          style="
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+          "
+          onfocus="this.style.borderColor='#8b5cf6'; this.style.boxShadow='0 0 0 3px rgba(139, 92, 246, 0.1)';"
+          onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none';"
+        />
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button 
+            id="cancel-btn"
+            style="
+              padding: 10px 20px;
+              border: none;
+              border-radius: 8px;
+              background: #f3f4f6;
+              color: #6b7280;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.2s ease;
+            "
+            onmouseover="this.style.background='#e5e7eb'"
+            onmouseout="this.style.background='#f3f4f6'"
+          >
+            Hủy
+          </button>
+          <button 
+            id="save-btn"
+            style="
+              padding: 10px 20px;
+              border: none;
+              border-radius: 8px;
+              background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+              color: white;
+              font-weight: 600;
+              cursor: pointer;
+              transition: all 0.2s ease;
+            "
+            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(139, 92, 246, 0.4)'"
+            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'"
+          >
+            Lưu
+          </button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    const input = document.getElementById('point-name-input');
+    const saveBtn = document.getElementById('save-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    
+    // Focus vào input và select text
+    setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 100);
+    
+    // Xử lý lưu tên
+    const saveName = () => {
+      const newName = input.value.trim();
+      if (newName && newName !== currentName) {
+        point.name = newName;
+        
+        // Cập nhật popup của marker
+        if (point.marker && window.mapInstance) {
+          point.marker.setPopupContent(`
+            <div style="text-align: center; padding: 10px; min-width: 180px;">
+              <strong style="font-size: 1.1em; color: #8b5cf6;">${newName}</strong><br>
+              <small style="color: #6b7280; font-family: 'Courier New', monospace;">${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}</small>
+              <div style="margin-top: 8px; display: flex; gap: 6px; justify-content: center;">
+                <button 
+                  onclick="editPointName(${index})" 
+                  style="
+                    padding: 6px 12px;
+                    border: none;
+                    border-radius: 6px;
+                    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                    color: white;
+                    font-size: 0.8em;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                  "
+                  onmouseover="this.style.transform='scale(1.05)'"
+                  onmouseout="this.style.transform='scale(1)'"
+                  title="Đổi tên điểm"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  Đổi tên
+                </button>
+              </div>
+            </div>
+          `);
+        }
+        
+        // Cập nhật danh sách
+        updatePointsList();
+      }
+      document.body.removeChild(modal);
+    };
+    
+    // Xử lý hủy
+    const cancelEdit = () => {
+      document.body.removeChild(modal);
+    };
+    
+    // Event listeners
+    saveBtn.onclick = saveName;
+    cancelBtn.onclick = cancelEdit;
+    
+    // Enter để lưu, Escape để hủy
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        saveName();
+      } else if (e.key === 'Escape') {
+        cancelEdit();
+      }
+    };
+    
+    // Click outside để hủy
+    modal.onclick = (e) => {
+      if (e.target === modal) {
+        cancelEdit();
+      }
+    };
+  }
+}
+
+// Bay đến điểm
+window.flyToPoint = function flyToPoint(index) {
+  if (index >= 0 && index < selectedPoints.length && window.mapInstance) {
+    const point = selectedPoints[index];
+    window.mapInstance.flyTo([point.lat, point.lng], 16, {
+      duration: 1.5
+    });
+    
+    // Làm nổi bật marker
+    if (point.marker) {
+      const markerElement = point.marker.getElement();
+      if (markerElement) {
+        markerElement.style.transform = 'scale(1.5)';
+        setTimeout(() => {
+          markerElement.style.transform = 'scale(1)';
+        }, 500);
+      }
+    }
+  }
+}
+
+// Xóa một điểm
+window.removePoint = function removePoint(index) {
+  if (index >= 0 && index < selectedPoints.length && window.mapInstance) {
+    const point = selectedPoints[index];
+    
+    // Xóa marker khỏi bản đồ
+    if (point.marker) {
+      window.mapInstance.removeLayer(point.marker);
+    }
+    
+    // Xóa khỏi mảng
+    selectedPoints.splice(index, 1);
+    
+    // Cập nhật số thứ tự trên các marker còn lại
+    selectedPoints.forEach((p, i) => {
+      if (p.marker) {
+        const markerElement = p.marker.getElement();
+        if (markerElement) {
+          markerElement.textContent = (i + 1).toString();
+        }
+      }
+    });
+    
+    // Cập nhật danh sách
+    updatePointsList();
+  }
+}
+
+// Tạo nội dung file KML
+function generateKML() {
+  const kmlHeader = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Các điểm đã chọn - Bản đồ AULAC</name>
+    <description>Tọa độ được xuất từ Bản đồ số Vĩnh Long - AULAC</description>
+    <Style id="pointStyle">
+      <IconStyle>
+        <color>ff5cf68b</color>
+        <scale>1.2</scale>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/pushpin/purple-pushpin.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+`;
+  
+  let placemarks = '';
+  selectedPoints.forEach(point => {
+    placemarks += `
+    <Placemark>
+      <name>${point.name}</name>
+      <description>Tọa độ: ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}</description>
+      <styleUrl>#pointStyle</styleUrl>
+      <Point>
+        <coordinates>${point.lng.toFixed(6)},${point.lat.toFixed(6)},0</coordinates>
+      </Point>
+    </Placemark>
+`;
+  });
+  
+  const kmlFooter = `  </Document>
+</kml>`;
+  
+  return kmlHeader + placemarks + kmlFooter;
+}
+
+// Xuất file KML
+function exportKML() {
+  if (selectedPoints.length === 0) {
+    alert('Chưa có điểm nào được chọn!');
+    return;
+  }
+  
+  const kmlContent = generateKML();
+  const blob = new Blob([kmlContent], { type: 'application/vnd.google-earth.kml+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `diem_da_chon_${new Date().getTime()}.kml`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  // Hiển thị thông báo thành công
+  if (window.mapInstance) {
+    const notification = L.popup({
+      closeButton: false,
+      autoClose: 3000,
+      className: 'coordinate-copy-notification'
+    })
+    .setLatLng(window.mapInstance.getCenter())
+    .setContent(`<div style="text-align: center; padding: 8px;"><strong>✓ Đã xuất file KML!</strong><br>${selectedPoints.length} điểm</div>`)
+    .openOn(window.mapInstance);
+  }
+}
+
+// Xuất file KMZ (KML được nén)
+async function exportKMZ() {
+  if (selectedPoints.length === 0) {
+    alert('Chưa có điểm nào được chọn!');
+    return;
+  }
+  
+  // Kiểm tra xem JSZip có sẵn không
+  if (typeof JSZip === 'undefined') {
+    alert('Đang tải thư viện nén... Vui lòng thử lại sau vài giây.');
+    
+    // Tải JSZip nếu chưa có
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+    script.onload = function() {
+      setTimeout(exportKMZ, 500);
+    };
+    document.head.appendChild(script);
+    return;
+  }
+  
+  try {
+    const kmlContent = generateKML();
+    const zip = new JSZip();
+    zip.file('doc.kml', kmlContent);
+    
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `diem_da_chon_${new Date().getTime()}.kmz`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    // Hiển thị thông báo thành công
+    if (window.mapInstance) {
+      const notification = L.popup({
+        closeButton: false,
+        autoClose: 3000,
+        className: 'coordinate-copy-notification'
+      })
+      .setLatLng(window.mapInstance.getCenter())
+      .setContent(`<div style="text-align: center; padding: 8px;"><strong>✓ Đã xuất file KMZ!</strong><br>${selectedPoints.length} điểm</div>`)
+      .openOn(window.mapInstance);
+    }
+  } catch (err) {
+    console.error('Lỗi khi tạo file KMZ:', err);
+    alert('Không thể tạo file KMZ. Vui lòng thử xuất file KML.');
+  }
+}
+
+// Xóa tất cả các điểm
+function clearAllPoints() {
+  if (selectedPoints.length === 0) return;
+  
+  if (!confirm(`Xóa tất cả ${selectedPoints.length} điểm đã chọn?`)) {
+    return;
+  }
+  
+  // Xóa tất cả marker khỏi bản đồ
+  if (window.mapInstance) {
+    selectedPoints.forEach(point => {
+      if (point.marker) {
+        window.mapInstance.removeLayer(point.marker);
+      }
+    });
+  }
+  
+  // Xóa mảng
+  selectedPoints = [];
+  pointIdCounter = 1;
+  
+  // Cập nhật danh sách
+  updatePointsList();
+}
+
+// Thiết lập nút chọn điểm
+function setupSharePointsButton(map) {
+  const selectPointsBtn = document.getElementById('select-points-btn');
+  const exportKmlBtn = document.getElementById('export-kml-btn');
+  const exportKmzBtn = document.getElementById('export-kmz-btn');
+  const clearPointsBtn = document.getElementById('clear-points-btn');
+  const pointNamingOption = document.getElementById('point-naming-option');
+  
+  if (!selectPointsBtn) return;
+  
+  // Xử lý nút chọn điểm
+  selectPointsBtn.onclick = function() {
+    if (!isSelectingPoints) {
+      // Bật chế độ chọn điểm
+      isSelectingPoints = true;
+      selectPointsBtn.classList.add('active');
+      selectPointsBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="15" y1="9" x2="9" y2="15"></line>
+          <line x1="9" y1="9" x2="15" y2="15"></line>
+        </svg>
+        <span>Dừng chọn</span>
+      `;
+      map.getContainer().style.cursor = 'crosshair';
+      
+      // Hiển thị tùy chọn đặt tên
+      if (pointNamingOption) {
+        pointNamingOption.style.display = 'block';
+      }
+      
+      // Ẩn hộp công cụ khi bắt đầu sử dụng
+      toggleToolsPanel(false);
+      
+      // Tắt tương tác với GeoJSON layers để có thể click vào bản đồ
+      toggleGeojsonInteractivity(false);
+      
+      // Xử lý click trên bản đồ
+      selectPointsClickHandler = async function(e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+        
+        // Tạo marker mới
+        const pointNumber = pointIdCounter;
+        const autoNameCheckbox = document.getElementById('auto-name-checkbox');
+        const autoName = autoNameCheckbox ? autoNameCheckbox.checked : true;
+        
+        // Nếu không tự động đặt tên, hỏi người dùng
+        let pointName = `Điểm ${pointNumber}`;
+        if (!autoName) {
+          pointName = await promptForPointName(pointNumber);
+          if (pointName === null) {
+            // Người dùng hủy, không tạo điểm
+            return;
+          }
+        }
+        
+        const marker = L.marker([lat, lng], {
+          icon: L.divIcon({
+            className: 'share-point-marker',
+            html: `${pointNumber}`,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+          }),
+          draggable: true
+        }).addTo(map);
+        
+        // Hàm tạo nội dung popup
+        const createPopupContent = (name, lat, lng, pointIndex) => {
+          return `
+            <div style="text-align: center; padding: 10px; min-width: 180px;">
+              <strong style="font-size: 1.1em; color: #8b5cf6;">${name}</strong><br>
+              <small style="color: #6b7280; font-family: 'Courier New', monospace;">${lat.toFixed(6)}, ${lng.toFixed(6)}</small>
+              <div style="margin-top: 8px; display: flex; gap: 6px; justify-content: center;">
+                <button 
+                  onclick="editPointName(${pointIndex})" 
+                  style="
+                    padding: 6px 12px;
+                    border: none;
+                    border-radius: 6px;
+                    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+                    color: white;
+                    font-size: 0.8em;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                  "
+                  onmouseover="this.style.transform='scale(1.05)'"
+                  onmouseout="this.style.transform='scale(1)'"
+                  title="Đổi tên điểm"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  Đổi tên
+                </button>
+              </div>
+            </div>
+          `;
+        };
+        
+        // Thêm popup cho marker
+        marker.bindPopup(createPopupContent(pointName, lat, lng, -1));
+        
+        // Xử lý kéo thả marker
+        marker.on('dragend', function(e) {
+          const newLat = e.target.getLatLng().lat;
+          const newLng = e.target.getLatLng().lng;
+          
+          // Cập nhật tọa độ trong mảng
+          const pointIndex = selectedPoints.findIndex(p => p.id === pointNumber);
+          if (pointIndex !== -1) {
+            selectedPoints[pointIndex].lat = newLat;
+            selectedPoints[pointIndex].lng = newLng;
+            const pointName = selectedPoints[pointIndex].name;
+            updatePointsList();
+            
+            // Cập nhật popup
+            marker.setPopupContent(createPopupContent(pointName, newLat, newLng, pointIndex));
+          }
+        });
+        
+        // Lưu điểm vào mảng
+        selectedPoints.push({
+          id: pointNumber,
+          lat: lat,
+          lng: lng,
+          name: pointName,
+          marker: marker
+        });
+        
+        pointIdCounter++;
+        
+        // Cập nhật popup với index đúng
+        const currentIndex = selectedPoints.length - 1;
+        marker.setPopupContent(createPopupContent(pointName, lat, lng, currentIndex));
+        
+        // Cập nhật danh sách
+        updatePointsList();
+        
+        // Hiển thị popup ngắn
+        marker.openPopup();
+        setTimeout(() => {
+          marker.closePopup();
+        }, 2000);
+      };
+      
+      map.on('click', selectPointsClickHandler);
+    } else {
+      // Tắt chế độ chọn điểm
+      isSelectingPoints = false;
+      selectPointsBtn.classList.remove('active');
+      selectPointsBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>Chọn điểm</span>
+      `;
+      map.getContainer().style.cursor = '';
+      
+      // Ẩn tùy chọn đặt tên
+      if (pointNamingOption) {
+        pointNamingOption.style.display = 'none';
+      }
+      
+      // Hiện lại hộp công cụ khi dừng
+      toggleToolsPanel(true);
+      
+      // Bật lại tương tác với GeoJSON layers
+      toggleGeojsonInteractivity(true);
+      
+      // Xóa sự kiện click
+      if (selectPointsClickHandler) {
+        map.off('click', selectPointsClickHandler);
+        selectPointsClickHandler = null;
+      }
+    }
+  };
+  
+  // Xử lý nút xuất KML
+  if (exportKmlBtn) {
+    exportKmlBtn.onclick = exportKML;
+  }
+  
+  // Xử lý nút xuất KMZ
+  if (exportKmzBtn) {
+    exportKmzBtn.onclick = exportKMZ;
+  }
+  
+  // Xử lý nút xóa điểm
+  if (clearPointsBtn) {
+    clearPointsBtn.onclick = clearAllPoints;
+  }
+}
+
 
 // ====== MAIN ======
 (function main() {
@@ -3891,6 +4698,7 @@ function setupCopyCoordinateButton(map) {
   setupMeasureButton(map);
   setupAreaButton(map);
   setupCopyCoordinateButton(map);
+  setupSharePointsButton(map);
   
   // Mở hộp công cụ khi khởi động (tùy chọn)
   setTimeout(() => {

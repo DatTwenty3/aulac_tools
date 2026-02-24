@@ -1240,7 +1240,8 @@ h1 {
   /* Tăng kích thước touch targets */
   button, .locate-btn-custom, .copy-coordinate-btn-custom, .measure-btn-custom, 
   .area-btn-custom,
-  .clear-measure-btn-custom, .clear-area-btn-custom {
+  .clear-measure-btn-custom, .clear-area-btn-custom,
+  .select-points-btn-custom, .export-btn-custom, .clear-points-btn-custom {
     min-height: 44px;
     min-width: 44px;
   }
@@ -1251,7 +1252,10 @@ h1 {
   .measure-btn-custom:hover,
   .area-btn-custom:hover,
   .clear-measure-btn-custom:hover,
-  .clear-area-btn-custom:hover {
+  .clear-area-btn-custom:hover,
+  .select-points-btn-custom:hover,
+  .export-btn-custom:hover,
+  .clear-points-btn-custom:hover {
     transform: none;
   }
   
@@ -1633,7 +1637,10 @@ h1 {
 .tools-panel .measure-btn-custom,
 .tools-panel .clear-measure-btn-custom,
 .tools-panel .area-btn-custom,
-.tools-panel .clear-area-btn-custom {
+.tools-panel .clear-area-btn-custom,
+.tools-panel .select-points-btn-custom,
+.tools-panel .export-btn-custom,
+.tools-panel .clear-points-btn-custom {
   width: 100%;
   padding: 12px 16px;
   border-radius: 12px;
@@ -1652,7 +1659,10 @@ h1 {
 .measure-btn-custom,
 .clear-measure-btn-custom,
 .area-btn-custom,
-.clear-area-btn-custom {
+.clear-area-btn-custom,
+.select-points-btn-custom,
+.export-btn-custom,
+.clear-points-btn-custom {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1664,7 +1674,10 @@ h1 {
 .measure-btn-custom svg,
 .clear-measure-btn-custom svg,
 .area-btn-custom svg,
-.clear-area-btn-custom svg {
+.clear-area-btn-custom svg,
+.select-points-btn-custom svg,
+.export-btn-custom svg,
+.clear-points-btn-custom svg {
   flex-shrink: 0;
 }
 
@@ -1719,6 +1732,9 @@ h1 {
   .tools-panel .clear-measure-btn-custom,
   .tools-panel .area-btn-custom,
   .tools-panel .clear-area-btn-custom,
+  .tools-panel .select-points-btn-custom,
+  .tools-panel .export-btn-custom,
+  .tools-panel .clear-points-btn-custom,
   .tool-btn {
     font-size: 0.9em;
     padding: 10px 14px;
@@ -1798,6 +1814,9 @@ h1 {
   .tools-panel .clear-measure-btn-custom,
   .tools-panel .area-btn-custom,
   .tools-panel .clear-area-btn-custom,
+  .tools-panel .select-points-btn-custom,
+  .tools-panel .export-btn-custom,
+  .tools-panel .clear-points-btn-custom,
   .tool-btn {
     font-size: 0.85em;
     padding: 8px 12px;
@@ -3086,5 +3105,303 @@ h1 {
     font-size: 0.75rem;
     background-position: right 10px center;
     padding-right: 32px;
+  }
+}
+
+/* ====== Styling cho tính năng chia sẻ tọa độ ====== */
+.select-points-btn-custom {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.select-points-btn-custom svg {
+  color: #ffffff;
+  stroke: #ffffff;
+}
+
+.select-points-btn-custom span {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.select-points-btn-custom:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+}
+
+.select-points-btn-custom.active {
+  background: linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+}
+
+.export-btn-custom {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.export-btn-custom svg {
+  color: #ffffff;
+  stroke: #ffffff;
+}
+
+.export-btn-custom span {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.export-btn-custom:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.clear-points-btn-custom {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.clear-points-btn-custom svg {
+  color: #ffffff;
+  stroke: #ffffff;
+}
+
+.clear-points-btn-custom span {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.clear-points-btn-custom:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.selected-points-info {
+  margin-top: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(124, 58, 237, 0.05) 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.points-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.15);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #6d28d9;
+}
+
+.points-count svg {
+  color: #8b5cf6;
+  flex-shrink: 0;
+}
+
+.points-list {
+  max-height: 200px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.point-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.point-item:hover {
+  background: rgba(139, 92, 246, 0.05);
+  border-color: rgba(139, 92, 246, 0.2);
+  transform: translateX(4px);
+}
+
+.point-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.point-item-name {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #1f2937;
+}
+
+.point-item-coords {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-family: 'Courier New', monospace;
+}
+
+.point-item-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.point-item-btn {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(139, 92, 246, 0.1);
+  color: #7c3aed;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.point-item-btn:hover {
+  background: rgba(139, 92, 246, 0.2);
+  transform: scale(1.05);
+}
+
+.point-item-btn.delete {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.point-item-btn.delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.point-item-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.points-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.points-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.points-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+
+.points-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Marker cho điểm đã chọn */
+.share-point-marker {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 50%;
+  background: #8b5cf6;
+  border: 4px solid #fff;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4),
+              0 0 0 3px rgba(139, 92, 246, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  animation: markerPop 0.3s ease;
+}
+
+@keyframes markerPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.share-point-marker:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.5),
+              0 0 0 4px rgba(139, 92, 246, 0.3);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .selected-points-info {
+    padding: 12px;
+  }
+  
+  .points-count {
+    font-size: 0.8rem;
+  }
+  
+  .point-item-name {
+    font-size: 0.75rem;
+  }
+  
+  .point-item-coords {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .selected-points-info {
+    padding: 10px;
+  }
+  
+  .points-count {
+    font-size: 0.75rem;
+  }
+  
+  .point-item {
+    padding: 6px 8px;
+  }
+  
+  .point-item-name {
+    font-size: 0.7rem;
+  }
+  
+  .point-item-coords {
+    font-size: 0.65rem;
+  }
+  
+  .point-item-btn {
+    padding: 3px 6px;
+    font-size: 0.65rem;
+  }
+}
+
+/* ====== Animation cho modal ====== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 } 
