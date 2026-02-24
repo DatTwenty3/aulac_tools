@@ -4339,10 +4339,10 @@ function generateKML() {
     <description>Tọa độ được xuất từ Bản đồ số Vĩnh Long - AULAC</description>
     <Style id="pointStyle">
       <IconStyle>
-        <color>ff5cf68b</color>
+        <color>ffB469FF</color>
         <scale>1.2</scale>
         <Icon>
-          <href>http://maps.google.com/mapfiles/kml/pushpin/purple-pushpin.png</href>
+          <href>http://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png</href>
         </Icon>
       </IconStyle>
     </Style>
