@@ -3363,4 +3363,77 @@ h1 {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* ====== Styles cho Drawing Tools ====== */
+.tool-btn-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  font-weight: 500;
+  min-height: 60px;
+}
+
+.tool-btn-mini:hover {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border-color: #8b5cf6;
+  color: #8b5cf6;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.15);
+}
+
+.tool-btn-mini.active {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  border-color: #7c3aed;
+  color: white;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.tool-btn-mini.active:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  transform: translateY(-2px);
+}
+
+.tool-btn-mini svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Text marker trên bản đồ */
+.drawing-text-marker {
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  cursor: move;
+}
+
+.drawing-text-marker div {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .tool-btn-mini {
+    min-height: 50px;
+    padding: 6px 2px;
+    font-size: 0.7rem;
+  }
+  
+  .tool-btn-mini svg {
+    width: 16px;
+    height: 16px;
+  }
 } 
