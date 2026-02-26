@@ -90,6 +90,9 @@ let drawingLayers = []; // Lưu tất cả các layer đã vẽ
 let currentDrawingLayer = null; // Layer đang vẽ
 let drawingClickHandler = null;
 let drawingMouseMoveHandler = null;
+let drawingDblClickHandler = null; // Handler cho double click
+let drawingMouseDownHandler = null; // Handler cho mouse down
+let drawingMouseUpHandler = null; // Handler cho mouse up
 let tempDrawingPoints = []; // Điểm tạm cho vẽ tự do
 let drawingStartPoint = null; // Điểm bắt đầu cho shapes
 let drawingHistory = []; // Lưu lịch sử để undo
@@ -104,11 +107,47 @@ let notificationTimeouts = []; // Mảng lưu các timeout cho notifications
 let tempMarkerTimeout = null; // Timeout xóa marker tạm
 let inputFocusTimeout = null; // Timeout focus input
 let markerAnimationTimeout = null; // Timeout animation marker
-let initializationTimeout = null; // Timeout khởi tạo app
+let projectLoadTimeout = null; // Timeout tải projects
+let toolsPanelTimeout = null; // Timeout mở tools panel
+let searchDebounceTimeout = null; // Timeout debounce search
 let popupCloseTimeout = null; // Timeout đóng popup
 
 // Biến lưu trữ event listeners để cleanup
 let documentClickHandler = null; // Handler cho document click (ẩn suggestions)
+
+// ====== TIMEOUT TRACKING (Development Mode) ======
+// Object để track active timeouts trong development mode
+const activeTimeouts = {
+  count: 0,
+  list: new Map(), // Map<timeoutId, {name, timestamp}>
+  
+  add(timeoutId, name) {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      this.list.set(timeoutId, { name, timestamp: Date.now() });
+      this.count++;
+    }
+  },
+  
+  remove(timeoutId) {
+    if (this.list.has(timeoutId)) {
+      this.list.delete(timeoutId);
+      this.count--;
+    }
+  },
+  
+  report() {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      console.log(`📊 Active Timeouts: ${this.count}`);
+      if (this.count > 0) {
+        console.table(Array.from(this.list.entries()).map(([id, info]) => ({
+          ID: id,
+          Name: info.name,
+          Age: `${Math.round((Date.now() - info.timestamp) / 1000)}s`
+        })));
+      }
+    }
+  }
+};
 
 // Dữ liệu kinh tuyến trục của các tỉnh (định dạng thập phân)
 const provinceCentralMeridians = {
@@ -244,51 +283,94 @@ function clearAllPopupTimeouts() {
   popupOpenTimeouts = [];
 }
 
-// Hàm cleanup tất cả timeouts để tránh memory leaks
-function cleanupAllTimeouts() {
-  // Clear selected geojson layer timeout
-  if (selectedGeojsonLayerTimeout) {
-    clearTimeout(selectedGeojsonLayerTimeout);
-    selectedGeojsonLayerTimeout = null;
+// ====== HELPER FUNCTIONS ĐỂ QUẢN LÝ TIMEOUT TỐT HƠN ======
+
+/**
+ * Hàm helper để set timeout và tự động cleanup
+ * @param {Function} callback - Hàm sẽ được gọi sau delay
+ * @param {number} delay - Thời gian delay (ms)
+ * @param {Object} timeoutRef - Object chứa biến timeout (ví dụ: {ref: null})
+ * @returns {number} Timeout ID
+ */
+function setManagedTimeout(callback, delay, timeoutRef = null) {
+  // Clear timeout cũ nếu có
+  if (timeoutRef && timeoutRef.ref) {
+    clearTimeout(timeoutRef.ref);
   }
   
-  // Clear popup timeouts
+  const timeoutId = setTimeout(() => {
+    callback();
+    // Auto-cleanup: Set về null sau khi execute
+    if (timeoutRef) {
+      timeoutRef.ref = null;
+    }
+  }, delay);
+  
+  // Lưu timeout ID vào ref nếu có
+  if (timeoutRef) {
+    timeoutRef.ref = timeoutId;
+  }
+  
+  return timeoutId;
+}
+
+/**
+ * Hàm helper để clear timeout một cách an toàn
+ * @param {Object} timeoutRef - Object chứa biến timeout
+ */
+function clearManagedTimeout(timeoutRef) {
+  if (timeoutRef && timeoutRef.ref) {
+    clearTimeout(timeoutRef.ref);
+    timeoutRef.ref = null;
+  }
+}
+
+// Hàm cleanup tất cả timeouts để tránh memory leaks
+function cleanupAllTimeouts() {
+  // Report active timeouts trước khi cleanup (development mode)
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('🧹 Đang cleanup timeouts...');
+    activeTimeouts.report();
+  }
+  
+  // Helper function để clear timeout an toàn
+  const safeClearTimeout = (timeoutVar) => {
+    if (timeoutVar) {
+      clearTimeout(timeoutVar);
+      activeTimeouts.remove(timeoutVar);
+      return null;
+    }
+    return timeoutVar;
+  };
+  
+  // Clear tất cả single timeouts
+  selectedGeojsonLayerTimeout = safeClearTimeout(selectedGeojsonLayerTimeout);
+  tempMarkerTimeout = safeClearTimeout(tempMarkerTimeout);
+  inputFocusTimeout = safeClearTimeout(inputFocusTimeout);
+  markerAnimationTimeout = safeClearTimeout(markerAnimationTimeout);
+  popupCloseTimeout = safeClearTimeout(popupCloseTimeout);
+  searchResultMarkerTimeout = safeClearTimeout(searchResultMarkerTimeout);
+  projectLoadTimeout = safeClearTimeout(projectLoadTimeout);
+  toolsPanelTimeout = safeClearTimeout(toolsPanelTimeout);
+  searchDebounceTimeout = safeClearTimeout(searchDebounceTimeout);
+  
+  // Clear popup timeouts (array)
   clearAllPopupTimeouts();
   
-  // Clear notification timeouts
+  // Clear notification timeouts (array)
   notificationTimeouts.forEach(timeoutId => {
     clearTimeout(timeoutId);
+    activeTimeouts.remove(timeoutId);
   });
   notificationTimeouts = [];
   
-  // Clear temp marker timeout
-  if (tempMarkerTimeout) {
-    clearTimeout(tempMarkerTimeout);
-    tempMarkerTimeout = null;
-  }
+  // Clear tracking map
+  activeTimeouts.list.clear();
+  activeTimeouts.count = 0;
   
-  // Clear input focus timeout
-  if (inputFocusTimeout) {
-    clearTimeout(inputFocusTimeout);
-    inputFocusTimeout = null;
-  }
-  
-  // Clear marker animation timeout
-  if (markerAnimationTimeout) {
-    clearTimeout(markerAnimationTimeout);
-    markerAnimationTimeout = null;
-  }
-  
-  // Clear popup close timeout
-  if (popupCloseTimeout) {
-    clearTimeout(popupCloseTimeout);
-    popupCloseTimeout = null;
-  }
-  
-  // Clear search result marker timeout
-  if (searchResultMarkerTimeout) {
-    clearTimeout(searchResultMarkerTimeout);
-    searchResultMarkerTimeout = null;
+  // Log để debug (chỉ trong development)
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('✅ Đã cleanup tất cả timeouts');
   }
 }
 
@@ -319,6 +401,32 @@ function cleanupAllEventListeners(map) {
   if (selectPointsClickHandler) {
     map.off('click', selectPointsClickHandler);
     selectPointsClickHandler = null;
+  }
+  
+  // Remove drawing event handlers
+  if (drawingClickHandler) {
+    map.off('click', drawingClickHandler);
+    drawingClickHandler = null;
+  }
+  
+  if (drawingMouseMoveHandler) {
+    map.off('mousemove', drawingMouseMoveHandler);
+    drawingMouseMoveHandler = null;
+  }
+  
+  if (drawingDblClickHandler) {
+    map.off('dblclick', drawingDblClickHandler);
+    drawingDblClickHandler = null;
+  }
+  
+  if (drawingMouseDownHandler) {
+    map.off('mousedown', drawingMouseDownHandler);
+    drawingMouseDownHandler = null;
+  }
+  
+  if (drawingMouseUpHandler) {
+    map.off('mouseup', drawingMouseUpHandler);
+    drawingMouseUpHandler = null;
   }
 }
 
@@ -2635,13 +2743,26 @@ function setupSearch(map) {
 
   // Xử lý khi người dùng gõ
   searchInput.addEventListener('input', function(e) {
+    // Clear timeout cũ để debounce
+    if (searchDebounceTimeout) {
+      clearTimeout(searchDebounceTimeout);
+      searchDebounceTimeout = null;
+    }
+    
     const keyword = e.target.value.trim();
-    if (keyword.length >= 1) {
+    
+    // Nếu keyword rỗng, ẩn suggestions ngay lập tức
+    if (keyword.length < 1) {
+      suggestionsContainer.classList.remove('show');
+      return;
+    }
+    
+    // Debounce 300ms trước khi tìm kiếm
+    searchDebounceTimeout = setTimeout(() => {
       const suggestions = getSearchSuggestions(keyword);
       showSuggestions(suggestions);
-    } else {
-      suggestionsContainer.classList.remove('show');
-    }
+      searchDebounceTimeout = null; // Clear sau khi execute
+    }, 300);
   });
   
   // Xử lý khi người dùng nhấn phím
@@ -5980,7 +6101,7 @@ function setupDrawingTools(map) {
     
     map.getContainer().style.cursor = '';
     
-    // Xóa event handlers
+    // Xóa event handlers - Sử dụng named handlers để cleanup đúng cách
     if (drawingClickHandler) {
       map.off('click', drawingClickHandler);
       drawingClickHandler = null;
@@ -5989,13 +6110,18 @@ function setupDrawingTools(map) {
       map.off('mousemove', drawingMouseMoveHandler);
       drawingMouseMoveHandler = null;
     }
-    
-    // Xóa mousedown và mouseup handlers cho freehand
-    map.off('mousedown');
-    map.off('mouseup');
-    
-    // Xóa dblclick handler cho polygon
-    map.off('dblclick');
+    if (drawingDblClickHandler) {
+      map.off('dblclick', drawingDblClickHandler);
+      drawingDblClickHandler = null;
+    }
+    if (drawingMouseDownHandler) {
+      map.off('mousedown', drawingMouseDownHandler);
+      drawingMouseDownHandler = null;
+    }
+    if (drawingMouseUpHandler) {
+      map.off('mouseup', drawingMouseUpHandler);
+      drawingMouseUpHandler = null;
+    }
 
     // Bật lại map dragging và các interactions
     if (map.dragging) {
@@ -6045,7 +6171,8 @@ function setupDrawingTools(map) {
       
       let isMouseDown = false;
       
-      map.on('mousedown', function(e) {
+      // Sử dụng named function để có thể cleanup
+      drawingMouseDownHandler = function(e) {
         // Disable map dragging khi bắt đầu vẽ
         if (map.dragging) {
           map.dragging.disable();
@@ -6061,7 +6188,8 @@ function setupDrawingTools(map) {
         
         // Prevent map from panning
         L.DomEvent.stopPropagation(e.originalEvent);
-      });
+      };
+      map.on('mousedown', drawingMouseDownHandler);
       
       drawingMouseMoveHandler = function(e) {
         if (isMouseDown && currentDrawingLayer) {
@@ -6071,7 +6199,7 @@ function setupDrawingTools(map) {
       };
       map.on('mousemove', drawingMouseMoveHandler);
       
-      map.on('mouseup', function() {
+      drawingMouseUpHandler = function() {
         if (isMouseDown && currentDrawingLayer) {
           isMouseDown = false;
           currentDrawingLayer._drawingType = 'freehand';
@@ -6090,7 +6218,8 @@ function setupDrawingTools(map) {
             map.dragging.enable();
           }
         }
-      });
+      };
+      map.on('mouseup', drawingMouseUpHandler);
     };
   }
   
@@ -6140,8 +6269,8 @@ function setupDrawingTools(map) {
 
       map.on('click', drawingClickHandler);
 
-      // Double-click để hoàn thành polyline
-      map.on('dblclick', function(e) {
+      // Double-click để hoàn thành polyline - Sử dụng named function
+      drawingDblClickHandler = function(e) {
         L.DomEvent.stopPropagation(e);
         
         if (linePoints.length >= 2) {
@@ -6166,7 +6295,8 @@ function setupDrawingTools(map) {
         } else {
           showSearchNotification('Cần ít nhất 2 điểm để tạo đường!', 'error');
         }
-      });
+      };
+      map.on('dblclick', drawingDblClickHandler);
     };
   }
   
@@ -6330,8 +6460,8 @@ function setupDrawingTools(map) {
 
       map.on('click', drawingClickHandler);
 
-      // Double-click để hoàn thành polygon
-      map.on('dblclick', function(e) {
+      // Double-click để hoàn thành polygon - Sử dụng named function
+      drawingDblClickHandler = function(e) {
         L.DomEvent.stopPropagation(e);
         
         if (polygonPoints.length >= 3) {
@@ -6357,7 +6487,8 @@ function setupDrawingTools(map) {
         } else {
           showSearchNotification('Cần ít nhất 3 điểm để tạo hình đa giác!', 'error');
         }
-      });
+      };
+      map.on('dblclick', drawingDblClickHandler);
     };
   }
   
@@ -6524,7 +6655,7 @@ function setupDrawingTools(map) {
   setupLocateButton(map);
   loadAllGeojsons(map);
   // Tải các dự án sau một khoảng thời gian ngắn để đảm bảo chúng nằm phía trên các layer khác
-  const projectLoadTimeoutId = setTimeout(() => {
+  projectLoadTimeout = setTimeout(() => {
     loadProjects(map); // Tải các dự án với màu sắc khác nhau
     // Tải các file DuAn (nằm trên cùng)
     loadDuanFiles(map);
@@ -6538,11 +6669,57 @@ function setupDrawingTools(map) {
   setupDrawingTools(map);
   
   // Mở hộp công cụ khi khởi động (tùy chọn)
-  const toolsPanelTimeoutId = setTimeout(() => {
+  toolsPanelTimeout = setTimeout(() => {
     toggleToolsPanel(true);
   }, 300);
+})();
+
+// ====== GLOBAL DEBUG COMMANDS (Development Mode) ======
+// Expose debug functions cho console trong development mode
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+  window.debugMap = {
+    // Check active timeouts
+    checkTimeouts: () => {
+      console.log('🔍 Checking Active Timeouts...');
+      activeTimeouts.report();
+    },
+    
+    // Cleanup tất cả
+    cleanupAll: () => {
+      console.log('🧹 Manual Cleanup...');
+      if (window.mapInstance) {
+        cleanupAll(window.mapInstance);
+        console.log('✅ Cleanup completed');
+      } else {
+        console.warn('⚠️ Map instance not found');
+      }
+    },
+    
+    // Check event listeners
+    checkListeners: () => {
+      console.log('🎯 Event Listeners Status:');
+      console.log('- measureClickHandler:', measureClickHandler ? '✅ Active' : '❌ Inactive');
+      console.log('- areaClickHandler:', areaClickHandler ? '✅ Active' : '❌ Inactive');
+      console.log('- copyCoordinateClickHandler:', copyCoordinateClickHandler ? '✅ Active' : '❌ Inactive');
+      console.log('- selectPointsClickHandler:', selectPointsClickHandler ? '✅ Active' : '❌ Inactive');
+      console.log('- drawingClickHandler:', drawingClickHandler ? '✅ Active' : '❌ Inactive');
+      console.log('- drawingMouseMoveHandler:', drawingMouseMoveHandler ? '✅ Active' : '❌ Inactive');
+      console.log('- drawingDblClickHandler:', drawingDblClickHandler ? '✅ Active' : '❌ Inactive');
+    },
+    
+    // Hiển thị tất cả info
+    showAll: () => {
+      console.log('📊 Debug Information:');
+      window.debugMap.checkTimeouts();
+      console.log('');
+      window.debugMap.checkListeners();
+    }
+  };
   
-  // Lưu các initialization timeouts (không cần cleanup vì chỉ chạy một lần)
-  // Tuy nhiên lưu lại để có thể cancel nếu cần khi reload page
-  initializationTimeout = { projectLoadTimeoutId, toolsPanelTimeoutId };
-})(); 
+  console.log('%c🗺️ Debug Mode Activated', 'color: #10b981; font-weight: bold; font-size: 14px;');
+  console.log('%cSử dụng window.debugMap để debug:', 'color: #6366f1; font-weight: bold;');
+  console.log('  • debugMap.checkTimeouts() - Kiểm tra active timeouts');
+  console.log('  • debugMap.checkListeners() - Kiểm tra event listeners');
+  console.log('  • debugMap.cleanupAll() - Cleanup tất cả');
+  console.log('  • debugMap.showAll() - Hiển thị tất cả thông tin');
+} 
