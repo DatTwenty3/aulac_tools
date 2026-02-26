@@ -328,13 +328,13 @@ h1 {
     cursor: pointer;
 }
 
-/* Đảm bảo tooltip luôn hiển thị trên các layer dự án */
+/* Đảm bảo tooltip luôn hiển thị trên tất cả các layer (chỉ thấp hơn popup) */
 .leaflet-tooltip-pane {
-    z-index: 800 !important;
+    z-index: 950 !important;
 }
 
 .custom-tooltip {
-    z-index: 800 !important;
+    z-index: 950 !important;
     pointer-events: none !important;
 }
 
@@ -3422,6 +3422,29 @@ h1 {
   padding: 4px 8px;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Style cho các nút hành động vẽ (Hoàn tác, Xóa, Xuất KML) */
+.drawing-action-btn {
+  background: #3b82f6;
+  border: none !important;
+  color: white;
+  font-weight: 500;
+}
+
+.drawing-action-btn:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.drawing-action-btn svg {
+  stroke: white;
+}
+
+.drawing-action-btn:active {
+  transform: translateY(0);
+  background: #1d4ed8;
 }
 
 /* Responsive cho mobile */

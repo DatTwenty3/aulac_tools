@@ -689,10 +689,10 @@ function initMap() {
     layers: [osmLayer]
   });
 
-  // Tạo pane riêng cho tooltip với z-index cao hơn các layer dự án (700)
-  // TooltipPane mặc định của Leaflet có z-index 650, cần tăng lên để không bị che
+  // Tạo pane riêng cho tooltip với z-index cao nhất (chỉ thấp hơn popup)
+  // TooltipPane mặc định của Leaflet có z-index 650, cần tăng lên để không bị che bởi bất kỳ layer nào
   if (map.getPane('tooltipPane')) {
-    map.getPane('tooltipPane').style.zIndex = 800;
+    map.getPane('tooltipPane').style.zIndex = 950; // Cao hơn drawingPane (880), thấp hơn popupPane (1000)
   }
   
   // Đảm bảo popupPane có z-index cao nhất để popup luôn hiển thị trên cùng
@@ -5010,7 +5010,7 @@ function makeDrawingDeletable(layer, map) {
   
   const drawingTypeName = {
     'freehand': 'Vẽ tự do',
-    'line': 'Đường thẳng',
+    'line': 'Đường gấp khúc',
     'arrow': 'Mũi tên',
     'polygon': 'Hình đa giác',
     'circle': 'Hình tròn',
@@ -5608,105 +5608,220 @@ function undoDrawing(map) {
 }
 
 // Hàm export drawings sang GeoJSON
+// Hàm tạo polygon từ circle (để xuất KML)
+function circleToPolygon(center, radiusInMeters, numPoints = 64) {
+  const points = [];
+  const earthRadius = 6371000; // meters
+  
+  for (let i = 0; i <= numPoints; i++) {
+    const angle = (i / numPoints) * 2 * Math.PI;
+    
+    // Tính toán điểm mới dựa trên bearing và distance
+    const lat1 = center.lat * Math.PI / 180;
+    const lng1 = center.lng * Math.PI / 180;
+    const angularDistance = radiusInMeters / earthRadius;
+    
+    const lat2 = Math.asin(
+      Math.sin(lat1) * Math.cos(angularDistance) +
+      Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(angle)
+    );
+    
+    const lng2 = lng1 + Math.atan2(
+      Math.sin(angle) * Math.sin(angularDistance) * Math.cos(lat1),
+      Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2)
+    );
+    
+    points.push({
+      lat: lat2 * 180 / Math.PI,
+      lng: lng2 * 180 / Math.PI
+    });
+  }
+  
+  return points;
+}
+
+// Hàm escape XML
+function escapeXml(unsafe) {
+  if (!unsafe) return '';
+  return unsafe.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+// Hàm chuyển màu hex sang KML color (aabbggrr)
+function hexToKmlColor(hex, opacity = 1) {
+  // Remove # if present
+  hex = hex.replace('#', '');
+  
+  // Convert to RGB
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  // Convert opacity to hex (0-1 to 00-ff)
+  const alpha = Math.round(opacity * 255).toString(16).padStart(2, '0');
+  
+  // KML format: aabbggrr
+  return alpha + 
+         b.toString(16).padStart(2, '0') + 
+         g.toString(16).padStart(2, '0') + 
+         r.toString(16).padStart(2, '0');
+}
+
 function exportDrawings() {
   if (drawingLayers.length === 0) {
     alert('Chưa có vẽ nào để xuất!');
     return;
   }
-  
+
   try {
-    const features = drawingLayers.map(layer => {
-      let geometry = null;
-      const properties = {
-        drawingType: layer._drawingType,
-        color: layer._drawingColor,
-        weight: layer._drawingWeight,
-        label: layer._drawingLabel || '',
-        opacity: layer._drawingOpacity !== undefined ? layer._drawingOpacity : 0.2
-      };
-      
-      if (layer instanceof L.Polygon && !(layer instanceof L.Rectangle)) {
-        // Polygon (hình đa giác)
-        let coords = layer.getLatLngs()[0]; // Polygon có array lồng nhau
-        if (!Array.isArray(coords[0])) {
-          // Nếu là mảng đơn giản, wrap lại
-          coords = [coords];
-        }
-        const polyCoords = coords.map(ring => 
-          ring.map(ll => [ll.lng, ll.lat])
-        );
-        // Đóng polygon nếu chưa đóng
-        if (polyCoords[0].length > 0) {
-          const first = polyCoords[0][0];
-          const last = polyCoords[0][polyCoords[0].length - 1];
-          if (first[0] !== last[0] || first[1] !== last[1]) {
-            polyCoords[0].push([...first]);
-          }
-        }
-        geometry = {
-          type: 'Polygon',
-          coordinates: polyCoords
-        };
-      } else if (layer instanceof L.Polyline && !(layer instanceof L.Polygon)) {
-        // Polyline (line, freehand, arrow)
-        const coords = layer.getLatLngs().map(ll => [ll.lng, ll.lat]);
-        geometry = {
-          type: 'LineString',
-          coordinates: coords
-        };
-      } else if (layer instanceof L.Rectangle) {
-        // Legacy rectangle - convert thành polygon
-        const bounds = layer.getBounds();
-        const coords = [[
-          [bounds.getWest(), bounds.getSouth()],
-          [bounds.getEast(), bounds.getSouth()],
-          [bounds.getEast(), bounds.getNorth()],
-          [bounds.getWest(), bounds.getNorth()],
-          [bounds.getWest(), bounds.getSouth()]
-        ]];
-        geometry = {
-          type: 'Polygon',
-          coordinates: coords
-        };
-      } else if (layer instanceof L.Circle) {
-        const center = layer.getLatLng();
-        geometry = {
-          type: 'Point',
-          coordinates: [center.lng, center.lat]
-        };
-        properties.radius = layer.getRadius();
-      } else if (layer instanceof L.Marker) {
-        const latlng = layer.getLatLng();
-        geometry = {
-          type: 'Point',
-          coordinates: [latlng.lng, latlng.lat]
-        };
-        properties.text = layer._drawingText;
+    // KML header
+    let kml = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Chú thích bản đồ</name>
+    <description>Xuất từ ứng dụng bản đồ</description>
+`;
+
+    // Tạo styles
+    const styles = new Set();
+    drawingLayers.forEach(layer => {
+      const styleId = `style_${layer._drawingColor.replace('#', '')}`;
+      if (!styles.has(styleId)) {
+        styles.add(styleId);
+        const kmlColor = hexToKmlColor(layer._drawingColor, 0.8);
+        const fillOpacity = layer._drawingOpacity !== undefined ? layer._drawingOpacity : 0.2;
+        const fillColor = hexToKmlColor(layer._drawingColor, fillOpacity);
+        
+        kml += `    <Style id="${styleId}">
+      <LineStyle>
+        <color>${kmlColor}</color>
+        <width>${layer._drawingWeight || 3}</width>
+      </LineStyle>
+      <PolyStyle>
+        <color>${fillColor}</color>
+        <fill>1</fill>
+        <outline>1</outline>
+      </PolyStyle>
+    </Style>
+`;
       }
-      
-      return {
-        type: 'Feature',
-        properties: properties,
-        geometry: geometry
-      };
     });
-    
-    const geojson = {
-      type: 'FeatureCollection',
-      features: features
-    };
-    
-    const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/json' });
+
+    // Tạo placemarks
+    drawingLayers.forEach((layer, index) => {
+      const drawingTypeName = {
+        'freehand': 'Vẽ tự do',
+        'line': 'Đường thẳng',
+        'arrow': 'Mũi tên',
+        'polygon': 'Hình đa giác',
+        'circle': 'Hình tròn',
+        'text': 'Chú thích'
+      };
+      
+      const name = layer._drawingLabel || layer._drawingText || drawingTypeName[layer._drawingType] || `Ghi chú ${index + 1}`;
+      const styleId = `style_${layer._drawingColor.replace('#', '')}`;
+      
+      let description = `Loại: ${drawingTypeName[layer._drawingType] || layer._drawingType}`;
+      if (layer._drawingType === 'polygon') {
+        const latlngs = layer.getLatLngs()[0] || layer.getLatLngs();
+        const area = calculatePolygonArea(latlngs);
+        description += `\nDiện tích: ${formatMeasurement(area, 'area')}`;
+      } else if (layer._drawingType === 'circle') {
+        const radius = layer.getRadius();
+        const area = Math.PI * radius * radius;
+        description += `\nDiện tích: ${formatMeasurement(area, 'area')}`;
+        description += `\nBán kính: ${formatMeasurement(radius, 'length')}`;
+      } else if (layer._drawingType === 'freehand' || layer._drawingType === 'line' || layer._drawingType === 'arrow') {
+        const latlngs = layer.getLatLngs();
+        const length = calculatePolylineLength(latlngs);
+        description += `\nChiều dài: ${formatMeasurement(length, 'length')}`;
+      }
+
+      kml += `    <Placemark>
+      <name>${escapeXml(name)}</name>
+      <description>${escapeXml(description)}</description>
+      <styleUrl>#${styleId}</styleUrl>
+`;
+
+      // Geometry
+      if (layer instanceof L.Circle) {
+        // Circle - chuyển thành polygon
+        const center = layer.getLatLng();
+        const radius = layer.getRadius();
+        const circleCoords = circleToPolygon(center, radius);
+        const coordString = circleCoords.map(ll => `${ll.lng},${ll.lat},0`).join(' ');
+        kml += `      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>${coordString}</coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+`;
+      } else if (layer instanceof L.Polygon && !(layer instanceof L.Rectangle)) {
+        // Polygon
+        let coords = layer.getLatLngs()[0];
+        if (Array.isArray(coords[0])) {
+          coords = coords[0];
+        }
+        
+        // Đảm bảo polygon đóng kín (điểm cuối trùng điểm đầu)
+        const coordsArray = Array.from(coords);
+        const first = coordsArray[0];
+        const last = coordsArray[coordsArray.length - 1];
+        if (first.lat !== last.lat || first.lng !== last.lng) {
+          coordsArray.push(first);
+        }
+        
+        const coordString = coordsArray.map(ll => `${ll.lng},${ll.lat},0`).join(' ');
+        kml += `      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>${coordString}</coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+`;
+      } else if (layer instanceof L.Polyline && !(layer instanceof L.Polygon)) {
+        // LineString
+        const coords = layer.getLatLngs();
+        const coordString = coords.map(ll => `${ll.lng},${ll.lat},0`).join(' ');
+        kml += `      <LineString>
+        <coordinates>${coordString}</coordinates>
+      </LineString>
+`;
+      } else if (layer instanceof L.Marker) {
+        // Point
+        const latlng = layer.getLatLng();
+        kml += `      <Point>
+        <coordinates>${latlng.lng},${latlng.lat},0</coordinates>
+      </Point>
+`;
+      }
+
+      kml += `    </Placemark>
+`;
+    });
+
+    kml += `  </Document>
+</kml>`;
+
+    // Xuất file
+    const blob = new Blob([kml], { type: 'application/vnd.google-earth.kml+xml' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `chuThich_${new Date().getTime()}.geojson`;
+    a.download = `chuThich_${new Date().getTime()}.kml`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    showSearchNotification('Đã xuất file GeoJSON!', 'success');
+
+    showSearchNotification('Đã xuất file KML!', 'success');
   } catch (error) {
     console.error('Lỗi khi xuất vẽ:', error);
     alert('Không thể xuất file. Vui lòng thử lại.');
@@ -5719,8 +5834,8 @@ function setupDrawingTools(map) {
   if (!drawingToolsContainer) return;
   
   // Tạo pane riêng cho drawings với z-index cao
-  // Z-index hierarchy: overlayPane(400) < projectPane(650) < duanPane(700) < tooltipPane(800)
-  //                    < searchResultPane(800) < locationPane(850) < drawingPane(880) < popupPane(1000)
+  // Z-index hierarchy: overlayPane(400) < projectPane(650) < duanPane(700) < searchResultPane(800)
+  //                    < locationPane(850) < drawingPane(880) < tooltipPane(950) < popupPane(1000)
   if (!map._drawingPane) {
     map._drawingPane = map.createPane('drawingPane');
     map._drawingPane.style.zIndex = 880; // Cao hơn các layer nhưng thấp hơn popup
@@ -5734,7 +5849,25 @@ function setupDrawingTools(map) {
   
   // Tải drawings đã lưu
   loadDrawings(map);
-  
+
+  // Thêm event listener cho phím ESC để thoát khỏi chế độ vẽ
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+      if (isDrawing) {
+        // Xóa layer tạm thời nếu có
+        if (currentDrawingLayer && map.hasLayer(currentDrawingLayer)) {
+          map.removeLayer(currentDrawingLayer);
+        }
+        
+        // Tắt chế độ vẽ
+        disableAllDrawingTools();
+        
+        // Hiển thị thông báo
+        showSearchNotification('Đã hủy vẽ', 'info');
+      }
+    }
+  });
+
   // Các nút công cụ vẽ
   const freehandBtn = document.getElementById('draw-freehand-btn');
   const lineBtn = document.getElementById('draw-line-btn');
@@ -5772,6 +5905,9 @@ function setupDrawingTools(map) {
     map.off('mousedown');
     map.off('mouseup');
     
+    // Xóa dblclick handler cho polygon
+    map.off('dblclick');
+
     // Bật lại map dragging và các interactions
     if (map.dragging) {
       map.dragging.enable();
@@ -5869,74 +6005,79 @@ function setupDrawingTools(map) {
     };
   }
   
-  // Hàm vẽ đường thẳng
+  // Hàm vẽ đường gấp khúc (polyline)
   if (lineBtn) {
     lineBtn.onclick = function() {
       if (currentDrawingTool === 'line') {
         disableAllDrawingTools();
         return;
       }
-      
+
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'line';
       lineBtn.classList.add('active');
       map.getContainer().style.cursor = 'crosshair';
       toggleGeojsonInteractivity(false);
-      
-      let clickCount = 0;
+
       let linePoints = [];
-      
+
       drawingClickHandler = function(e) {
-        clickCount++;
         linePoints.push(e.latlng);
-        
-        if (clickCount === 1) {
-          // Điểm đầu - tạo polyline tạm
-          currentDrawingLayer = L.polyline([e.latlng, e.latlng], {
+
+        if (linePoints.length === 1) {
+          // Điểm đầu tiên - tạo polyline tạm
+          currentDrawingLayer = L.polyline([linePoints[0], linePoints[0]], {
             color: drawingColor,
             weight: drawingWeight,
-            dashArray: '5, 5',
             pane: 'drawingPane'
           }).addTo(map);
-          
-          // Mouse move để preview
+
           drawingMouseMoveHandler = function(e) {
-            if (currentDrawingLayer) {
-              currentDrawingLayer.setLatLngs([linePoints[0], e.latlng]);
+            if (currentDrawingLayer && linePoints.length > 0) {
+              // Cập nhật polyline với các điểm đã click + vị trí chuột hiện tại
+              const tempPoints = [...linePoints, e.latlng];
+              currentDrawingLayer.setLatLngs(tempPoints);
             }
           };
           map.on('mousemove', drawingMouseMoveHandler);
-        } else if (clickCount === 2) {
-          // Điểm cuối - hoàn thành vẽ
+          
+          showSearchNotification('Click để thêm điểm, double-click để hoàn thành', 'info');
+        } else {
+          // Các điểm tiếp theo - cập nhật polyline
+          currentDrawingLayer.setLatLngs(linePoints);
+        }
+      };
+
+      map.on('click', drawingClickHandler);
+
+      // Double-click để hoàn thành polyline
+      map.on('dblclick', function(e) {
+        L.DomEvent.stopPropagation(e);
+        
+        if (linePoints.length >= 2) {
           map.off('mousemove', drawingMouseMoveHandler);
-          map.removeLayer(currentDrawingLayer);
-          
-          const finalLine = L.polyline(linePoints, {
-            color: drawingColor,
-            weight: drawingWeight,
-            pane: 'drawingPane'
-          }).addTo(map);
-          
-          finalLine._drawingType = 'line';
-          finalLine._drawingColor = drawingColor;
-          finalLine._drawingWeight = drawingWeight;
-          finalLine._drawingLabel = '';
-          finalLine._drawingId = drawingIdCounter++;
-          drawingLayers.push(finalLine);
-          makeDrawingDeletable(finalLine, map);
+          map.off('click', drawingClickHandler);
+
+          // Hoàn thành polyline
+          currentDrawingLayer.setLatLngs(linePoints);
+          currentDrawingLayer._drawingType = 'line';
+          currentDrawingLayer._drawingColor = drawingColor;
+          currentDrawingLayer._drawingWeight = drawingWeight;
+          currentDrawingLayer._drawingLabel = '';
+          currentDrawingLayer._drawingId = drawingIdCounter++;
+          drawingLayers.push(currentDrawingLayer);
+          makeDrawingDeletable(currentDrawingLayer, map);
           saveDrawings();
-          
-          // Reset
-          clickCount = 0;
+
           linePoints = [];
           currentDrawingLayer = null;
           disableAllDrawingTools();
-          showSearchNotification('Đã vẽ đường thẳng!', 'success');
+          showSearchNotification('Đã vẽ đường gấp khúc!', 'success');
+        } else {
+          showSearchNotification('Cần ít nhất 2 điểm để tạo đường!', 'error');
         }
-      };
-      
-      map.on('click', drawingClickHandler);
+      });
     };
   }
   
