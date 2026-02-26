@@ -79,6 +79,20 @@ let selectedPoints = []; // Mảng lưu các điểm đã chọn: {id, lat, lng,
 let selectPointsClickHandler = null;
 let pointIdCounter = 1;
 
+// Biến lưu trữ các timeout IDs để cleanup (tránh memory leaks)
+let selectedGeojsonLayerTimeout = null; // Timeout khôi phục style của geojson layer
+let duanLayerBringToFrontTimeout = null; // Timeout bringToFront cho duan layers
+let popupOpenTimeouts = []; // Mảng lưu các timeout mở popup
+let notificationTimeouts = []; // Mảng lưu các timeout cho notifications
+let tempMarkerTimeout = null; // Timeout xóa marker tạm
+let inputFocusTimeout = null; // Timeout focus input
+let markerAnimationTimeout = null; // Timeout animation marker
+let initializationTimeout = null; // Timeout khởi tạo app
+let popupCloseTimeout = null; // Timeout đóng popup
+
+// Biến lưu trữ event listeners để cleanup
+let documentClickHandler = null; // Handler cho document click (ẩn suggestions)
+
 // Dữ liệu kinh tuyến trục của các tỉnh (định dạng thập phân)
 const provinceCentralMeridians = {
   'An Giang': 104.75,
@@ -181,6 +195,120 @@ function toggleGeojsonInteractivity(enable) {
 // ====== HÀM TIỆN ÍCH ======
 function removeVietnameseTones(str) {
   return str.normalize('NFD').replace(/\p{Diacritic}/gu, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+
+// Hàm mở popup với timeout cleanup tự động (tránh memory leak)
+function openPopupWithDelay(marker, delay = 500) {
+  const timeoutId = setTimeout(() => {
+    if (marker && marker.openPopup) {
+      marker.openPopup();
+      const popup = marker.getPopup();
+      if (popup && popup.getElement()) {
+        popup.getElement().style.zIndex = '1000';
+      }
+    }
+    // Xóa timeout ID khỏi mảng sau khi thực thi
+    const index = popupOpenTimeouts.indexOf(timeoutId);
+    if (index > -1) {
+      popupOpenTimeouts.splice(index, 1);
+    }
+  }, delay);
+  
+  // Lưu timeout ID để có thể cleanup sau
+  popupOpenTimeouts.push(timeoutId);
+  return timeoutId;
+}
+
+// Hàm cleanup tất cả popup timeouts
+function clearAllPopupTimeouts() {
+  popupOpenTimeouts.forEach(timeoutId => {
+    clearTimeout(timeoutId);
+  });
+  popupOpenTimeouts = [];
+}
+
+// Hàm cleanup tất cả timeouts để tránh memory leaks
+function cleanupAllTimeouts() {
+  // Clear selected geojson layer timeout
+  if (selectedGeojsonLayerTimeout) {
+    clearTimeout(selectedGeojsonLayerTimeout);
+    selectedGeojsonLayerTimeout = null;
+  }
+  
+  // Clear popup timeouts
+  clearAllPopupTimeouts();
+  
+  // Clear notification timeouts
+  notificationTimeouts.forEach(timeoutId => {
+    clearTimeout(timeoutId);
+  });
+  notificationTimeouts = [];
+  
+  // Clear temp marker timeout
+  if (tempMarkerTimeout) {
+    clearTimeout(tempMarkerTimeout);
+    tempMarkerTimeout = null;
+  }
+  
+  // Clear input focus timeout
+  if (inputFocusTimeout) {
+    clearTimeout(inputFocusTimeout);
+    inputFocusTimeout = null;
+  }
+  
+  // Clear marker animation timeout
+  if (markerAnimationTimeout) {
+    clearTimeout(markerAnimationTimeout);
+    markerAnimationTimeout = null;
+  }
+  
+  // Clear popup close timeout
+  if (popupCloseTimeout) {
+    clearTimeout(popupCloseTimeout);
+    popupCloseTimeout = null;
+  }
+  
+  // Clear search result marker timeout
+  if (searchResultMarkerTimeout) {
+    clearTimeout(searchResultMarkerTimeout);
+    searchResultMarkerTimeout = null;
+  }
+}
+
+// Hàm cleanup tất cả event listeners
+function cleanupAllEventListeners(map) {
+  // Remove document click handler
+  if (documentClickHandler) {
+    document.removeEventListener('click', documentClickHandler);
+    documentClickHandler = null;
+  }
+  
+  // Remove map click handlers
+  if (measureClickHandler) {
+    map.off('click', measureClickHandler);
+    measureClickHandler = null;
+  }
+  
+  if (areaClickHandler) {
+    map.off('click', areaClickHandler);
+    areaClickHandler = null;
+  }
+  
+  if (copyCoordinateClickHandler) {
+    map.off('click', copyCoordinateClickHandler);
+    copyCoordinateClickHandler = null;
+  }
+  
+  if (selectPointsClickHandler) {
+    map.off('click', selectPointsClickHandler);
+    selectPointsClickHandler = null;
+  }
+}
+
+// Hàm cleanup toàn bộ để tránh memory leaks
+function cleanupAll(map) {
+  cleanupAllTimeouts();
+  cleanupAllEventListeners(map);
 }
 
 function createPopupContent(properties) {
@@ -1052,8 +1180,13 @@ function addGeojsonToMap(map, data) {
         
         selectedGeojsonLayer = layer;
         
+        // Clear timeout cũ nếu có
+        if (selectedGeojsonLayerTimeout) {
+          clearTimeout(selectedGeojsonLayerTimeout);
+        }
+        
         // Tự động khôi phục sau 3 giây
-        setTimeout(() => {
+        selectedGeojsonLayerTimeout = setTimeout(() => {
           if (layer._originalGeojsonStyle && selectedGeojsonLayer === layer) {
             const style = layer._originalGeojsonStyle;
             layer.setStyle({
@@ -1064,6 +1197,7 @@ function addGeojsonToMap(map, data) {
             });
             selectedGeojsonLayer = null;
           }
+          selectedGeojsonLayerTimeout = null;
         }, 3000);
         
         openInfoPanel(feature.properties, isDhlvb);
@@ -1293,7 +1427,13 @@ function loadDuanConfig() {
 
 // Hàm lưu cấu hình vào localStorage
 function saveDuanConfig() {
-  localStorage.setItem('duanConfig', JSON.stringify(duanConfig));
+  try {
+    localStorage.setItem('duanConfig', JSON.stringify(duanConfig));
+  } catch (error) {
+    console.error('Lỗi khi lưu cấu hình:', error);
+    // Không hiển thị thông báo lỗi vì đây là operation background
+    // Có thể do storage đầy hoặc bị block bởi browser settings
+  }
 }
 
 // Hàm tạo màu mặc định cho file
@@ -1668,41 +1808,50 @@ function createDuanFileUI(filename, index) {
 
 // Hàm tải và hiển thị các file DuAn
 async function loadDuanFiles(map) {
-  // Tải danh sách file
-  duanFiles = await loadDuanFilesList();
-  
-  // Tải cấu hình đã lưu
-  loadDuanConfig();
-  
-  // Tạo UI cho từng file
-  const container = document.getElementById('duan-files-container');
-  if (!container) return;
-  
-  container.innerHTML = '';
-  
-  // Xóa cache cũ trước khi tải lại
-  duanFeaturesCache = {};
-  
-  duanFiles.forEach((filename, index) => {
-    const fileItem = createDuanFileUI(filename, index);
-    container.appendChild(fileItem);
+  try {
+    // Tải danh sách file
+    duanFiles = await loadDuanFilesList();
     
-    // Lấy cấu hình
-    const config = duanConfig[filename] || {
-      color: getDefaultColor(index),
-      weight: 4,
-      visible: true
-    };
+    // Tải cấu hình đã lưu
+    loadDuanConfig();
     
-    // Tải và hiển thị file nếu visible (chỉ cache các file visible)
-    if (config.visible) {
-      const dashArray = config.dashArray === '' ? null : config.dashArray;
-      addDuanFileToMap(map, filename, config.color, config.weight, dashArray);
+    // Tạo UI cho từng file
+    const container = document.getElementById('duan-files-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Xóa cache cũ trước khi tải lại
+    duanFeaturesCache = {};
+    
+    duanFiles.forEach((filename, index) => {
+      const fileItem = createDuanFileUI(filename, index);
+      container.appendChild(fileItem);
+      
+      // Lấy cấu hình
+      const config = duanConfig[filename] || {
+        color: getDefaultColor(index),
+        weight: 4,
+        visible: true
+      };
+      
+      // Tải và hiển thị file nếu visible (chỉ cache các file visible)
+      if (config.visible) {
+        const dashArray = config.dashArray === '' ? null : config.dashArray;
+        addDuanFileToMap(map, filename, config.color, config.weight, dashArray);
+      }
+    });
+    
+    // Thiết lập event listeners
+    setupDuanFileControls(map);
+  } catch (error) {
+    console.error('Lỗi khi tải danh sách file DuAn:', error);
+    // Hiển thị thông báo lỗi cho người dùng (không dùng alert để không làm gián đoạn)
+    const container = document.getElementById('duan-files-container');
+    if (container) {
+      container.innerHTML = '<div style="color: #ef4444; padding: 10px; text-align: center;">Không thể tải danh sách dự án. Vui lòng thử lại sau.</div>';
     }
-  });
-  
-  // Thiết lập event listeners
-  setupDuanFileControls(map);
+  }
 }
 
 // Hàm thiết lập các control cho file DuAn
@@ -1993,13 +2142,7 @@ function setupSearch(map) {
       });
       
       // Mở popup sau khi di chuyển
-      setTimeout(() => {
-        searchResultMarker.openPopup();
-        const popup = searchResultMarker.getPopup();
-        if (popup && popup.getElement()) {
-          popup.getElement().style.zIndex = '1000';
-        }
-      }, 500);
+      openPopupWithDelay(searchResultMarker, 500);
       
       // Tự động xóa marker sau 5 giây
       autoRemoveMarker(map, searchResultMarker, 5000);
@@ -2033,13 +2176,7 @@ function setupSearch(map) {
               duration: 1.0
             });
             
-            setTimeout(() => {
-              searchResultMarker.openPopup();
-              const popup = searchResultMarker.getPopup();
-              if (popup && popup.getElement()) {
-                popup.getElement().style.zIndex = '1000';
-              }
-            }, 500);
+            openPopupWithDelay(searchResultMarker, 500);
             
             // Tự động xóa marker sau 3 giây
             autoRemoveMarker(map, searchResultMarker, 3000);
@@ -2051,8 +2188,9 @@ function setupSearch(map) {
             
             showSearchNotification('Đã tìm thấy: ' + suggestion.title, 'success');
           })
-          .catch(() => {
-            alert('Lỗi khi tải dữ liệu!');
+          .catch((error) => {
+            console.error('Lỗi khi tải dữ liệu GeoJSON:', error);
+            showSearchNotification('Không thể tải dữ liệu địa điểm. Vui lòng thử lại.', 'error');
           });
         return;
       } else {
@@ -2118,13 +2256,7 @@ function setupSearch(map) {
             duration: 1.0
           });
           
-          setTimeout(() => {
-            searchResultMarker.openPopup();
-            const popup = searchResultMarker.getPopup();
-            if (popup && popup.getElement()) {
-              popup.getElement().style.zIndex = '1000';
-            }
-          }, 500);
+          openPopupWithDelay(searchResultMarker, 500);
           
           // Tự động xóa marker sau 3 giây
           autoRemoveMarker(map, searchResultMarker, 3000);
@@ -2136,8 +2268,9 @@ function setupSearch(map) {
           
           showSearchNotification('Đã tìm thấy: ' + foundFile.replace('.geojson', ''), 'success');
         })
-        .catch(() => {
-          alert('Lỗi khi tải dữ liệu!');
+        .catch((error) => {
+          console.error('Lỗi khi tải dữ liệu GeoJSON:', error);
+          showSearchNotification('Không thể tải dữ liệu địa điểm. Vui lòng thử lại.', 'error');
         });
       return;
     }
@@ -2239,13 +2372,7 @@ function setupSearch(map) {
     
     // Mở popup của marker đầu tiên sau khi zoom
     if (markers.length > 0) {
-      setTimeout(() => {
-        markers[0].openPopup();
-        const popup = markers[0].getPopup();
-        if (popup && popup.getElement()) {
-          popup.getElement().style.zIndex = '1000';
-        }
-      }, 600);
+      openPopupWithDelay(markers[0], 600);
     }
     
     // Hiển thị thông báo
@@ -2456,13 +2583,7 @@ function setupSearch(map) {
           // Đóng tất cả popup
           markers.forEach(m => m.closePopup());
           // Mở popup của marker mới
-          setTimeout(() => {
-            searchResultMarker.openPopup();
-            const popup = searchResultMarker.getPopup();
-            if (popup && popup.getElement()) {
-              popup.getElement().style.zIndex = '1000';
-            }
-          }, 100);
+          openPopupWithDelay(searchResultMarker, 100);
           
           // Zoom đến marker đó với animation
           map.flyTo(markerPoint, Math.max(map.getZoom(), 13), { 
@@ -2538,11 +2659,16 @@ function setupSearch(map) {
   });
   
   // Ẩn gợi ý khi click ra ngoài
-  document.addEventListener('click', function(e) {
+  // Xóa event listener cũ nếu có
+  if (documentClickHandler) {
+    document.removeEventListener('click', documentClickHandler);
+  }
+  documentClickHandler = function(e) {
     if (!searchInput.contains(e.target) && !suggestionsContainer.contains(e.target)) {
       suggestionsContainer.classList.remove('show');
     }
-  });
+  };
+  document.addEventListener('click', documentClickHandler);
 
   searchBtn.onclick = function() {
     performSearch();
@@ -2656,13 +2782,19 @@ function findLayerInAllDuanFiles(feature) {
     const duanLayer = duanLayers[filename];
     if (duanLayer) {
       duanLayer.eachLayer(function(layer) {
-        // So sánh feature bằng cách so sánh geometry và properties
-        if (layer.feature === feature || 
-            (layer.feature && feature && 
-             JSON.stringify(layer.feature.geometry) === JSON.stringify(feature.geometry) &&
-             layer.feature.properties && feature.properties &&
-             layer.feature.properties.ten === feature.properties.ten)) {
-          foundLayer = layer;
+        try {
+          // So sánh feature bằng cách so sánh geometry và properties
+          if (layer.feature === feature || 
+              (layer.feature && feature && 
+               JSON.stringify(layer.feature.geometry) === JSON.stringify(feature.geometry) &&
+               layer.feature.properties && feature.properties &&
+               layer.feature.properties.ten === feature.properties.ten)) {
+            foundLayer = layer;
+          }
+        } catch (error) {
+          // Bỏ qua lỗi stringify và tiếp tục so sánh các layer khác
+          // Có thể xảy ra nếu geometry quá lớn hoặc có circular reference
+          console.debug('Lỗi khi so sánh geometry:', error);
         }
       });
       if (foundLayer) break; // Tìm thấy rồi thì dừng
@@ -2725,22 +2857,34 @@ function zoomToDuanFeature(map, feature, cachedData) {
   
   
   // Mở popup sau khi zoom và đảm bảo nó ở trên cùng
-  setTimeout(() => {
-    searchResultMarker.openPopup();
-    // Đảm bảo popup được hiển thị trên cùng
-    const popup = searchResultMarker.getPopup();
-    if (popup && popup.getElement()) {
-      popup.getElement().style.zIndex = '1000';
-      // Đảm bảo popup tip cũng có z-index cao
-      const popupTip = popup.getElement().parentElement?.querySelector('.leaflet-popup-tip');
-      if (popupTip) {
-        popupTip.style.zIndex = '1000';
+  const popupTimeoutId = setTimeout(() => {
+    if (searchResultMarker && searchResultMarker.openPopup) {
+      searchResultMarker.openPopup();
+      // Đảm bảo popup được hiển thị trên cùng
+      const popup = searchResultMarker.getPopup();
+      if (popup && popup.getElement()) {
+        popup.getElement().style.zIndex = '1000';
+        // Đảm bảo popup tip cũng có z-index cao
+        const popupTip = popup.getElement().parentElement?.querySelector('.leaflet-popup-tip');
+        if (popupTip) {
+          popupTip.style.zIndex = '1000';
+        }
       }
     }
+    // Xóa khỏi mảng sau khi thực thi
+    const index = popupOpenTimeouts.indexOf(popupTimeoutId);
+    if (index > -1) {
+      popupOpenTimeouts.splice(index, 1);
+    }
   }, 600);
+  popupOpenTimeouts.push(popupTimeoutId);
   
   // Tự động xóa marker sau 3 giây (không phụ thuộc vào highlight)
-  setTimeout(() => {
+  // Clear timeout cũ nếu có
+  if (tempMarkerTimeout) {
+    clearTimeout(tempMarkerTimeout);
+  }
+  tempMarkerTimeout = setTimeout(() => {
     // Xóa marker
     if (searchResultMarker && searchResultMarker._map) {
       if (searchResultMarker.getPopup && searchResultMarker.getPopup()) {
@@ -2749,6 +2893,7 @@ function zoomToDuanFeature(map, feature, cachedData) {
       map.removeLayer(searchResultMarker);
       searchResultMarker = null;
     }
+    tempMarkerTimeout = null;
   }, 3000);
   
   // Hiển thị thông tin
@@ -2787,17 +2932,35 @@ function showSearchNotification(message, type = 'success') {
   document.body.appendChild(notification);
   
   // Hiển thị với animation
-  setTimeout(() => {
+  const showTimeoutId = setTimeout(() => {
     notification.classList.add('show');
+    // Xóa khỏi mảng sau khi thực thi
+    const index = notificationTimeouts.indexOf(showTimeoutId);
+    if (index > -1) {
+      notificationTimeouts.splice(index, 1);
+    }
   }, 10);
+  notificationTimeouts.push(showTimeoutId);
   
   // Tự động ẩn sau 4 giây
-  setTimeout(() => {
+  const hideTimeoutId = setTimeout(() => {
     notification.classList.remove('show');
-    setTimeout(() => {
+    const removeTimeoutId = setTimeout(() => {
       notification.remove();
+      // Xóa khỏi mảng sau khi thực thi
+      const index = notificationTimeouts.indexOf(removeTimeoutId);
+      if (index > -1) {
+        notificationTimeouts.splice(index, 1);
+      }
     }, 300);
+    notificationTimeouts.push(removeTimeoutId);
+    // Xóa khỏi mảng sau khi thực thi
+    const index = notificationTimeouts.indexOf(hideTimeoutId);
+    if (index > -1) {
+      notificationTimeouts.splice(index, 1);
+    }
   }, 4000);
+  notificationTimeouts.push(hideTimeoutId);
 }
 
 // ====== Thiết lập các control trong hộp công cụ ======
@@ -3853,8 +4016,15 @@ function setupCopyCoordinateButton(map) {
           }).addTo(map);
           
           // Xóa marker sau 3 giây
-          setTimeout(function() {
-            map.removeLayer(tempMarker);
+          // Clear timeout cũ nếu có
+          if (tempMarkerTimeout) {
+            clearTimeout(tempMarkerTimeout);
+          }
+          tempMarkerTimeout = setTimeout(function() {
+            if (tempMarker && map.hasLayer(tempMarker)) {
+              map.removeLayer(tempMarker);
+            }
+            tempMarkerTimeout = null;
           }, 3000);
           
         } catch (err) {
@@ -4002,9 +4172,16 @@ function promptForPointName(pointNumber) {
     const cancelBtn = document.getElementById('cancel-new-point-btn');
     
     // Focus vào input và select text
-    setTimeout(() => {
-      input.focus();
-      input.select();
+    // Clear timeout cũ nếu có
+    if (inputFocusTimeout) {
+      clearTimeout(inputFocusTimeout);
+    }
+    inputFocusTimeout = setTimeout(() => {
+      if (input) {
+        input.focus();
+        input.select();
+      }
+      inputFocusTimeout = null;
     }, 100);
     
     // Xử lý lưu tên
@@ -4217,9 +4394,16 @@ window.editPointName = function editPointName(index) {
     const cancelBtn = document.getElementById('cancel-btn');
     
     // Focus vào input và select text
-    setTimeout(() => {
-      input.focus();
-      input.select();
+    // Clear timeout cũ nếu có
+    if (inputFocusTimeout) {
+      clearTimeout(inputFocusTimeout);
+    }
+    inputFocusTimeout = setTimeout(() => {
+      if (input) {
+        input.focus();
+        input.select();
+      }
+      inputFocusTimeout = null;
     }, 100);
     
     // Xử lý lưu tên
@@ -4312,8 +4496,15 @@ window.flyToPoint = function flyToPoint(index) {
       const markerElement = point.marker.getElement();
       if (markerElement) {
         markerElement.style.transform = 'scale(1.5)';
-        setTimeout(() => {
-          markerElement.style.transform = 'scale(1)';
+        // Clear timeout cũ nếu có
+        if (markerAnimationTimeout) {
+          clearTimeout(markerAnimationTimeout);
+        }
+        markerAnimationTimeout = setTimeout(() => {
+          if (markerElement) {
+            markerElement.style.transform = 'scale(1)';
+          }
+          markerAnimationTimeout = null;
         }, 500);
       }
     }
@@ -4365,24 +4556,36 @@ function generateKML() {
       </IconStyle>
     </Style>
 `;
-  
+
   let placemarks = '';
   selectedPoints.forEach(point => {
+    // Escape XML special characters trong tên để tránh lỗi parse
+    const escapedName = (point.name || 'Điểm')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+    
+    // Validate tọa độ
+    const lat = typeof point.lat === 'number' ? point.lat : 0;
+    const lng = typeof point.lng === 'number' ? point.lng : 0;
+    
     placemarks += `
     <Placemark>
-      <name>${point.name}</name>
-      <description>Tọa độ: ${point.lat.toFixed(6)}, ${point.lng.toFixed(6)}</description>
+      <name>${escapedName}</name>
+      <description>Tọa độ: ${lat.toFixed(6)}, ${lng.toFixed(6)}</description>
       <styleUrl>#pointStyle</styleUrl>
       <Point>
-        <coordinates>${point.lng.toFixed(6)},${point.lat.toFixed(6)},0</coordinates>
+        <coordinates>${lng.toFixed(6)},${lat.toFixed(6)},0</coordinates>
       </Point>
     </Placemark>
 `;
   });
-  
+
   const kmlFooter = `  </Document>
 </kml>`;
-  
+
   return kmlHeader + placemarks + kmlFooter;
 }
 
@@ -4392,28 +4595,33 @@ function exportKML() {
     alert('Chưa có điểm nào được chọn!');
     return;
   }
-  
-  const kmlContent = generateKML();
-  const blob = new Blob([kmlContent], { type: 'application/vnd.google-earth.kml+xml' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `diem_da_chon_${new Date().getTime()}.kml`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  
-  // Hiển thị thông báo thành công
-  if (window.mapInstance) {
-    const notification = L.popup({
-      closeButton: false,
-      autoClose: 3000,
-      className: 'coordinate-copy-notification'
-    })
-    .setLatLng(window.mapInstance.getCenter())
-    .setContent(`<div style="text-align: center; padding: 8px;"><strong>✓ Đã xuất file KML!</strong><br>${selectedPoints.length} điểm</div>`)
-    .openOn(window.mapInstance);
+
+  try {
+    const kmlContent = generateKML();
+    const blob = new Blob([kmlContent], { type: 'application/vnd.google-earth.kml+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `diem_da_chon_${new Date().getTime()}.kml`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Hiển thị thông báo thành công
+    if (window.mapInstance) {
+      const notification = L.popup({
+        closeButton: false,
+        autoClose: 3000,
+        className: 'coordinate-copy-notification'
+      })
+      .setLatLng(window.mapInstance.getCenter())
+      .setContent(`<div style="text-align: center; padding: 8px;"><strong>✓ Đã xuất file KML!</strong><br>${selectedPoints.length} điểm</div>`)
+      .openOn(window.mapInstance);
+    }
+  } catch (error) {
+    console.error('Lỗi khi xuất file KML:', error);
+    alert('Không thể tạo file KML. Vui lòng thử lại.');
   }
 }
 
@@ -4641,8 +4849,15 @@ function setupSharePointsButton(map) {
         
         // Hiển thị popup ngắn
         marker.openPopup();
-        setTimeout(() => {
-          marker.closePopup();
+        // Clear timeout cũ nếu có
+        if (popupCloseTimeout) {
+          clearTimeout(popupCloseTimeout);
+        }
+        popupCloseTimeout = setTimeout(() => {
+          if (marker && marker.closePopup) {
+            marker.closePopup();
+          }
+          popupCloseTimeout = null;
         }, 2000);
       };
       
@@ -4706,7 +4921,7 @@ function setupSharePointsButton(map) {
   setupLocateButton(map);
   loadAllGeojsons(map);
   // Tải các dự án sau một khoảng thời gian ngắn để đảm bảo chúng nằm phía trên các layer khác
-  setTimeout(() => {
+  const projectLoadTimeoutId = setTimeout(() => {
     loadProjects(map); // Tải các dự án với màu sắc khác nhau
     // Tải các file DuAn (nằm trên cùng)
     loadDuanFiles(map);
@@ -4719,7 +4934,11 @@ function setupSharePointsButton(map) {
   setupSharePointsButton(map);
   
   // Mở hộp công cụ khi khởi động (tùy chọn)
-  setTimeout(() => {
+  const toolsPanelTimeoutId = setTimeout(() => {
     toggleToolsPanel(true);
   }, 300);
+  
+  // Lưu các initialization timeouts (không cần cleanup vì chỉ chạy một lần)
+  // Tuy nhiên lưu lại để có thể cancel nếu cần khi reload page
+  initializationTimeout = { projectLoadTimeoutId, toolsPanelTimeoutId };
 })(); 
