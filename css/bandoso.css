@@ -41,36 +41,32 @@ body {
 /* Nút toggle thông tin */
 .info-toggle-btn {
   position: absolute;
-  bottom: 24px;
-  left: 24px;
+  bottom: 20px;
+  left: 20px;
   z-index: 1200;
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1),
-              0 4px 12px rgba(0, 0, 0, 0.06),
-              inset 0 1px 0 rgba(255, 255, 255, 0.8),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
+              0 2px 6px rgba(0, 0, 0, 0.04);
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #1d1d1f;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
 }
 
 .info-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12),
-              0 6px 16px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.9),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1),
+              0 3px 8px rgba(0, 0, 0, 0.06);
+  transform: scale(1.03) translateY(-1px);
   border-color: rgba(255, 255, 255, 0.4);
 }
 
@@ -93,25 +89,23 @@ body {
 /* Khối thông tin có thể ẩn/hiện */
 .info-card {
   position: absolute;
-  bottom: 24px;
-  left: 24px;
+  bottom: 20px;
+  left: 20px;
   z-index: 1200;
-  max-width: 420px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(60px) saturate(200%);
-  -webkit-backdrop-filter: blur(60px) saturate(200%);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12),
-              0 12px 32px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.7),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 24px;
-  padding: 18px 28px;
+  max-width: 380px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08),
+              0 4px 12px rgba(0, 0, 0, 0.04);
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 14px 20px;
   transform: translateY(0);
   opacity: 1;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: auto;
-  animation: slideUpFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+  animation: slideUpFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
 }
 
 .info-card.hidden {
@@ -148,7 +142,6 @@ body {
   color: #6b7280;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
-  border: 1px solid rgba(0, 0, 0, 0.08);
   padding: 0;
 }
 
@@ -185,34 +178,33 @@ body {
 .info-card-footer {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 0.5px solid rgba(0, 0, 0, 0.06);
 }
 
 .info-footer-badge {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #007aff;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
 .info-footer-link {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border-radius: 14px;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
   background: rgba(0, 122, 255, 0.08);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(15px);
   color: #007aff;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 122, 255, 0.15);
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 0.5px solid rgba(0, 122, 255, 0.15);
+  box-shadow: 0 2px 6px rgba(0, 122, 255, 0.06);
 }
 
 .info-footer-link:hover {
@@ -229,12 +221,11 @@ body {
 }
 
 .brand-logo {
-    height: 36px;
-    width: 36px;
+    height: 32px;
+    width: 32px;
     border-radius: 999px;
     object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1),
-                0 0 0 1px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .brand-text {
@@ -253,10 +244,10 @@ body {
 }
 
 h1 {
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 600;
     margin: 0 0 2px 0;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     text-transform: none;
     color: #1d1d1f;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
@@ -265,13 +256,13 @@ h1 {
 
 .subtitle {
     color: #4a4a4a;
-    font-size: 0.88rem;
-    font-weight: 500;
+    font-size: 0.8rem;
+    font-weight: 400;
     margin: 0;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
     text-transform: none;
-    opacity: 1;
-    line-height: 1.4;
+    opacity: 0.9;
+    line-height: 1.3;
 }
 
 #map {
@@ -292,17 +283,15 @@ h1 {
 
 /* Popup hiện đại */
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(60px) saturate(200%);
-    -webkit-backdrop-filter: blur(60px) saturate(200%);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
     color: #1d1d1f;
-    font-size: 15px;
-    border-radius: 20px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
-                0 6px 20px rgba(0, 0, 0, 0.08),
-                inset 0 1px 0 rgba(255, 255, 255, 0.7),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.35);
+    font-size: 14px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
+                0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 0.5px solid rgba(255, 255, 255, 0.35);
 }
 .popup-info {
     min-width: 240px;
@@ -357,7 +346,7 @@ h1 {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     font-size: 1.1em;
     font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: none;
     border-radius: 16px;
     padding: 14px 32px;
     box-shadow: 0 6px 20px rgba(0, 122, 255, 0.25),
@@ -414,36 +403,32 @@ h1 {
 .tools-toggle-btn {
   position: absolute;
   top: 50%;
-  right: 24px;
+  right: 20px;
   transform: translateY(-50%);
   z-index: 1200;
-  width: 52px;
-  height: 52px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1),
-              0 4px 12px rgba(0, 0, 0, 0.06),
-              inset 0 1px 0 rgba(255, 255, 255, 0.8),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
+              0 2px 6px rgba(0, 0, 0, 0.04);
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #1d1d1f;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInScale 0.5s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both;
 }
 
 .tools-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12),
-              0 6px 16px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.9),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-  transform: translateY(-50%) scale(1.05) translateX(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1),
+              0 3px 8px rgba(0, 0, 0, 0.06);
+  transform: translateY(-50%) scale(1.03) translateX(-1px);
   border-color: rgba(255, 255, 255, 0.4);
 }
 
@@ -458,19 +443,17 @@ h1 {
   top: 0;
   right: 0;
   height: 100%;
-  width: 400px;
+  width: 360px;
   max-width: 90vw;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(60px) saturate(200%);
-  -webkit-backdrop-filter: blur(60px) saturate(200%);
-  box-shadow: -24px 0 64px rgba(0, 0, 0, 0.12),
-              -12px 0 32px rgba(0, 0, 0, 0.08),
-              inset 1px 0 0 rgba(255, 255, 255, 0.6),
-              inset -1px 0 0 rgba(0, 0, 0, 0.05);
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08),
+              -4px 0 12px rgba(0, 0, 0, 0.04);
+  border-left: 0.5px solid rgba(255, 255, 255, 0.3);
   transform: translateX(100%);
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1300;
   display: flex;
   flex-direction: column;
@@ -502,24 +485,24 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 28px 20px 28px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 16px 20px 14px 20px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(20px);
 }
 
 .tools-panel-label {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   color: #9ca3af;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   font-weight: 600;
 }
 
 .tools-panel-title {
-  font-size: 1.1rem;
-  font-weight: 650;
+  font-size: 1rem;
+  font-weight: 600;
   color: #111827;
   margin: 0;
 }
@@ -537,7 +520,6 @@ h1 {
   cursor: pointer;
   color: #6b7280;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border: 0.5px solid rgba(0, 0, 0, 0.06);
   padding: 0;
 }
 
@@ -555,30 +537,30 @@ h1 {
 
 .tools-panel-tabs {
   display: flex;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 0 28px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+  padding: 0 20px;
   gap: 0;
   background: rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(15px);
 }
 
 .tools-tab-btn {
   flex: 1;
-  padding: 14px 16px;
+  padding: 10px 12px;
   border: none;
   background: transparent;
   color: #6b7280;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   text-align: center;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .tools-tab-btn span {
@@ -635,11 +617,11 @@ h1 {
 }
 
 .tools-panel-body {
-  padding: 28px;
+  padding: 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   flex: 1;
 }
 
@@ -695,18 +677,16 @@ h1 {
 
 .tools-panel .search-input-modern {
   width: 100%;
-  padding: 14px 20px;
-  border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  font-size: 1em;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.9em;
   outline: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(20px);
   color: #1d1d1f;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
 .tools-panel .search-input-modern:focus {
@@ -724,21 +704,19 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px 20px;
-  border-radius: 14px;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
   background: #007aff;
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(20px);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  font-size: 1em;
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.9em;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.25),
-              0 3px 10px rgba(0, 122, 255, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.3),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 3px 10px rgba(0, 122, 255, 0.2),
+              0 2px 5px rgba(0, 122, 255, 0.12);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .tools-panel .search-btn-modern:hover, .tools-panel .search-btn-modern:focus {
@@ -757,15 +735,13 @@ h1 {
 
 /* Ngăn Cài đặt */
 .settings-section {
-  padding: 24px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(30px);
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.03);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .settings-section:hover {
@@ -798,7 +774,7 @@ h1 {
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(20px);
   border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: none;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
@@ -845,7 +821,7 @@ h1 {
   width: 100%;
   padding: 16px 20px;
   border-radius: 14px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: none;
   background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(20px);
   color: #1d1d1f;
@@ -995,7 +971,7 @@ h1 {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(30px);
   border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: none;
   padding: 18px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
@@ -1200,7 +1176,7 @@ h1 {
   background: rgba(0, 122, 255, 0.9);
   backdrop-filter: blur(20px);
   color: #fff;
-  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  border: none;
   font-size: 1.08em;
   font-weight: 600;
   cursor: pointer;
@@ -1349,7 +1325,7 @@ h1 {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: none;
   border-radius: 16px;
   padding: 14px 32px;
   box-shadow: 0 6px 20px rgba(52, 199, 89, 0.25),
@@ -1393,7 +1369,7 @@ h1 {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: none;
   border-radius: 16px;
   padding: 14px 32px;
   box-shadow: 0 6px 20px rgba(255, 59, 48, 0.25),
@@ -1426,7 +1402,7 @@ h1 {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: none;
   border-radius: 16px;
   padding: 14px 32px;
   box-shadow: 0 6px 20px rgba(255, 149, 0, 0.25),
@@ -1464,7 +1440,7 @@ h1 {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
   font-size: 1.1em;
   font-weight: 600;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: none;
   border-radius: 16px;
   padding: 14px 32px;
   box-shadow: 0 6px 20px rgba(255, 59, 48, 0.25),
@@ -1511,13 +1487,12 @@ h1 {
 /* Nhóm công cụ */
 .tool-group {
   background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(20px);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  border: 0.5px solid rgba(255, 255, 255, 0.3);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
 }
 
 .tool-group:hover {
@@ -1530,31 +1505,33 @@ h1 {
 .tool-group-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: rgba(0, 122, 255, 0.08);
-  border-bottom: 1px solid rgba(0, 122, 255, 0.1);
-  backdrop-filter: blur(10px);
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 122, 255, 0.06);
+  border-bottom: 0.5px solid rgba(0, 122, 255, 0.1);
+  backdrop-filter: blur(8px);
 }
 
 .tool-group-header svg {
   color: #007aff;
   flex-shrink: 0;
+  width: 14px;
+  height: 14px;
 }
 
 .tool-group-title {
-  font-size: 0.85rem;
-  font-weight: 700;
+  font-size: 0.75rem;
+  font-weight: 600;
   color: #007aff;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
 }
 
 .tool-group-content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 12px;
+  gap: 6px;
+  padding: 10px;
 }
 
 /* Nút công cụ trong nhóm */
@@ -1563,11 +1540,11 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
@@ -1642,15 +1619,15 @@ h1 {
 .tools-panel .export-btn-custom,
 .tools-panel .clear-points-btn-custom {
   width: 100%;
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 0.95rem;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.85rem;
   text-align: left;
   white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 10px;
+  gap: 8px;
   margin: 0;
 }
 
@@ -2034,21 +2011,19 @@ h1 {
 /* Thông tin đo diện tích */
 .area-info {
   position: absolute;
-  left: 24px;
-  top: 24px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
-  border-radius: 18px;
-  padding: 16px 24px;
-  max-width: 420px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
-              0 6px 20px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.7),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(255, 149, 0, 0.25);
+  left: 20px;
+  top: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-radius: 12px;
+  padding: 12px 18px;
+  max-width: 360px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
+              0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 0.5px solid rgba(255, 149, 0, 0.25);
   z-index: 1200;
-  animation: fadeInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: fadeInDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 .area-info-content {
   display: flex;
@@ -2070,19 +2045,17 @@ h1 {
   top: 0;
   right: 0;
   height: 100%;
-  width: 400px;
+  width: 360px;
   max-width: 90vw;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(60px) saturate(200%);
-  -webkit-backdrop-filter: blur(60px) saturate(200%);
-  box-shadow: -24px 0 64px rgba(0, 0, 0, 0.12),
-              -12px 0 32px rgba(0, 0, 0, 0.08),
-              inset 1px 0 0 rgba(255, 255, 255, 0.6),
-              inset -1px 0 0 rgba(0, 0, 0, 0.05);
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.08),
+              -4px 0 12px rgba(0, 0, 0, 0.04);
+  border-left: 0.5px solid rgba(255, 255, 255, 0.3);
   transform: translateX(100%);
   opacity: 0;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1300;
   display: flex;
   flex-direction: column;
@@ -2098,24 +2071,24 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 24px 28px 20px 28px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 16px 20px 14px 20px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
   background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(20px);
 }
 
 .info-panel-label {
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   color: #9ca3af;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   font-weight: 600;
 }
 
 .info-panel-title {
-  font-size: 1.1rem;
-  font-weight: 650;
+  font-size: 1rem;
+  font-weight: 600;
   color: #111827;
   margin: 0;
 }
@@ -2133,7 +2106,6 @@ h1 {
   cursor: pointer;
   color: #6b7280;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  border: 0.5px solid rgba(0, 0, 0, 0.06);
   padding: 0;
 }
 
@@ -2298,21 +2270,19 @@ h1 {
 /* Thông tin đo khoảng cách */
 .measure-info {
   position: absolute;
-  left: 24px;
-  top: 24px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(50px) saturate(200%);
-  -webkit-backdrop-filter: blur(50px) saturate(200%);
-  border-radius: 18px;
-  padding: 16px 24px;
-  max-width: 420px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
-              0 6px 20px rgba(0, 0, 0, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.7),
-              inset 0 -1px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(52, 199, 89, 0.25);
+  left: 20px;
+  top: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  border-radius: 12px;
+  padding: 12px 18px;
+  max-width: 360px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08),
+              0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 0.5px solid rgba(52, 199, 89, 0.25);
   z-index: 1200;
-  animation: fadeInDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: fadeInDown 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 .measure-info-content {
   display: flex;
@@ -2731,7 +2701,7 @@ h1 {
 .search-results-close {
   background: rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: none;
   color: #6b7280;
   cursor: pointer;
   padding: 0;
@@ -2773,7 +2743,7 @@ h1 {
   margin-bottom: 8px;
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: none;
 }
 
 .search-result-item:hover {
@@ -2799,7 +2769,7 @@ h1 {
   box-shadow: 0 4px 12px rgba(0, 122, 255, 0.25),
               inset 0 1px 0 rgba(255, 255, 255, 0.3),
               inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  border: none;
 }
 
 .search-result-item-content {
@@ -2825,7 +2795,7 @@ h1 {
   background: #007aff;
   backdrop-filter: blur(20px);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: none;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
@@ -2972,13 +2942,13 @@ h1 {
 
 /* ====== Styling cho phần chọn hệ tọa độ ====== */
 .coordinate-system-selector {
-  margin-top: 12px;
-  padding: 14px;
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(14, 165, 233, 0.05) 100%);
-  border-radius: 12px;
-  border: 1px solid rgba(56, 189, 248, 0.15);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
+  margin-top: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.06) 0%, rgba(14, 165, 233, 0.04) 100%);
+  border-radius: 10px;
+  border: 0.5px solid rgba(56, 189, 248, 0.15);
+  backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
 }
 
 .coordinate-system-selector:hover {
@@ -3028,21 +2998,21 @@ h1 {
 
 .coordinate-select {
   width: 100%;
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: #ffffff;
-  border: 2px solid rgba(14, 165, 233, 0.2);
-  border-radius: 8px;
-  font-size: 0.875rem;
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: 6px;
+  font-size: 0.8rem;
   font-weight: 500;
   color: #334155;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   outline: none;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2.5 4.5L6 8L9.5 4.5' stroke='%230ea5e9' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  padding-right: 36px;
+  background-position: right 10px center;
+  padding-right: 32px;
 }
 
 .coordinate-select:hover {
@@ -3113,6 +3083,7 @@ h1 {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
   color: #ffffff;
   font-weight: 700;
+  border: none;
 }
 
 .select-points-btn-custom svg {
@@ -3138,6 +3109,7 @@ h1 {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: #ffffff;
   font-weight: 700;
+  border: none;
 }
 
 .export-btn-custom svg {
@@ -3158,6 +3130,7 @@ h1 {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: #ffffff;
   font-weight: 700;
+  border: none;
 }
 
 .clear-points-btn-custom svg {
@@ -3175,12 +3148,12 @@ h1 {
 }
 
 .selected-points-info {
-  margin-top: 12px;
-  padding: 14px;
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(124, 58, 237, 0.05) 100%);
-  border-radius: 12px;
-  border: 1px solid rgba(139, 92, 246, 0.15);
-  backdrop-filter: blur(10px);
+  margin-top: 10px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, rgba(124, 58, 237, 0.04) 100%);
+  border-radius: 10px;
+  border: 0.5px solid rgba(139, 92, 246, 0.15);
+  backdrop-filter: blur(8px);
 }
 
 .points-count {
@@ -3215,7 +3188,7 @@ h1 {
   padding: 8px 10px;
   background: #ffffff;
   border-radius: 8px;
-  border: 1px solid rgba(139, 92, 246, 0.1);
+  border: none;
   transition: all 0.2s ease;
   cursor: pointer;
 }
