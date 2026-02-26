@@ -410,9 +410,12 @@
           </div>
 
           <!-- Ẩn/Hiện ranh giới -->
+          <!-- RANH GIỚI XÃ/PHƯỜNG -->
           <div class="settings-section">
-            <div class="settings-section-title">Ranh giới xã/phường</div>
-            <button id="toggle-overlay-btn-custom" class="toggle-overlay-btn-custom">
+            <div class="settings-section-title">RANH GIỚI XÃ/PHƯỜNG</div>
+            
+            <!-- Nút bật/tắt hiển thị -->
+            <button id="toggle-overlay-btn-custom" class="toggle-overlay-btn-custom" style="margin-bottom: 12px;">
               <span class="toggle-icon">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -421,15 +424,27 @@
               </span>
               <span class="toggle-text">Hiển thị ranh giới</span>
             </button>
-          </div>
 
-          <!-- Độ trong suốt -->
-          <div class="settings-section">
-            <div class="settings-section-title">Độ trong suốt</div>
-            <div class="opacity-control-custom">
-              <input type="range" id="opacity-slider-custom" min="0" max="1" step="0.05" value="0.4" class="opacity-slider">
-              <div class="opacity-value">
-                <span id="opacity-value-text">0.40</span>
+            <!-- Các tùy chỉnh -->
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <!-- Độ trong suốt -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <label style="font-size: 0.85em; color: #6b7280; white-space: nowrap; font-weight: 600;">Độ trong suốt:</label>
+                <input type="range" id="opacity-slider-custom" min="0" max="1" step="0.05" value="0.4" class="opacity-slider" style="flex: 1;">
+                <span id="opacity-value-text" style="font-size: 0.85em; font-weight: 600; color: #1f2937; min-width: 45px; text-align: right;">0.40</span>
+              </div>
+
+              <!-- Màu ranh giới -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <label style="font-size: 0.85em; color: #6b7280; white-space: nowrap; font-weight: 600;">Màu ranh giới:</label>
+                <input type="color" id="boundary-color-picker" value="#000000" style="width: 50px; height: 35px; border: 1px solid #d1d5db; border-radius: 6px; cursor: pointer;">
+              </div>
+              
+              <!-- Độ dày -->
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <label style="font-size: 0.85em; color: #6b7280; white-space: nowrap; font-weight: 600;">Độ dày:</label>
+                <input type="range" id="boundary-weight-slider" min="0.5" max="5" step="0.5" value="0.5" style="flex: 1;">
+                <span id="boundary-weight-value" style="font-size: 0.85em; font-weight: 600; color: #1f2937; min-width: 45px; text-align: right;">0.5px</span>
               </div>
             </div>
           </div>

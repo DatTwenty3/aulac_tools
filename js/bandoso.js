@@ -29,6 +29,8 @@ let cachedGeojsonFiles = [];
 let geojsonLayers = [];
 let geojsonVisible = true;
 let currentOverlayOpacity = 0.4;
+let currentBoundaryColor = '#000000'; // Màu ranh giới mặc định (đen)
+let currentBoundaryWeight = 0.5; // Độ dày ranh giới mặc định
 let selectedGeojsonLayer = null; // Layer phường/xã đang được chọn
 
 // Biến cho quản lý các file DuAn
@@ -1106,16 +1108,16 @@ function addGeojsonToMap(map, data) {
       // Sử dụng màu từ GeoJSON nếu có, nếu không thì dùng màu đã gán
       const featureStyle = feature.properties.style || {};
       return {
-        color: isDhlvb ? '#ff0000' : (featureStyle.color || '#3388ff'),
-        weight: isDhlvb ? 4 : (featureStyle.weight || 2),
+        color: isDhlvb ? '#ff0000' : (featureStyle.color || currentBoundaryColor),
+        weight: isDhlvb ? 4 : (featureStyle.weight || currentBoundaryWeight),
         fillColor: isDhlvb ? '#ff0000' : (featureStyle.fillColor || fillColor),
         fillOpacity: featureStyle.opacity || currentOverlayOpacity
       };
     },
     onEachFeature: function (feature, layer) {
       const featureStyle = feature.properties.style || {};
-      const baseColor = isDhlvb ? '#ff0000' : (featureStyle.color || '#3388ff');
-      const baseWeight = isDhlvb ? 4 : (featureStyle.weight || 2);
+      const baseColor = isDhlvb ? '#ff0000' : (featureStyle.color || currentBoundaryColor);
+      const baseWeight = isDhlvb ? 4 : (featureStyle.weight || currentBoundaryWeight);
       
       // Lấy màu đã được gán (đảm bảo không trùng với các feature lân cận)
       const featureName = getFeatureName(feature.properties);
@@ -1180,7 +1182,7 @@ function addGeojsonToMap(map, data) {
               color: prevStyle.color,
               weight: prevStyle.weight,
               fillColor: prevStyle.fillColor,
-              fillOpacity: geojsonVisible ? prevStyle.fillOpacity : 0
+              fillOpacity: prevStyle.fillOpacity
             });
           }
         }
@@ -1189,8 +1191,8 @@ function addGeojsonToMap(map, data) {
         layer.setStyle({
           color: '#2ecc40',
           weight: 3,
-          fillColor: originalStyle.fillColor, // Giữ nguyên màu fill
-          fillOpacity: geojsonVisible ? originalStyle.fillOpacity : 0
+          fillColor: originalStyle.fillColor,
+          fillOpacity: originalStyle.fillOpacity
         });
         
         selectedGeojsonLayer = layer;
@@ -1208,7 +1210,7 @@ function addGeojsonToMap(map, data) {
               color: style.color,
               weight: style.weight,
               fillColor: style.fillColor,
-              fillOpacity: geojsonVisible ? style.fillOpacity : 0
+              fillOpacity: style.fillOpacity
             });
             selectedGeojsonLayer = null;
           }
@@ -1259,7 +1261,13 @@ function addGeojsonToMap(map, data) {
       //   }
       // });
     }
-  }).addTo(map);
+  });
+  
+  // Chỉ add vào map nếu ranh giới đang hiển thị
+  if (geojsonVisible) {
+    layer.addTo(map);
+  }
+  
   geojsonLayers.push(layer);
   return layer;
 }
@@ -1510,7 +1518,7 @@ function reloadDuanFileToCache(map, filename) {
 }
 
 // Hàm thêm file DuAn lên bản đồ
-function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
+function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
   // Tạo pane riêng cho các file DuAn nếu chưa có (z-index cao nhất)
   if (!map._duanPane) {
     map._duanPane = map.createPane('duanPane');
@@ -1699,8 +1707,8 @@ function addDuanFileToMap(map, filename, color, weight = 4, dashArray = null) {
 }
 
 // Hàm tính toán dashArray dựa trên weight để đảm bảo tỷ lệ phù hợp
-// weight chuẩn là 4 (mặc định), dashArray sẽ được scale theo tỷ lệ weight/4
-function scaleDashArray(dashArrayPattern, weight, baseWeight = 4) {
+// weight chuẩn là 1 (mặc định), dashArray sẽ được scale theo tỷ lệ weight/1
+function scaleDashArray(dashArrayPattern, weight, baseWeight = 1) {
   if (!dashArrayPattern || dashArrayPattern === '') {
     return null;
   }
@@ -1846,7 +1854,7 @@ async function loadDuanFiles(map) {
       // Lấy cấu hình
       const config = duanConfig[filename] || {
         color: getDefaultColor(index),
-        weight: 4,
+        weight: 1,
         visible: true
       };
       
@@ -1884,7 +1892,7 @@ function setupDuanFileControls(map) {
         // Hiển thị layer nếu chưa có
         if (!duanLayers[filename]) {
           const color = config.color || getDefaultColor(duanFiles.indexOf(filename));
-          const weight = config.weight || 4;
+          const weight = config.weight || 1;
           const dashArray = config.dashArray === '' ? null : config.dashArray;
           addDuanFileToMap(map, filename, color, weight, dashArray);
         } else {
@@ -2226,7 +2234,7 @@ function setupSearch(map) {
         if (!duanLayers[cachedData.filename]) {
           const config = duanConfig[cachedData.filename] || {
             color: getDefaultColor(duanFiles.indexOf(cachedData.filename)),
-            weight: 4,
+            weight: 1,
             dashArray: null,
             visible: true
           };
@@ -2329,7 +2337,7 @@ function setupSearch(map) {
         if (!duanLayers[cachedData.filename]) {
           const config = duanConfig[cachedData.filename] || {
             color: getDefaultColor(duanFiles.indexOf(cachedData.filename)),
-            weight: 4,
+            weight: 1,
             dashArray: null,
             visible: true
           };
@@ -3026,13 +3034,16 @@ function setupToolsPanelControls(map) {
     toggleOverlayBtn.onclick = function() {
       geojsonVisible = !geojsonVisible;
       geojsonLayers.forEach(layer => {
-        // Chỉ thay đổi fillOpacity (phần tô màu), giữ nguyên đường viền
         if (geojsonVisible) {
-          // Hiển thị: khôi phục fillOpacity về giá trị hiện tại
-          layer.setStyle({ fillOpacity: currentOverlayOpacity });
+          // Hiển thị: thêm layer vào map
+          if (!map.hasLayer(layer)) {
+            map.addLayer(layer);
+          }
         } else {
-          // Ẩn: đặt fillOpacity = 0 (trong suốt), nhưng vẫn giữ đường viền
-          layer.setStyle({ fillOpacity: 0 });
+          // Ẩn: xóa layer khỏi map
+          if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+          }
         }
       });
       if (geojsonVisible) {
@@ -3055,8 +3066,86 @@ function setupToolsPanelControls(map) {
       const val = parseFloat(this.value);
       opacityValueText.textContent = val.toFixed(2);
       currentOverlayOpacity = val;
+      
+      // Chỉ cập nhật nếu ranh giới đang hiển thị
+      if (geojsonVisible) {
+        geojsonLayers.forEach(layer => {
+          if (map.hasLayer(layer)) {
+            layer.setStyle({ fillOpacity: currentOverlayOpacity });
+          }
+        });
+      }
+    });
+  }
+
+  // Thiết lập color picker và weight slider cho ranh giới
+  const boundaryColorPicker = document.getElementById('boundary-color-picker');
+  const boundaryWeightSlider = document.getElementById('boundary-weight-slider');
+  const boundaryWeightValue = document.getElementById('boundary-weight-value');
+  
+  // Load cài đặt đã lưu từ localStorage
+  const savedBoundaryColor = localStorage.getItem('boundaryColor');
+  const savedBoundaryWeight = localStorage.getItem('boundaryWeight');
+  
+  if (savedBoundaryColor) {
+    currentBoundaryColor = savedBoundaryColor;
+    if (boundaryColorPicker) boundaryColorPicker.value = savedBoundaryColor;
+  }
+  
+  if (savedBoundaryWeight) {
+    currentBoundaryWeight = parseFloat(savedBoundaryWeight);
+    if (boundaryWeightSlider) boundaryWeightSlider.value = savedBoundaryWeight;
+    if (boundaryWeightValue) boundaryWeightValue.textContent = savedBoundaryWeight + 'px';
+  }
+  
+  // Event listener cho màu ranh giới
+  if (boundaryColorPicker) {
+    boundaryColorPicker.addEventListener('input', function() {
+      currentBoundaryColor = this.value;
+      localStorage.setItem('boundaryColor', currentBoundaryColor);
+      
+      // Cập nhật màu cho tất cả các layer hiện có (trừ DHLVB)
       geojsonLayers.forEach(layer => {
-        layer.setStyle({ fillOpacity: currentOverlayOpacity });
+        if (map.hasLayer(layer)) {
+          layer.eachLayer(function(featureLayer) {
+            const feature = featureLayer.feature;
+            const isDhlvb = feature.properties.LOAIRANH === "RANH GIỚI DHLVB";
+            if (!isDhlvb) {
+              const currentStyle = featureLayer.options;
+              featureLayer.setStyle({ 
+                color: currentBoundaryColor,
+                weight: currentStyle.weight
+              });
+            }
+          });
+        }
+      });
+    });
+  }
+  
+  // Event listener cho độ dày ranh giới
+  if (boundaryWeightSlider && boundaryWeightValue) {
+    boundaryWeightSlider.addEventListener('input', function() {
+      const val = parseFloat(this.value);
+      currentBoundaryWeight = val;
+      boundaryWeightValue.textContent = val + 'px';
+      localStorage.setItem('boundaryWeight', val);
+      
+      // Cập nhật độ dày cho tất cả các layer hiện có (trừ DHLVB)
+      geojsonLayers.forEach(layer => {
+        if (map.hasLayer(layer)) {
+          layer.eachLayer(function(featureLayer) {
+            const feature = featureLayer.feature;
+            const isDhlvb = feature.properties.LOAIRANH === "RANH GIỚI DHLVB";
+            if (!isDhlvb) {
+              const currentStyle = featureLayer.options;
+              featureLayer.setStyle({ 
+                color: currentStyle.color,
+                weight: currentBoundaryWeight
+              });
+            }
+          });
+        }
       });
     });
   }
