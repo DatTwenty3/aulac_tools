@@ -3166,7 +3166,9 @@ function setupAreaButton(map) {
       areaBtn.classList.add('active');
       areaBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
         </svg>
         <span>Dừng đo</span>
       `;
@@ -3319,7 +3321,9 @@ function setupAreaButton(map) {
       areaBtn.classList.remove('active');
       areaBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
         </svg>
         <span>Đo diện tích</span>
       `;
@@ -3346,7 +3350,9 @@ function setupAreaButton(map) {
       areaBtn.classList.remove('active');
       areaBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
         </svg>
         <span>Đo diện tích</span>
       `;
@@ -3517,7 +3523,13 @@ function setupMeasureButton(map) {
       measureBtn.classList.add('active');
       measureBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="6" y="6" width="12" height="12" rx="2"></rect>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <circle cx="5" cy="12" r="2"></circle>
+          <circle cx="19" cy="12" r="2"></circle>
+          <line x1="3" y1="6" x2="7" y2="6"></line>
+          <line x1="3" y1="8" x2="7" y2="8"></line>
+          <line x1="17" y1="6" x2="21" y2="6"></line>
+          <line x1="17" y1="8" x2="21" y2="8"></line>
         </svg>
         <span>Dừng đo</span>
       `;
@@ -3636,10 +3648,13 @@ function setupMeasureButton(map) {
       measureBtn.classList.remove('active');
       measureBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="3" x2="21" y2="21"></line>
-          <path d="M9 9l3 3-3 3"></path>
-          <path d="M15 15l-3-3 3-3"></path>
-          <line x1="21" y1="3" x2="3" y2="21"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <circle cx="5" cy="12" r="2"></circle>
+          <circle cx="19" cy="12" r="2"></circle>
+          <line x1="3" y1="6" x2="7" y2="6"></line>
+          <line x1="3" y1="8" x2="7" y2="8"></line>
+          <line x1="17" y1="6" x2="21" y2="6"></line>
+          <line x1="17" y1="8" x2="21" y2="8"></line>
         </svg>
         <span>Đo khoảng cách</span>
       `;
@@ -3666,10 +3681,13 @@ function setupMeasureButton(map) {
       measureBtn.classList.remove('active');
       measureBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="3" y1="3" x2="21" y2="21"></line>
-          <path d="M9 9l3 3-3 3"></path>
-          <path d="M15 15l-3-3 3-3"></path>
-          <line x1="21" y1="3" x2="3" y2="21"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <circle cx="5" cy="12" r="2"></circle>
+          <circle cx="19" cy="12" r="2"></circle>
+          <line x1="3" y1="6" x2="7" y2="6"></line>
+          <line x1="3" y1="8" x2="7" y2="8"></line>
+          <line x1="17" y1="6" x2="21" y2="6"></line>
+          <line x1="17" y1="8" x2="21" y2="8"></line>
         </svg>
         <span>Đo khoảng cách</span>
       `;
