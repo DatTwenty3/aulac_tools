@@ -41,28 +41,57 @@
       },
       
       init: function() {
-        this.userPosition = {lat: 0, lon: 0};
+        this.userPosition = {lat: null, lon: null};
         this.distance = 0;
+        this.lastUpdate = 0;
         this.updateDistanceDisplay();
+        
+        window.addEventListener('gps-camera-update-position', (e) => {
+          const position = e.detail.position;
+          this.userPosition.lat = position.latitude;
+          this.userPosition.lon = position.longitude;
+          
+          console.log('Vị trí hiện tại:', this.userPosition);
+          console.log('Điểm đến:', {lat: this.data.targetLat, lon: this.data.targetLon});
+          
+          this.distance = this.calculateDistance(
+            this.userPosition.lat,
+            this.userPosition.lon,
+            this.data.targetLat,
+            this.data.targetLon
+          );
+          
+          console.log('Khoảng cách tính được:', this.distance, 'mét');
+          
+          this.updateDistanceDisplay();
+          this.updateMarkerText();
+        });
       },
       
-      tick: function() {
-        const camera = this.el.sceneEl.querySelector('[gps-camera]');
-        if (camera && camera.components['gps-camera']) {
-          const cameraGps = camera.components['gps-camera'];
-          if (cameraGps.currentPosition) {
-            this.userPosition.lat = cameraGps.currentPosition.latitude;
-            this.userPosition.lon = cameraGps.currentPosition.longitude;
+      tick: function(time) {
+        if (time - this.lastUpdate > 1000) {
+          this.lastUpdate = time;
+          
+          const camera = this.el.sceneEl.querySelector('[gps-camera]');
+          if (camera && camera.components['gps-camera']) {
+            const gpsCamera = camera.components['gps-camera'];
             
-            this.distance = this.calculateDistance(
-              this.userPosition.lat,
-              this.userPosition.lon,
-              this.data.targetLat,
-              this.data.targetLon
-            );
-            
-            this.updateDistanceDisplay();
-            this.updateMarkerText();
+            if (gpsCamera.originCoords) {
+              this.userPosition.lat = gpsCamera.originCoords.latitude || gpsCamera.originCoords.lat;
+              this.userPosition.lon = gpsCamera.originCoords.longitude || gpsCamera.originCoords.lng || gpsCamera.originCoords.lon;
+              
+              if (this.userPosition.lat && this.userPosition.lon) {
+                this.distance = this.calculateDistance(
+                  this.userPosition.lat,
+                  this.userPosition.lon,
+                  this.data.targetLat,
+                  this.data.targetLon
+                );
+                
+                this.updateDistanceDisplay();
+                this.updateMarkerText();
+              }
+            }
           }
         }
       },
@@ -84,7 +113,9 @@
       
       updateDistanceDisplay: function() {
         let distanceText = '';
-        if (this.distance >= 1000) {
+        if (this.userPosition.lat === null || this.userPosition.lon === null) {
+          distanceText = 'Đang định vị...';
+        } else if (this.distance >= 1000) {
           distanceText = (this.distance / 1000).toFixed(2) + ' km';
         } else {
           distanceText = this.distance.toFixed(0) + ' m';
@@ -103,7 +134,9 @@
         const textEl = this.el.querySelector('a-text');
         if (textEl) {
           let distanceText = '';
-          if (this.distance >= 1000) {
+          if (this.userPosition.lat === null || this.userPosition.lon === null) {
+            distanceText = 'Đang định vị...';
+          } else if (this.distance >= 1000) {
             distanceText = (this.distance / 1000).toFixed(2) + ' km';
           } else {
             distanceText = this.distance.toFixed(0) + ' m';
