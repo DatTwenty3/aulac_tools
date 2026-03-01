@@ -1,4 +1,18 @@
 // ====== CẤU HÌNH CHUNG ======
+// Thứ tự hiển thị layer (z-index) cố định, từ dưới lên trên:
+// Vùng (polygon) < Đường (line) < Điểm (point) < Chú thích (label) < Hộp thoại (tooltip/popup)
+const LAYER_ZINDEX = {
+  dataPolygon: 410,
+  dataLine: 420,
+  dataPoint: 430,
+  dataLabel: 440,
+  projectPane: 650,
+  searchResultPane: 800,
+  locationPane: 850,
+  tooltipPane: 950,
+  popupPane: 1000
+};
+
 const fieldMap = {
   // Định dạng cũ
   ma: 'Mã xã/phường',
@@ -104,7 +118,6 @@ let drawingDragState = null; // { drawingId, snapshot, moveHandler, upHandler } 
 
 // Biến lưu trữ các timeout IDs để cleanup (tránh memory leaks)
 let selectedGeojsonLayerTimeout = null; // Timeout khôi phục style của geojson layer
-let duanLayerBringToFrontTimeout = null; // Timeout bringToFront cho duan layers
 let popupOpenTimeouts = []; // Mảng lưu các timeout mở popup
 let notificationTimeouts = []; // Mảng lưu các timeout cho notifications
 let tempMarkerTimeout = null; // Timeout xóa marker tạm
@@ -802,16 +815,22 @@ function initMap() {
     layers: [osmLayer]
   });
 
-  // Tạo pane riêng cho tooltip với z-index cao nhất (chỉ thấp hơn popup)
-  // TooltipPane mặc định của Leaflet có z-index 650, cần tăng lên để không bị che bởi bất kỳ layer nào
+  // Tạo các pane với z-index cố định: polygon < line < point < label < tooltip < popup
+  const dataPolygonPane = map.createPane('dataPolygonPane');
+  dataPolygonPane.style.zIndex = LAYER_ZINDEX.dataPolygon;
+  const dataLinePane = map.createPane('dataLinePane');
+  dataLinePane.style.zIndex = LAYER_ZINDEX.dataLine;
+  const dataPointPane = map.createPane('dataPointPane');
+  dataPointPane.style.zIndex = LAYER_ZINDEX.dataPoint;
+  const dataLabelPane = map.createPane('dataLabelPane');
+  dataLabelPane.style.zIndex = LAYER_ZINDEX.dataLabel;
+
   if (map.getPane('tooltipPane')) {
-    map.getPane('tooltipPane').style.zIndex = 950; // Cao hơn drawingPane (880), thấp hơn popupPane (1000)
+    map.getPane('tooltipPane').style.zIndex = LAYER_ZINDEX.tooltipPane;
   }
-  
-  // Đảm bảo popupPane có z-index cao nhất để popup luôn hiển thị trên cùng
   const popupPane = map.getPane('popupPane');
   if (popupPane) {
-    popupPane.style.zIndex = 1000; // Cao nhất - luôn hiển thị trên tất cả layers
+    popupPane.style.zIndex = LAYER_ZINDEX.popupPane;
   }
 
   // Lưu các layer để dùng sau
@@ -902,7 +921,7 @@ function setupLocateButton(map) {
         // Tạo pane riêng cho location marker với z-index cao hơn duanPane (700)
         if (!map._locationPane) {
           map._locationPane = map.createPane('locationPane');
-          map._locationPane.style.zIndex = 850; // Cao hơn duanPane (700) nhưng thấp hơn searchResultPane (800) và popupPane (900)
+          map._locationPane.style.zIndex = LAYER_ZINDEX.locationPane;
         }
         
         // Tạo marker mới với icon hiện đại cho real-time
@@ -1403,7 +1422,7 @@ function addProjectToMap(map, filename, color, weight = 6, displayName = '') {
       // Tạo pane riêng cho các dự án nếu chưa có
       if (!map._projectPane) {
         map._projectPane = map.createPane('projectPane');
-        map._projectPane.style.zIndex = 650; // Cao hơn overlayPane (z-index 400)
+        map._projectPane.style.zIndex = LAYER_ZINDEX.projectPane;
       }
       
       // Lấy tên dự án đã format
@@ -1451,8 +1470,6 @@ function addProjectToMap(map, filename, color, weight = 6, displayName = '') {
       });
       
       layer.addTo(map);
-      // Đưa toàn bộ layer lên phía trên
-      layer.bringToFront();
       geojsonLayers.push(layer);
     })
     .catch(err => console.error('Lỗi tải dự án', filename, err));
@@ -1628,183 +1645,113 @@ function reloadDuanFileToCache(map, filename) {
     });
 }
 
-// Hàm thêm file DuAn lên bản đồ
+// Phân loại geometry: Polygon/MultiPolygon → polygon, LineString/MultiLineString → line, Point/MultiPoint → point
+function getDuanGeometryType(geom) {
+  if (!geom || !geom.type) return null;
+  const t = geom.type;
+  if (t === 'Polygon' || t === 'MultiPolygon') return 'polygon';
+  if (t === 'LineString' || t === 'MultiLineString') return 'line';
+  if (t === 'Point' || t === 'MultiPoint') return 'point';
+  return null;
+}
+
+// Hàm thêm file DuAn lên bản đồ — thứ tự layer cố định: polygon (dưới) < line < point (trên)
 function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
-  // Tạo pane riêng cho các file DuAn nếu chưa có (z-index cao nhất)
-  if (!map._duanPane) {
-    map._duanPane = map.createPane('duanPane');
-    map._duanPane.style.zIndex = 700; // Cao hơn projectPane (650) và overlayPane (400)
-  }
-  
-  // Nếu layer đã tồn tại, xóa nó trước
   if (duanLayers[filename]) {
     map.removeLayer(duanLayers[filename]);
     delete duanLayers[filename];
   }
-  
+
   const filepath = 'geo-json/DuAn/' + encodeURIComponent(filename);
-  // Lấy tên hiển thị từ list.json hoặc fallback
   const displayName = getDuanDisplayName(filename);
-  
+
   fetch(filepath)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       return res.json();
     })
     .then(data => {
-      // Chỉ cache các feature từ file đang được hiển thị
-      // Kiểm tra xem file có đang visible không
       const config = duanConfig[filename] || {};
-      if (config.visible !== false) {
-        // Cache các feature theo "ten" để hỗ trợ tìm kiếm (lưu tất cả các feature cùng tên)
-        if (data.features && Array.isArray(data.features)) {
-          data.features.forEach(feature => {
-            if (feature.properties && feature.properties.ten) {
-              const ten = feature.properties.ten.toString().toLowerCase();
-              // Lưu feature vào mảng nếu chưa có, hoặc thêm vào mảng nếu đã có
-              if (!duanFeaturesCache[ten]) {
-                duanFeaturesCache[ten] = [];
-              }
-              duanFeaturesCache[ten].push({
-                feature: feature,
-                filename: filename,
-                displayName: displayName
-              });
-            }
-          });
-        }
+      if (config.visible !== false && data.features && Array.isArray(data.features)) {
+        data.features.forEach(feature => {
+          if (feature.properties && feature.properties.ten) {
+            const ten = feature.properties.ten.toString().toLowerCase();
+            if (!duanFeaturesCache[ten]) duanFeaturesCache[ten] = [];
+            duanFeaturesCache[ten].push({ feature: feature, filename: filename, displayName: displayName });
+          }
+        });
       }
-      
-      // Scale dashArray dựa trên weight nếu có
+
       const scaledDashArray = dashArray ? scaleDashArray(dashArray, weight) : null;
-      
-      const layer = L.geoJSON(data, {
-        style: function(feature) {
-          return {
-            color: color,
-            weight: weight,
-            fillColor: color,
-            fillOpacity: 0.3,
-            opacity: 1.0,
-            dashArray: scaledDashArray
-          };
+      const polygonFeatures = (data.features || []).filter(f => getDuanGeometryType(f.geometry) === 'polygon');
+      const lineFeatures = (data.features || []).filter(f => getDuanGeometryType(f.geometry) === 'line');
+      const pointFeatures = (data.features || []).filter(f => getDuanGeometryType(f.geometry) === 'point');
+
+      const commonOpts = {
+        style: function() {
+          return { color: color, weight: weight, fillColor: color, fillOpacity: 0.3, opacity: 1.0, dashArray: scaledDashArray };
         },
-        onEachFeature: function (feature, layer) {
-          // Lấy tên hiển thị cho tooltip (ưu tiên tên đường, sau đó là tên file)
-          const tooltipText = (feature.properties && feature.properties.ten) 
-            ? `${feature.properties.ten}${feature.properties.phanLoai ? ' - ' + feature.properties.phanLoai : ''}`
-            : displayName;
-          
-          // Tooltip với thông tin đường
-          layer.bindTooltip(tooltipText, {
-            direction: 'top', 
-            sticky: true, 
-            offset: [0, -8], 
-            className: 'custom-tooltip'
-          });
-          
-          // Hiển thị panel chi tiết khi click
+        onEachFeature: function(feature, layer) {
+          const tooltipText = (feature.properties && feature.properties.ten)
+            ? `${feature.properties.ten}${feature.properties.phanLoai ? ' - ' + feature.properties.phanLoai : ''}` : displayName;
+          layer.bindTooltip(tooltipText, { direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip' });
           layer.on('click', function() {
-            if (isMeasuring || isMeasuringArea) {
-              return;
-            }
-            
-            // Lấy giá trị hiện tại từ config để đảm bảo luôn đúng với cài đặt mới nhất
+            if (isMeasuring || isMeasuringArea) return;
             const currentConfig = duanConfig[filename] || {};
             const currentWeight = currentConfig.weight || weight;
             const currentColor = currentConfig.color || color;
             const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
             const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
-            
-            // Khôi phục style của layer trước đó nếu có
             if (selectedDuanFeatureLayer && selectedDuanFeatureLayer !== layer) {
-              if (selectedDuanFeatureStyle) {
-                selectedDuanFeatureLayer.setStyle(selectedDuanFeatureStyle);
-              }
+              if (selectedDuanFeatureStyle) selectedDuanFeatureLayer.setStyle(selectedDuanFeatureStyle);
             }
-            
-            // Tính scaledDashArray cho weight + 2 (khi highlight)
             const highlightWeight = currentWeight + 2;
             const highlightDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, highlightWeight) : null;
-            
-            // Lưu style gốc của layer hiện tại
-            selectedDuanFeatureStyle = {
-              color: currentColor,
-              weight: currentWeight,
-              fillOpacity: 0.3,
-              dashArray: currentScaledDashArray
-            };
+            selectedDuanFeatureStyle = { color: currentColor, weight: currentWeight, fillOpacity: 0.3, dashArray: currentScaledDashArray };
             selectedDuanFeatureLayer = layer;
-            
-            // Highlight đường được chọn
-            layer.setStyle({color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray});
-            
-            // Hiển thị thông tin chi tiết từ properties
+            layer.setStyle({ color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray });
             openInfoPanel(feature.properties, false, true, displayName, true);
           });
-          
           layer.on('mouseover', function() {
-            // Lấy giá trị hiện tại từ config để đảm bảo luôn đúng với cài đặt mới nhất
             const currentConfig = duanConfig[filename] || {};
             const currentWeight = currentConfig.weight || weight;
-            const currentColor = currentConfig.color || color;
             const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
             const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
-            
-            // Giữ nguyên weight và dashArray như cài đặt, chỉ thay đổi màu và opacity
-            layer.setStyle({
-              fillOpacity: 0.5, 
-              color: '#ff7800', 
-              weight: currentWeight,
-              dashArray: currentScaledDashArray
-            });
+            layer.setStyle({ fillOpacity: 0.5, color: '#ff7800', weight: currentWeight, dashArray: currentScaledDashArray });
           });
-          
           layer.on('mouseout', function() {
-            // Lấy giá trị hiện tại từ config để đảm bảo luôn đúng với cài đặt mới nhất
             const currentConfig = duanConfig[filename] || {};
             const currentWeight = currentConfig.weight || weight;
             const currentColor = currentConfig.color || color;
             const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
             const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
-            
-            // Khôi phục style ban đầu (trừ khi đang được chọn)
             if (selectedDuanFeatureLayer !== layer) {
-              layer.setStyle({
-                fillOpacity: 0.3, 
-                color: currentColor,
-                weight: currentWeight,
-                dashArray: currentScaledDashArray
-              });
+              layer.setStyle({ fillOpacity: 0.3, color: currentColor, weight: currentWeight, dashArray: currentScaledDashArray });
             } else {
-              // Nếu đang được chọn, giữ style highlight nhưng với weight và dashArray đúng
               const highlightWeight = currentWeight + 2;
               const highlightDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, highlightWeight) : null;
-              layer.setStyle({
-                color: '#2ecc40', 
-                weight: highlightWeight,
-                dashArray: highlightDashArray
-              });
+              layer.setStyle({ color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray });
             }
           });
-        },
-        // Sử dụng pane riêng để đảm bảo nằm phía trên cùng
-        pane: 'duanPane'
-      });
-      
-      layer.addTo(map);
-      // Đưa toàn bộ layer lên phía trên cùng
-      layer.bringToFront();
-      
-      // Lưu layer vào object
-      duanLayers[filename] = layer;
-      
-      // Đảm bảo layer luôn ở trên cùng khi có layer mới được thêm
-      setTimeout(() => {
-        if (duanLayers[filename]) {
-          duanLayers[filename].bringToFront();
         }
-      }, 100);
+      };
+
+      const layerGroup = L.layerGroup();
+      // Thêm theo thứ tự: polygon (dưới) → line → point (trên) để z-index pane đảm bảo thứ tự
+      if (polygonFeatures.length) {
+        const polyLayer = L.geoJSON({ type: 'FeatureCollection', features: polygonFeatures }, { ...commonOpts, pane: 'dataPolygonPane' });
+        polyLayer.addTo(layerGroup);
+      }
+      if (lineFeatures.length) {
+        const lineLayer = L.geoJSON({ type: 'FeatureCollection', features: lineFeatures }, { ...commonOpts, pane: 'dataLinePane' });
+        lineLayer.addTo(layerGroup);
+      }
+      if (pointFeatures.length) {
+        const pointLayer = L.geoJSON({ type: 'FeatureCollection', features: pointFeatures }, { ...commonOpts, pane: 'dataPointPane' });
+        pointLayer.addTo(layerGroup);
+      }
+      layerGroup.addTo(map);
+      duanLayers[filename] = layerGroup;
     })
     .catch(err => {
       console.error('Lỗi tải file DuAn', filename, err);
@@ -1837,34 +1784,23 @@ function scaleDashArray(dashArrayPattern, weight, baseWeight = 1) {
   return scaledParts.join(', ');
 }
 
-// Hàm cập nhật style của layer
+// Hàm cập nhật style của layer (duanLayers[filename] là LayerGroup chứa các GeoJSON theo geometry)
 function updateDuanLayerStyle(filename, color, weight, dashArray = null) {
-  if (duanLayers[filename]) {
-    // Reset layer đang được chọn nếu nó thuộc file này
-    if (selectedDuanFeatureLayer) {
-      const layerGroup = duanLayers[filename];
-      layerGroup.eachLayer(function(layer) {
-        if (layer === selectedDuanFeatureLayer) {
+  const group = duanLayers[filename];
+  if (!group) return;
+  const scaledDashArray = dashArray ? scaleDashArray(dashArray, weight) : null;
+  const newStyle = { color: color, weight: weight, fillColor: color, fillOpacity: 0.3, dashArray: scaledDashArray };
+  group.eachLayer(function(geoJsonLayer) {
+    if (geoJsonLayer.eachLayer) {
+      geoJsonLayer.eachLayer(function(featureLayer) {
+        if (selectedDuanFeatureLayer === featureLayer) {
           selectedDuanFeatureLayer = null;
           selectedDuanFeatureStyle = null;
         }
+        featureLayer.setStyle(newStyle);
       });
     }
-    
-    // Scale dashArray dựa trên weight nếu có
-    const scaledDashArray = dashArray ? scaleDashArray(dashArray, weight) : null;
-    
-    // Cập nhật style cho tất cả các feature trong layer
-    duanLayers[filename].eachLayer(function(layer) {
-      layer.setStyle({
-        color: color,
-        weight: weight,
-        fillColor: color,
-        fillOpacity: 0.3,
-        dashArray: scaledDashArray
-      });
-    });
-  }
+  });
 }
 
 // Hàm tạo UI cho từng file DuAn
@@ -2834,7 +2770,7 @@ function createSearchResultMarker(map, latlng, title) {
   // Tạo pane riêng cho search results với z-index cao hơn DuAn (700)
   if (!map._searchResultPane) {
     map._searchResultPane = map.createPane('searchResultPane');
-    map._searchResultPane.style.zIndex = 800; // Cao hơn duanPane (700)
+    map._searchResultPane.style.zIndex = LAYER_ZINDEX.searchResultPane;
   }
   
   // Đảm bảo popupPane có z-index cao nhất để popup luôn hiển thị trên cùng
@@ -5257,7 +5193,7 @@ function addDrawingTempLabel(map, latlng, text) {
       iconAnchor: [35, 10]
     }),
     interactive: false,
-    pane: 'drawingLabelsPane'
+    pane: 'dataLabelPane'
   });
   label.addTo(map);
   drawingTempLabels.push(label);
@@ -5284,7 +5220,7 @@ function addPersistentLabelsForDrawing(drawingId, map) {
         iconAnchor: [35, 10]
       }),
       interactive: false,
-      pane: 'drawingLabelsPane'
+      pane: 'dataLabelPane'
     });
     label.addTo(map);
     mainLayer._drawingLabelLayers.push(label);
@@ -5689,19 +5625,23 @@ function makeDrawingDeletable(layer, map) {
       var drawingId = this._drawingId;
       var snapshot = getDrawingSnapshot(drawingId);
       var originalMouse = e.latlng;
+      // Chụp vị trí gốc của các nhãn (độ dài/bán kính) để cộng delta đúng khi kéo, tránh cộng dồn sai
+      var layers = getDrawingLayersById(drawingId);
+      var mainLayer = layers.find(function(l) { return !l._mainArrow; }) || layers[0];
+      var labelSnapshot = [];
+      if (mainLayer._drawingLabelLayers) {
+        mainLayer._drawingLabelLayers.forEach(function(m) {
+          labelSnapshot.push({ marker: m, latlng: L.latLng(m.getLatLng()) });
+        });
+      }
       if (map.dragging) map.dragging.disable();
       var moveHandler = function(ev) {
         var dLat = ev.latlng.lat - originalMouse.lat;
         var dLng = ev.latlng.lng - originalMouse.lng;
         applyDrawingSnapshot(snapshot, dLat, dLng);
-        var layers = getDrawingLayersById(drawingId);
-        var mainLayer = layers.find(function(l) { return !l._mainArrow; }) || layers[0];
-        if (mainLayer._drawingLabelLayers) {
-          mainLayer._drawingLabelLayers.forEach(function(m) {
-            var ll = m.getLatLng();
-            m.setLatLng(L.latLng(ll.lat + dLat, ll.lng + dLng));
-          });
-        }
+        labelSnapshot.forEach(function(o) {
+          o.marker.setLatLng(L.latLng(o.latlng.lat + dLat, o.latlng.lng + dLng));
+        });
       };
       var upHandler = function() {
         map.off('mousemove', moveHandler);
@@ -5934,17 +5874,17 @@ function loadDrawings(map) {
         layer = L.polyline(data.latlngs, {
           color: data.color,
           weight: data.weight,
-          pane: 'drawingPane'
+          pane: 'dataLinePane'
         }).addTo(map);
       } else if (data.type === 'arrow') {
         layer = L.polyline(data.latlngs, {
           color: data.color,
           weight: data.weight,
-          pane: 'drawingPane'
+          pane: 'dataLinePane'
         }).addTo(map);
-        // Thêm mũi tên decorator
+        // Thêm mũi tên decorator (cùng pane với đường để đúng thứ tự layer)
         if (L.polylineDecorator) {
-          L.polylineDecorator(layer, {
+          const decoratorLayer = L.polylineDecorator(layer, {
             patterns: [
               {
                 offset: '100%',
@@ -5957,13 +5897,14 @@ function loadDrawings(map) {
               }
             ]
           }).addTo(map);
+          if (decoratorLayer && decoratorLayer.setPane) decoratorLayer.setPane('dataLinePane');
         }
       } else if (data.type === 'polygon') {
         layer = L.polygon(data.latlngs, {
           color: data.color,
           weight: data.weight,
           fillOpacity: data.opacity !== undefined ? data.opacity : 0.2,
-          pane: 'drawingPane'
+          pane: 'dataPolygonPane'
         }).addTo(map);
       } else if (data.type === 'rectangle' && data.bounds) {
         const bounds = L.latLngBounds(data.bounds._southWest || data.bounds[0], data.bounds._northEast || data.bounds[1]);
@@ -5971,7 +5912,7 @@ function loadDrawings(map) {
           color: data.color,
           weight: data.weight,
           fillOpacity: data.opacity !== undefined ? data.opacity : 0.2,
-          pane: 'drawingPane'
+          pane: 'dataPolygonPane'
         }).addTo(map);
       } else if (data.type === 'circle') {
         layer = L.circle(data.center, {
@@ -5979,7 +5920,7 @@ function loadDrawings(map) {
           color: data.color,
           weight: data.weight,
           fillOpacity: data.opacity !== undefined ? data.opacity : 0.2,
-          pane: 'drawingPane'
+          pane: 'dataPolygonPane'
         }).addTo(map);
       } else if (data.type === 'text') {
         layer = L.marker(data.latlng, {
@@ -5988,7 +5929,7 @@ function loadDrawings(map) {
             html: `<div style="color: ${data.color}; font-size: 16px; font-weight: bold; white-space: nowrap; text-shadow: 1px 1px 2px white, -1px -1px 2px white;">${data.text}</div>`,
             iconSize: null
           }),
-          pane: 'drawingPane'
+          pane: 'dataLabelPane'
         }).addTo(map);
         layer._drawingText = data.text;
       }
@@ -6306,22 +6247,10 @@ function setupDrawingTools(map) {
   const drawingToolsContainer = document.getElementById('drawing-tools-container');
   if (!drawingToolsContainer) return;
   
-  // Tạo pane riêng cho drawings với z-index cao
-  // Z-index hierarchy: overlayPane(400) < projectPane(650) < duanPane(700) < searchResultPane(800)
-  //                    < locationPane(850) < drawingPane(880) < drawingLabelsPane(885) < tooltipPane(950) < popupPane(1000)
-  if (!map._drawingPane) {
-    map._drawingPane = map.createPane('drawingPane');
-    map._drawingPane.style.zIndex = 880; // Cao hơn các layer nhưng thấp hơn popup
-  }
-  if (!map._drawingLabelsPane) {
-    map._drawingLabelsPane = map.createPane('drawingLabelsPane');
-    map._drawingLabelsPane.style.zIndex = 885; // Cao hơn drawingPane để nhãn luôn nằm trên hình vẽ
-  }
-  
-  // Đảm bảo popupPane có z-index cao nhất để popup luôn hiển thị trên cùng
+  // Drawing dùng chung pane với dữ liệu: dataPolygonPane, dataLinePane, dataPointPane, dataLabelPane (đã tạo trong createMap)
   const popupPane = map.getPane('popupPane');
   if (popupPane) {
-    popupPane.style.zIndex = 1000; // Cao nhất - đảm bảo popup luôn hiển thị trên tất cả
+    popupPane.style.zIndex = LAYER_ZINDEX.popupPane;
   }
   
   // Tải drawings đã lưu
@@ -6465,7 +6394,7 @@ function setupDrawingTools(map) {
         currentDrawingLayer = L.polyline([e.latlng], {
           color: drawingColor,
           weight: drawingWeight,
-          pane: 'drawingPane'
+          pane: 'dataLinePane'
         }).addTo(map);
         
         // Prevent map from panning
@@ -6539,7 +6468,7 @@ function setupDrawingTools(map) {
           currentDrawingLayer = L.polyline([linePoints[0], linePoints[0]], {
             color: drawingColor,
             weight: drawingWeight,
-            pane: 'drawingPane'
+            pane: 'dataLinePane'
           }).addTo(map);
 
           drawingMouseMoveHandler = function(e) {
@@ -6633,7 +6562,7 @@ function setupDrawingTools(map) {
             color: drawingColor,
             weight: drawingWeight,
             dashArray: '5, 5',
-            pane: 'drawingPane'
+            pane: 'dataLinePane'
           }).addTo(map);
           
           drawingMouseMoveHandler = function(e) {
@@ -6655,7 +6584,7 @@ function setupDrawingTools(map) {
           const arrow = L.polyline(arrowPoints, {
             color: drawingColor,
             weight: drawingWeight,
-            pane: 'drawingPane'
+            pane: 'dataLinePane'
           }).addTo(map);
           
           // Thêm mũi tên
@@ -6668,7 +6597,7 @@ function setupDrawingTools(map) {
           ], {
             color: drawingColor,
             weight: drawingWeight,
-            pane: 'drawingPane'
+            pane: 'dataLinePane'
           }).addTo(map);
           
           const arrowHead2 = L.polyline([
@@ -6680,7 +6609,7 @@ function setupDrawingTools(map) {
           ], {
             color: drawingColor,
             weight: drawingWeight,
-            pane: 'drawingPane'
+            pane: 'dataLinePane'
           }).addTo(map);
           
           arrow._drawingType = 'arrow';
@@ -6759,7 +6688,7 @@ function setupDrawingTools(map) {
             color: drawingColor,
             weight: drawingWeight,
             fillOpacity: 0.2,
-            pane: 'drawingPane'
+            pane: 'dataPolygonPane'
           }).addTo(map);
 
           drawingMouseMoveHandler = function(e) {
@@ -6855,7 +6784,7 @@ function setupDrawingTools(map) {
             color: drawingColor,
             weight: drawingWeight,
             fillOpacity: 0.2,
-            pane: 'drawingPane'
+            pane: 'dataPolygonPane'
           }).addTo(map);
           
           drawingMouseMoveHandler = function(e) {
@@ -6929,7 +6858,7 @@ function setupDrawingTools(map) {
             color: drawingColor,
             weight: drawingWeight,
             fillOpacity: 0.2,
-            pane: 'drawingPane'
+            pane: 'dataPolygonPane'
           }).addTo(map);
           
           drawingMouseMoveHandler = function(e) {
@@ -7010,7 +6939,7 @@ function setupDrawingTools(map) {
               html: `<div style="color: ${drawingColor}; font-size: 16px; font-weight: bold; white-space: nowrap; text-shadow: 1px 1px 2px white, -1px -1px 2px white;">${text}</div>`,
               iconSize: null
             }),
-            pane: 'drawingPane'
+            pane: 'dataLabelPane'
           }).addTo(map);
           
           marker._drawingType = 'text';
