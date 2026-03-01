@@ -14,6 +14,12 @@
     <!-- Bản đồ chiếm trọn màn hình -->
     <div id="map"></div>
 
+    <!-- Panel thông tin vị trí & diện tích real-time khi vẽ chú thích -->
+    <div id="drawing-live-info" class="drawing-live-info" style="display: none;" aria-live="polite">
+      <div class="drawing-live-row"><span class="drawing-live-label">Vị trí:</span> <span id="drawing-live-position">—</span></div>
+      <div class="drawing-live-row" id="drawing-live-area-row"><span class="drawing-live-label">Diện tích:</span> <span id="drawing-live-area">—</span></div>
+    </div>
+
     <!-- Nút toggle thông tin -->
     <button id="info-toggle-btn" class="info-toggle-btn" title="Hiển thị thông tin">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -337,6 +343,12 @@
                       <circle cx="12" cy="12" r="10"/>
                     </svg>
                     <span style="font-size: 0.75rem;">Hình tròn</span>
+                  </button>
+                  <button id="draw-rectangle-btn" class="tool-btn-mini" title="Vẽ hình chữ nhật (click góc thứ nhất, sau đó click góc đối diện)">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="0"/>
+                    </svg>
+                    <span style="font-size: 0.75rem;">Chữ nhật</span>
                   </button>
                   <button id="draw-text-btn" class="tool-btn-mini" title="Thêm chú thích text">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

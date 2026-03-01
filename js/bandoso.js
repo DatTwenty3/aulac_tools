@@ -90,6 +90,7 @@ let drawingLayers = []; // Lưu tất cả các layer đã vẽ
 let currentDrawingLayer = null; // Layer đang vẽ
 let drawingClickHandler = null;
 let drawingMouseMoveHandler = null;
+let drawingPreMouseMoveHandler = null; // Handler chỉ cập nhật vị trí trước khi click (circle/rectangle)
 let drawingDblClickHandler = null; // Handler cho double click
 let drawingMouseDownHandler = null; // Handler cho mouse down
 let drawingMouseUpHandler = null; // Handler cho mouse up
@@ -98,6 +99,8 @@ let drawingStartPoint = null; // Điểm bắt đầu cho shapes
 let drawingHistory = []; // Lưu lịch sử để undo
 let drawingHistoryIndex = -1; // Index hiện tại trong history
 let drawingIdCounter = 1; // Counter để tạo ID duy nhất cho mỗi drawing
+let drawingTempLabels = []; // Nhãn tạm hiển thị bán kính/độ dài cạnh khi đang vẽ
+let drawingDragState = null; // { drawingId, snapshot, moveHandler, upHandler } khi đang kéo di chuyển chú thích
 
 // Biến lưu trữ các timeout IDs để cleanup (tránh memory leaks)
 let selectedGeojsonLayerTimeout = null; // Timeout khôi phục style của geojson layer
@@ -5202,6 +5205,193 @@ function formatMeasurement(value, type) {
   }
 }
 
+// Định dạng diện tích hiển thị real-time: luôn hiển thị cả m² và ha
+function formatAreaForLive(sqMeters) {
+  if (sqMeters == null || isNaN(sqMeters) || sqMeters < 0) return '—';
+  const m2 = sqMeters.toFixed(2);
+  const ha = (sqMeters / 10000).toFixed(2);
+  return `${m2} m² (${ha} ha)`;
+}
+
+// Hiển thị / ẩn / cập nhật panel thông tin vẽ real-time (vị trí + diện tích ha/m²)
+function showDrawingLiveInfo(showAreaRow) {
+  const panel = document.getElementById('drawing-live-info');
+  const areaRow = document.getElementById('drawing-live-area-row');
+  if (!panel) return;
+  panel.style.display = 'block';
+  if (areaRow) areaRow.style.display = showAreaRow ? '' : 'none';
+}
+
+function hideDrawingLiveInfo() {
+  const panel = document.getElementById('drawing-live-info');
+  if (panel) panel.style.display = 'none';
+}
+
+function updateDrawingLiveInfo(latlng, areaSqMeters) {
+  const posEl = document.getElementById('drawing-live-position');
+  const areaEl = document.getElementById('drawing-live-area');
+  if (posEl && latlng) {
+    posEl.textContent = `${latlng.lat.toFixed(6)}, ${latlng.lng.toFixed(6)}`;
+  }
+  if (areaEl) {
+    areaEl.textContent = areaSqMeters != null ? formatAreaForLive(areaSqMeters) : '—';
+  }
+}
+
+// Xóa tất cả nhãn tạm (bán kính / độ dài cạnh) khi đang vẽ
+function clearDrawingTempLabels(map) {
+  if (!map || !drawingTempLabels.length) return;
+  drawingTempLabels.forEach(function(layer) {
+    if (map.hasLayer(layer)) map.removeLayer(layer);
+  });
+  drawingTempLabels = [];
+}
+
+// Thêm nhãn độ dài/bán kính trực tiếp trên hình đang vẽ (tạm thời, biến mất khi vẽ xong)
+function addDrawingTempLabel(map, latlng, text) {
+  const label = L.marker(latlng, {
+    icon: L.divIcon({
+      className: 'drawing-segment-label',
+      html: '<div class="drawing-segment-label-content">' + text + '</div>',
+      iconSize: [70, 20],
+      iconAnchor: [35, 10]
+    }),
+    interactive: false,
+    pane: 'drawingLabelsPane'
+  });
+  label.addTo(map);
+  drawingTempLabels.push(label);
+}
+
+// Tạo nhãn cố định (độ dài/bán kính) cho chú thích đã vẽ xong — không biến mất
+function addPersistentLabelsForDrawing(drawingId, map) {
+  if (!map) return;
+  var layers = getDrawingLayersById(drawingId);
+  if (!layers.length) return;
+  var mainLayer = layers.find(function(l) { return !l._mainArrow; }) || layers[0];
+  if (mainLayer._drawingLabelLayers) {
+    mainLayer._drawingLabelLayers.forEach(function(m) {
+      if (map.hasLayer(m)) map.removeLayer(m);
+    });
+  }
+  mainLayer._drawingLabelLayers = [];
+  function addLabel(latlng, text) {
+    var label = L.marker(latlng, {
+      icon: L.divIcon({
+        className: 'drawing-segment-label',
+        html: '<div class="drawing-segment-label-content">' + text + '</div>',
+        iconSize: [70, 20],
+        iconAnchor: [35, 10]
+      }),
+      interactive: false,
+      pane: 'drawingLabelsPane'
+    });
+    label.addTo(map);
+    mainLayer._drawingLabelLayers.push(label);
+  }
+  var type = mainLayer._drawingType;
+  if (type === 'circle') {
+    var center = mainLayer.getLatLng();
+    var radius = mainLayer.getRadius();
+    addLabel(center, 'r = ' + formatDistance(radius));
+  } else if (type === 'rectangle') {
+    var b = mainLayer.getBounds();
+    var sw = b.getSouthWest(), nw = b.getNorthWest(), ne = b.getNorthEast(), se = b.getSouthEast();
+    [[sw, nw], [nw, ne], [ne, se], [se, sw]].forEach(function(pair) {
+      var p1 = pair[0], p2 = pair[1];
+      var mid = L.latLng((p1.lat + p2.lat) / 2, (p1.lng + p2.lng) / 2);
+      addLabel(mid, formatDistance(p1.distanceTo(p2)));
+    });
+  } else if (type === 'polygon') {
+    var ring = mainLayer.getLatLngs()[0] || mainLayer.getLatLngs();
+    for (var i = 0; i < ring.length; i++) {
+      var p1 = ring[i], p2 = ring[(i + 1) % ring.length];
+      var mid = L.latLng((p1.lat + p2.lat) / 2, (p1.lng + p2.lng) / 2);
+      var dist = p1.distanceTo ? p1.distanceTo(p2) : L.latLng(p1).distanceTo(L.latLng(p2));
+      addLabel(mid, formatDistance(dist));
+    }
+  } else if (type === 'line' || type === 'freehand' || type === 'arrow') {
+    var latlngs = mainLayer.getLatLngs();
+    for (var j = 0; j < latlngs.length - 1; j++) {
+      var a = latlngs[j], b = latlngs[j + 1];
+      var mid = L.latLng((a.lat + b.lat) / 2, (a.lng + b.lng) / 2);
+      addLabel(mid, formatDistance(a.distanceTo ? a.distanceTo(b) : L.latLng(a).distanceTo(L.latLng(b))));
+    }
+  }
+}
+
+// Xóa nhãn cố định khi xóa chú thích
+function removePersistentLabelsForDrawing(drawingId, map) {
+  var layers = getDrawingLayersById(drawingId);
+  var mainLayer = layers.find(function(l) { return !l._mainArrow; }) || layers[0];
+  if (mainLayer._drawingLabelLayers) {
+    mainLayer._drawingLabelLayers.forEach(function(m) {
+      if (map && map.hasLayer(m)) map.removeLayer(m);
+    });
+    mainLayer._drawingLabelLayers = [];
+  }
+}
+
+// Lấy tất cả layer thuộc một chú thích (cùng _drawingId; arrow có 3 layer)
+function getDrawingLayersById(drawingId) {
+  return drawingLayers.filter(function(l) { return l._drawingId === drawingId; });
+}
+
+// Sao chép và dịch latlngs theo delta (hỗ trợ mảng lồng nhau cho polygon)
+function shiftLatLngs(latlngs, dLat, dLng) {
+  if (!latlngs || !latlngs.length) return latlngs;
+  var first = latlngs[0];
+  if (first && (typeof first.lat === 'number' || first.lat === undefined && first[0] != null)) {
+    return latlngs.map(function(p) {
+      return L.latLng(p.lat + dLat, p.lng + dLng);
+    });
+  }
+  return latlngs.map(function(ring) { return shiftLatLngs(ring, dLat, dLng); });
+}
+
+// Chụp trạng thái vị trí tất cả layer của một chú thích (để di chuyển)
+function getDrawingSnapshot(drawingId) {
+  var layers = getDrawingLayersById(drawingId);
+  return layers.map(function(l) {
+    if (l instanceof L.Circle) {
+      return { layer: l, type: 'circle', center: L.latLng(l.getLatLng()), radius: l.getRadius() };
+    }
+    if (l instanceof L.Rectangle) {
+      var b = l.getBounds();
+      return { layer: l, type: 'rectangle', sw: b.getSouthWest(), ne: b.getNorthEast() };
+    }
+    if (l instanceof L.Marker) {
+      return { layer: l, type: 'marker', latlng: L.latLng(l.getLatLng()) };
+    }
+    if (l.getLatLngs) {
+      var ll = l.getLatLngs();
+      var copy = ll.length && typeof ll[0].lat === 'number'
+        ? ll.map(function(p) { return L.latLng(p.lat, p.lng); })
+        : ll.map(function(ring) { return ring.map(function(p) { return L.latLng(p.lat, p.lng); }); });
+      return { layer: l, type: 'latlngs', latlngs: copy };
+    }
+    return null;
+  }).filter(Boolean);
+}
+
+// Áp dụng snapshot + delta lên tất cả layer (sau khi kéo)
+function applyDrawingSnapshot(snapshot, dLat, dLng) {
+  snapshot.forEach(function(item) {
+    if (item.type === 'circle') {
+      item.layer.setLatLng(L.latLng(item.center.lat + dLat, item.center.lng + dLng));
+    } else if (item.type === 'rectangle') {
+      item.layer.setBounds(L.latLngBounds(
+        L.latLng(item.sw.lat + dLat, item.sw.lng + dLng),
+        L.latLng(item.ne.lat + dLat, item.ne.lng + dLng)
+      ));
+    } else if (item.type === 'marker') {
+      item.layer.setLatLng(L.latLng(item.latlng.lat + dLat, item.latlng.lng + dLng));
+    } else if (item.type === 'latlngs') {
+      item.layer.setLatLngs(shiftLatLngs(item.latlngs, dLat, dLng));
+    }
+  });
+}
+
 // Hàm thêm khả năng xóa và chỉnh sửa cho drawing layer
 function makeDrawingDeletable(layer, map) {
   // Gán ID duy nhất cho layer nếu chưa có
@@ -5224,6 +5414,7 @@ function makeDrawingDeletable(layer, map) {
     'arrow': 'Mũi tên',
     'polygon': 'Hình đa giác',
     'circle': 'Hình tròn',
+    'rectangle': 'Hình chữ nhật',
     'text': 'Chú thích'
   };
   
@@ -5232,8 +5423,8 @@ function makeDrawingDeletable(layer, map) {
   // Tất cả các loại đều có thể chỉnh sửa
   const isEditable = true;
   
-  // Các loại có fillOpacity (polygon, circle)
-  const hasFillOpacity = layer._drawingType === 'polygon' || layer._drawingType === 'circle';
+  // Các loại có fillOpacity (polygon, circle, rectangle)
+  const hasFillOpacity = layer._drawingType === 'polygon' || layer._drawingType === 'circle' || layer._drawingType === 'rectangle';
   
   // Loại text có thể chỉnh sửa nội dung
   const isText = layer._drawingType === 'text';
@@ -5272,6 +5463,14 @@ function makeDrawingDeletable(layer, map) {
         <br>
         <span style="font-size: 0.85em; color: #6b7280;">⭕ Bán kính:</span>
         <strong style="color: #1f2937; font-size: 1em; margin-left: 6px;">${formatMeasurement(radius, 'length')}</strong>
+      </div>`;
+    } else if (layer._drawingType === 'rectangle') {
+      // Tính diện tích cho rectangle
+      const latlngs = layer.getLatLngs()[0] || layer.getLatLngs();
+      const area = calculatePolygonArea(latlngs);
+      measurementInfo = `<div style="background: #f3f4f6; padding: 8px; border-radius: 4px; margin-bottom: 12px; text-align: center;">
+        <span style="font-size: 0.85em; color: #6b7280;">📐 Diện tích:</span>
+        <strong style="color: #1f2937; font-size: 1em; margin-left: 6px;">${formatMeasurement(area, 'area')}</strong>
       </div>`;
     } else if (layer._drawingType === 'freehand' || layer._drawingType === 'line' || layer._drawingType === 'arrow') {
       // Tính chiều dài cho freehand, line và arrow
@@ -5479,9 +5678,52 @@ function makeDrawingDeletable(layer, map) {
   // Bind popup
   layer.bindPopup(popupContent, { maxWidth: 300 });
   
-  // Thêm click event
+  // Cho phép di chuyển chú thích: Marker (text) dùng kéo sẵn có, shape khác dùng mousedown + mousemove
+  if (layer instanceof L.Marker) {
+    if (layer.dragging) layer.dragging.enable();
+    layer.on('dragend', function() { saveDrawings(); });
+  } else {
+    layer.on('mousedown', function(e) {
+      L.DomEvent.stopPropagation(e.originalEvent);
+      if (isDrawing || drawingDragState) return;
+      var drawingId = this._drawingId;
+      var snapshot = getDrawingSnapshot(drawingId);
+      var originalMouse = e.latlng;
+      if (map.dragging) map.dragging.disable();
+      var moveHandler = function(ev) {
+        var dLat = ev.latlng.lat - originalMouse.lat;
+        var dLng = ev.latlng.lng - originalMouse.lng;
+        applyDrawingSnapshot(snapshot, dLat, dLng);
+        var layers = getDrawingLayersById(drawingId);
+        var mainLayer = layers.find(function(l) { return !l._mainArrow; }) || layers[0];
+        if (mainLayer._drawingLabelLayers) {
+          mainLayer._drawingLabelLayers.forEach(function(m) {
+            var ll = m.getLatLng();
+            m.setLatLng(L.latLng(ll.lat + dLat, ll.lng + dLng));
+          });
+        }
+      };
+      var upHandler = function() {
+        map.off('mousemove', moveHandler);
+        map.off('mouseup', upHandler);
+        if (map.dragging) map.dragging.enable();
+        getDrawingLayersById(drawingId).forEach(function(l) { l._drawingJustDragged = true; });
+        drawingDragState = null;
+        saveDrawings();
+      };
+      drawingDragState = { drawingId: drawingId, snapshot: snapshot };
+      map.on('mousemove', moveHandler);
+      map.on('mouseup', upHandler);
+    });
+  }
+  
+  // Thêm click event (không mở popup nếu vừa kéo xong)
   layer.on('click', function(e) {
     L.DomEvent.stopPropagation(e);
+    if (this._drawingJustDragged) {
+      this._drawingJustDragged = false;
+      return;
+    }
     this.openPopup();
   });
   
@@ -5618,6 +5860,7 @@ window.deleteDrawingLayer = function(buttonElement) {
   const layersToRemove = drawingLayers.filter(l => l._drawingId === layerId);
   
   if (layersToRemove.length > 0) {
+    removePersistentLabelsForDrawing(layerId, map);
     // Xóa tất cả layers có cùng ID
     layersToRemove.forEach(l => {
       try {
@@ -5661,9 +5904,8 @@ function saveDrawings() {
         layerData.center = layer.getLatLng();
         layerData.radius = layer.getRadius();
       } else if (layer instanceof L.Rectangle) {
-        // Hỗ trợ legacy rectangle - chuyển thành polygon
-        layerData.bounds = layer.getBounds();
-        layerData.type = 'polygon'; // Convert sang polygon
+        const b = layer.getBounds();
+        layerData.bounds = { _southWest: b.getSouthWest(), _northEast: b.getNorthEast() };
       } else if (layer instanceof L.Marker) {
         layerData.latlng = layer.getLatLng();
         layerData.text = layer._drawingText;
@@ -5723,24 +5965,14 @@ function loadDrawings(map) {
           fillOpacity: data.opacity !== undefined ? data.opacity : 0.2,
           pane: 'drawingPane'
         }).addTo(map);
-      } else if (data.type === 'rectangle') {
-        // Hỗ trợ legacy rectangle - convert thành polygon
-        if (data.bounds) {
-          const bounds = L.latLngBounds(data.bounds);
-          const coords = [
-            [bounds.getSouth(), bounds.getWest()],
-            [bounds.getNorth(), bounds.getWest()],
-            [bounds.getNorth(), bounds.getEast()],
-            [bounds.getSouth(), bounds.getEast()]
-          ];
-          layer = L.polygon(coords, {
-            color: data.color,
-            weight: data.weight,
-            fillOpacity: data.opacity !== undefined ? data.opacity : 0.2,
-            pane: 'drawingPane'
-          }).addTo(map);
-          layer._drawingType = 'polygon'; // Convert type
-        }
+      } else if (data.type === 'rectangle' && data.bounds) {
+        const bounds = L.latLngBounds(data.bounds._southWest || data.bounds[0], data.bounds._northEast || data.bounds[1]);
+        layer = L.rectangle(bounds, {
+          color: data.color,
+          weight: data.weight,
+          fillOpacity: data.opacity !== undefined ? data.opacity : 0.2,
+          pane: 'drawingPane'
+        }).addTo(map);
       } else if (data.type === 'circle') {
         layer = L.circle(data.center, {
           radius: data.radius,
@@ -5770,8 +6002,8 @@ function loadDrawings(map) {
         layer._drawingId = drawingIdCounter++;
         
         drawingLayers.push(layer);
-        // Thêm khả năng xóa và chỉnh sửa
         makeDrawingDeletable(layer, map);
+        addPersistentLabelsForDrawing(layer._drawingId, map);
       }
     });
   } catch (error) {
@@ -5790,7 +6022,12 @@ function clearAllDrawings(map) {
     return;
   }
   
-  drawingLayers.forEach(layer => {
+  var drawnIds = [];
+  drawingLayers.forEach(function(layer) {
+    if (drawnIds.indexOf(layer._drawingId) === -1) drawnIds.push(layer._drawingId);
+  });
+  drawnIds.forEach(function(id) { removePersistentLabelsForDrawing(id, map); });
+  drawingLayers.forEach(function(layer) {
     map.removeLayer(layer);
   });
   
@@ -5929,6 +6166,7 @@ function exportDrawings() {
         'arrow': 'Mũi tên',
         'polygon': 'Hình đa giác',
         'circle': 'Hình tròn',
+        'rectangle': 'Hình chữ nhật',
         'text': 'Chú thích'
       };
       
@@ -5945,6 +6183,10 @@ function exportDrawings() {
         const area = Math.PI * radius * radius;
         description += `\nDiện tích: ${formatMeasurement(area, 'area')}`;
         description += `\nBán kính: ${formatMeasurement(radius, 'length')}`;
+      } else if (layer._drawingType === 'rectangle') {
+        const latlngs = layer.getLatLngs()[0] || layer.getLatLngs();
+        const area = calculatePolygonArea(latlngs);
+        description += `\nDiện tích: ${formatMeasurement(area, 'area')}`;
       } else if (layer._drawingType === 'freehand' || layer._drawingType === 'line' || layer._drawingType === 'arrow') {
         const latlngs = layer.getLatLngs();
         const length = calculatePolylineLength(latlngs);
@@ -5972,8 +6214,29 @@ function exportDrawings() {
         </outerBoundaryIs>
       </Polygon>
 `;
-      } else if (layer instanceof L.Polygon && !(layer instanceof L.Rectangle)) {
-        // Polygon
+      } else if (layer instanceof L.Rectangle) {
+        // Rectangle - xuất dạng Polygon
+        let coords = layer.getLatLngs()[0];
+        if (Array.isArray(coords[0])) {
+          coords = coords[0];
+        }
+        const coordsArray = Array.from(coords);
+        const first = coordsArray[0];
+        const last = coordsArray[coordsArray.length - 1];
+        if (first.lat !== last.lat || first.lng !== last.lng) {
+          coordsArray.push(first);
+        }
+        const coordString = coordsArray.map(ll => `${ll.lng},${ll.lat},0`).join(' ');
+        kml += `      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>${coordString}</coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+`;
+      } else if (layer instanceof L.Polygon) {
+        // Polygon (không phải Rectangle)
         let coords = layer.getLatLngs()[0];
         if (Array.isArray(coords[0])) {
           coords = coords[0];
@@ -6045,10 +6308,14 @@ function setupDrawingTools(map) {
   
   // Tạo pane riêng cho drawings với z-index cao
   // Z-index hierarchy: overlayPane(400) < projectPane(650) < duanPane(700) < searchResultPane(800)
-  //                    < locationPane(850) < drawingPane(880) < tooltipPane(950) < popupPane(1000)
+  //                    < locationPane(850) < drawingPane(880) < drawingLabelsPane(885) < tooltipPane(950) < popupPane(1000)
   if (!map._drawingPane) {
     map._drawingPane = map.createPane('drawingPane');
     map._drawingPane.style.zIndex = 880; // Cao hơn các layer nhưng thấp hơn popup
+  }
+  if (!map._drawingLabelsPane) {
+    map._drawingLabelsPane = map.createPane('drawingLabelsPane');
+    map._drawingLabelsPane.style.zIndex = 885; // Cao hơn drawingPane để nhãn luôn nằm trên hình vẽ
   }
   
   // Đảm bảo popupPane có z-index cao nhất để popup luôn hiển thị trên cùng
@@ -6083,6 +6350,7 @@ function setupDrawingTools(map) {
   const lineBtn = document.getElementById('draw-line-btn');
   const polygonBtn = document.getElementById('draw-polygon-btn');
   const circleBtn = document.getElementById('draw-circle-btn');
+  const rectangleBtn = document.getElementById('draw-rectangle-btn');
   const arrowBtn = document.getElementById('draw-arrow-btn');
   const textBtn = document.getElementById('draw-text-btn');
   const colorPicker = document.getElementById('drawing-color-picker');
@@ -6109,6 +6377,10 @@ function setupDrawingTools(map) {
     if (drawingMouseMoveHandler) {
       map.off('mousemove', drawingMouseMoveHandler);
       drawingMouseMoveHandler = null;
+    }
+    if (drawingPreMouseMoveHandler) {
+      map.off('mousemove', drawingPreMouseMoveHandler);
+      drawingPreMouseMoveHandler = null;
     }
     if (drawingDblClickHandler) {
       map.off('dblclick', drawingDblClickHandler);
@@ -6144,9 +6416,12 @@ function setupDrawingTools(map) {
     toggleGeojsonInteractivity(true);
     
     // Remove active class từ tất cả buttons
-    [freehandBtn, lineBtn, polygonBtn, circleBtn, arrowBtn, textBtn].forEach(btn => {
+    [freehandBtn, lineBtn, polygonBtn, circleBtn, rectangleBtn, arrowBtn, textBtn].forEach(btn => {
       if (btn) btn.classList.remove('active');
     });
+
+    hideDrawingLiveInfo();
+    clearDrawingTempLabels(map);
   }
   
   // Hàm bắt đầu vẽ tự do
@@ -6163,6 +6438,9 @@ function setupDrawingTools(map) {
       freehandBtn.classList.add('active');
       map.getContainer().style.cursor = 'crosshair';
       toggleGeojsonInteractivity(false);
+      showDrawingLiveInfo(false);
+      drawingPreMouseMoveHandler = function(e) { updateDrawingLiveInfo(e.latlng); };
+      map.on('mousemove', drawingPreMouseMoveHandler);
       
       // Disable scrollWheelZoom để tránh zoom khi vẽ
       if (map.scrollWheelZoom) {
@@ -6173,6 +6451,10 @@ function setupDrawingTools(map) {
       
       // Sử dụng named function để có thể cleanup
       drawingMouseDownHandler = function(e) {
+        if (drawingPreMouseMoveHandler) {
+          map.off('mousemove', drawingPreMouseMoveHandler);
+          drawingPreMouseMoveHandler = null;
+        }
         // Disable map dragging khi bắt đầu vẽ
         if (map.dragging) {
           map.dragging.disable();
@@ -6192,6 +6474,7 @@ function setupDrawingTools(map) {
       map.on('mousedown', drawingMouseDownHandler);
       
       drawingMouseMoveHandler = function(e) {
+        updateDrawingLiveInfo(e.latlng);
         if (isMouseDown && currentDrawingLayer) {
           tempDrawingPoints.push(e.latlng);
           currentDrawingLayer.setLatLngs(tempDrawingPoints);
@@ -6209,6 +6492,7 @@ function setupDrawingTools(map) {
           currentDrawingLayer._drawingId = drawingIdCounter++;
           drawingLayers.push(currentDrawingLayer);
           makeDrawingDeletable(currentDrawingLayer, map);
+          addPersistentLabelsForDrawing(currentDrawingLayer._drawingId, map);
           saveDrawings();
           currentDrawingLayer = null;
           tempDrawingPoints = [];
@@ -6237,10 +6521,17 @@ function setupDrawingTools(map) {
       lineBtn.classList.add('active');
       map.getContainer().style.cursor = 'crosshair';
       toggleGeojsonInteractivity(false);
+      showDrawingLiveInfo(false);
+      drawingPreMouseMoveHandler = function(e) { updateDrawingLiveInfo(e.latlng); };
+      map.on('mousemove', drawingPreMouseMoveHandler);
 
       let linePoints = [];
 
       drawingClickHandler = function(e) {
+        if (drawingPreMouseMoveHandler) {
+          map.off('mousemove', drawingPreMouseMoveHandler);
+          drawingPreMouseMoveHandler = null;
+        }
         linePoints.push(e.latlng);
 
         if (linePoints.length === 1) {
@@ -6252,10 +6543,16 @@ function setupDrawingTools(map) {
           }).addTo(map);
 
           drawingMouseMoveHandler = function(e) {
+            updateDrawingLiveInfo(e.latlng);
             if (currentDrawingLayer && linePoints.length > 0) {
-              // Cập nhật polyline với các điểm đã click + vị trí chuột hiện tại
               const tempPoints = [...linePoints, e.latlng];
               currentDrawingLayer.setLatLngs(tempPoints);
+              clearDrawingTempLabels(map);
+              for (let i = 0; i < tempPoints.length - 1; i++) {
+                const p1 = tempPoints[i], p2 = tempPoints[i + 1];
+                const mid = L.latLng((p1.lat + p2.lat) / 2, (p1.lng + p2.lng) / 2);
+                addDrawingTempLabel(map, mid, formatDistance(p1.distanceTo(p2)));
+              }
             }
           };
           map.on('mousemove', drawingMouseMoveHandler);
@@ -6276,6 +6573,7 @@ function setupDrawingTools(map) {
         if (linePoints.length >= 2) {
           map.off('mousemove', drawingMouseMoveHandler);
           map.off('click', drawingClickHandler);
+          clearDrawingTempLabels(map);
 
           // Hoàn thành polyline
           currentDrawingLayer.setLatLngs(linePoints);
@@ -6286,6 +6584,7 @@ function setupDrawingTools(map) {
           currentDrawingLayer._drawingId = drawingIdCounter++;
           drawingLayers.push(currentDrawingLayer);
           makeDrawingDeletable(currentDrawingLayer, map);
+          addPersistentLabelsForDrawing(currentDrawingLayer._drawingId, map);
           saveDrawings();
 
           linePoints = [];
@@ -6314,11 +6613,18 @@ function setupDrawingTools(map) {
       arrowBtn.classList.add('active');
       map.getContainer().style.cursor = 'crosshair';
       toggleGeojsonInteractivity(false);
+      showDrawingLiveInfo(false);
+      drawingPreMouseMoveHandler = function(e) { updateDrawingLiveInfo(e.latlng); };
+      map.on('mousemove', drawingPreMouseMoveHandler);
       
       let clickCount = 0;
       let arrowPoints = [];
       
       drawingClickHandler = function(e) {
+        if (drawingPreMouseMoveHandler) {
+          map.off('mousemove', drawingPreMouseMoveHandler);
+          drawingPreMouseMoveHandler = null;
+        }
         clickCount++;
         arrowPoints.push(e.latlng);
         
@@ -6331,13 +6637,19 @@ function setupDrawingTools(map) {
           }).addTo(map);
           
           drawingMouseMoveHandler = function(e) {
+            updateDrawingLiveInfo(e.latlng);
             if (currentDrawingLayer) {
               currentDrawingLayer.setLatLngs([arrowPoints[0], e.latlng]);
+              clearDrawingTempLabels(map);
+              const len = arrowPoints[0].distanceTo(e.latlng);
+              const mid = L.latLng((arrowPoints[0].lat + e.latlng.lat) / 2, (arrowPoints[0].lng + e.latlng.lng) / 2);
+              addDrawingTempLabel(map, mid, formatDistance(len));
             }
           };
           map.on('mousemove', drawingMouseMoveHandler);
         } else if (clickCount === 2) {
           map.off('mousemove', drawingMouseMoveHandler);
+          clearDrawingTempLabels(map);
           map.removeLayer(currentDrawingLayer);
           
           const arrow = L.polyline(arrowPoints, {
@@ -6399,8 +6711,9 @@ function setupDrawingTools(map) {
           makeDrawingDeletable(arrow, map);
           makeDrawingDeletable(arrowHead, map);
           makeDrawingDeletable(arrowHead2, map);
+          addPersistentLabelsForDrawing(arrow._drawingId, map);
           saveDrawings();
-          
+
           clickCount = 0;
           arrowPoints = [];
           currentDrawingLayer = null;
@@ -6427,10 +6740,17 @@ function setupDrawingTools(map) {
       polygonBtn.classList.add('active');
       map.getContainer().style.cursor = 'crosshair';
       toggleGeojsonInteractivity(false);
+      showDrawingLiveInfo(true);
+      drawingPreMouseMoveHandler = function(e) { updateDrawingLiveInfo(e.latlng); };
+      map.on('mousemove', drawingPreMouseMoveHandler);
 
       let polygonPoints = [];
 
       drawingClickHandler = function(e) {
+        if (drawingPreMouseMoveHandler) {
+          map.off('mousemove', drawingPreMouseMoveHandler);
+          drawingPreMouseMoveHandler = null;
+        }
         polygonPoints.push(e.latlng);
 
         if (polygonPoints.length === 1) {
@@ -6443,10 +6763,17 @@ function setupDrawingTools(map) {
           }).addTo(map);
 
           drawingMouseMoveHandler = function(e) {
+            const tempPoints = [...polygonPoints, e.latlng];
+            const area = tempPoints.length >= 3 ? calculatePolygonArea(tempPoints) : null;
+            updateDrawingLiveInfo(e.latlng, area);
             if (currentDrawingLayer && polygonPoints.length > 0) {
-              // Cập nhật polygon với các điểm đã click + vị trí chuột hiện tại
-              const tempPoints = [...polygonPoints, e.latlng];
               currentDrawingLayer.setLatLngs(tempPoints);
+            }
+            clearDrawingTempLabels(map);
+            for (let i = 0; i < tempPoints.length - 1; i++) {
+              const p1 = tempPoints[i], p2 = tempPoints[i + 1];
+              const mid = L.latLng((p1.lat + p2.lat) / 2, (p1.lng + p2.lng) / 2);
+              addDrawingTempLabel(map, mid, formatDistance(p1.distanceTo(p2)));
             }
           };
           map.on('mousemove', drawingMouseMoveHandler);
@@ -6467,6 +6794,7 @@ function setupDrawingTools(map) {
         if (polygonPoints.length >= 3) {
           map.off('mousemove', drawingMouseMoveHandler);
           map.off('click', drawingClickHandler);
+          clearDrawingTempLabels(map);
 
           // Hoàn thành polygon
           currentDrawingLayer.setLatLngs(polygonPoints);
@@ -6478,6 +6806,7 @@ function setupDrawingTools(map) {
           currentDrawingLayer._drawingId = drawingIdCounter++;
           drawingLayers.push(currentDrawingLayer);
           makeDrawingDeletable(currentDrawingLayer, map);
+          addPersistentLabelsForDrawing(currentDrawingLayer._drawingId, map);
           saveDrawings();
 
           polygonPoints = [];
@@ -6506,6 +6835,9 @@ function setupDrawingTools(map) {
       circleBtn.classList.add('active');
       map.getContainer().style.cursor = 'crosshair';
       toggleGeojsonInteractivity(false);
+      showDrawingLiveInfo(true);
+      drawingPreMouseMoveHandler = function(e) { updateDrawingLiveInfo(e.latlng); };
+      map.on('mousemove', drawingPreMouseMoveHandler);
       
       let clickCount = 0;
       
@@ -6513,6 +6845,10 @@ function setupDrawingTools(map) {
         clickCount++;
         
         if (clickCount === 1) {
+          if (drawingPreMouseMoveHandler) {
+            map.off('mousemove', drawingPreMouseMoveHandler);
+            drawingPreMouseMoveHandler = null;
+          }
           drawingStartPoint = e.latlng;
           currentDrawingLayer = L.circle(drawingStartPoint, {
             radius: 1,
@@ -6526,12 +6862,16 @@ function setupDrawingTools(map) {
             if (currentDrawingLayer) {
               const radius = drawingStartPoint.distanceTo(e.latlng);
               currentDrawingLayer.setRadius(radius);
+              const area = Math.PI * radius * radius;
+              updateDrawingLiveInfo(e.latlng, area);
+              clearDrawingTempLabels(map);
+              addDrawingTempLabel(map, drawingStartPoint, 'r = ' + formatDistance(radius));
             }
           };
           map.on('mousemove', drawingMouseMoveHandler);
         } else if (clickCount === 2) {
           map.off('mousemove', drawingMouseMoveHandler);
-          
+          clearDrawingTempLabels(map);
           currentDrawingLayer._drawingType = 'circle';
           currentDrawingLayer._drawingColor = drawingColor;
           currentDrawingLayer._drawingWeight = drawingWeight;
@@ -6540,6 +6880,7 @@ function setupDrawingTools(map) {
           currentDrawingLayer._drawingId = drawingIdCounter++;
           drawingLayers.push(currentDrawingLayer);
           makeDrawingDeletable(currentDrawingLayer, map);
+          addPersistentLabelsForDrawing(currentDrawingLayer._drawingId, map);
           saveDrawings();
           
           clickCount = 0;
@@ -6547,6 +6888,89 @@ function setupDrawingTools(map) {
           currentDrawingLayer = null;
           disableAllDrawingTools();
           showSearchNotification('Đã vẽ hình tròn!', 'success');
+        }
+      };
+      
+      map.on('click', drawingClickHandler);
+    };
+  }
+  
+  // Hàm vẽ hình chữ nhật
+  if (rectangleBtn) {
+    rectangleBtn.onclick = function() {
+      if (currentDrawingTool === 'rectangle') {
+        disableAllDrawingTools();
+        return;
+      }
+      
+      disableAllDrawingTools();
+      isDrawing = true;
+      currentDrawingTool = 'rectangle';
+      rectangleBtn.classList.add('active');
+      map.getContainer().style.cursor = 'crosshair';
+      toggleGeojsonInteractivity(false);
+      showDrawingLiveInfo(true);
+      drawingPreMouseMoveHandler = function(e) { updateDrawingLiveInfo(e.latlng); };
+      map.on('mousemove', drawingPreMouseMoveHandler);
+      
+      let clickCount = 0;
+      
+      drawingClickHandler = function(e) {
+        clickCount++;
+        
+        if (clickCount === 1) {
+          if (drawingPreMouseMoveHandler) {
+            map.off('mousemove', drawingPreMouseMoveHandler);
+            drawingPreMouseMoveHandler = null;
+          }
+          drawingStartPoint = e.latlng;
+          const bounds = L.latLngBounds(e.latlng, e.latlng);
+          currentDrawingLayer = L.rectangle(bounds, {
+            color: drawingColor,
+            weight: drawingWeight,
+            fillOpacity: 0.2,
+            pane: 'drawingPane'
+          }).addTo(map);
+          
+          drawingMouseMoveHandler = function(e) {
+            if (currentDrawingLayer && drawingStartPoint) {
+              const bounds = L.latLngBounds(drawingStartPoint, e.latlng);
+              currentDrawingLayer.setBounds(bounds);
+              const sw = bounds.getSouthWest(), nw = bounds.getNorthWest(), ne = bounds.getNorthEast(), se = bounds.getSouthEast();
+              const area = calculatePolygonArea([sw, nw, ne, se]);
+              updateDrawingLiveInfo(e.latlng, area);
+              clearDrawingTempLabels(map);
+              const edges = [
+                [sw, nw], [nw, ne], [ne, se], [se, sw]
+              ];
+              edges.forEach(function(pair) {
+                const p1 = pair[0], p2 = pair[1];
+                const mid = L.latLng((p1.lat + p2.lat) / 2, (p1.lng + p2.lng) / 2);
+                const len = p1.distanceTo(p2);
+                addDrawingTempLabel(map, mid, formatDistance(len));
+              });
+            }
+          };
+          map.on('mousemove', drawingMouseMoveHandler);
+        } else if (clickCount === 2) {
+          map.off('mousemove', drawingMouseMoveHandler);
+          clearDrawingTempLabels(map);
+          currentDrawingLayer._drawingType = 'rectangle';
+          currentDrawingLayer._drawingColor = drawingColor;
+          currentDrawingLayer._drawingWeight = drawingWeight;
+          currentDrawingLayer._drawingLabel = '';
+          currentDrawingLayer._drawingOpacity = 0.2;
+          currentDrawingLayer._drawingId = drawingIdCounter++;
+          drawingLayers.push(currentDrawingLayer);
+          makeDrawingDeletable(currentDrawingLayer, map);
+          addPersistentLabelsForDrawing(currentDrawingLayer._drawingId, map);
+          saveDrawings();
+          
+          clickCount = 0;
+          drawingStartPoint = null;
+          currentDrawingLayer = null;
+          disableAllDrawingTools();
+          showSearchNotification('Đã vẽ hình chữ nhật!', 'success');
         }
       };
       
@@ -6568,8 +6992,16 @@ function setupDrawingTools(map) {
       textBtn.classList.add('active');
       map.getContainer().style.cursor = 'crosshair';
       toggleGeojsonInteractivity(false);
+      showDrawingLiveInfo(false);
+      drawingPreMouseMoveHandler = function(e) { updateDrawingLiveInfo(e.latlng); };
+      map.on('mousemove', drawingPreMouseMoveHandler);
       
       drawingClickHandler = function(e) {
+        if (drawingPreMouseMoveHandler) {
+          map.off('mousemove', drawingPreMouseMoveHandler);
+          drawingPreMouseMoveHandler = null;
+        }
+        updateDrawingLiveInfo(e.latlng);
         const text = prompt('Nhập chú thích:', 'Ghi chú');
         if (text) {
           const marker = L.marker(e.latlng, {
