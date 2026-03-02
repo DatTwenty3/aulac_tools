@@ -138,6 +138,16 @@ const subjectsConfig = [
             law: ['khaosatdiahinh1_PLC.csv', 'khaosatdiahinh1_PLR.csv'],
             specialized: ['khaosatdiahinh1_CM.csv']
         }
+    },
+    {
+        id: 'duongbo1',
+        title: 'Đường bộ, Hạng I',
+        subtitle: 'Thi chứng chỉ hành nghề Thiết kế xây XDCT: CT Đường bộ, Hạng I',
+        icon: '🚗',
+        files: {
+            law: ['duongbo1_PLC.csv', 'duongbo1_PLR.csv'],
+            specialized: ['duongbo1_CM.csv']
+        }
     }
 ];
 
