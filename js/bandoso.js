@@ -568,6 +568,7 @@ function formatFieldName(key) {
     'OBJECTID': 'ID',
     'maDoiTuong': 'Mã đối tượng',
     'ten': 'Tên',
+    'Name': 'Tên điểm',
     'ten_xa': 'Tên xã/phường',
     'ma_xa': 'Mã xã/phường',
     'ma_tinh': 'Mã tỉnh',
@@ -1200,7 +1201,7 @@ function assignColorToFeature(feature, allFeatures, assignedColors, index) {
 // Hỗ trợ cả định dạng cũ (ten, ma) và mới (ten_xa, ma_xa)
 function getFeatureName(properties) {
   if (!properties) return null;
-  return properties.ten_xa || properties.ten || null;
+  return properties.ten_xa || properties.ten || properties.Name || properties.name || null;
 }
 
 function getFeatureCode(properties) {
@@ -1810,7 +1811,8 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
             selectedDuanFeatureLayer = layer;
             if (layer.setStyle) layer.setStyle({ fillColor: '#2ecc40', fillOpacity: 1.0, stroke: false, opacity: 1.0 });
             if (layer.setRadius) layer.setRadius(baseRadius + 2);
-            openInfoPanel(feature.properties, false, true, displayName, true);
+            const pointName = feature?.properties ? (feature.properties.Name || feature.properties.ten || feature.properties.name) : null;
+            openInfoPanel(pointName ? { Name: pointName } : null, false, false, '', false);
           });
 
           layer.on('mouseover', function() {
@@ -3094,8 +3096,10 @@ function zoomToDuanFeature(map, feature, cachedData) {
   }
   
   // Tạo marker tại vị trí tìm thấy
-  const ten = feature.properties && feature.properties.ten ? feature.properties.ten : 'Đường';
-  const displayText = `${ten}${feature.properties && feature.properties.phanLoai ? ' - ' + feature.properties.phanLoai : ''}`;
+  const isPointFile = cachedData && isDuanPointFile(cachedData.filename);
+  const rawName = feature && feature.properties ? (feature.properties.ten || feature.properties.Name || feature.properties.name) : null;
+  const ten = rawName ? rawName : (isPointFile ? 'Điểm' : 'Đường');
+  const displayText = isPointFile ? `${ten}` : `${ten}${feature.properties && feature.properties.phanLoai ? ' - ' + feature.properties.phanLoai : ''}`;
   searchResultMarker = createSearchResultMarker(map, markerPoint, displayText);
   searchResultMarker.addTo(map);
   
@@ -3150,7 +3154,11 @@ function zoomToDuanFeature(map, feature, cachedData) {
   
   // Hiển thị thông tin
   if (feature.properties) {
-    openInfoPanel(feature.properties, false, true, cachedData.displayName, true);
+    if (isPointFile) {
+      openInfoPanel(rawName ? { Name: rawName } : null, false, false, '', false);
+    } else {
+      openInfoPanel(feature.properties, false, true, cachedData.displayName, true);
+    }
   }
   
   // Hiển thị thông báo thành công
