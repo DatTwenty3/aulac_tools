@@ -368,9 +368,12 @@
                   </div>
                   <div style="flex: 1;">
                     <label style="display: block; font-size: 0.8rem; color: #6b7280; margin-bottom: 4px;">
-                      Độ dày <span id="drawing-weight-value" style="font-weight: 600; color: #8b5cf6;">3px</span>
+                      Độ dày
                     </label>
-                    <input type="range" id="drawing-weight-slider" min="1" max="10" value="3" style="width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <input type="range" id="drawing-weight-slider" class="duan-weight-slider" min="1" max="10" value="3">
+                      <span id="drawing-weight-value" class="duan-weight-value">3</span>
+                    </div>
                   </div>
                 </div>
 

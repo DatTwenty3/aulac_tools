@@ -63,6 +63,28 @@ const duanDisplayNames = {
   // Có thể thêm fallback ở đây nếu cần
 };
 
+function isDuanPointFile(filename) {
+  return typeof filename === 'string' && /_P\.geojson$/i.test(filename);
+}
+
+function getDuanTooltipText(feature, displayName) {
+  if (!feature || !feature.properties) return displayName;
+  const props = feature.properties;
+  const name = props.ten || props.Name || props.name;
+  const phanLoai = props.phanLoai || props.description;
+  if (!name) return displayName;
+  return phanLoai ? `${name} - ${phanLoai}` : name;
+}
+
+function getDuanPointDefaults() {
+  return { pointRadius: 6 };
+}
+
+function normalizeNumber(value, fallback) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 // Biến cho tính năng đo khoảng cách
 let isMeasuring = false;
 let measurePoints = [];
@@ -1619,18 +1641,20 @@ function reloadDuanFileToCache(map, filename) {
       // Cache các feature từ file đang được hiển thị
       if (data.features && Array.isArray(data.features)) {
         data.features.forEach(feature => {
-          if (feature.properties && feature.properties.ten) {
-            const ten = feature.properties.ten.toString().toLowerCase();
-            if (!duanFeaturesCache[ten]) {
-              duanFeaturesCache[ten] = [];
+          const props = feature && feature.properties;
+          const rawName = props ? (props.ten || props.Name || props.name) : null;
+          if (rawName) {
+            const key = rawName.toString().toLowerCase();
+            if (!duanFeaturesCache[key]) {
+              duanFeaturesCache[key] = [];
             }
             // Kiểm tra xem feature đã có trong cache chưa (tránh trùng lặp)
-            const exists = duanFeaturesCache[ten].some(item => 
+            const exists = duanFeaturesCache[key].some(item => 
               item.filename === filename && 
               item.feature === feature
             );
             if (!exists) {
-              duanFeaturesCache[ten].push({
+              duanFeaturesCache[key].push({
                 feature: feature,
                 filename: filename,
                 displayName: displayName
@@ -1664,6 +1688,7 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
 
   const filepath = 'geo-json/DuAn/' + encodeURIComponent(filename);
   const displayName = getDuanDisplayName(filename);
+  const isPointFile = isDuanPointFile(filename);
 
   fetch(filepath)
     .then(res => {
@@ -1672,12 +1697,20 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
     })
     .then(data => {
       const config = duanConfig[filename] || {};
+      if (isPointFile) {
+        const defaults = getDuanPointDefaults();
+        config.pointRadius = normalizeNumber(config.pointRadius, defaults.pointRadius);
+        duanConfig[filename] = config;
+        saveDuanConfig();
+      }
       if (config.visible !== false && data.features && Array.isArray(data.features)) {
         data.features.forEach(feature => {
-          if (feature.properties && feature.properties.ten) {
-            const ten = feature.properties.ten.toString().toLowerCase();
-            if (!duanFeaturesCache[ten]) duanFeaturesCache[ten] = [];
-            duanFeaturesCache[ten].push({ feature: feature, filename: filename, displayName: displayName });
+          const props = feature && feature.properties;
+          const rawName = props ? (props.ten || props.Name || props.name) : null;
+          if (rawName) {
+            const key = rawName.toString().toLowerCase();
+            if (!duanFeaturesCache[key]) duanFeaturesCache[key] = [];
+            duanFeaturesCache[key].push({ feature: feature, filename: filename, displayName: displayName });
           }
         });
       }
@@ -1687,13 +1720,12 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
       const lineFeatures = (data.features || []).filter(f => getDuanGeometryType(f.geometry) === 'line');
       const pointFeatures = (data.features || []).filter(f => getDuanGeometryType(f.geometry) === 'point');
 
-      const commonOpts = {
+      const polygonLineOpts = {
         style: function() {
           return { color: color, weight: weight, fillColor: color, fillOpacity: 0.3, opacity: 1.0, dashArray: scaledDashArray };
         },
         onEachFeature: function(feature, layer) {
-          const tooltipText = (feature.properties && feature.properties.ten)
-            ? `${feature.properties.ten}${feature.properties.phanLoai ? ' - ' + feature.properties.phanLoai : ''}` : displayName;
+          const tooltipText = getDuanTooltipText(feature, displayName);
           layer.bindTooltip(tooltipText, { direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip' });
           layer.on('click', function() {
             if (isMeasuring || isMeasuringArea) return;
@@ -1703,13 +1735,13 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
             const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
             const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
             if (selectedDuanFeatureLayer && selectedDuanFeatureLayer !== layer) {
-              if (selectedDuanFeatureStyle) selectedDuanFeatureLayer.setStyle(selectedDuanFeatureStyle);
+              if (selectedDuanFeatureStyle && selectedDuanFeatureLayer.setStyle) selectedDuanFeatureLayer.setStyle(selectedDuanFeatureStyle);
             }
             const highlightWeight = currentWeight + 2;
             const highlightDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, highlightWeight) : null;
             selectedDuanFeatureStyle = { color: currentColor, weight: currentWeight, fillOpacity: 0.3, dashArray: currentScaledDashArray };
             selectedDuanFeatureLayer = layer;
-            layer.setStyle({ color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray });
+            if (layer.setStyle) layer.setStyle({ color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray });
             openInfoPanel(feature.properties, false, true, displayName, true);
           });
           layer.on('mouseover', function() {
@@ -1717,7 +1749,7 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
             const currentWeight = currentConfig.weight || weight;
             const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
             const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
-            layer.setStyle({ fillOpacity: 0.5, color: '#ff7800', weight: currentWeight, dashArray: currentScaledDashArray });
+            if (layer.setStyle) layer.setStyle({ fillOpacity: 0.5, color: '#ff7800', weight: currentWeight, dashArray: currentScaledDashArray });
           });
           layer.on('mouseout', function() {
             const currentConfig = duanConfig[filename] || {};
@@ -1726,28 +1758,95 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
             const currentDashArrayPattern = currentConfig.dashArray === '' || currentConfig.dashArray === null ? null : (currentConfig.dashArray || dashArray);
             const currentScaledDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, currentWeight) : null;
             if (selectedDuanFeatureLayer !== layer) {
-              layer.setStyle({ fillOpacity: 0.3, color: currentColor, weight: currentWeight, dashArray: currentScaledDashArray });
+              if (layer.setStyle) layer.setStyle({ fillOpacity: 0.3, color: currentColor, weight: currentWeight, dashArray: currentScaledDashArray });
             } else {
               const highlightWeight = currentWeight + 2;
               const highlightDashArray = currentDashArrayPattern ? scaleDashArray(currentDashArrayPattern, highlightWeight) : null;
-              layer.setStyle({ color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray });
+              if (layer.setStyle) layer.setStyle({ color: '#2ecc40', weight: highlightWeight, dashArray: highlightDashArray });
             }
           });
         }
       };
 
+      const pointOpts = isPointFile ? {
+        pointToLayer: function(feature, latlng) {
+          const currentConfig = duanConfig[filename] || {};
+          const currentColor = currentConfig.color || color;
+          const radius = normalizeNumber(currentConfig.pointRadius, getDuanPointDefaults().pointRadius);
+          return L.circleMarker(latlng, {
+            radius,
+            fillColor: currentColor,
+            fillOpacity: 1.0,
+            stroke: false,
+            opacity: 1.0
+          });
+        },
+        onEachFeature: function(feature, layer) {
+          const currentConfig = duanConfig[filename] || {};
+          const radius = normalizeNumber(currentConfig.pointRadius, getDuanPointDefaults().pointRadius);
+          const tooltipText = getDuanTooltipText(feature, displayName);
+          layer.bindTooltip(tooltipText, {
+            direction: 'top',
+            sticky: false,
+            permanent: true,
+            offset: [0, -(radius + 8)],
+            className: 'custom-tooltip'
+          });
+
+          layer.on('click', function() {
+            if (isMeasuring || isMeasuringArea) return;
+            const cfg = duanConfig[filename] || {};
+            const currentColor = cfg.color || color;
+            const baseRadius = normalizeNumber(cfg.pointRadius, getDuanPointDefaults().pointRadius);
+            if (selectedDuanFeatureLayer && selectedDuanFeatureLayer !== layer) {
+              if (selectedDuanFeatureStyle) {
+                if (selectedDuanFeatureLayer.setStyle) selectedDuanFeatureLayer.setStyle(selectedDuanFeatureStyle);
+                if (selectedDuanFeatureLayer.setRadius && typeof selectedDuanFeatureStyle.radius === 'number') {
+                  selectedDuanFeatureLayer.setRadius(selectedDuanFeatureStyle.radius);
+                }
+              }
+            }
+            selectedDuanFeatureStyle = { fillColor: currentColor, fillOpacity: 1.0, stroke: false, opacity: 1.0, radius: baseRadius };
+            selectedDuanFeatureLayer = layer;
+            if (layer.setStyle) layer.setStyle({ fillColor: '#2ecc40', fillOpacity: 1.0, stroke: false, opacity: 1.0 });
+            if (layer.setRadius) layer.setRadius(baseRadius + 2);
+            openInfoPanel(feature.properties, false, true, displayName, true);
+          });
+
+          layer.on('mouseover', function() {
+            const cfg = duanConfig[filename] || {};
+            const baseRadius = normalizeNumber(cfg.pointRadius, getDuanPointDefaults().pointRadius);
+            if (selectedDuanFeatureLayer !== layer) {
+              if (layer.setStyle) layer.setStyle({ fillOpacity: 1.0, stroke: false, opacity: 1.0 });
+              if (layer.setRadius) layer.setRadius(baseRadius + 1);
+            }
+          });
+
+          layer.on('mouseout', function() {
+            const cfg = duanConfig[filename] || {};
+            const currentColor = cfg.color || color;
+            const baseRadius = normalizeNumber(cfg.pointRadius, getDuanPointDefaults().pointRadius);
+            if (selectedDuanFeatureLayer !== layer) {
+              if (layer.setStyle) layer.setStyle({ fillColor: currentColor, fillOpacity: 1.0, stroke: false, opacity: 1.0 });
+              if (layer.setRadius) layer.setRadius(baseRadius);
+            }
+          });
+        }
+      } : null;
+
       const layerGroup = L.layerGroup();
       // Thêm theo thứ tự: polygon (dưới) → line → point (trên) để z-index pane đảm bảo thứ tự
       if (polygonFeatures.length) {
-        const polyLayer = L.geoJSON({ type: 'FeatureCollection', features: polygonFeatures }, { ...commonOpts, pane: 'dataPolygonPane' });
+        const polyLayer = L.geoJSON({ type: 'FeatureCollection', features: polygonFeatures }, { ...polygonLineOpts, pane: 'dataPolygonPane' });
         polyLayer.addTo(layerGroup);
       }
       if (lineFeatures.length) {
-        const lineLayer = L.geoJSON({ type: 'FeatureCollection', features: lineFeatures }, { ...commonOpts, pane: 'dataLinePane' });
+        const lineLayer = L.geoJSON({ type: 'FeatureCollection', features: lineFeatures }, { ...polygonLineOpts, pane: 'dataLinePane' });
         lineLayer.addTo(layerGroup);
       }
       if (pointFeatures.length) {
-        const pointLayer = L.geoJSON({ type: 'FeatureCollection', features: pointFeatures }, { ...commonOpts, pane: 'dataPointPane' });
+        const pointLayerOpts = pointOpts ? { ...pointOpts, pane: 'dataPointPane' } : { ...polygonLineOpts, pane: 'dataPointPane' };
+        const pointLayer = L.geoJSON({ type: 'FeatureCollection', features: pointFeatures }, pointLayerOpts);
         pointLayer.addTo(layerGroup);
       }
       layerGroup.addTo(map);
@@ -1788,6 +1887,7 @@ function scaleDashArray(dashArrayPattern, weight, baseWeight = 1) {
 function updateDuanLayerStyle(filename, color, weight, dashArray = null) {
   const group = duanLayers[filename];
   if (!group) return;
+  const isPointFile = isDuanPointFile(filename);
   const scaledDashArray = dashArray ? scaleDashArray(dashArray, weight) : null;
   const newStyle = { color: color, weight: weight, fillColor: color, fillOpacity: 0.3, dashArray: scaledDashArray };
   group.eachLayer(function(geoJsonLayer) {
@@ -1797,7 +1897,25 @@ function updateDuanLayerStyle(filename, color, weight, dashArray = null) {
           selectedDuanFeatureLayer = null;
           selectedDuanFeatureStyle = null;
         }
-        featureLayer.setStyle(newStyle);
+        if (isPointFile && typeof featureLayer.setRadius === 'function') {
+          const cfg = duanConfig[filename] || {};
+          const radius = normalizeNumber(cfg.pointRadius, getDuanPointDefaults().pointRadius);
+          featureLayer.setStyle({ fillColor: color, fillOpacity: 1.0, stroke: false, opacity: 1.0 });
+          featureLayer.setRadius(radius);
+          const feature = featureLayer.feature;
+          const displayName = getDuanDisplayName(filename);
+          const tooltipText = getDuanTooltipText(feature, displayName);
+          featureLayer.unbindTooltip();
+          featureLayer.bindTooltip(tooltipText, {
+            direction: 'top',
+            sticky: false,
+            permanent: true,
+            offset: [0, -(radius + 8)],
+            className: 'custom-tooltip'
+          });
+        } else if (featureLayer.setStyle) {
+          featureLayer.setStyle(newStyle);
+        }
       });
     }
   });
@@ -1809,13 +1927,16 @@ function createDuanFileUI(filename, index) {
   const displayName = getDuanDisplayName(filename);
   const defaultColor = getDefaultColor(index);
   const defaultWeight = 4;
+  const isPointFile = isDuanPointFile(filename);
+  const pointDefaults = getDuanPointDefaults();
   
   // Lấy cấu hình đã lưu hoặc dùng mặc định
   const config = duanConfig[filename] || {
     color: defaultColor,
     weight: defaultWeight,
     dashArray: null,
-    visible: true
+    visible: true,
+    ...(isPointFile ? { pointRadius: pointDefaults.pointRadius } : {})
   };
   
   // Cập nhật lại config nếu chưa có
@@ -1827,6 +1948,20 @@ function createDuanFileUI(filename, index) {
   // Đảm bảo dashArray có giá trị mặc định nếu chưa có
   if (config.dashArray === undefined) {
     config.dashArray = null;
+  }
+
+  // Đảm bảo cấu hình point có giá trị mặc định (tương thích localStorage cũ)
+  if (isPointFile) {
+    let changed = false;
+    const normalizedRadius = normalizeNumber(config.pointRadius, pointDefaults.pointRadius);
+    if (config.pointRadius !== normalizedRadius) {
+      config.pointRadius = normalizedRadius;
+      changed = true;
+    }
+    if (changed) {
+      duanConfig[filename] = config;
+      saveDuanConfig();
+    }
   }
   
   // Tạo options cho dropdown loại nét
@@ -1844,18 +1979,15 @@ function createDuanFileUI(filename, index) {
   
   const fileItem = document.createElement('div');
   fileItem.className = 'duan-file-item';
-  fileItem.innerHTML = `
-    <div class="duan-file-header">
-      <label class="duan-file-checkbox">
-        <input type="checkbox" data-filename="${filename}" ${config.visible ? 'checked' : ''}>
-        <span class="duan-file-name">${displayName}</span>
-      </label>
-    </div>
-    <div class="duan-file-controls">
+  const pointControlsHtml = isPointFile ? `
       <div class="duan-control-group">
-        <label class="duan-control-label">Màu:</label>
-        <input type="color" class="duan-color-picker" data-filename="${filename}" value="${config.color}">
+        <label class="duan-control-label">Kích thước:</label>
+        <input type="range" class="duan-point-radius-slider duan-weight-slider" data-filename="${filename}"
+               min="2" max="20" step="1" value="${config.pointRadius}">
+        <span class="duan-point-radius-value duan-weight-value">${config.pointRadius}</span>
       </div>
+  ` : '';
+  const lineControlsHtml = !isPointFile ? `
       <div class="duan-control-group">
         <label class="duan-control-label">Độ dày:</label>
         <input type="range" class="duan-weight-slider" data-filename="${filename}" 
@@ -1870,6 +2002,21 @@ function createDuanFileUI(filename, index) {
           ).join('')}
         </select>
       </div>
+  ` : '';
+  fileItem.innerHTML = `
+    <div class="duan-file-header">
+      <label class="duan-file-checkbox">
+        <input type="checkbox" data-filename="${filename}" ${config.visible ? 'checked' : ''}>
+        <span class="duan-file-name">${displayName}</span>
+      </label>
+    </div>
+    <div class="duan-file-controls">
+      <div class="duan-control-group">
+        <label class="duan-control-label">Màu:</label>
+        <input type="color" class="duan-color-picker" data-filename="${filename}" value="${config.color}">
+      </div>
+      ${lineControlsHtml}
+      ${pointControlsHtml}
     </div>
   `;
   
@@ -1968,8 +2115,12 @@ function setupDuanFileControls(map) {
       duanConfig[filename] = config;
       saveDuanConfig();
       
-      const dashArray = config.dashArray === '' ? null : config.dashArray;
-      updateDuanLayerStyle(filename, color, config.weight || 4, dashArray);
+      if (isDuanPointFile(filename)) {
+        updateDuanLayerStyle(filename, color, config.weight || 4, null);
+      } else {
+        const dashArray = config.dashArray === '' ? null : config.dashArray;
+        updateDuanLayerStyle(filename, color, config.weight || 4, dashArray);
+      }
     });
   });
   
@@ -2007,6 +2158,23 @@ function setupDuanFileControls(map) {
       
       const dashArray = config.dashArray === '' || config.dashArray === null ? null : config.dashArray;
       updateDuanLayerStyle(filename, config.color || getDefaultColor(duanFiles.indexOf(filename)), config.weight || 4, dashArray);
+    });
+  });
+
+  // Xử lý kích thước điểm (_P.geojson)
+  document.querySelectorAll('.duan-point-radius-slider').forEach(slider => {
+    slider.addEventListener('input', function() {
+      const filename = this.getAttribute('data-filename');
+      const radius = parseInt(this.value, 10);
+      const config = duanConfig[filename] || {};
+      config.pointRadius = radius;
+      duanConfig[filename] = config;
+      saveDuanConfig();
+
+      const valueSpan = this.parentElement.querySelector('.duan-point-radius-value');
+      if (valueSpan) valueSpan.textContent = radius;
+
+      updateDuanLayerStyle(filename, config.color || getDefaultColor(duanFiles.indexOf(filename)), config.weight || 4, null);
     });
   });
 }
@@ -2053,17 +2221,18 @@ function setupSearch(map) {
         // Chỉ thêm 1 lần vào suggestions, không lặp lại
         if (cachedDataArray.length > 0) {
           const firstFeature = cachedDataArray[0].feature;
-          const ten = firstFeature.properties && firstFeature.properties.ten ? firstFeature.properties.ten : '';
-          const phanLoai = firstFeature.properties && firstFeature.properties.phanLoai ? firstFeature.properties.phanLoai : '';
-          
+          const tooltipName = getDuanTooltipText(firstFeature, cachedDataArray[0].displayName || '');
+          const ten = firstFeature && firstFeature.properties
+            ? (firstFeature.properties.ten || firstFeature.properties.Name || firstFeature.properties.name || '')
+            : '';
           const title = cachedDataArray.length > 1 
-            ? `${ten} (${cachedDataArray.length} kết quả)`
-            : ten;
+            ? `${ten || tooltipName} (${cachedDataArray.length} kết quả)`
+            : (ten || tooltipName);
           
           suggestions.push({
             type: 'duan',
             title: title,
-            subtitle: phanLoai || 'Đường',
+            subtitle: 'Dự án',
             value: ten,
             isFile: false,
             feature: firstFeature,
@@ -2270,11 +2439,11 @@ function setupSearch(map) {
         
         // Nếu có nhiều feature cùng tên, hiển thị tất cả
         if (suggestion.allFeatures && suggestion.allFeatures.length > 1) {
-          const ten = feature.properties && feature.properties.ten 
-            ? feature.properties.ten.toString().toLowerCase() 
-            : '';
-          const foundFeatureKeys = [ten];
-          showAllMatchingFeatures(map, foundFeatureKeys, ten);
+          const props = feature && feature.properties;
+          const rawName = props ? (props.ten || props.Name || props.name) : '';
+          const key = rawName.toString().toLowerCase();
+          const foundFeatureKeys = key ? [key] : [];
+          showAllMatchingFeatures(map, foundFeatureKeys, rawName);
           return;
         }
         
@@ -2375,8 +2544,8 @@ function setupSearch(map) {
         allFeatures.push({
           feature: cachedData.feature,
           cachedData: cachedData,
-          ten: cachedData.feature.properties && cachedData.feature.properties.ten 
-            ? cachedData.feature.properties.ten 
+          ten: cachedData.feature && cachedData.feature.properties
+            ? (cachedData.feature.properties.ten || cachedData.feature.properties.Name || cachedData.feature.properties.name || 'Đường')
             : 'Đường'
         });
         
@@ -6974,13 +7143,13 @@ function setupDrawingTools(map) {
     weightSlider.value = drawingWeight;
     const weightValue = document.getElementById('drawing-weight-value');
     if (weightValue) {
-      weightValue.textContent = drawingWeight + 'px';
+      weightValue.textContent = drawingWeight;
     }
     
     weightSlider.addEventListener('input', function() {
       drawingWeight = parseInt(this.value);
       if (weightValue) {
-        weightValue.textContent = drawingWeight + 'px';
+        weightValue.textContent = drawingWeight;
       }
     });
   }
