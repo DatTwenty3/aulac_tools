@@ -3332,7 +3332,7 @@ function setupToolsPanelControls(map) {
   if (savedBoundaryWeight) {
     currentBoundaryWeight = parseFloat(savedBoundaryWeight);
     if (boundaryWeightSlider) boundaryWeightSlider.value = savedBoundaryWeight;
-    if (boundaryWeightValue) boundaryWeightValue.textContent = savedBoundaryWeight + 'px';
+    if (boundaryWeightValue) boundaryWeightValue.textContent = savedBoundaryWeight;
   }
   
   // Event listener cho màu ranh giới
@@ -3365,7 +3365,7 @@ function setupToolsPanelControls(map) {
     boundaryWeightSlider.addEventListener('input', function() {
       const val = parseFloat(this.value);
       currentBoundaryWeight = val;
-      boundaryWeightValue.textContent = val + 'px';
+      boundaryWeightValue.textContent = val;
       localStorage.setItem('boundaryWeight', val);
       
       // Cập nhật độ dày cho tất cả các layer hiện có (trừ DHLVB)
