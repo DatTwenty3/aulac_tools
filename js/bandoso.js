@@ -870,6 +870,152 @@ let watchPositionId = null;
 let currentLocationMarker = null;
 let isTrackingLocation = false;
 
+/**
+ * Dừng toàn bộ tính năng đang chạy. Chỉ cho phép một tính năng hoạt động tại một thời điểm.
+ * Khi người dùng chuyển sang tính năng khác, tính năng hiện tại sẽ bị hủy/reset trước khi bật tính năng mới.
+ * @param {L.Map} map - Instance bản đồ
+ */
+function deactivateAllFeatures(map) {
+  if (!map) return;
+
+  // 1. Dừng theo dõi vị trí (Xác định vị trí)
+  if (isTrackingLocation && watchPositionId !== null) {
+    navigator.geolocation.clearWatch(watchPositionId);
+    watchPositionId = null;
+    isTrackingLocation = false;
+    const locateBtnDom = document.getElementById('locate-btn');
+    if (locateBtnDom) {
+      locateBtnDom.disabled = false;
+      locateBtnDom.classList.remove('active');
+      locateBtnDom.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>Xác định vị trí</span>
+      `;
+    }
+    if (currentLocationMarker && map.hasLayer(currentLocationMarker)) {
+      map.removeLayer(currentLocationMarker);
+      currentLocationMarker = null;
+    }
+  }
+
+  // 2. Dừng xác định tọa độ
+  if (isCopyingCoordinate) {
+    isCopyingCoordinate = false;
+    const copyBtn = document.getElementById('copy-coordinate-btn');
+    if (copyBtn) {
+      copyBtn.classList.remove('active');
+      copyBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="2" x2="12" y2="6"></line>
+          <line x1="12" y1="18" x2="12" y2="22"></line>
+          <line x1="2" y1="12" x2="6" y2="12"></line>
+          <line x1="18" y1="12" x2="22" y2="12"></line>
+        </svg>
+        <span>Xác định tọa độ</span>
+      `;
+    }
+    if (copyCoordinateClickHandler) {
+      map.off('click', copyCoordinateClickHandler);
+      copyCoordinateClickHandler = null;
+    }
+    map.getContainer().style.cursor = '';
+    toggleToolsPanel(true);
+    toggleGeojsonInteractivity(true);
+  }
+
+  // 3. Dừng đo khoảng cách
+  if (isMeasuring) {
+    isMeasuring = false;
+    clearMeasure(map);
+    const measureBtn = document.getElementById('measure-btn');
+    if (measureBtn) {
+      measureBtn.classList.remove('active');
+      measureBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <circle cx="5" cy="12" r="2"></circle>
+          <circle cx="19" cy="12" r="2"></circle>
+          <line x1="3" y1="6" x2="7" y2="6"></line>
+          <line x1="3" y1="8" x2="7" y2="8"></line>
+          <line x1="17" y1="6" x2="21" y2="6"></line>
+          <line x1="17" y1="8" x2="21" y2="8"></line>
+        </svg>
+        <span>Đo khoảng cách</span>
+      `;
+    }
+    const clearMeasureBtn = document.getElementById('clear-measure-btn');
+    if (clearMeasureBtn) clearMeasureBtn.style.display = 'none';
+    if (measureClickHandler) {
+      map.off('click', measureClickHandler);
+      measureClickHandler = null;
+    }
+    map.getContainer().style.cursor = '';
+    toggleToolsPanel(true);
+    toggleGeojsonInteractivity(true);
+  }
+
+  // 4. Dừng đo diện tích
+  if (isMeasuringArea) {
+    isMeasuringArea = false;
+    clearArea(map);
+    const areaBtn = document.getElementById('area-btn');
+    if (areaBtn) {
+      areaBtn.classList.remove('active');
+      areaBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="9" y1="3" x2="9" y2="21"></line>
+          <line x1="3" y1="9" x2="21" y2="9"></line>
+        </svg>
+        <span>Đo diện tích</span>
+      `;
+    }
+    const clearAreaBtn = document.getElementById('clear-area-btn');
+    if (clearAreaBtn) clearAreaBtn.style.display = 'none';
+    if (areaClickHandler) {
+      map.off('click', areaClickHandler);
+      areaClickHandler = null;
+    }
+    map.getContainer().style.cursor = '';
+    toggleToolsPanel(true);
+    toggleGeojsonInteractivity(true);
+  }
+
+  // 5. Dừng chế độ chọn điểm (không xóa danh sách điểm đã chọn)
+  if (isSelectingPoints) {
+    isSelectingPoints = false;
+    const selectPointsBtn = document.getElementById('select-points-btn');
+    if (selectPointsBtn) {
+      selectPointsBtn.classList.remove('active');
+      selectPointsBtn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>Chọn điểm</span>
+      `;
+    }
+    const pointNamingOption = document.getElementById('point-naming-option');
+    if (pointNamingOption) pointNamingOption.style.display = 'none';
+    if (selectPointsClickHandler) {
+      map.off('click', selectPointsClickHandler);
+      selectPointsClickHandler = null;
+    }
+    map.getContainer().style.cursor = '';
+    toggleToolsPanel(true);
+    toggleGeojsonInteractivity(true);
+  }
+
+  // 6. Dừng chế độ vẽ chú thích
+  if (typeof window._disableAllDrawingTools === 'function') {
+    window._disableAllDrawingTools();
+  }
+}
+
 function setupLocateButton(map) {
   const locateBtnDom = document.getElementById('locate-btn');
   if (!locateBtnDom) return;
@@ -879,31 +1025,10 @@ function setupLocateButton(map) {
       alert('Trình duyệt không hỗ trợ xác định vị trí!');
       return;
     }
-    
-    // Nếu đang theo dõi, dừng lại
-    if (isTrackingLocation && watchPositionId !== null) {
-      navigator.geolocation.clearWatch(watchPositionId);
-      watchPositionId = null;
-      isTrackingLocation = false;
-      locateBtnDom.disabled = false;
-      locateBtnDom.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        <span>Xác định vị trí</span>
-      `;
-      locateBtnDom.classList.remove('active');
-      // Xóa marker
-      if (currentLocationMarker) {
-        map.removeLayer(currentLocationMarker);
-        currentLocationMarker = null;
-      }
-      // Hiện lại hộp công cụ khi dừng
-      toggleToolsPanel(true);
-      return;
-    }
-    
+    const wasActive = isTrackingLocation;
+    deactivateAllFeatures(map);
+    if (wasActive) return;
+
     // Bắt đầu theo dõi vị trí
     locateBtnDom.disabled = true;
     locateBtnDom.innerHTML = `
@@ -3651,20 +3776,11 @@ function setupAreaButton(map) {
   if (!areaBtn) return;
   
   areaBtn.onclick = function() {
-    // Tắt chế độ đo khoảng cách nếu đang bật
-    if (isMeasuring) {
-      const measureBtn = document.getElementById('measure-btn');
-      if (measureBtn) measureBtn.click();
-    }
-    
-    // Tắt chế độ xác định tọa độ nếu đang bật
-    if (isCopyingCoordinate) {
-      const copyBtn = document.getElementById('copy-coordinate-btn');
-      if (copyBtn) copyBtn.click();
-    }
-    
-    isMeasuringArea = !isMeasuringArea;
-    
+    const wasActive = isMeasuringArea;
+    deactivateAllFeatures(map);
+    if (wasActive) return;
+
+    isMeasuringArea = true;
     if (isMeasuringArea) {
       // Bật chế độ đo diện tích
       areaBtn.classList.add('active');
@@ -4008,20 +4124,11 @@ function setupMeasureButton(map) {
   if (!measureBtn) return;
   
   measureBtn.onclick = function() {
-    // Tắt chế độ đo diện tích nếu đang bật
-    if (isMeasuringArea) {
-      const areaBtn = document.getElementById('area-btn');
-      if (areaBtn) areaBtn.click();
-    }
-    
-    // Tắt chế độ xác định tọa độ nếu đang bật
-    if (isCopyingCoordinate) {
-      const copyBtn = document.getElementById('copy-coordinate-btn');
-      if (copyBtn) copyBtn.click();
-    }
-    
-    isMeasuring = !isMeasuring;
-    
+    const wasActive = isMeasuring;
+    deactivateAllFeatures(map);
+    if (wasActive) return;
+
+    isMeasuring = true;
     if (isMeasuring) {
       // Bật chế độ đo
       measureBtn.classList.add('active');
@@ -4246,20 +4353,11 @@ function setupCopyCoordinateButton(map) {
   }
   
   copyBtn.onclick = function() {
-    // Tắt chế độ đo khoảng cách nếu đang bật
-    if (isMeasuring) {
-      const measureBtn = document.getElementById('measure-btn');
-      if (measureBtn) measureBtn.click();
-    }
-    
-    // Tắt chế độ đo diện tích nếu đang bật
-    if (isMeasuringArea) {
-      const areaBtn = document.getElementById('area-btn');
-      if (areaBtn) areaBtn.click();
-    }
-    
-    isCopyingCoordinate = !isCopyingCoordinate;
-    
+    const wasActive = isCopyingCoordinate;
+    deactivateAllFeatures(map);
+    if (wasActive) return;
+
+    isCopyingCoordinate = true;
     if (isCopyingCoordinate) {
       // Bật chế độ xác định tọa độ
       copyBtn.classList.add('active');
@@ -4375,32 +4473,6 @@ function setupCopyCoordinateButton(map) {
       };
       
       map.on('click', copyCoordinateClickHandler);
-    } else {
-      // Tắt chế độ xác định tọa độ
-      copyBtn.classList.remove('active');
-      copyBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="2" x2="12" y2="6"></line>
-          <line x1="12" y1="18" x2="12" y2="22"></line>
-          <line x1="2" y1="12" x2="6" y2="12"></line>
-          <line x1="18" y1="12" x2="22" y2="12"></line>
-        </svg>
-        <span>Xác định tọa độ</span>
-      `;
-      map.getContainer().style.cursor = '';
-      
-      // Hiện lại hộp công cụ khi dừng
-      toggleToolsPanel(true);
-      
-      // Bật lại tương tác với GeoJSON layers
-      toggleGeojsonInteractivity(true);
-      
-      // Xóa sự kiện click
-      if (copyCoordinateClickHandler) {
-        map.off('click', copyCoordinateClickHandler);
-        copyCoordinateClickHandler = null;
-      }
     }
   };
 }
@@ -5056,7 +5128,11 @@ function setupSharePointsButton(map) {
   
   // Xử lý nút chọn điểm
   selectPointsBtn.onclick = function() {
-    if (!isSelectingPoints) {
+    const wasActive = isSelectingPoints;
+    deactivateAllFeatures(map);
+    if (wasActive) return;
+
+    {
       // Bật chế độ chọn điểm
       isSelectingPoints = true;
       selectPointsBtn.classList.add('active');
@@ -5203,35 +5279,6 @@ function setupSharePointsButton(map) {
       };
       
       map.on('click', selectPointsClickHandler);
-    } else {
-      // Tắt chế độ chọn điểm
-      isSelectingPoints = false;
-      selectPointsBtn.classList.remove('active');
-      selectPointsBtn.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
-        </svg>
-        <span>Chọn điểm</span>
-      `;
-      map.getContainer().style.cursor = '';
-      
-      // Ẩn tùy chọn đặt tên
-      if (pointNamingOption) {
-        pointNamingOption.style.display = 'none';
-      }
-      
-      // Hiện lại hộp công cụ khi dừng
-      toggleToolsPanel(true);
-      
-      // Bật lại tương tác với GeoJSON layers
-      toggleGeojsonInteractivity(true);
-      
-      // Xóa sự kiện click
-      if (selectPointsClickHandler) {
-        map.off('click', selectPointsClickHandler);
-        selectPointsClickHandler = null;
-      }
     }
   };
   
@@ -5423,7 +5470,8 @@ function addPersistentLabelsForDrawing(drawingId, map) {
       var dist = p1.distanceTo ? p1.distanceTo(p2) : L.latLng(p1).distanceTo(L.latLng(p2));
       addLabel(mid, formatDistance(dist));
     }
-  } else if (type === 'line' || type === 'freehand' || type === 'arrow') {
+  } else if (type === 'line' || type === 'arrow') {
+    // Vẽ tự do (freehand) không hiển thị khoảng cách giữa các điểm
     var latlngs = mainLayer.getLatLngs();
     for (var j = 0; j < latlngs.length - 1; j++) {
       var a = latlngs[j], b = latlngs[j + 1];
@@ -5585,8 +5633,8 @@ function makeDrawingDeletable(layer, map) {
         <span style="font-size: 0.85em; color: #6b7280;">📐 Diện tích:</span>
         <strong style="color: #1f2937; font-size: 1em; margin-left: 6px;">${formatMeasurement(area, 'area')}</strong>
       </div>`;
-    } else if (layer._drawingType === 'freehand' || layer._drawingType === 'line' || layer._drawingType === 'arrow') {
-      // Tính chiều dài cho freehand, line và arrow
+    } else if (layer._drawingType === 'line' || layer._drawingType === 'arrow') {
+      // Tính chiều dài cho đường và mũi tên (vẽ tự do không hiển thị khoảng cách)
       const latlngs = layer.getLatLngs();
       const length = calculatePolylineLength(latlngs);
       measurementInfo = `<div style="background: #f3f4f6; padding: 8px; border-radius: 4px; margin-bottom: 12px; text-align: center;">
@@ -6305,7 +6353,7 @@ function exportDrawings() {
         const latlngs = layer.getLatLngs()[0] || layer.getLatLngs();
         const area = calculatePolygonArea(latlngs);
         description += `\nDiện tích: ${formatMeasurement(area, 'area')}`;
-      } else if (layer._drawingType === 'freehand' || layer._drawingType === 'line' || layer._drawingType === 'arrow') {
+      } else if (layer._drawingType === 'line' || layer._drawingType === 'arrow') {
         const latlngs = layer.getLatLngs();
         const length = calculatePolylineLength(latlngs);
         description += `\nChiều dài: ${formatMeasurement(length, 'length')}`;
@@ -6529,15 +6577,14 @@ function setupDrawingTools(map) {
     hideDrawingLiveInfo();
     clearDrawingTempLabels(map);
   }
+  window._disableAllDrawingTools = disableAllDrawingTools;
   
   // Hàm bắt đầu vẽ tự do
   if (freehandBtn) {
     freehandBtn.onclick = function() {
-      if (currentDrawingTool === 'freehand') {
-        disableAllDrawingTools();
-        return;
-      }
-      
+      const wasThisTool = currentDrawingTool;
+      deactivateAllFeatures(map);
+      if (wasThisTool === 'freehand') return;
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'freehand';
@@ -6616,11 +6663,9 @@ function setupDrawingTools(map) {
   // Hàm vẽ đường gấp khúc (polyline)
   if (lineBtn) {
     lineBtn.onclick = function() {
-      if (currentDrawingTool === 'line') {
-        disableAllDrawingTools();
-        return;
-      }
-
+      const wasThisTool = currentDrawingTool;
+      deactivateAllFeatures(map);
+      if (wasThisTool === 'line') return;
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'line';
@@ -6708,11 +6753,9 @@ function setupDrawingTools(map) {
   // Hàm vẽ mũi tên
   if (arrowBtn) {
     arrowBtn.onclick = function() {
-      if (currentDrawingTool === 'arrow') {
-        disableAllDrawingTools();
-        return;
-      }
-      
+      const wasThisTool = currentDrawingTool;
+      deactivateAllFeatures(map);
+      if (wasThisTool === 'arrow') return;
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'arrow';
@@ -6835,11 +6878,9 @@ function setupDrawingTools(map) {
   // Hàm vẽ hình đa giác
   if (polygonBtn) {
     polygonBtn.onclick = function() {
-      if (currentDrawingTool === 'polygon') {
-        disableAllDrawingTools();
-        return;
-      }
-
+      const wasThisTool = currentDrawingTool;
+      deactivateAllFeatures(map);
+      if (wasThisTool === 'polygon') return;
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'polygon';
@@ -6930,11 +6971,9 @@ function setupDrawingTools(map) {
   // Hàm vẽ hình tròn
   if (circleBtn) {
     circleBtn.onclick = function() {
-      if (currentDrawingTool === 'circle') {
-        disableAllDrawingTools();
-        return;
-      }
-      
+      const wasThisTool = currentDrawingTool;
+      deactivateAllFeatures(map);
+      if (wasThisTool === 'circle') return;
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'circle';
@@ -7004,11 +7043,9 @@ function setupDrawingTools(map) {
   // Hàm vẽ hình chữ nhật
   if (rectangleBtn) {
     rectangleBtn.onclick = function() {
-      if (currentDrawingTool === 'rectangle') {
-        disableAllDrawingTools();
-        return;
-      }
-      
+      const wasThisTool = currentDrawingTool;
+      deactivateAllFeatures(map);
+      if (wasThisTool === 'rectangle') return;
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'rectangle';
@@ -7087,11 +7124,9 @@ function setupDrawingTools(map) {
   // Hàm thêm text
   if (textBtn) {
     textBtn.onclick = function() {
-      if (currentDrawingTool === 'text') {
-        disableAllDrawingTools();
-        return;
-      }
-      
+      const wasThisTool = currentDrawingTool;
+      deactivateAllFeatures(map);
+      if (wasThisTool === 'text') return;
       disableAllDrawingTools();
       isDrawing = true;
       currentDrawingTool = 'text';
