@@ -1,6 +1,6 @@
 {
 "type": "FeatureCollection",
-"name": "Hien Trang Mang Luoi Duong Bo",
+"name": "VL-Hien Trang Mang Luoi Duong Bo",
 "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
 "features": [
 { "type": "Feature", "properties": { "OBJECTID": 178, "maDoiTuong": "T86-SH01-00000001", "ten": "ĐT.886", "phanLoai": "Đường tỉnh", "chieuDai": null, "quyMo": null, "capKyThuat": null, "loaiHienTrang": 1, "nam": 2025, "nguon": "Sở Xây dựng", "Shape_Length": 67.915172962950834 }, "geometry": { "type": "MultiLineString", "coordinates": [ [ [ 106.710728186139235, 10.151250359656418 ], [ 106.71095262393392, 10.151427101674647 ], [ 106.71064510444279, 10.151553711513307 ] ] ] } },
