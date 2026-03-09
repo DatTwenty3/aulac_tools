@@ -201,6 +201,52 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
+        .tab-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+            gap: 28px;
+            align-items: flex-start;
+        }
+
+        .tab-main {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .tab-side {
+            position: sticky;
+            top: 24px;
+        }
+
+        .side-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            padding: 18px 20px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .side-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .side-card ul {
+            padding-left: 18px;
+            margin: 8px 0 0;
+        }
+
+        .side-card li {
+            margin-bottom: 4px;
+        }
+
         .tab-content {
             display: none;
         }
@@ -230,29 +276,35 @@
         }
 
         .input-wrapper {
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .input-wrapper .quick-action {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: transparent;
-            border: none;
+            position: relative;
+            right: auto;
+            top: auto;
+            transform: none;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border);
             cursor: pointer;
-            padding: 6px;
-            border-radius: 6px;
-            display: flex;
+            padding: 0;
+            border-radius: 999px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
-            opacity: 0.6;
+            opacity: 0.85;
+            width: 38px;
+            height: 38px;
+            margin-top: 0;
+            box-shadow: none;
         }
 
         .input-wrapper .quick-action:hover {
             opacity: 1;
-            background: rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 1);
         }
 
         .input-wrapper .quick-action svg {
@@ -595,6 +647,14 @@
                 padding: 28px 24px;
             }
 
+            .tab-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-side {
+                position: static;
+            }
+
             .tab {
                 font-size: 13px;
                 padding: 16px 12px;
@@ -651,229 +711,285 @@
         <div class="content">
             <!-- Tab 1: Location Info -->
             <div class="tab-content active" id="tab-0">
-                <div class="info-box">
-                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                    <p>Tra cứu thông tin địa chính (xã, huyện, tỉnh) theo tọa độ WGS84. Bao gồm thông tin sau sáp nhập và trước sáp nhập.</p>
-                </div>
-                <form onsubmit="getLocationInfo(event)">
-                    <div class="form-group">
-                        <label>Hoặc nhập tọa độ (lat, lng)</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="loc_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('loc', this.value, true)" onpaste="setTimeout(() => parseCoordinates('loc', this.value), 10)">
-                            <button type="button" class="quick-action" onclick="getCurrentLocation('loc')" title="Lấy vị trí hiện tại">
-                                <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                <div class="tab-layout">
+                    <div class="tab-main">
+                        <div class="info-box">
+                            <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <p>Tra cứu thông tin địa chính (xã, huyện, tỉnh) theo tọa độ WGS84. Bao gồm thông tin sau sáp nhập và trước sáp nhập.</p>
+                        </div>
+                        <form onsubmit="getLocationInfo(event)">
+                            <div class="form-group">
+                                <label>Hoặc nhập tọa độ (lat, lng)</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="loc_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('loc', this.value, true)" onpaste="setTimeout(() => parseCoordinates('loc', this.value), 10)">
+                                    <button type="button" class="quick-action" onclick="getCurrentLocation('loc')" title="Lấy vị trí hiện tại">
+                                        <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>Vĩ độ (Latitude)</label>
+                                    <input type="number" id="loc_lat" step="any" placeholder="VD: 16.0302630" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kinh độ (Longitude)</label>
+                                    <input type="number" id="loc_lng" step="any" placeholder="VD: 107.904724" required>
+                                </div>
+                            </div>
+                            <button type="submit">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+                                Tra cứu thông tin
                             </button>
-                        </div>
+                        </form>
+                        <div id="result-0"></div>
                     </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>Vĩ độ (Latitude)</label>
-                            <input type="number" id="loc_lat" step="any" placeholder="VD: 16.0302630" required>
+                    <aside class="tab-side">
+                        <div class="side-card">
+                            <h4>Mẹo nhập tọa độ nhanh</h4>
+                            <ul>
+                                <li>Có thể dán trực tiếp chuỗi <code>lat, lng</code> từ Google Maps.</li>
+                                <li>Nếu đang ngoài thực địa, bấm nút vị trí để lấy tọa độ GPS hiện tại.</li>
+                                <li>Giữ nguyên đơn vị độ thập phân để kết quả chính xác hơn.</li>
+                            </ul>
                         </div>
-                        <div class="form-group">
-                            <label>Kinh độ (Longitude)</label>
-                            <input type="number" id="loc_lng" step="any" placeholder="VD: 107.904724" required>
-                        </div>
-                    </div>
-                    <button type="submit">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                        Tra cứu thông tin
-                    </button>
-                </form>
-                <div id="result-0"></div>
+                    </aside>
+                </div>
             </div>
 
             <!-- Tab 2: WGS84 to VN2000 -->
             <div class="tab-content" id="tab-1">
-                <div class="info-box">
-                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                    <p>Chuyển đổi tọa độ từ hệ WGS84 (GPS) sang hệ tọa độ quốc gia VN2000.</p>
-                </div>
-                <form onsubmit="wgs84ToVn2000(event)">
-                    <div class="form-group">
-                        <label>Hoặc nhập tọa độ (lat, lng)</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="wgs_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('wgs', this.value, true)" onpaste="setTimeout(() => parseCoordinates('wgs', this.value), 10)">
-                            <button type="button" class="quick-action" onclick="getCurrentLocation('wgs')" title="Lấy vị trí hiện tại">
-                                <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                <div class="tab-layout">
+                    <div class="tab-main">
+                        <div class="info-box">
+                            <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <p>Chuyển đổi tọa độ từ hệ WGS84 (GPS) sang hệ tọa độ quốc gia VN2000.</p>
+                        </div>
+                        <form onsubmit="wgs84ToVn2000(event)">
+                            <div class="form-group">
+                                <label>Hoặc nhập tọa độ (lat, lng)</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="wgs_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('wgs', this.value, true)" onpaste="setTimeout(() => parseCoordinates('wgs', this.value), 10)">
+                                    <button type="button" class="quick-action" onclick="getCurrentLocation('wgs')" title="Lấy vị trí hiện tại">
+                                        <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>Vĩ độ (Latitude)</label>
+                                    <input type="number" id="wgs_lat" step="any" placeholder="VD: 16.0302630" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kinh độ (Longitude)</label>
+                                    <input type="number" id="wgs_lng" step="any" placeholder="VD: 107.904724" required>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>Múi chiếu (Zone Width)</label>
+                                    <select id="wgs_zone">
+                                        <option value="3" selected>3 độ</option>
+                                        <option value="6">6 độ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tỉnh/Thành phố</label>
+                                    <select id="wgs_province" onchange="updateMeridian('wgs')" required>
+                                        <option value="">-- Chọn tỉnh/thành phố --</option>
+                                        <option value="104.75">An Giang</option>
+                                        <option value="107.00">Bắc Ninh</option>
+                                        <option value="104.50">Cà Mau</option>
+                                        <option value="105.75">Cao Bằng</option>
+                                        <option value="108.50">Đắk Lắk</option>
+                                        <option value="103.00">Điện Biên</option>
+                                        <option value="107.75">Đồng Nai</option>
+                                        <option value="105.00">Đồng Tháp</option>
+                                        <option value="108.25">Gia Lai</option>
+                                        <option value="105.50">Hà Tĩnh</option>
+                                        <option value="105.50">Hưng Yên</option>
+                                        <option value="108.25">Khánh Hòa</option>
+                                        <option value="104.75">Lai Châu</option>
+                                        <option value="107.25">Lạng Sơn</option>
+                                        <option value="104.75">Lào Cai</option>
+                                        <option value="107.75">Lâm Đồng</option>
+                                        <option value="104.75">Nghệ An</option>
+                                        <option value="105.00">Ninh Bình</option>
+                                        <option value="104.75">Phú Thọ</option>
+                                        <option value="108.00">Quảng Ngãi</option>
+                                        <option value="107.75">Quảng Ninh</option>
+                                        <option value="106.00">Quảng Trị</option>
+                                        <option value="104.00">Sơn La</option>
+                                        <option value="105.75">Tây Ninh</option>
+                                        <option value="106.50">Thái Nguyên</option>
+                                        <option value="105.00">Thanh Hóa</option>
+                                        <option value="105.00">Thành phố Cần Thơ</option>
+                                        <option value="107.75">Thành phố Đà Nẵng</option>
+                                        <option value="105.00">Thành phố Hà Nội</option>
+                                        <option value="105.75">Thành phố Hải Phòng</option>
+                                        <option value="105.75">Thành phố Hồ Chí Minh</option>
+                                        <option value="107.00">Thành phố Huế</option>
+                                        <option value="106.00">Tuyên Quang</option>
+                                        <option value="105.50">Vĩnh Long</option>
+                                    </select>
+                                    <input type="hidden" id="wgs_meridian" value="">
+                                </div>
+                            </div>
+                            <button type="submit">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                                Chuyển đổi
                             </button>
-                        </div>
+                        </form>
+                        <div id="result-1"></div>
                     </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>Vĩ độ (Latitude)</label>
-                            <input type="number" id="wgs_lat" step="any" placeholder="VD: 16.0302630" required>
+                    <aside class="tab-side">
+                        <div class="side-card">
+                            <h4>Mẹo chọn tham số VN2000</h4>
+                            <ul>
+                                <li>Luôn chọn đúng tỉnh/thành phố để tự động gợi ý kinh tuyến trục.</li>
+                                <li>Mặc định múi chiếu 3° phù hợp với hầu hết khu vực Việt Nam.</li>
+                                <li>Nếu dùng dữ liệu từ hệ khác, kiểm tra lại tham số trước khi xuất bản đồ.</li>
+                            </ul>
                         </div>
-                        <div class="form-group">
-                            <label>Kinh độ (Longitude)</label>
-                            <input type="number" id="wgs_lng" step="any" placeholder="VD: 107.904724" required>
-                        </div>
-                    </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>Múi chiếu (Zone Width)</label>
-                            <select id="wgs_zone">
-                                <option value="3" selected>3 độ</option>
-                                <option value="6">6 độ</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Tỉnh/Thành phố</label>
-                            <select id="wgs_province" onchange="updateMeridian('wgs')" required>
-                                <option value="">-- Chọn tỉnh/thành phố --</option>
-                                <option value="104.75">An Giang</option>
-                                <option value="107.00">Bắc Ninh</option>
-                                <option value="104.50">Cà Mau</option>
-                                <option value="105.75">Cao Bằng</option>
-                                <option value="108.50">Đắk Lắk</option>
-                                <option value="103.00">Điện Biên</option>
-                                <option value="107.75">Đồng Nai</option>
-                                <option value="105.00">Đồng Tháp</option>
-                                <option value="108.25">Gia Lai</option>
-                                <option value="105.50">Hà Tĩnh</option>
-                                <option value="105.50">Hưng Yên</option>
-                                <option value="108.25">Khánh Hòa</option>
-                                <option value="104.75">Lai Châu</option>
-                                <option value="107.25">Lạng Sơn</option>
-                                <option value="104.75">Lào Cai</option>
-                                <option value="107.75">Lâm Đồng</option>
-                                <option value="104.75">Nghệ An</option>
-                                <option value="105.00">Ninh Bình</option>
-                                <option value="104.75">Phú Thọ</option>
-                                <option value="108.00">Quảng Ngãi</option>
-                                <option value="107.75">Quảng Ninh</option>
-                                <option value="106.00">Quảng Trị</option>
-                                <option value="104.00">Sơn La</option>
-                                <option value="105.75">Tây Ninh</option>
-                                <option value="106.50">Thái Nguyên</option>
-                                <option value="105.00">Thanh Hóa</option>
-                                <option value="105.00">Thành phố Cần Thơ</option>
-                                <option value="107.75">Thành phố Đà Nẵng</option>
-                                <option value="105.00">Thành phố Hà Nội</option>
-                                <option value="105.75">Thành phố Hải Phòng</option>
-                                <option value="105.75">Thành phố Hồ Chí Minh</option>
-                                <option value="107.00">Thành phố Huế</option>
-                                <option value="106.00">Tuyên Quang</option>
-                                <option value="105.50">Vĩnh Long</option>
-                            </select>
-                            <input type="hidden" id="wgs_meridian" value="">
-                        </div>
-                    </div>
-                    <button type="submit">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-                        Chuyển đổi
-                    </button>
-                </form>
-                <div id="result-1"></div>
+                    </aside>
+                </div>
             </div>
 
             <!-- Tab 3: VN2000 to WGS84 -->
             <div class="tab-content" id="tab-2">
-                <div class="info-box">
-                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                    <p>Chuyển đổi tọa độ từ hệ VN2000 về hệ WGS84 (GPS).</p>
+                <div class="tab-layout">
+                    <div class="tab-main">
+                        <div class="info-box">
+                            <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <p>Chuyển đổi tọa độ từ hệ VN2000 về hệ WGS84 (GPS).</p>
+                        </div>
+                        <form onsubmit="vn2000ToWgs84(event)">
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>Tọa độ X (m)</label>
+                                    <input type="number" id="vn_x" step="any" placeholder="VD: 1772933.81" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tọa độ Y (m)</label>
+                                    <input type="number" id="vn_y" step="any" placeholder="VD: 516361.59" required>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>Múi chiếu (Zone Width)</label>
+                                    <select id="vn_zone">
+                                        <option value="3" selected>3 độ</option>
+                                        <option value="6">6 độ</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tỉnh/Thành phố</label>
+                                    <select id="vn_province" onchange="updateMeridian('vn')" required>
+                                        <option value="">-- Chọn tỉnh/thành phố --</option>
+                                        <option value="104.75">An Giang</option>
+                                        <option value="107.00">Bắc Ninh</option>
+                                        <option value="104.50">Cà Mau</option>
+                                        <option value="105.75">Cao Bằng</option>
+                                        <option value="108.50">Đắk Lắk</option>
+                                        <option value="103.00">Điện Biên</option>
+                                        <option value="107.75">Đồng Nai</option>
+                                        <option value="105.00">Đồng Tháp</option>
+                                        <option value="108.25">Gia Lai</option>
+                                        <option value="105.50">Hà Tĩnh</option>
+                                        <option value="105.50">Hưng Yên</option>
+                                        <option value="108.25">Khánh Hòa</option>
+                                        <option value="104.75">Lai Châu</option>
+                                        <option value="107.25">Lạng Sơn</option>
+                                        <option value="104.75">Lào Cai</option>
+                                        <option value="107.75">Lâm Đồng</option>
+                                        <option value="104.75">Nghệ An</option>
+                                        <option value="105.00">Ninh Bình</option>
+                                        <option value="104.75">Phú Thọ</option>
+                                        <option value="108.00">Quảng Ngãi</option>
+                                        <option value="107.75">Quảng Ninh</option>
+                                        <option value="106.00">Quảng Trị</option>
+                                        <option value="104.00">Sơn La</option>
+                                        <option value="105.75">Tây Ninh</option>
+                                        <option value="106.50">Thái Nguyên</option>
+                                        <option value="105.00">Thanh Hóa</option>
+                                        <option value="105.00">Thành phố Cần Thơ</option>
+                                        <option value="107.75">Thành phố Đà Nẵng</option>
+                                        <option value="105.00">Thành phố Hà Nội</option>
+                                        <option value="105.75">Thành phố Hải Phòng</option>
+                                        <option value="105.75">Thành phố Hồ Chí Minh</option>
+                                        <option value="107.00">Thành phố Huế</option>
+                                        <option value="106.00">Tuyên Quang</option>
+                                        <option value="105.50">Vĩnh Long</option>
+                                    </select>
+                                    <input type="hidden" id="vn_meridian" value="">
+                                </div>
+                            </div>
+                            <button type="submit">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+                                Chuyển đổi
+                            </button>
+                        </form>
+                        <div id="result-2"></div>
+                    </div>
+                    <aside class="tab-side">
+                        <div class="side-card">
+                            <h4>Gợi ý nhập tọa độ VN2000</h4>
+                            <ul>
+                                <li>Lấy trực tiếp X, Y từ phần mềm bản đồ hoặc báo cáo đo đạc.</li>
+                                <li>Kiểm tra lại đơn vị là mét (m) trước khi nhập.</li>
+                                <li>Nếu không nhớ múi chiếu, hãy chọn đúng tỉnh rồi để hệ thống gợi ý.</li>
+                            </ul>
+                        </div>
+                    </aside>
                 </div>
-                <form onsubmit="vn2000ToWgs84(event)">
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>Tọa độ X (m)</label>
-                            <input type="number" id="vn_x" step="any" placeholder="VD: 1772933.81" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Tọa độ Y (m)</label>
-                            <input type="number" id="vn_y" step="any" placeholder="VD: 516361.59" required>
-                        </div>
-                    </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>Múi chiếu (Zone Width)</label>
-                            <select id="vn_zone">
-                                <option value="3" selected>3 độ</option>
-                                <option value="6">6 độ</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Tỉnh/Thành phố</label>
-                            <select id="vn_province" onchange="updateMeridian('vn')" required>
-                                <option value="">-- Chọn tỉnh/thành phố --</option>
-                                <option value="104.75">An Giang</option>
-                                <option value="107.00">Bắc Ninh</option>
-                                <option value="104.50">Cà Mau</option>
-                                <option value="105.75">Cao Bằng</option>
-                                <option value="108.50">Đắk Lắk</option>
-                                <option value="103.00">Điện Biên</option>
-                                <option value="107.75">Đồng Nai</option>
-                                <option value="105.00">Đồng Tháp</option>
-                                <option value="108.25">Gia Lai</option>
-                                <option value="105.50">Hà Tĩnh</option>
-                                <option value="105.50">Hưng Yên</option>
-                                <option value="108.25">Khánh Hòa</option>
-                                <option value="104.75">Lai Châu</option>
-                                <option value="107.25">Lạng Sơn</option>
-                                <option value="104.75">Lào Cai</option>
-                                <option value="107.75">Lâm Đồng</option>
-                                <option value="104.75">Nghệ An</option>
-                                <option value="105.00">Ninh Bình</option>
-                                <option value="104.75">Phú Thọ</option>
-                                <option value="108.00">Quảng Ngãi</option>
-                                <option value="107.75">Quảng Ninh</option>
-                                <option value="106.00">Quảng Trị</option>
-                                <option value="104.00">Sơn La</option>
-                                <option value="105.75">Tây Ninh</option>
-                                <option value="106.50">Thái Nguyên</option>
-                                <option value="105.00">Thanh Hóa</option>
-                                <option value="105.00">Thành phố Cần Thơ</option>
-                                <option value="107.75">Thành phố Đà Nẵng</option>
-                                <option value="105.00">Thành phố Hà Nội</option>
-                                <option value="105.75">Thành phố Hải Phòng</option>
-                                <option value="105.75">Thành phố Hồ Chí Minh</option>
-                                <option value="107.00">Thành phố Huế</option>
-                                <option value="106.00">Tuyên Quang</option>
-                                <option value="105.50">Vĩnh Long</option>
-                            </select>
-                            <input type="hidden" id="vn_meridian" value="">
-                        </div>
-                    </div>
-                    <button type="submit">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-                        Chuyển đổi
-                    </button>
-                </form>
-                <div id="result-2"></div>
             </div>
 
             <!-- Tab 4: Elevation -->
             <div class="tab-content" id="tab-3">
-                <div class="info-box">
-                    <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                    <p>Tra cứu độ cao (cao độ) theo tọa độ WGS84 tại Việt Nam.</p>
-                </div>
-                <form onsubmit="getElevation(event)">
-                    <div class="form-group">
-                        <label>Hoặc nhập tọa độ (lat, lng)</label>
-                        <div class="input-wrapper">
-                            <input type="text" id="elev_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('elev', this.value, true)" onpaste="setTimeout(() => parseCoordinates('elev', this.value), 10)">
-                            <button type="button" class="quick-action" onclick="getCurrentLocation('elev')" title="Lấy vị trí hiện tại">
-                                <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                <div class="tab-layout">
+                    <div class="tab-main">
+                        <div class="info-box">
+                            <svg class="info-box-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                            <p>Tra cứu độ cao (cao độ) theo tọa độ WGS84 tại Việt Nam.</p>
+                        </div>
+                        <form onsubmit="getElevation(event)">
+                            <div class="form-group">
+                                <label>Hoặc nhập tọa độ (lat, lng)</label>
+                                <div class="input-wrapper">
+                                    <input type="text" id="elev_coords" placeholder="VD: 9.980386960060025, 106.34463476755995" onblur="parseCoordinates('elev', this.value, true)" onpaste="setTimeout(() => parseCoordinates('elev', this.value), 10)">
+                                    <button type="button" class="quick-action" onclick="getCurrentLocation('elev')" title="Lấy vị trí hiện tại">
+                                        <svg viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0013 3.06V1h-2v2.06A8.994 8.994 0 003.06 11H1v2h2.06A8.994 8.994 0 0011 20.94V23h2v-2.06A8.994 8.994 0 0020.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-row">
+                                <div class="form-group">
+                                    <label>Vĩ độ (Latitude)</label>
+                                    <input type="number" id="elev_lat" step="any" placeholder="VD: 16.0302630" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Kinh độ (Longitude)</label>
+                                    <input type="number" id="elev_lng" step="any" placeholder="VD: 107.904724" required>
+                                </div>
+                            </div>
+                            <button type="submit">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                Tra cứu độ cao
                             </button>
-                        </div>
+                        </form>
+                        <div id="result-3"></div>
                     </div>
-                    <div class="input-row">
-                        <div class="form-group">
-                            <label>Vĩ độ (Latitude)</label>
-                            <input type="number" id="elev_lat" step="any" placeholder="VD: 16.0302630" required>
+                    <aside class="tab-side">
+                        <div class="side-card">
+                            <h4>Lưu ý khi tra cứu độ cao</h4>
+                            <ul>
+                                <li>Nên dùng tọa độ lấy trực tiếp từ GPS hoặc bản đồ tin cậy.</li>
+                                <li>Độ cao chỉ mang tính tham khảo, có thể sai khác so với đo đạc thực tế.</li>
+                                <li>Nhập tọa độ càng chính xác, kết quả càng sát với thực địa.</li>
+                            </ul>
                         </div>
-                        <div class="form-group">
-                            <label>Kinh độ (Longitude)</label>
-                            <input type="number" id="elev_lng" step="any" placeholder="VD: 107.904724" required>
-                        </div>
-                    </div>
-                    <button type="submit">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                        Tra cứu độ cao
-                    </button>
-                </form>
-                <div id="result-3"></div>
+                    </aside>
+                </div>
             </div>
         </div>
     </div>
@@ -1021,20 +1137,10 @@
         function updateMeridian(type) {
             const provinceSelect = document.getElementById(`${type}_province`);
             const meridianInput = document.getElementById(`${type}_meridian`);
-            const zoneSelect = document.getElementById(`${type}_zone`);
             
             if (provinceSelect && meridianInput) {
                 const meridian = provinceSelect.value;
                 meridianInput.value = meridian;
-                
-                if (zoneSelect) {
-                    if (meridian) {
-                        const zoneWidth = getZoneWidth(meridian);
-                        zoneSelect.value = zoneWidth.toString();
-                    } else {
-                        zoneSelect.value = '3';
-                    }
-                }
             }
         }
 
