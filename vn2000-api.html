@@ -12,56 +12,30 @@
         }
 
         :root {
-            --primary: #1976d2;
-            --primary-dark: #1565c0;
-            --secondary: #ff9800;
-            --secondary-dark: #e68900;
-            --success: #4caf50;
-            --error: #f44336;
-            --bg: #f5f7fa;
+            --primary: #1b5dbf;
+            --primary-dark: #144a96;
+            --secondary: #455a64;
+            --secondary-dark: #37474f;
+            --success: #43a047;
+            --error: #e53935;
+            --bg: #f4f6fb;
             --surface: #ffffff;
-            --text-primary: #1d1d1f;
+            --text-primary: #222222;
             --text-secondary: #6e6e73;
             --border: rgba(0, 0, 0, 0.1);
             --shadow: rgba(25, 118, 210, 0.08);
         }
 
-        [data-theme="dark"] {
-            --bg: #1a1a1a;
-            --surface: #2d2d2d;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --border: rgba(255, 255, 255, 0.1);
-            --shadow: rgba(0, 0, 0, 0.3);
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
             background: var(--bg);
             min-height: 100vh;
             padding: 20px;
             position: relative;
             overflow-x: hidden;
             transition: background 0.3s ease;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 20% 50%, rgba(25, 118, 210, 0.08) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(255, 152, 0, 0.08) 0%, transparent 50%);
-            animation: float 20s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(-30px, -30px) rotate(5deg); }
         }
 
         .container {
@@ -87,53 +61,24 @@
             color: var(--text-primary);
             padding: 40px 30px;
             text-align: center;
-            position: relative;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 0.95);
-            transform: scale(1.05);
-        }
-
-        .theme-toggle svg {
-            width: 20px;
-            height: 20px;
-            fill: var(--text-primary);
         }
 
         .header h1 {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            letter-spacing: -0.5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 0.06em;
+            color: var(--primary);
+            text-transform: uppercase;
         }
 
         .header p {
-            opacity: 0.7;
-            font-size: 15px;
-            font-weight: 400;
-            color: var(--text-secondary);
+            opacity: 0.8;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
         }
 
         .tabs {
@@ -187,7 +132,7 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: var(--primary);
         }
 
         .tab-icon {
@@ -220,9 +165,7 @@
         }
 
         .side-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: #fafbff;
             border-radius: 16px;
             border: 1px solid var(--border);
             padding: 18px 20px;
@@ -318,18 +261,11 @@
             padding: 14px 16px;
             border: 1px solid var(--border);
             border-radius: 12px;
-            font-size: 15px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            font-size: 14px;
+            background: #ffffff;
             color: var(--text-primary);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: inherit;
-        }
-
-        [data-theme="dark"] input,
-        [data-theme="dark"] select {
-            background: rgba(45, 45, 45, 0.8);
         }
 
         input:focus, select:focus {
@@ -359,12 +295,12 @@
         }
 
         button {
-            background: linear-gradient(90deg, var(--secondary) 60%, var(--secondary-dark) 100%);
+            background: var(--primary);
             color: white;
             border: none;
             padding: 16px 32px;
             border-radius: 12px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
             cursor: pointer;
             width: 100%;
@@ -379,9 +315,9 @@
         }
 
         button:hover {
-            background: linear-gradient(90deg, var(--primary) 60%, var(--secondary) 100%);
+            background: var(--primary-dark);
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
+            box-shadow: 0 4px 12px rgba(20, 80, 160, 0.25);
         }
 
         button:active {
@@ -412,9 +348,7 @@
         .result {
             margin-top: 32px;
             padding: 24px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: #ffffff;
             border-radius: 16px;
             border: 1px solid var(--border);
             animation: slideUp 0.3s ease;
@@ -460,8 +394,8 @@
         }
 
         .result-item {
-            padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.5);
+            padding: 12px 14px;
+            background: #fafbff;
             margin-bottom: 8px;
             border-radius: 10px;
             display: flex;
@@ -530,9 +464,7 @@
         }
 
         .info-box {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: #f8f9ff;
             padding: 18px 20px;
             border-radius: 12px;
             margin-bottom: 28px;
@@ -661,14 +593,6 @@
                 min-width: 120px;
             }
 
-            .theme-toggle {
-                top: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-                padding: 8px;
-            }
-
             .toast {
                 left: 20px;
                 right: 20px;
@@ -680,11 +604,6 @@
 <body>
     <div class="container">
         <div class="header">
-            <button class="theme-toggle" onclick="toggleTheme()" title="Chuyển đổi chế độ sáng/tối">
-                <svg viewBox="0 0 24 24" id="theme-icon">
-                    <path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.59 1.59a.75.75 0 001.06 1.06l1.59-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 00-1.061 1.06l1.59 1.59z"/>
-                </svg>
-            </button>
             <h1>VN2000 - Công cụ Tọa độ & Địa chính</h1>
             <p>Công cụ chuyển đổi tọa độ và tra cứu thông tin địa chính Việt Nam</p>
         </div>
@@ -995,30 +914,6 @@
     </div>
 
     <script>
-        // Theme management
-        function initTheme() {
-            const theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-            updateThemeIcon(theme);
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-        }
-
-        function updateThemeIcon(theme) {
-            const icon = document.getElementById('theme-icon');
-            if (theme === 'dark') {
-                icon.innerHTML = '<path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>';
-            } else {
-                icon.innerHTML = '<path d="M12 2.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V3a.75.75 0 01.75-.75zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.894 6.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM21.75 12a.75.75 0 01-.75.75h-2.25a.75.75 0 010-1.5H21a.75.75 0 01.75.75zM17.834 18.894a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 10-1.061 1.06l1.59 1.59zM12 18a.75.75 0 01.75.75V21a.75.75 0 01-1.5 0v-2.25A.75.75 0 0112 18zM7.758 17.303a.75.75 0 00-1.061-1.06l-1.59 1.59a.75.75 0 001.06 1.06l1.59-1.59zM6 12a.75.75 0 01-.75.75H3a.75.75 0 010-1.5h2.25A.75.75 0 016 12zM6.697 7.757a.75.75 0 001.06-1.06l-1.59-1.59a.75.75 0 00-1.061 1.06l1.59 1.59z"/>';
-            }
-        }
-
         // Toast notification
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
@@ -1328,9 +1223,6 @@
                 showToast('Lỗi kết nối', 'error');
             }
         }
-
-        // Initialize theme on load
-        initTheme();
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
