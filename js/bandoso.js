@@ -831,6 +831,23 @@ function initMap() {
   const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
     attribution: 'Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
   });
+  
+  // Google Maps Layers
+  const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+  });
+  
+  const googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+  });
+  
+
+  const googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+  });
 
   const map = L.map('map', {
     center: [10.2536, 105.9722],
@@ -858,8 +875,11 @@ function initMap() {
 
   // Lưu các layer để dùng sau
   map._baseLayers = {
-    osm: osmLayer,
-    satellite: satelliteLayer
+    'osm': osmLayer,
+    'satellite': satelliteLayer,
+    'google-satellite': googleSat,
+    'google-hybrid': googleHybrid,
+    'google-streets': googleStreets
   };
 
   return map;
@@ -3351,15 +3371,19 @@ function showSearchNotification(message, type = 'success') {
 // ====== Thiết lập các control trong hộp công cụ ======
 function setupToolsPanelControls(map) {
   // Thiết lập layer control (OSM/Vệ tinh)
+  // Thiết lập layer control (Chuyển đổi các loại bản đồ)
   const layerRadios = document.querySelectorAll('input[name="base-layer"]');
   layerRadios.forEach(radio => {
     radio.addEventListener('change', function() {
-      if (this.value === 'osm') {
-        map.removeLayer(map._baseLayers.satellite);
-        map.addLayer(map._baseLayers.osm);
-      } else if (this.value === 'satellite') {
-        map.removeLayer(map._baseLayers.osm);
-        map.addLayer(map._baseLayers.satellite);
+      // Ẩn tất cả base layers hiện đang hiển thị
+      Object.keys(map._baseLayers).forEach(key => {
+        if (map.hasLayer(map._baseLayers[key])) {
+          map.removeLayer(map._baseLayers[key]);
+        }
+      });
+      // Bật layer được chọn
+      if (map._baseLayers[this.value]) {
+         map.addLayer(map._baseLayers[this.value]);
       }
     });
   });
@@ -5348,6 +5372,162 @@ function calculatePolylineLength(latlngs) {
   return length;
 }
 
+// ====== TẠO HÀNH LANG (HÌNH CHỮ NHẬT) BAO QUANH ĐƯỜNG (m) ======
+function corridorFlattenLatLngs(latlngs) {
+  if (!latlngs) return [];
+  // Polyline thường là mảng LatLng; đôi khi có nested array
+  const arr = Array.isArray(latlngs[0]) ? latlngs[0] : latlngs;
+  return (arr || []).map(p => L.latLng(p));
+}
+
+function corridorLineIntersection(p, r, q, s) {
+  // p + r*t = q + s*u
+  const crossRS = r.x * s.y - r.y * s.x;
+  if (Math.abs(crossRS) < 1e-12) return null; // song song / gần song song
+  const qmpx = q.x - p.x;
+  const qmpy = q.y - p.y;
+  const t = (qmpx * s.y - qmpy * s.x) / crossRS;
+  return { x: p.x + r.x * t, y: p.y + r.y * t };
+}
+
+function corridorNormalize(x, y) {
+  const len = Math.hypot(x, y);
+  if (!Number.isFinite(len) || len === 0) return { x: 0, y: 0, len: 0 };
+  return { x: x / len, y: y / len, len };
+}
+
+function createCorridorPolygonLatLngs(map, inputLatLngs, widthMeters, opts) {
+  const latlngs = corridorFlattenLatLngs(inputLatLngs);
+  if (!map || latlngs.length < 2) return null;
+  const width = Number(widthMeters);
+  if (!Number.isFinite(width) || width <= 0) return null;
+
+  const options = opts || {};
+  // Người dùng nhập bề rộng mỗi bên tính từ tim đường (m)
+  const half = width;
+  const miterLimit = (Number.isFinite(options.miterLimit) ? options.miterLimit : 10) * half; // meters
+
+  // Dùng CRS hiện tại của map (thường EPSG:3857 => đơn vị mét)
+  const crs = (map.options && map.options.crs) ? map.options.crs : L.CRS.EPSG3857;
+  const pts = latlngs.map(ll => crs.project(L.latLng(ll)));
+
+  // Tính hướng + pháp tuyến cho từng đoạn
+  const dirs = [];
+  const norms = []; // left normals
+  for (let i = 0; i < pts.length - 1; i++) {
+    const dx = pts[i + 1].x - pts[i].x;
+    const dy = pts[i + 1].y - pts[i].y;
+    const n = corridorNormalize(dx, dy);
+    dirs.push({ x: n.x, y: n.y });
+    norms.push({ x: -n.y, y: n.x }); // quay 90° sang trái
+  }
+
+  const left = [];
+  const right = [];
+
+  // Điểm đầu (square cap)
+  left.push({ x: pts[0].x + norms[0].x * half, y: pts[0].y + norms[0].y * half });
+  right.push({ x: pts[0].x - norms[0].x * half, y: pts[0].y - norms[0].y * half });
+
+  // Nối góc cho các đỉnh giữa
+  for (let i = 1; i < pts.length - 1; i++) {
+    const p = { x: pts[i].x, y: pts[i].y };
+    const prevDir = dirs[i - 1];
+    const nextDir = dirs[i];
+    const prevN = norms[i - 1];
+    const nextN = norms[i];
+
+    function addJoin(sideSign, outArr) {
+      const base1 = { x: p.x + prevN.x * half * sideSign, y: p.y + prevN.y * half * sideSign };
+      const base2 = { x: p.x + nextN.x * half * sideSign, y: p.y + nextN.y * half * sideSign };
+      const inter = corridorLineIntersection(base1, prevDir, base2, nextDir);
+      if (inter) {
+        const miterLen = Math.hypot(inter.x - p.x, inter.y - p.y);
+        if (miterLen <= miterLimit) {
+          outArr.push(inter);
+          return;
+        }
+      }
+      // Bevel join fallback
+      outArr.push(base1, base2);
+    }
+
+    addJoin(+1, left);
+    addJoin(-1, right);
+  }
+
+  // Điểm cuối (square cap)
+  const lastIdx = pts.length - 1;
+  const lastN = norms[norms.length - 1];
+  left.push({ x: pts[lastIdx].x + lastN.x * half, y: pts[lastIdx].y + lastN.y * half });
+  right.push({ x: pts[lastIdx].x - lastN.x * half, y: pts[lastIdx].y - lastN.y * half });
+
+  const polyPts = left.concat(right.reverse());
+  const polyLatLngs = polyPts.map(p => crs.unproject(L.point(p.x, p.y)));
+  return polyLatLngs;
+}
+
+window.createCorridorFromDrawing = function(buttonElement) {
+  try {
+    const map = window.mapInstance;
+    if (!map) return;
+    const layerId = parseInt(buttonElement.getAttribute('data-layer-id'));
+    if (!Number.isFinite(layerId)) return;
+
+    const widthInput = document.getElementById(`corridor-width-${layerId}`);
+    const widthVal = widthInput ? Number(widthInput.value) : NaN;
+    if (!Number.isFinite(widthVal) || widthVal <= 0) {
+      showSearchNotification('Bề rộng mỗi bên phải là số > 0 (m)', 'error');
+      return;
+    }
+
+    const layers = getDrawingLayersById(layerId);
+    if (!layers || !layers.length) {
+      showSearchNotification('Không tìm thấy đường để tạo hành lang', 'error');
+      return;
+    }
+    const mainLayer = layers.find(function(l) { return !l._mainArrow; }) || layers[0];
+    if (!mainLayer || !mainLayer.getLatLngs) {
+      showSearchNotification('Đối tượng này không phải là đường', 'error');
+      return;
+    }
+
+    const latlngs = mainLayer.getLatLngs();
+    const corridorLatLngs = createCorridorPolygonLatLngs(map, latlngs, widthVal, { miterLimit: 10 });
+    if (!corridorLatLngs || corridorLatLngs.length < 3) {
+      showSearchNotification('Không thể tạo hành lang từ đường này', 'error');
+      return;
+    }
+
+    const color = mainLayer._drawingColor || '#f97316';
+    const weight = Math.max(1, Math.min(10, Number(mainLayer._drawingWeight || 3)));
+
+    const corridorLayer = L.polygon(corridorLatLngs, {
+      color: color,
+      weight: weight,
+      fillOpacity: 0.15,
+      pane: 'dataPolygonPane'
+    }).addTo(map);
+
+    corridorLayer._drawingType = 'polygon';
+    corridorLayer._drawingColor = color;
+    corridorLayer._drawingWeight = weight;
+    corridorLayer._drawingOpacity = 0.15;
+    corridorLayer._drawingLabel = `Hành lang ±${widthVal}m từ tim đường`;
+
+    drawingLayers.push(corridorLayer);
+    makeDrawingDeletable(corridorLayer, map);
+    addPersistentLabelsForDrawing(corridorLayer._drawingId, map);
+    saveDrawings();
+
+    try { if (mainLayer.closePopup) mainLayer.closePopup(); } catch (_) {}
+    showSearchNotification('Đã tạo hành lang bao quanh đường!', 'success');
+  } catch (error) {
+    console.error('Lỗi tạo hành lang:', error);
+    showSearchNotification('Không thể tạo hành lang. Vui lòng thử lại.', 'error');
+  }
+};
+
 // Hàm format diện tích/chiều dài
 function formatMeasurement(value, type) {
   if (type === 'area') {
@@ -5731,6 +5911,60 @@ function makeDrawingDeletable(layer, map) {
     }
     
     // Popup với form chỉnh sửa
+    const corridorControls = (layer._drawingType === 'line' || layer._drawingType === 'freehand' || layer._drawingType === 'arrow')
+      ? `
+        <div style="margin-top: 8px; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.85em; color: #111827;">
+              <span style="display:inline-block;width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,#f97316,#fb923c);"></span>
+              <span>Hành lang tuyến</span>
+            </span>
+            <span style="font-size: 0.78em; color: #6b7280;">mỗi bên (m)</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input
+              type="number"
+              id="corridor-width-${layer._drawingId}"
+              min="1"
+              step="1"
+              value="20"
+              style="
+                flex: 1;
+                padding: 6px 10px;
+                border: 1px solid #d1d5db;
+                border-radius: 6px;
+                font-size: 0.9em;
+                box-sizing: border-box;
+              "
+              placeholder="Bề rộng mỗi bên (m)"
+              title="Nhập bề rộng mỗi bên tính từ tim đường (m)"
+            />
+            <button
+              onclick="createCorridorFromDrawing(this)"
+              data-layer-id="${layer._drawingId}"
+              style="
+                padding: 8px 10px;
+                border: none;
+                border-radius: 6px;
+                background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+                color: white;
+                font-size: 0.85em;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+              "
+              onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 4px 12px rgba(249, 115, 22, 0.35)'"
+              onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none'"
+              title="Tạo polygon bao quanh đường theo chiều rộng"
+            >
+              Tạo
+            </button>
+          </div>
+        </div>
+      `
+      : '';
+
     popupContent = `
       <div style="padding: 12px; min-width: 250px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -5748,6 +5982,8 @@ function makeDrawingDeletable(layer, map) {
         ${measurementInfo}
         
         ${formControls}
+
+        ${corridorControls}
         
         <div style="display: flex; gap: 8px; margin-top: 12px;">
           <button 
