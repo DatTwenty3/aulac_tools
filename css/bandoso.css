@@ -3577,3 +3577,14 @@ h1 {
     height: 16px;
   }
 } 
+/* 3D Map Rotation Properties */
+.leaflet-container { perspective: 1200px; }
+.leaflet-map-pane { transform-style: preserve-3d; will-change: transform; transition: transform 0.1s linear; }
+
+/* 3D Reset Button */
+.reset-3d-btn { position: absolute; bottom: 80px; left: 20px; z-index: 1200; padding: 8px 16px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-weight: bold; color: #007aff; cursor: pointer; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.reset-3d-btn.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.reset-3d-btn:hover { background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-2px); }
+.reset-3d-btn:active { transform: translateY(0); }
+.reset-3d-btn svg { vertical-align: middle; margin-right: 6px; }
+

@@ -117,6 +117,10 @@ let selectedPoints = []; // Mảng lưu các điểm đã chọn: {id, lat, lng,
 let selectPointsClickHandler = null;
 let pointIdCounter = 1;
 
+// Biến cho các lớp KML/KMZ được import
+let importedKmlLayers = []; // [{id, name, layerGroup}]
+let importedKmlIdCounter = 1;
+
 // Biến cho tính năng vẽ chú thích
 let isDrawing = false;
 let currentDrawingTool = null; // 'freehand', 'line', 'polygon', 'circle', 'text', 'arrow'
@@ -5115,6 +5119,279 @@ async function exportKMZ() {
   }
 }
 
+// ====== IMPORT KML/KMZ ======
+function parseKmlCoordinates(coordString) {
+  if (!coordString) return [];
+  return coordString
+    .trim()
+    .split(/\s+/)
+    .map(pair => {
+      const parts = pair.split(',');
+      if (parts.length < 2) return null;
+      const lng = parseFloat(parts[0]);
+      const lat = parseFloat(parts[1]);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return [lat, lng];
+    })
+    .filter(Boolean);
+}
+
+function renderKmlKmzImportList(map) {
+  const container = document.getElementById('kml-kmz-import-list');
+  if (!container) return;
+
+  if (!importedKmlLayers.length) {
+    container.innerHTML = '';
+    return;
+  }
+
+  let html = '<div style="margin-top:4px; font-size:0.8rem; color:#4b5563;">';
+  html += '<div style="margin-bottom:4px; font-weight:600;">KML/KMZ đã nhập:</div>';
+  importedKmlLayers.forEach(item => {
+    html += `
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; padding:4px 6px; border-radius:6px; background:#f9fafb; margin-bottom:2px;">
+        <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${item.name}">${item.name}</span>
+        <button 
+          type="button"
+          data-kml-kmz-id="${item.id}"
+          style="
+            border:none;
+            background:#fee2e2;
+            color:#b91c1c;
+            border-radius:4px;
+            padding:2px 6px;
+            font-size:0.75rem;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            gap:4px;
+          "
+          title="Xóa file này khỏi bản đồ"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          <span>Xóa</span>
+        </button>
+      </div>
+    `;
+  });
+  html += '</div>';
+
+  container.innerHTML = html;
+
+  importedKmlLayers.forEach(item => {
+    const btn = container.querySelector(`button[data-kml-kmz-id="${item.id}"]`);
+    if (btn) {
+      btn.onclick = () => {
+        removeSingleImportedKmlKmz(map, item.id);
+      };
+    }
+  });
+}
+
+function removeSingleImportedKmlKmz(map, id) {
+  const index = importedKmlLayers.findIndex(item => item.id === id);
+  if (index === -1) return;
+
+  const item = importedKmlLayers[index];
+  if (map && item.layerGroup && map.hasLayer(item.layerGroup)) {
+    map.removeLayer(item.layerGroup);
+  }
+
+  importedKmlLayers.splice(index, 1);
+  renderKmlKmzImportList(map);
+
+  showSearchNotification(`Đã xóa "${item.name}" khỏi bản đồ.`, 'success');
+}
+
+function parseKmlAndAddToMap(kmlText, map, sourceName) {
+  try {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(kmlText, 'text/xml');
+
+    const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
+    if (parserError) {
+      console.error('Lỗi parse KML:', parserError.textContent || parserError);
+      alert('File KML không hợp lệ. Vui lòng kiểm tra lại.');
+      return;
+    }
+
+    const placemarks = Array.from(xmlDoc.getElementsByTagName('Placemark'));
+    if (!placemarks.length) {
+      alert('Không tìm thấy đối tượng nào trong file KML.');
+      return;
+    }
+
+    const layerGroup = L.featureGroup().addTo(map);
+
+    placemarks.forEach(pm => {
+      const nameNode = pm.getElementsByTagName('name')[0];
+      const descNode = pm.getElementsByTagName('description')[0];
+      const name = nameNode ? nameNode.textContent : '';
+      const desc = descNode ? descNode.textContent : '';
+
+      let layer = null;
+
+      const pointNode = pm.getElementsByTagName('Point')[0];
+      const lineNode = pm.getElementsByTagName('LineString')[0];
+      const polygonNode = pm.getElementsByTagName('Polygon')[0];
+
+      if (pointNode) {
+        const coordNode = pointNode.getElementsByTagName('coordinates')[0];
+        const coords = coordNode ? parseKmlCoordinates(coordNode.textContent) : [];
+        if (coords.length === 1) {
+          // Hiển thị điểm dạng "chấm" không viền
+          layer = L.circleMarker(coords[0], {
+            radius: 5,
+            stroke: false,
+            fillColor: '#FF0000',
+            fillOpacity: 1
+          });
+        }
+      } else if (lineNode) {
+        const coordNode = lineNode.getElementsByTagName('coordinates')[0];
+        const coords = coordNode ? parseKmlCoordinates(coordNode.textContent) : [];
+        if (coords.length >= 2) {
+          layer = L.polyline(coords, { color: '#FF0000', weight: 3 });
+        }
+      } else if (polygonNode) {
+        const outer = polygonNode.getElementsByTagName('outerBoundaryIs')[0] || polygonNode;
+        const ring = outer ? outer.getElementsByTagName('LinearRing')[0] : null;
+        const coordNode = ring ? ring.getElementsByTagName('coordinates')[0] : null;
+        const coords = coordNode ? parseKmlCoordinates(coordNode.textContent) : [];
+        if (coords.length >= 3) {
+          layer = L.polygon(coords, { color: '#FF0000', weight: 2, fillOpacity: 0.3 });
+        }
+      }
+
+      if (layer) {
+        const popupContent = `
+          <div style="max-width: 240px;">
+            ${name ? `<strong>${escapeXml(name)}</strong><br>` : ''}
+            ${desc ? `<div style="margin-top:4px;">${desc}</div>` : ''}
+          </div>
+        `;
+        if (name || desc) {
+          layer.bindPopup(popupContent);
+        }
+        layerGroup.addLayer(layer);
+      }
+    });
+
+    if (layerGroup.getLayers().length === 0) {
+      map.removeLayer(layerGroup);
+      alert('Không thể tạo đối tượng từ file KML (cấu trúc không hỗ trợ).');
+      return;
+    }
+
+    try {
+      map.fitBounds(layerGroup.getBounds(), { padding: [40, 40] });
+    } catch (e) {
+      console.warn('Không thể fitBounds cho KML import:', e);
+    }
+
+    const importName =
+      sourceName ||
+      (placemarks[0] &&
+        placemarks[0].getElementsByTagName('name')[0] &&
+        placemarks[0].getElementsByTagName('name')[0].textContent) ||
+      'KML/KMZ';
+
+    const id = importedKmlIdCounter++;
+    importedKmlLayers.push({
+      id,
+      name: importName,
+      layerGroup
+    });
+    renderKmlKmzImportList(map);
+
+    showSearchNotification('Đã nhập KML/KMZ và hiển thị trên bản đồ.', 'success');
+  } catch (err) {
+    console.error('Lỗi khi xử lý KML:', err);
+    alert('Có lỗi xảy ra khi đọc file KML.');
+  }
+}
+
+async function handleKmzImport(file, map) {
+  try {
+    if (typeof JSZip === 'undefined') {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Không thể tải thư viện JSZip.'));
+        document.head.appendChild(script);
+      });
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    let kmlFile = null;
+    zip.forEach((relativePath, zipEntry) => {
+      if (!kmlFile && /\.kml$/i.test(relativePath)) {
+        kmlFile = zipEntry;
+      }
+    });
+
+    if (!kmlFile) {
+      alert('Không tìm thấy file KML bên trong KMZ.');
+      return;
+    }
+
+    const kmlText = await kmlFile.async('text');
+    parseKmlAndAddToMap(kmlText, map, file.name);
+  } catch (err) {
+    console.error('Lỗi khi đọc file KMZ:', err);
+    alert('Không thể đọc file KMZ. Vui lòng kiểm tra lại file.');
+  }
+}
+
+function setupKmlKmzImport(map) {
+  const fileInput = document.getElementById('kml-kmz-input');
+  const importBtn = document.getElementById('import-kml-kmz-btn');
+
+  if (!fileInput || !importBtn) return;
+  renderKmlKmzImportList(map);
+
+  importBtn.onclick = function() {
+    fileInput.click();
+  };
+
+  fileInput.onchange = async function(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    const name = file.name.toLowerCase();
+    if (!name.endsWith('.kml') && !name.endsWith('.kmz')) {
+      alert('Vui lòng chọn file KML hoặc KMZ hợp lệ.');
+      fileInput.value = '';
+      return;
+    }
+
+    try {
+      if (name.endsWith('.kml')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const text = e.target.result;
+          parseKmlAndAddToMap(text, map, file.name);
+        };
+        reader.onerror = function(e) {
+          console.error('Lỗi khi đọc file KML:', e);
+          alert('Không thể đọc file KML. Vui lòng thử lại.');
+        };
+        reader.readAsText(file, 'UTF-8');
+      } else {
+        await handleKmzImport(file, map);
+      }
+    } finally {
+      fileInput.value = '';
+    }
+  };
+}
+
 // Xóa tất cả các điểm
 function clearAllPoints() {
   if (selectedPoints.length === 0) return;
@@ -7476,6 +7753,7 @@ function setupDrawingTools(map) {
   setupCopyCoordinateButton(map);
   setupSharePointsButton(map);
   setupDrawingTools(map);
+  setupKmlKmzImport(map);
   
   // Mở hộp công cụ khi khởi động (tùy chọn)
   toolsPanelTimeout = setTimeout(() => {
