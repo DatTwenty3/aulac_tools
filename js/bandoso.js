@@ -1466,7 +1466,19 @@ function addGeojsonToMap(map, data) {
       // Tooltip tên xã/phường
       const tooltipName = getFeatureName(feature.properties);
       if (tooltipName) {
-        layer.bindTooltip(tooltipName, {direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip'});
+        layer.bindTooltip(tooltipName, {
+          direction: 'top',
+          sticky: false,
+          offset: [0, -8],
+          className: 'custom-tooltip',
+          interactive: false
+        });
+        // Đảm bảo tooltip luôn tắt khi rời chuột khỏi lớp (kể cả khi sự kiện mouseout bị mất)
+        layer.on('mouseout', function () {
+          if (layer.closeTooltip) {
+            layer.closeTooltip();
+          }
+        });
       }
       
       // Hiển thị panel chi tiết khi click
@@ -1613,10 +1625,16 @@ function addProjectToMap(map, filename, color, weight = 6, displayName = '') {
         onEachFeature: function (feature, layer) {
           // Tooltip tên dự án
           layer.bindTooltip(projectName, {
-            direction: 'top', 
-            sticky: true, 
-            offset: [0, -8], 
-            className: 'custom-tooltip'
+            direction: 'top',
+            sticky: false,
+            offset: [0, -8],
+            className: 'custom-tooltip',
+            interactive: false
+          });
+          layer.on('mouseout', function () {
+            if (layer.closeTooltip) {
+              layer.closeTooltip();
+            }
           });
           // Hiển thị panel chi tiết khi click
           layer.on('click', function() {
