@@ -1,18 +1,25 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Tìm Vị Trí (FindMy Clone)</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tìm Vị Trí</title>
     <style>
         :root {
-            --bg-color: #000000;
-            --panel-bg: rgba(28, 28, 30, 0.7);
-            --text-main: #ffffff;
+            /* Light, fresh color palette */
+            --bg-color: #f2f2f7;
+            /* Apple specific light gray background */
+            --panel-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1c1c1e;
             --text-secondary: #8e8e93;
-            --accent: #0a84ff;
-            --accent-green: #30d158;
-            --danger: #ff453a;
+            --text-muted: #aeaeb2;
+            --accent: #007aff;
+            --accent-green: #34c759;
+            --danger: #ff3b30;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            --input-border: #e5e5ea;
         }
 
         body {
@@ -28,56 +35,71 @@
             flex-direction: column;
             -webkit-user-select: none;
             user-select: none;
+            /* Subtly animated background gradient */
+            background: linear-gradient(135deg, #f2f2f7 0%, #ffffff 100%);
         }
 
-        /* Top panel containing inputs */
+        /* Top panel containing inputs - Floating Card Style */
         .controls-panel {
             background: var(--panel-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: env(safe-area-inset-top, 20px) 20px 20px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            padding: calc(env(safe-area-inset-top, 20px) + 15px) 20px 20px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
             z-index: 10;
+            border-radius: 0 0 24px 24px;
         }
 
         .input-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
         input {
             flex: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            border-radius: 10px;
-            color: white;
-            padding: 12px 15px;
+            background: #ffffff;
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            padding: 14px 16px;
             font-size: 16px;
+            font-weight: 500;
             outline: none;
             width: 100%;
             box-sizing: border-box;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
+        }
+
         input::placeholder {
-            color: var(--text-secondary);
+            color: var(--text-muted);
+            font-weight: 400;
         }
 
         button.primary-btn {
             background: var(--accent);
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 12px 20px;
+            border-radius: 12px;
+            padding: 14px 20px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
 
         button.primary-btn:active {
-            background: #006ee6;
+            transform: scale(0.98);
+            box-shadow: 0 2px 6px rgba(0, 122, 255, 0.2);
         }
 
         /* Main compass area */
@@ -91,29 +113,44 @@
         }
 
         .distance-display {
-            font-size: 5rem;
+            font-size: 5.5rem;
             font-weight: 700;
             letter-spacing: -2px;
             margin-bottom: 5px;
             font-variant-numeric: tabular-nums;
             text-align: center;
             line-height: 1;
-            transition: color 0.3s;
+            color: var(--text-main);
+            transition: color 0.3s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         }
 
         .distance-unit {
-            font-size: 2rem;
-            font-weight: 500;
+            font-size: 2.2rem;
+            font-weight: 600;
             color: var(--text-secondary);
+            margin-left: 2px;
         }
-        
+
         .accuracy-text {
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
             color: var(--text-secondary);
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.1);
-            padding: 4px 10px;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.04);
+            padding: 6px 14px;
             border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .accuracy-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--accent-green);
         }
 
         .arrow-container {
@@ -123,51 +160,76 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            /* Premium glass ring around the compass */
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06), inset 0 0 0 1px rgba(255, 255, 255, 0.8);
         }
 
         .arrow {
-            width: 180px;
-            height: 180px;
-            fill: var(--text-main);
+            width: 160px;
+            height: 160px;
+            /* Subtle gradient for the arrow */
+            fill: #3a3a3c;
             transform-origin: center center;
-            transition: transform 0.1s linear, fill 0.3s, filter 0.3s;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            transition: transform 0.1s linear, fill 0.3s, filter 0.3s, transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15));
             transform: rotate(0deg);
             will-change: transform;
+        }
+
+        /* The glow effect when pointing correctly */
+        .arrow-container::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 0 40px rgba(52, 199, 89, 0);
+            transition: box-shadow 0.4s ease;
+            pointer-events: none;
+        }
+
+        .arrow-container.aligned::after {
+            box-shadow: 0 0 40px rgba(52, 199, 89, 0.3);
         }
 
         /* Arrival pulse effect */
         .arrival-pulse {
             display: none;
-            width: 150px;
-            height: 150px;
-            background-color: var(--accent-green);
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, var(--accent-green) 0%, #28a745 100%);
             border-radius: 50%;
             position: absolute;
-            animation: pulse 1.5s infinite;
+            animation: pulseLight 1.5s infinite;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 10px 20px rgba(52, 199, 89, 0.4);
         }
 
         .arrival-pulse svg {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             fill: white;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
-        @keyframes pulse {
+        @keyframes pulseLight {
             0% {
                 transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7);
+                box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.5);
             }
+
             70% {
                 transform: scale(1.1);
-                box-shadow: 0 0 0 30px rgba(48, 209, 88, 0);
+                box-shadow: 0 0 0 25px rgba(52, 199, 89, 0);
             }
+
             100% {
                 transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(48, 209, 88, 0);
+                box-shadow: 0 0 0 0 rgba(52, 199, 89, 0);
             }
         }
 
@@ -178,9 +240,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -189,48 +251,86 @@
             padding: 30px;
             text-align: center;
             box-sizing: border-box;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        .overlay-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 24px rgba(0, 122, 255, 0.3);
+        }
+
+        .overlay-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
         }
 
         .overlay h2 {
-            margin-bottom: 10px;
-            font-size: 24px;
+            margin-bottom: 12px;
+            font-size: 28px;
+            color: var(--text-main);
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .overlay p {
             color: var(--text-secondary);
-            margin-bottom: 30px;
-            line-height: 1.5;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            font-size: 16px;
+            max-width: 300px;
         }
 
         .status-text {
             position: absolute;
-            bottom: max(env(safe-area-inset-bottom, 20px), 20px);
-            color: var(--text-secondary);
+            bottom: max(env(safe-area-inset-bottom, 30px), 30px);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-main);
             font-size: 14px;
+            font-weight: 600;
             text-align: center;
-            width: 100%;
-            padding: 0 20px;
-            box-sizing: border-box;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            backdrop-filter: blur(10px);
+            transform: translateX(-50%);
+            left: 50%;
+            white-space: nowrap;
         }
     </style>
 </head>
+
 <body>
 
     <!-- Permissions Overlay -->
     <div class="overlay" id="startOverlay">
+        <div class="overlay-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L22 22L12 18L2 22L12 2Z" />
+            </svg>
+        </div>
         <h2>La Bàn Bắt Đầu</h2>
-        <p>Ứng dụng cần quyền truy cập Vị trí và Cảm biến hướng (La bàn) để hoạt động. Vui lòng cấp quyền khi được yêu cầu.</p>
-        <button class="primary-btn" id="btnStart" style="background: var(--accent-green);">Cấp Quyền & Bắt Đầu</button>
+        <p>Để chỉ dẫn đến mục tiêu, ứng dụng cần sử dụng GPS và Cảm biến hướng của thiết bị.</p>
+        <button class="primary-btn" id="btnStart"
+            style="background: var(--accent); max-width: 250px; font-size: 18px; padding: 16px;">Cho phép & Bắt
+            đầu</button>
     </div>
 
     <!-- Controls -->
     <div class="controls-panel">
         <div class="input-group">
-            <input type="text" id="targetLat" placeholder="Vĩ độ (VD: 21.0285) hoặc dán Tọa độ">
+            <input type="text" id="targetLat" placeholder="Vĩ độ (VD: 21.0285)">
             <input type="number" id="targetLng" placeholder="Kinh độ (VD: 105.8542)" step="any">
         </div>
-        <button class="primary-btn" id="btnSetTarget">Đặt Điểm Đến</button>
+        <button class="primary-btn" id="btnSetTarget">Dẫn đường đến Tọa độ</button>
     </div>
 
     <!-- Compass Area -->
@@ -238,19 +338,23 @@
         <div class="distance-display" id="distanceContainer">
             <span id="distanceValue">--</span><span class="distance-unit" id="distanceUnit">m</span>
         </div>
-        
-        <div class="accuracy-text" id="accuracyText" style="display: none;">Độ chính xác: -- m</div>
-        
-        <div class="arrow-container">
+
+        <div class="accuracy-text" id="accuracyText" style="display: none;">
+            <div class="accuracy-dot" id="accuracyDot"></div>
+            <span>Độ chính xác GPS: -- m</span>
+        </div>
+
+        <div class="arrow-container" id="arrowContainer">
             <!-- Navigation Arrow pointing UP by default -->
+            <!-- We use a slightly more elegant sharp arrowhead here -->
             <svg class="arrow" id="directionArrow" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <path d="M50 5 L90 85 L50 70 L10 85 Z" />
+                <path d="M50 8 L85 85 L50 68 L15 85 Z" />
             </svg>
-            
+
             <!-- Arrival Checkmark (Hidden by default) -->
             <div class="arrival-pulse" id="arrivalPulse" style="display: none;">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                 </svg>
             </div>
         </div>
@@ -269,6 +373,8 @@
         const distanceValue = document.getElementById('distanceValue');
         const distanceUnit = document.getElementById('distanceUnit');
         const accuracyText = document.getElementById('accuracyText');
+        const accuracyDot = document.getElementById('accuracyDot');
+        const arrowContainer = document.getElementById('arrowContainer');
         const directionArrow = document.getElementById('directionArrow');
         const arrivalPulse = document.getElementById('arrivalPulse');
         const statusText = document.getElementById('statusText');
@@ -278,10 +384,10 @@
         let currentLng = null;
         let currentAccuracy = null;
         let currentHeading = null; // degrees from North (0-360)
-        
+
         let targetLat = null;
         let targetLng = null;
-        
+
         let lastRotation = 0; // for smooth interpolation
         let isPointingAtTarget = false; // Haptic state
         let isArrived = false; // Arrival state
@@ -314,12 +420,12 @@
             const Δφ = toRad(lat2 - lat1);
             const Δλ = toRad(lon2 - lon1);
 
-            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                      Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-            return R * c; 
+            return R * c;
         }
 
         // Calculate bearing in degrees from North (0-360) towards target
@@ -331,10 +437,10 @@
 
             const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
             const x = Math.cos(φ1) * Math.sin(φ2) -
-                      Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
-            
+                Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
+
             let bearing = toDeg(Math.atan2(y, x));
-            return (bearing + 360) % 360; 
+            return (bearing + 360) % 360;
         }
 
         // Vibrate helper
@@ -347,22 +453,24 @@
         // Update UI components
         function updateUI() {
             if (currentAccuracy !== null) {
-                accuracyText.style.display = 'block';
-                accuracyText.innerText = `Độ chính xác GPS: ±${Math.round(currentAccuracy)}m`;
-                
-                // Show warning if accuracy is very bad
-                if (currentAccuracy > 50) {
-                    accuracyText.style.color = "var(--danger)";
+                accuracyText.style.display = 'flex';
+                accuracyText.querySelector('span').innerText = `Độ chính xác: ±${Math.round(currentAccuracy)}m`;
+
+                // Color code the accuracy dot
+                if (currentAccuracy <= 15) {
+                    accuracyDot.style.backgroundColor = "var(--accent-green)"; // Excellent
+                } else if (currentAccuracy <= 50) {
+                    accuracyDot.style.backgroundColor = "#ffcc00"; // Moderate
                 } else {
-                    accuracyText.style.color = "var(--text-secondary)";
+                    accuracyDot.style.backgroundColor = "var(--danger)"; // Poor
                 }
             }
 
             if (currentLat !== null && currentLng !== null && targetLat !== null && targetLng !== null) {
-                
+
                 // --- Distance Calculation ---
                 const distanceMeters = calculateDistance(currentLat, currentLng, targetLat, targetLng);
-                
+
                 // --- Arrival Logic (Distance < 10 meters) ---
                 if (distanceMeters < 10) {
                     if (!isArrived) {
@@ -370,11 +478,13 @@
                         directionArrow.style.display = 'none';
                         arrivalPulse.style.display = 'flex';
                         distanceContainer.style.color = 'var(--accent-green)';
-                        vibrate([100, 50, 100, 50, 100]); // Success vibration pattern
+                        distanceContainer.style.transform = 'scale(1.05)';
+                        arrowContainer.classList.add('aligned');
+                        vibrate([100, 50, 100, 50, 200]); // Success vibration pattern
                     }
                     distanceValue.innerText = "Đã đến";
                     distanceUnit.innerText = " nơi";
-                    statusText.innerText = "Bạn đã ở rất gần điểm đến!";
+                    statusText.innerText = "Bạn đã đến mục tiêu!";
                     return; // Skip compass updating when arrived
                 } else {
                     if (isArrived) {
@@ -383,6 +493,7 @@
                         directionArrow.style.display = 'block';
                         arrivalPulse.style.display = 'none';
                         distanceContainer.style.color = 'var(--text-main)';
+                        distanceContainer.style.transform = 'scale(1)';
                     }
                 }
 
@@ -401,46 +512,47 @@
 
                     // Target rotation for the arrow relative to phone's top (UP)
                     let targetRotation = bearing - currentHeading;
-                    
+
                     // Logic to find shortest path for smooth CSS rotation
                     let diff = targetRotation - (lastRotation % 360);
                     if (diff > 180) diff -= 360;
                     if (diff < -180) diff += 360;
-                    
+
                     lastRotation += diff;
-                    
+
                     // Apply rotation
                     directionArrow.style.transform = `rotate(${lastRotation}deg)`;
-                    
+
                     // Highlight arrow in GREEN when roughly pointing at the target (+- 15 degrees)
                     let pointingError = Math.abs((bearing - currentHeading + 360) % 360);
                     if (pointingError > 180) pointingError = 360 - pointingError;
 
                     if (pointingError < 15) {
-                         directionArrow.style.fill = 'var(--accent-green)';
-                         directionArrow.style.filter = 'drop-shadow(0 0 20px rgba(48, 209, 88, 0.6))';
-                         
-                         // Trigger haptic feedback ONCE when entering the "correct" zone
-                         if (!isPointingAtTarget) {
-                             isPointingAtTarget = true;
-                             vibrate(50); // Short tap vibration
-                         }
+                        directionArrow.style.fill = 'var(--accent-green)';
+                        arrowContainer.classList.add('aligned');
+
+                        // Trigger haptic feedback ONCE when entering the "correct" zone
+                        if (!isPointingAtTarget) {
+                            isPointingAtTarget = true;
+                            vibrate([30]); // Short crisp tap
+                        }
                     } else {
-                         directionArrow.style.fill = 'var(--text-main)';
-                         directionArrow.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.2))';
-                         isPointingAtTarget = false;
+                        // Default color in light mode is dark gray
+                        directionArrow.style.fill = '#3a3a3c';
+                        arrowContainer.classList.remove('aligned');
+                        isPointingAtTarget = false;
                     }
 
-                    statusText.innerText = `Đang dẫn đường (${Math.round(pointingError)}° chệch hướng)`;
+                    statusText.innerText = `Chệch hướng khoảng ${Math.round(pointingError)}°`;
                 } else {
-                    statusText.innerText = "Đang định hướng thiết bị (hãy di chuyển điện thoại)...";
+                    statusText.innerText = "Đang định hướng thiết bị...";
                 }
             } else if (targetLat === null || targetLng === null) {
-                statusText.innerText = "Vui lòng nhập tọa độ điểm đến";
+                statusText.innerText = "Chờ nhập tọa độ...";
                 distanceValue.innerText = "--";
                 distanceUnit.innerText = "m";
             } else {
-                statusText.innerText = "Đang tìm vị trí hiện tại của bạn...";
+                statusText.innerText = "Đang tìm vị trí hiện tại...";
             }
         }
 
@@ -456,13 +568,13 @@
                     },
                     (error) => {
                         let msg = "";
-                        switch(error.code) {
+                        switch (error.code) {
                             case error.PERMISSION_DENIED: msg = "Bị từ chối Quyền Vị trí."; break;
                             case error.POSITION_UNAVAILABLE: msg = "Không có kết nối GPS."; break;
-                            case error.TIMEOUT: msg = "Hết thời gian chờ."; break;
+                            case error.TIMEOUT: msg = "Hết thời gian chờ GPS."; break;
                             default: msg = "Lỗi Vị trí không xác định."; break;
                         }
-                        statusText.innerText = "Lỗi: " + msg;
+                        statusText.innerText = msg;
                         statusText.style.color = "var(--danger)";
                     },
                     {
@@ -483,7 +595,7 @@
                 // iOS (webkitCompassHeading)
                 if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
                     heading = event.webkitCompassHeading;
-                } 
+                }
                 // Android (absolute alpha)
                 else if (event.absolute === true && event.alpha !== null) {
                     heading = 360 - event.alpha;
@@ -509,15 +621,15 @@
 
         // Button Listeners
         btnStart.addEventListener('click', async () => {
-             // Ask for iOS 13+ DeviceOrientation permissions explicitly
+            // Ask for iOS 13+ DeviceOrientation permissions explicitly
             if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
                 try {
                     const permissionState = await DeviceOrientationEvent.requestPermission();
                     if (permissionState === 'granted') {
                         startTrackingCompass();
                     } else {
-                        alert("Vui lòng cấp quyền La Bàn để sử dụng.");
-                        statusText.innerText = "Thiếu quyền sử dụng La bàn.";
+                        alert("Vui lòng cấp quyền La Bàn để sử dụng chức năng chỉ hướng.");
+                        statusText.innerText = "Chưa cấp quyền La bàn.";
                         return; // do not dismiss overlay
                     }
                 } catch (error) {
@@ -530,14 +642,14 @@
 
             // Start location tracking
             startTrackingLocation();
-            
-            // Dismiss overlay
+
+            // Dismiss overlay smoothly
             overlay.style.opacity = '0';
             setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 300);
-            
-            // Pre-warm vibrate if possible
+                overlay.style.visibility = 'hidden';
+            }, 400);
+
+            // Pre-warm vibrate
             vibrate(1);
         });
 
@@ -556,11 +668,15 @@
                 inputLat.blur();
                 inputLng.blur();
                 updateUI();
+                // Pop animation for the button
+                btnSetTarget.style.transform = 'scale(0.95)';
+                setTimeout(() => btnSetTarget.style.transform = 'none', 150);
             } else {
                 alert("Định dạng tọa độ không hợp lệ.");
             }
         });
-        
+
     </script>
 </body>
+
 </html>
