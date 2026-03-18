@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tìm Vị Trí (FindMy Clone)</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --panel-bg: rgba(28, 28, 30, 0.7);
+            --text-main: #ffffff;
+            --text-secondary: #8e8e93;
+            --accent: #0a84ff;
+            --accent-green: #30d158;
+            --danger: #ff453a;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Top panel containing inputs */
+        .controls-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: env(safe-area-inset-top, 20px) 20px 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            padding: 12px 15px;
+            font-size: 16px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        button.primary-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        button.primary-btn:active {
+            background: #006ee6;
+        }
+
+        /* Main compass area */
+        .compass-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .distance-display {
+            font-size: 5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 10px;
+            font-variant-numeric: tabular-nums;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .distance-unit {
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .arrow-container {
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .arrow {
+            width: 180px;
+            height: 180px;
+            fill: var(--text-main);
+            transform-origin: center center;
+            transition: transform 0.1s linear, fill 0.3s, filter 0.3s;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            transform: rotate(0deg);
+            will-change: transform;
+        }
+
+        /* Overlay for permissions */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+            box-sizing: border-box;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay h2 {
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .overlay p {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .status-text {
+            position: absolute;
+            bottom: max(env(safe-area-inset-bottom, 20px), 20px);
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-align: center;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Permissions Overlay -->
+    <div class="overlay" id="startOverlay">
+        <h2>La Bàn Bắt Đầu</h2>
+        <p>Ứng dụng cần quyền truy cập Vị trí và Cảm biến hướng (La bàn) để hoạt động. Vui lòng cấp quyền khi được yêu cầu.</p>
+        <button class="primary-btn" id="btnStart" style="background: var(--accent-green);">Cấp Quyền & Bắt Đầu</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-panel">
+        <div class="input-group">
+            <input type="text" id="targetLat" placeholder="Vĩ độ (Ví dụ: 21.0285)">
+            <input type="number" id="targetLng" placeholder="Kinh độ (Ví dụ: 105.8542)" step="any">
+        </div>
+        <button class="primary-btn" id="btnSetTarget">Đặt Điểm Đến</button>
+    </div>
+
+    <!-- Compass Area -->
+    <div class="compass-area">
+        <div class="distance-display">
+            <span id="distanceValue">--</span><span class="distance-unit" id="distanceUnit">m</span>
+        </div>
+        
+        <div class="arrow-container">
+            <!-- Navigation Arrow pointing UP by default -->
+            <svg class="arrow" id="directionArrow" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 5 L90 85 L50 70 L10 85 Z" />
+            </svg>
+        </div>
+    </div>
+
+    <div class="status-text" id="statusText">Đang chờ vị trí...</div>
+
+    <script>
+        // DOM Elements
+        const overlay = document.getElementById('startOverlay');
+        const btnStart = document.getElementById('btnStart');
+        const btnSetTarget = document.getElementById('btnSetTarget');
+        const inputLat = document.getElementById('targetLat');
+        const inputLng = document.getElementById('targetLng');
+        const distanceValue = document.getElementById('distanceValue');
+        const distanceUnit = document.getElementById('distanceUnit');
+        const directionArrow = document.getElementById('directionArrow');
+        const statusText = document.getElementById('statusText');
+
+        // State variables
+        let currentLat = null;
+        let currentLng = null;
+        let currentHeading = null; // degrees from North (0-360)
+        
+        let targetLat = null;
+        let targetLng = null;
+        
+        let lastRotation = 0; // for smooth interpolation
+
+        // Auto-split comma-separated coordinates if pasted into the Latitude field
+        inputLat.addEventListener('input', (e) => {
+            const val = e.target.value;
+            if (val.includes(',')) {
+                const parts = val.split(',');
+                if (parts.length >= 2) {
+                    inputLat.value = parts[0].trim();
+                    inputLng.value = parts[1].trim();
+                }
+            }
+        });
+
+        // Math Helpers
+        function toRad(degrees) {
+            return degrees * Math.PI / 180;
+        }
+        function toDeg(radians) {
+            return radians * 180 / Math.PI;
+        }
+
+        // Calculate distance in meters using Haversine formula
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth radius in meters
+            const φ1 = toRad(lat1);
+            const φ2 = toRad(lat2);
+            const Δφ = toRad(lat2 - lat1);
+            const Δλ = toRad(lon2 - lon1);
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c; 
+        }
+
+        // Calculate bearing in degrees from North (0-360) towards target
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const φ1 = toRad(lat1);
+            const φ2 = toRad(lat2);
+            const λ1 = toRad(lon1);
+            const λ2 = toRad(lon2);
+
+            const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
+            const x = Math.cos(φ1) * Math.sin(φ2) -
+                      Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
+            
+            let bearing = toDeg(Math.atan2(y, x));
+            return (bearing + 360) % 360; 
+        }
+
+        // Update UI components
+        function updateUI() {
+            if (currentLat !== null && currentLng !== null && targetLat !== null && targetLng !== null) {
+                
+                // --- Distance Calculation ---
+                const distanceMeters = calculateDistance(currentLat, currentLng, targetLat, targetLng);
+                
+                if (distanceMeters > 999) {
+                    distanceValue.innerText = (distanceMeters / 1000).toFixed(2);
+                    distanceUnit.innerText = 'km';
+                } else {
+                    distanceValue.innerText = Math.round(distanceMeters);
+                    distanceUnit.innerText = 'm';
+                }
+
+                // --- Bearing & Arrow Rotation ---
+                if (currentHeading !== null) {
+                    const bearing = calculateBearing(currentLat, currentLng, targetLat, targetLng);
+
+                    // Target rotation for the arrow relative to phone's top (UP)
+                    let targetRotation = bearing - currentHeading;
+                    
+                    // Logic to find shortest path for smooth CSS rotation
+                    let diff = targetRotation - (lastRotation % 360);
+                    if (diff > 180) diff -= 360;
+                    if (diff < -180) diff += 360;
+                    
+                    lastRotation += diff;
+                    
+                    // Apply rotation
+                    directionArrow.style.transform = `rotate(${lastRotation}deg)`;
+                    
+                    // Highlight arrow in GREEN when roughly pointing at the target (+- 15 degrees)
+                    let pointingError = Math.abs((bearing - currentHeading + 360) % 360);
+                    if (pointingError > 180) pointingError = 360 - pointingError;
+
+                    if (pointingError < 15) {
+                         directionArrow.style.fill = 'var(--accent-green)';
+                         directionArrow.style.filter = 'drop-shadow(0 0 20px rgba(48, 209, 88, 0.6))';
+                    } else {
+                         directionArrow.style.fill = 'var(--text-main)';
+                         directionArrow.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.2))';
+                    }
+
+                    statusText.innerText = `Đang dẫn đường (${Math.round(pointingError)}° chệch hướng)`;
+                } else {
+                    statusText.innerText = "Đang định hướng thiết bị (hãy di chuyển điện thoại)...";
+                }
+            } else if (targetLat === null || targetLng === null) {
+                statusText.innerText = "Vui lòng nhập tọa độ điểm đến";
+                distanceValue.innerText = "--";
+                distanceUnit.innerText = "m";
+            } else {
+                statusText.innerText = "Đang tìm vị trí hiện tại của bạn...";
+            }
+        }
+
+        // Initialize Geolocation Tracking
+        function startTrackingLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.watchPosition(
+                    (position) => {
+                        currentLat = position.coords.latitude;
+                        currentLng = position.coords.longitude;
+                        updateUI();
+                    },
+                    (error) => {
+                        let msg = "";
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED: msg = "Bị từ chối Quyền Vị trí."; break;
+                            case error.POSITION_UNAVAILABLE: msg = "Không có kết nối GPS."; break;
+                            case error.TIMEOUT: msg = "Hết thời gian chờ."; break;
+                            default: msg = "Lỗi Vị trí không xác định."; break;
+                        }
+                        statusText.innerText = "Lỗi: " + msg;
+                        statusText.style.color = "var(--danger)";
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        maximumAge: 0,
+                        timeout: 10000
+                    }
+                );
+            } else {
+                statusText.innerText = "Thiết bị không hỗ trợ định vị.";
+            }
+        }
+
+        // Initialize Device Orientation Tracking (Compass)
+        function startTrackingCompass() {
+            const handleOrientation = (event) => {
+                let heading = null;
+                // iOS (webkitCompassHeading)
+                if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
+                    heading = event.webkitCompassHeading;
+                } 
+                // Android (absolute alpha)
+                else if (event.absolute === true && event.alpha !== null) {
+                    heading = 360 - event.alpha;
+                }
+                // General fallback
+                else if (event.alpha !== null) {
+                    heading = 360 - event.alpha;
+                }
+
+                if (heading !== null) {
+                    currentHeading = heading;
+                    updateUI();
+                }
+            };
+
+            // Modern standard is ondeviceorientationabsolute, fallback to deviceorientation
+            if (window.DeviceOrientationAbsoluteEvent) {
+                window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+            } else {
+                window.addEventListener("deviceorientation", handleOrientation, true);
+            }
+        }
+
+        // Button Listeners
+        btnStart.addEventListener('click', async () => {
+             // Ask for iOS 13+ DeviceOrientation permissions explicitly
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                try {
+                    const permissionState = await DeviceOrientationEvent.requestPermission();
+                    if (permissionState === 'granted') {
+                        startTrackingCompass();
+                    } else {
+                        alert("Vui lòng cấp quyền La Bàn để sử dụng.");
+                        statusText.innerText = "Thiếu quyền sử dụng La bàn.";
+                        return; // do not dismiss overlay
+                    }
+                } catch (error) {
+                    console.error("Lỗi xin quyền compass:", error);
+                }
+            } else {
+                // Non-iOS or older devices don't require explicit async permission request
+                startTrackingCompass();
+            }
+
+            // Start location tracking
+            startTrackingLocation();
+            
+            // Dismiss overlay
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 300);
+        });
+
+        btnSetTarget.addEventListener('click', () => {
+            // Replace comma with dot to handle inputs from various locale keyboards
+            let valLat = inputLat.value.replace(',', '.');
+            let valLng = inputLng.value.replace(',', '.');
+
+            const lat = parseFloat(valLat);
+            const lng = parseFloat(valLng);
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                targetLat = lat;
+                targetLng = lng;
+                // Defocus input fields to hide keyboard on mobile
+                inputLat.blur();
+                inputLng.blur();
+                updateUI();
+            } else {
+                alert("Định dạng tọa độ không hợp lệ.");
+            }
+        });
+        
+    </script>
+</body>
+</html>
