@@ -94,16 +94,26 @@
             font-size: 5rem;
             font-weight: 700;
             letter-spacing: -2px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             font-variant-numeric: tabular-nums;
             text-align: center;
             line-height: 1;
+            transition: color 0.3s;
         }
 
         .distance-unit {
             font-size: 2rem;
             font-weight: 500;
             color: var(--text-secondary);
+        }
+        
+        .accuracy-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
         }
 
         .arrow-container {
@@ -124,6 +134,41 @@
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
             transform: rotate(0deg);
             will-change: transform;
+        }
+
+        /* Arrival pulse effect */
+        .arrival-pulse {
+            display: none;
+            width: 150px;
+            height: 150px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            position: absolute;
+            animation: pulse 1.5s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .arrival-pulse svg {
+            width: 80px;
+            height: 80px;
+            fill: white;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(48, 209, 88, 0.7);
+            }
+            70% {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 30px rgba(48, 209, 88, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(48, 209, 88, 0);
+            }
         }
 
         /* Overlay for permissions */
@@ -165,6 +210,8 @@
             font-size: 14px;
             text-align: center;
             width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -180,23 +227,32 @@
     <!-- Controls -->
     <div class="controls-panel">
         <div class="input-group">
-            <input type="text" id="targetLat" placeholder="Vĩ độ (Ví dụ: 21.0285)">
-            <input type="number" id="targetLng" placeholder="Kinh độ (Ví dụ: 105.8542)" step="any">
+            <input type="text" id="targetLat" placeholder="Vĩ độ (VD: 21.0285) hoặc dán Tọa độ">
+            <input type="number" id="targetLng" placeholder="Kinh độ (VD: 105.8542)" step="any">
         </div>
         <button class="primary-btn" id="btnSetTarget">Đặt Điểm Đến</button>
     </div>
 
     <!-- Compass Area -->
     <div class="compass-area">
-        <div class="distance-display">
+        <div class="distance-display" id="distanceContainer">
             <span id="distanceValue">--</span><span class="distance-unit" id="distanceUnit">m</span>
         </div>
+        
+        <div class="accuracy-text" id="accuracyText" style="display: none;">Độ chính xác: -- m</div>
         
         <div class="arrow-container">
             <!-- Navigation Arrow pointing UP by default -->
             <svg class="arrow" id="directionArrow" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <path d="M50 5 L90 85 L50 70 L10 85 Z" />
             </svg>
+            
+            <!-- Arrival Checkmark (Hidden by default) -->
+            <div class="arrival-pulse" id="arrivalPulse" style="display: none;">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                </svg>
+            </div>
         </div>
     </div>
 
@@ -209,20 +265,26 @@
         const btnSetTarget = document.getElementById('btnSetTarget');
         const inputLat = document.getElementById('targetLat');
         const inputLng = document.getElementById('targetLng');
+        const distanceContainer = document.getElementById('distanceContainer');
         const distanceValue = document.getElementById('distanceValue');
         const distanceUnit = document.getElementById('distanceUnit');
+        const accuracyText = document.getElementById('accuracyText');
         const directionArrow = document.getElementById('directionArrow');
+        const arrivalPulse = document.getElementById('arrivalPulse');
         const statusText = document.getElementById('statusText');
 
         // State variables
         let currentLat = null;
         let currentLng = null;
+        let currentAccuracy = null;
         let currentHeading = null; // degrees from North (0-360)
         
         let targetLat = null;
         let targetLng = null;
         
         let lastRotation = 0; // for smooth interpolation
+        let isPointingAtTarget = false; // Haptic state
+        let isArrived = false; // Arrival state
 
         // Auto-split comma-separated coordinates if pasted into the Latitude field
         inputLat.addEventListener('input', (e) => {
@@ -275,13 +337,56 @@
             return (bearing + 360) % 360; 
         }
 
+        // Vibrate helper
+        function vibrate(pattern) {
+            if ("vibrate" in navigator) {
+                navigator.vibrate(pattern);
+            }
+        }
+
         // Update UI components
         function updateUI() {
+            if (currentAccuracy !== null) {
+                accuracyText.style.display = 'block';
+                accuracyText.innerText = `Độ chính xác GPS: ±${Math.round(currentAccuracy)}m`;
+                
+                // Show warning if accuracy is very bad
+                if (currentAccuracy > 50) {
+                    accuracyText.style.color = "var(--danger)";
+                } else {
+                    accuracyText.style.color = "var(--text-secondary)";
+                }
+            }
+
             if (currentLat !== null && currentLng !== null && targetLat !== null && targetLng !== null) {
                 
                 // --- Distance Calculation ---
                 const distanceMeters = calculateDistance(currentLat, currentLng, targetLat, targetLng);
                 
+                // --- Arrival Logic (Distance < 10 meters) ---
+                if (distanceMeters < 10) {
+                    if (!isArrived) {
+                        isArrived = true;
+                        directionArrow.style.display = 'none';
+                        arrivalPulse.style.display = 'flex';
+                        distanceContainer.style.color = 'var(--accent-green)';
+                        vibrate([100, 50, 100, 50, 100]); // Success vibration pattern
+                    }
+                    distanceValue.innerText = "Đã đến";
+                    distanceUnit.innerText = " nơi";
+                    statusText.innerText = "Bạn đã ở rất gần điểm đến!";
+                    return; // Skip compass updating when arrived
+                } else {
+                    if (isArrived) {
+                        // Left the arrival zone
+                        isArrived = false;
+                        directionArrow.style.display = 'block';
+                        arrivalPulse.style.display = 'none';
+                        distanceContainer.style.color = 'var(--text-main)';
+                    }
+                }
+
+                // Update distance text
                 if (distanceMeters > 999) {
                     distanceValue.innerText = (distanceMeters / 1000).toFixed(2);
                     distanceUnit.innerText = 'km';
@@ -314,9 +419,16 @@
                     if (pointingError < 15) {
                          directionArrow.style.fill = 'var(--accent-green)';
                          directionArrow.style.filter = 'drop-shadow(0 0 20px rgba(48, 209, 88, 0.6))';
+                         
+                         // Trigger haptic feedback ONCE when entering the "correct" zone
+                         if (!isPointingAtTarget) {
+                             isPointingAtTarget = true;
+                             vibrate(50); // Short tap vibration
+                         }
                     } else {
                          directionArrow.style.fill = 'var(--text-main)';
                          directionArrow.style.filter = 'drop-shadow(0 0 10px rgba(255, 255, 255, 0.2))';
+                         isPointingAtTarget = false;
                     }
 
                     statusText.innerText = `Đang dẫn đường (${Math.round(pointingError)}° chệch hướng)`;
@@ -339,6 +451,7 @@
                     (position) => {
                         currentLat = position.coords.latitude;
                         currentLng = position.coords.longitude;
+                        currentAccuracy = position.coords.accuracy;
                         updateUI();
                     },
                     (error) => {
@@ -423,6 +536,9 @@
             setTimeout(() => {
                 overlay.style.display = 'none';
             }, 300);
+            
+            // Pre-warm vibrate if possible
+            vibrate(1);
         });
 
         btnSetTarget.addEventListener('click', () => {
