@@ -829,19 +829,7 @@ function setupToolsPanel() {
 
 // ====== KHỞI TẠO BẢN ĐỒ & LỚP NỀN ======
 function initMap() {
-  const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-  });
-  const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    attribution: 'Tiles © Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-  });
-  
   // Google Maps Layers
-  const googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
-    maxZoom: 20,
-    subdomains:['mt0','mt1','mt2','mt3']
-  });
-  
   const googleHybrid = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
     maxZoom: 20,
     subdomains:['mt0','mt1','mt2','mt3']
@@ -856,7 +844,7 @@ function initMap() {
   const map = L.map('map', {
     center: [10.2536, 105.9722],
     zoom: 10,
-    layers: [osmLayer]
+    layers: [googleHybrid]
   });
 
   // Tạo các pane với z-index cố định: polygon < line < point < label < tooltip < popup
@@ -879,9 +867,6 @@ function initMap() {
 
   // Lưu các layer để dùng sau
   map._baseLayers = {
-    'osm': osmLayer,
-    'satellite': satelliteLayer,
-    'google-satellite': googleSat,
     'google-hybrid': googleHybrid,
     'google-streets': googleStreets
   };
@@ -1894,7 +1879,7 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
         },
         onEachFeature: function(feature, layer) {
           const tooltipText = getDuanTooltipText(feature, displayName);
-          layer.bindTooltip(tooltipText, { direction: 'top', sticky: true, offset: [0, -8], className: 'custom-tooltip' });
+          layer.bindTooltip(tooltipText, { direction: 'top', sticky: false, offset: [0, -8], className: 'custom-tooltip', interactive: false });
           layer.on('click', function() {
             if (isMeasuring || isMeasuringArea) return;
             const currentConfig = duanConfig[filename] || {};
@@ -1956,9 +1941,10 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
           layer.bindTooltip(tooltipText, {
             direction: 'top',
             sticky: false,
-            permanent: true,
+            permanent: false,
             offset: [0, -(radius + 8)],
-            className: 'custom-tooltip'
+            className: 'custom-tooltip',
+            interactive: false
           });
 
           layer.on('click', function() {
@@ -3644,13 +3630,7 @@ function formatArea(squareMeters) {
   const squareKm = squareMeters / 1000000;
   const hectares = squareMeters / 10000;
   
-  if (squareKm >= 1) {
-    return squareKm.toFixed(4) + ' km²';
-  } else if (hectares >= 1) {
-    return hectares.toFixed(2) + ' ha';
-  } else {
-    return squareMeters.toFixed(2) + ' m²';
-  }
+  return squareKm.toFixed(4) + ' km² (' + hectares.toFixed(2) + ' ha)';
 }
 
 function formatHectares(squareMeters) {
@@ -3714,6 +3694,33 @@ function updateAreaPolygonAndLabels(map) {
       
       areaSegmentLabels.push(label);
     }
+    
+    // Thêm nhãn tổng diện tích ở giữa vùng
+    const area = calculatePolygonArea(areaPoints);
+    const sqKmText = (area / 1000000).toFixed(4) + ' km²';
+    const hectaresText = (area / 10000).toFixed(2) + ' ha';
+    
+    let centerLat = 0;
+    let centerLng = 0;
+    for(let i = 0; i < areaPoints.length; i++) {
+      centerLat += areaPoints[i].lat;
+      centerLng += areaPoints[i].lng;
+    }
+    centerLat /= areaPoints.length;
+    centerLng /= areaPoints.length;
+    
+    const areaLabel = L.marker([centerLat, centerLng], {
+      icon: L.divIcon({
+        className: 'area-total-label',
+        html: '<div class="area-total-label-content" style="background-color: #e11d48; color: white; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 14px; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4); white-space: nowrap; text-align: center; line-height: 1.4;">' + sqKmText + '<br>(' + hectaresText + ')</div>',
+        iconSize: [140, 46],
+        iconAnchor: [70, 23]
+      }),
+      interactive: false,
+      zIndexOffset: 2000
+    }).addTo(map);
+    
+    areaSegmentLabels.push(areaLabel);
   } else if (areaPoints.length >= 2) {
     // Vẽ đường nối khi chưa đủ 3 điểm
     const latlngs = areaPoints.map(p => [p.lat, p.lng]);
@@ -3763,8 +3770,9 @@ function updateAreaDisplay() {
   }
   
   const area = calculatePolygonArea(areaPoints);
-  const areaText = 'Diện tích: ' + formatArea(area);
-  const hectaresText = '(' + formatHectares(area) + ')';
+  const sqKmText = (area / 1000000).toFixed(4) + ' km²';
+  const areaText = 'Diện tích: ' + sqKmText;
+  const hectaresText = '(' + (area / 10000).toFixed(2) + ' ha)';
   const pointsText = 'Số điểm: ' + areaPoints.length;
   
   // Cập nhật thông tin ở phần chính
@@ -3893,92 +3901,8 @@ function setupAreaButton(map) {
         
         areaMarkers.push(marker);
         
-        // Xóa polygon và labels cũ để vẽ lại
-        if (areaPolygon) {
-          if (map.hasLayer(areaPolygon)) {
-            map.removeLayer(areaPolygon);
-          }
-          areaPolygon = null;
-        }
-        // Xóa tất cả labels một cách an toàn
-        areaSegmentLabels.forEach(label => {
-          if (label && map.hasLayer(label)) {
-            map.removeLayer(label);
-          }
-        });
-        areaSegmentLabels = [];
-        
-        if (areaPoints.length >= 3) {
-          const latlngs = areaPoints.map(p => [p.lat, p.lng]);
-          // Đóng polygon bằng cách thêm điểm đầu vào cuối
-          latlngs.push([areaPoints[0].lat, areaPoints[0].lng]);
-          
-          areaPolygon = L.polygon(latlngs, {
-            color: '#ff9800',
-            weight: 3,
-            fillColor: '#ff9800',
-            fillOpacity: 0.3
-          }).addTo(map);
-          
-          // Thêm label khoảng cách cho từng cạnh
-          for (let i = 0; i < areaPoints.length; i++) {
-            const p1 = areaPoints[i];
-            const p2 = areaPoints[(i + 1) % areaPoints.length];
-            const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
-            
-            // Tính điểm giữa của cạnh
-            const midLat = (p1.lat + p2.lat) / 2;
-            const midLng = (p1.lng + p2.lng) / 2;
-            
-            // Tạo label hiển thị khoảng cách
-            const labelText = formatDistance(segmentDistance);
-            const label = L.marker([midLat, midLng], {
-              icon: L.divIcon({
-                className: 'area-segment-label',
-                html: '<div class="area-segment-label-content">' + labelText + '</div>',
-                iconSize: [100, 30],
-                iconAnchor: [50, 15]
-              }),
-              interactive: false,
-              zIndexOffset: 1000
-            }).addTo(map);
-            
-            areaSegmentLabels.push(label);
-          }
-        } else if (areaPoints.length >= 2) {
-          // Vẽ đường nối khi chưa đủ 3 điểm
-          const latlngs = areaPoints.map(p => [p.lat, p.lng]);
-          areaPolygon = L.polyline(latlngs, {
-            color: '#ff9800',
-            weight: 3,
-            dashArray: '5, 5',
-            opacity: 0.8
-          }).addTo(map);
-          
-          // Thêm label cho đoạn hiện tại
-          const p1 = areaPoints[areaPoints.length - 2];
-          const p2 = areaPoints[areaPoints.length - 1];
-          const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
-          
-          const midLat = (p1.lat + p2.lat) / 2;
-          const midLng = (p1.lng + p2.lng) / 2;
-          
-          const labelText = formatDistance(segmentDistance);
-          const label = L.marker([midLat, midLng], {
-            icon: L.divIcon({
-              className: 'area-segment-label',
-              html: '<div class="area-segment-label-content">' + labelText + '</div>',
-              iconSize: [100, 30],
-              iconAnchor: [50, 15]
-            }),
-            interactive: false,
-            zIndexOffset: 1000
-          }).addTo(map);
-          
-          areaSegmentLabels.push(label);
-        }
-        
-        updateAreaDisplay();
+        // Cập nhật lại polygon và labels
+        updateAreaPolygonAndLabels(map);
       };
       
       map.on('click', areaClickHandler);
@@ -4090,6 +4014,29 @@ function updateMeasurePolylineAndLabels(map) {
       
       measureSegmentLabels.push(label);
     }
+    
+    // Thêm nhãn tổng khoảng cách ở điểm cuối
+    let totalDistance = 0;
+    for (let i = 0; i < measurePoints.length - 1; i++) {
+      const p1 = measurePoints[i];
+      const p2 = measurePoints[i + 1];
+      totalDistance += calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
+    }
+    
+    const lastPoint = measurePoints[measurePoints.length - 1];
+    const totalLabelText = "Tổng: " + formatDistance(totalDistance);
+    const totalLabel = L.marker([lastPoint.lat, lastPoint.lng], {
+      icon: L.divIcon({
+        className: 'measure-total-label',
+        html: '<div class="measure-total-label-content" style="background-color: #e11d48; color: white; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 14px; border: 2px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.4); white-space: nowrap;">' + totalLabelText + '</div>',
+        iconSize: [120, 30],
+        iconAnchor: [-30, 15] // Tăng offset X âm để đẩy nhãn sang phải xa hơn
+      }),
+      interactive: false,
+      zIndexOffset: 2000
+    }).addTo(map);
+    
+    measureSegmentLabels.push(totalLabel);
   }
   
   // Cập nhật hiển thị thông tin
@@ -4245,58 +4192,8 @@ function setupMeasureButton(map) {
         
         measureMarkers.push(marker);
         
-        // Xóa polyline và labels cũ để vẽ lại
-        if (measurePolyline) {
-          if (map.hasLayer(measurePolyline)) {
-            map.removeLayer(measurePolyline);
-          }
-          measurePolyline = null;
-        }
-        // Xóa tất cả labels một cách an toàn
-        measureSegmentLabels.forEach(label => {
-          if (label && map.hasLayer(label)) {
-            map.removeLayer(label);
-          }
-        });
-        measureSegmentLabels = [];
-        
-        if (measurePoints.length > 1) {
-          const latlngs = measurePoints.map(p => [p.lat, p.lng]);
-          measurePolyline = L.polyline(latlngs, {
-            color: '#4caf50',
-            weight: 3,
-            dashArray: '5, 5',
-            opacity: 0.8
-          }).addTo(map);
-          
-          // Thêm label khoảng cách cho từng đoạn
-          for (let i = 0; i < measurePoints.length - 1; i++) {
-            const p1 = measurePoints[i];
-            const p2 = measurePoints[i + 1];
-            const segmentDistance = calculateDistance(p1.lat, p1.lng, p2.lat, p2.lng);
-            
-            // Tính điểm giữa của đoạn
-            const midLat = (p1.lat + p2.lat) / 2;
-            const midLng = (p1.lng + p2.lng) / 2;
-            
-            // Tạo label hiển thị khoảng cách
-            const labelText = formatDistance(segmentDistance);
-            const label = L.marker([midLat, midLng], {
-              icon: L.divIcon({
-                className: 'measure-segment-label',
-                html: '<div class="measure-segment-label-content">' + labelText + '</div>',
-                iconSize: [100, 30],
-                iconAnchor: [50, 15]
-              }),
-              interactive: false,
-              zIndexOffset: 1000
-            }).addTo(map);
-            
-            measureSegmentLabels.push(label);
-          }
-        }
-        
-        updateMeasureDisplay();
+        // Cập nhật lại polyline và labels
+        updateMeasurePolylineAndLabels(map);
       };
       
       map.on('click', measureClickHandler);
@@ -5840,12 +5737,12 @@ function formatMeasurement(value, type) {
   }
 }
 
-// Định dạng diện tích hiển thị real-time: luôn hiển thị cả m² và ha
+// Định dạng diện tích hiển thị real-time: luôn hiển thị cả km² và ha
 function formatAreaForLive(sqMeters) {
   if (sqMeters == null || isNaN(sqMeters) || sqMeters < 0) return '—';
-  const m2 = sqMeters.toFixed(2);
+  const km2 = (sqMeters / 1000000).toFixed(4);
   const ha = (sqMeters / 10000).toFixed(2);
-  return `${m2} m² (${ha} ha)`;
+  return `${km2} km² (${ha} ha)`;
 }
 
 // Hiển thị / ẩn / cập nhật panel thông tin vẽ real-time (vị trí + diện tích ha/m²)
