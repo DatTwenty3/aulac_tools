@@ -5103,8 +5103,8 @@ function renderKmlKmzImportList(map) {
           <div style="width: 1px; height: 16px; background: #e5e7eb;"></div>
           <div style="flex: 1.5; display: flex; align-items: center; gap: 6px;">
             <span style="font-size: 0.7rem; color: #6b7280; font-weight: 600; text-transform: uppercase;">Dày</span>
-            <input type="range" id="kml-weight-${item.id}" min="1" max="10" value="${item.weight || 3}" style="width: 100%; height: 4px; accent-color: #8b5cf6; cursor: pointer;">
-            <span id="kml-weight-val-${item.id}" style="font-size: 0.75rem; font-weight: 600; color: #374151; min-width: 16px; text-align: right;">${item.weight || 3}</span>
+            <input type="range" id="kml-weight-${item.id}" min="1" max="10" value="${item.weight || 1}" style="width: 100%; height: 4px; accent-color: #8b5cf6; cursor: pointer;">
+            <span id="kml-weight-val-${item.id}" style="font-size: 0.75rem; font-weight: 600; color: #374151; min-width: 16px; text-align: right;">${item.weight || 1}</span>
           </div>
         </div>
       </div>
@@ -5141,7 +5141,7 @@ function renderKmlKmzImportList(map) {
       const colorPicker = document.getElementById(`kml-color-${item.id}`);
       const weightSlider = document.getElementById(`kml-weight-${item.id}`);
       if (colorPicker) item.color = colorPicker.value;
-      if (weightSlider) item.weight = parseInt(weightSlider.value) || 3;
+      if (weightSlider) item.weight = parseInt(weightSlider.value) || 1;
       
       item.layerGroup.eachLayer(layer => {
         if (layer.setStyle) {
@@ -5236,7 +5236,7 @@ function parseKmlAndAddToMap(kmlText, map, sourceName) {
         const coordNode = lineNode.getElementsByTagName('coordinates')[0];
         const coords = coordNode ? parseKmlCoordinates(coordNode.textContent) : [];
         if (coords.length >= 2) {
-          layer = L.polyline(coords, { color: '#FF0000', weight: 3 });
+          layer = L.polyline(coords, { color: '#FF0000', weight: 1 });
         }
       } else if (polygonNode) {
         const outer = polygonNode.getElementsByTagName('outerBoundaryIs')[0] || polygonNode;
@@ -5244,7 +5244,7 @@ function parseKmlAndAddToMap(kmlText, map, sourceName) {
         const coordNode = ring ? ring.getElementsByTagName('coordinates')[0] : null;
         const coords = coordNode ? parseKmlCoordinates(coordNode.textContent) : [];
         if (coords.length >= 3) {
-          layer = L.polygon(coords, { color: '#FF0000', weight: 2, fillOpacity: 0.3 });
+          layer = L.polygon(coords, { color: '#FF0000', weight: 1, fillOpacity: 0.3 });
         }
       }
 
@@ -5287,7 +5287,7 @@ function parseKmlAndAddToMap(kmlText, map, sourceName) {
       name: importName,
       layerGroup,
       color: '#FF0000',
-      weight: 3,
+      weight: 1,
       visible: true
     });
     renderKmlKmzImportList(map);
