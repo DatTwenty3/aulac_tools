@@ -5064,31 +5064,49 @@ function renderKmlKmzImportList(map) {
   html += '<div style="margin-bottom:4px; font-weight:600;">KML/KMZ đã nhập:</div>';
   importedKmlLayers.forEach(item => {
     html += `
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; padding:4px 6px; border-radius:6px; background:#f9fafb; margin-bottom:2px;">
-        <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${item.name}">${item.name}</span>
-        <button 
-          type="button"
-          data-kml-kmz-id="${item.id}"
-          style="
-            border:none;
-            background:#fee2e2;
-            color:#b91c1c;
-            border-radius:4px;
-            padding:2px 6px;
-            font-size:0.75rem;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            gap:4px;
-          "
-          title="Xóa file này khỏi bản đồ"
-        >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-          <span>Xóa</span>
-        </button>
+      <div style="padding: 10px; border-radius: 10px; background: #ffffff; margin-bottom: 8px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+          <label style="display: flex; align-items: center; gap: 8px; flex: 1; overflow: hidden; cursor: pointer;" title="${item.name}">
+            <input type="checkbox" id="kml-toggle-${item.id}" ${item.visible !== false ? 'checked' : ''} style="cursor: pointer; width: 16px; height: 16px; accent-color: #8b5cf6;" title="Hiển thị/Ẩn">
+            <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; font-size: 0.85rem; color: #374151;">${item.name}</span>
+          </label>
+          <button 
+            type="button"
+            data-kml-kmz-id="${item.id}"
+            style="
+              border:none;
+              background:#fee2e2;
+              color:#ef4444;
+              border-radius:6px;
+              padding:4px;
+              cursor:pointer;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              transition: background 0.2s;
+            "
+            title="Xóa file khỏi bản đồ"
+            onmouseover="this.style.background='#fecaca'"
+            onmouseout="this.style.background='#fee2e2'"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center; margin-left: 24px; background: #f9fafb; padding: 6px 10px; border-radius: 8px;">
+          <div style="flex: 1; display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 0.7rem; color: #6b7280; font-weight: 600; text-transform: uppercase;">Màu</span>
+            <input type="color" id="kml-color-${item.id}" value="${item.color || '#FF0000'}" style="width: 100%; height: 24px; border: 1px solid #d1d5db; border-radius: 4px; cursor: pointer; padding: 1px; background-color: white;">
+          </div>
+          <div style="width: 1px; height: 16px; background: #e5e7eb;"></div>
+          <div style="flex: 1.5; display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 0.7rem; color: #6b7280; font-weight: 600; text-transform: uppercase;">Dày</span>
+            <input type="range" id="kml-weight-${item.id}" min="1" max="10" value="${item.weight || 3}" style="width: 100%; height: 4px; accent-color: #8b5cf6; cursor: pointer;">
+            <span id="kml-weight-val-${item.id}" style="font-size: 0.75rem; font-weight: 600; color: #374151; min-width: 16px; text-align: right;">${item.weight || 3}</span>
+          </div>
+        </div>
       </div>
     `;
   });
@@ -5097,10 +5115,59 @@ function renderKmlKmzImportList(map) {
   container.innerHTML = html;
 
   importedKmlLayers.forEach(item => {
+    // Nút xóa
     const btn = container.querySelector(`button[data-kml-kmz-id="${item.id}"]`);
     if (btn) {
       btn.onclick = () => {
         removeSingleImportedKmlKmz(map, item.id);
+      };
+    }
+    
+    // Nút ẩn/hiện
+    const toggleCheckbox = document.getElementById(`kml-toggle-${item.id}`);
+    if (toggleCheckbox) {
+      toggleCheckbox.onchange = (e) => {
+        item.visible = e.target.checked;
+        if (item.visible) {
+          map.addLayer(item.layerGroup);
+        } else {
+          map.removeLayer(item.layerGroup);
+        }
+      };
+    }
+    
+    // Cập nhật style
+    const updateStyle = () => {
+      const colorPicker = document.getElementById(`kml-color-${item.id}`);
+      const weightSlider = document.getElementById(`kml-weight-${item.id}`);
+      if (colorPicker) item.color = colorPicker.value;
+      if (weightSlider) item.weight = parseInt(weightSlider.value) || 3;
+      
+      item.layerGroup.eachLayer(layer => {
+        if (layer.setStyle) {
+          // LineString, Polygon
+          layer.setStyle({ color: item.color, weight: item.weight });
+        }
+        if (layer instanceof L.CircleMarker) {
+          // Point
+          layer.setStyle({ fillColor: item.color, color: item.color });
+        }
+      });
+    };
+
+    // Chọn màu
+    const colorPicker = document.getElementById(`kml-color-${item.id}`);
+    if (colorPicker) {
+      colorPicker.oninput = updateStyle;
+    }
+
+    // Đổi độ dày
+    const weightSlider = document.getElementById(`kml-weight-${item.id}`);
+    const weightVal = document.getElementById(`kml-weight-val-${item.id}`);
+    if (weightSlider) {
+      weightSlider.oninput = (e) => {
+        if (weightVal) weightVal.textContent = e.target.value;
+        updateStyle();
       };
     }
   });
@@ -5218,7 +5285,10 @@ function parseKmlAndAddToMap(kmlText, map, sourceName) {
     importedKmlLayers.push({
       id,
       name: importName,
-      layerGroup
+      layerGroup,
+      color: '#FF0000',
+      weight: 3,
+      visible: true
     });
     renderKmlKmzImportList(map);
 
