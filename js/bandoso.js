@@ -47,6 +47,36 @@ let currentBoundaryColor = '#000000'; // Màu ranh giới mặc định (đen)
 let currentBoundaryWeight = 0.5; // Độ dày ranh giới mặc định
 let selectedGeojsonLayer = null; // Layer phường/xã đang được chọn
 
+// Ẩn/hiện ranh giới từng xã (không áp dụng lớp DHLVB)
+const wardBoundaryRegistry = new Map();
+let hiddenWardBoundaryKeysSet = null;
+let wardVisibilityPanelInitialized = false;
+let wardVisibilityRebuildTimer = null;
+
+function scheduleRebuildWardVisibilityPanel() {
+  if (wardVisibilityRebuildTimer) clearTimeout(wardVisibilityRebuildTimer);
+  wardVisibilityRebuildTimer = setTimeout(() => {
+    wardVisibilityRebuildTimer = null;
+    rebuildWardVisibilityPanel(typeof window !== 'undefined' ? window.mapInstance : null);
+  }, 250);
+}
+
+function getHiddenWardBoundaryKeysSet() {
+  if (!hiddenWardBoundaryKeysSet) {
+    try {
+      const raw = localStorage.getItem('hiddenWardBoundaryKeys');
+      hiddenWardBoundaryKeysSet = new Set(raw ? JSON.parse(raw) : []);
+    } catch (e) {
+      hiddenWardBoundaryKeysSet = new Set();
+    }
+  }
+  return hiddenWardBoundaryKeysSet;
+}
+
+function persistHiddenWardBoundaryKeys() {
+  localStorage.setItem('hiddenWardBoundaryKeys', JSON.stringify([...getHiddenWardBoundaryKeysSet()]));
+}
+
 // Biến cho quản lý các file DuAn
 let duanLayers = {}; // Lưu các layer theo tên file
 let duanFiles = []; // Danh sách các file trong folder DuAn
@@ -1343,8 +1373,161 @@ function getFeatureCode(properties) {
   return properties.ma_xa || properties.ma || null;
 }
 
+function buildWardBoundaryKey(sourceFilename, feature, featureIndex) {
+  const stem = (sourceFilename || '').replace(/\.geojson$/i, '');
+  const p = feature.properties || {};
+  const idPart = getFeatureCode(p) || getFeatureName(p) || ('f' + featureIndex);
+  return stem + '::' + idPart;
+}
+
+function applyCurrentStyleToWardBoundaryLayer(featureLayer) {
+  const orig = featureLayer._originalGeojsonStyle;
+  if (!orig) return;
+  featureLayer.setStyle({
+    color: currentBoundaryColor,
+    weight: currentBoundaryWeight,
+    fillColor: orig.fillColor,
+    fillOpacity: currentOverlayOpacity
+  });
+}
+
+function registerWardBoundariesFromGeoJsonLayer(layer, sourceFilename, isDhlvb) {
+  if (isDhlvb || !sourceFilename) return;
+  const hidden = getHiddenWardBoundaryKeysSet();
+  let idx = 0;
+  layer.eachLayer(function (featureLayer) {
+    const feature = featureLayer.feature;
+    if (!feature) return;
+    const wardKey = buildWardBoundaryKey(sourceFilename, feature, idx);
+    idx++;
+    const displayName =
+      getFeatureName(feature.properties) ||
+      getFeatureCode(feature.properties) ||
+      sourceFilename.replace(/\.geojson$/i, '').split('/').pop();
+    wardBoundaryRegistry.set(wardKey, {
+      subLayer: featureLayer,
+      groupLayer: layer,
+      displayName
+    });
+    featureLayer._wardBoundaryKey = wardKey;
+    if (hidden.has(wardKey)) {
+      layer.removeLayer(featureLayer);
+    }
+  });
+  scheduleRebuildWardVisibilityPanel();
+}
+
+function setWardBoundaryVisible(map, wardKey, visible) {
+  const rec = wardBoundaryRegistry.get(wardKey);
+  if (!rec) return;
+  const { subLayer, groupLayer } = rec;
+  if (visible) {
+    if (!groupLayer.hasLayer(subLayer)) {
+      groupLayer.addLayer(subLayer);
+      applyCurrentStyleToWardBoundaryLayer(subLayer);
+    }
+    getHiddenWardBoundaryKeysSet().delete(wardKey);
+  } else {
+    if (groupLayer.hasLayer(subLayer)) {
+      groupLayer.removeLayer(subLayer);
+    }
+    getHiddenWardBoundaryKeysSet().add(wardKey);
+  }
+  persistHiddenWardBoundaryKeys();
+  rebuildWardVisibilityPanel(map);
+}
+
+function rebuildWardVisibilityPanel(map) {
+  const listEl = document.getElementById('ward-visibility-list');
+  if (!listEl) return;
+
+  if (wardBoundaryRegistry.size === 0) {
+    listEl.innerHTML =
+      '<div class="ward-visibility-empty ward-visibility-empty--loading">Đang tải danh sách xã/phường…</div>';
+    return;
+  }
+
+  const filterInput = document.getElementById('ward-visibility-filter');
+  const q = (filterInput && filterInput.value ? filterInput.value : '').trim().toLowerCase();
+  const hidden = getHiddenWardBoundaryKeysSet();
+  const entries = [...wardBoundaryRegistry.entries()]
+    .map(([key, v]) => ({ key, label: v.displayName || key }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'vi'));
+  const frag = document.createDocumentFragment();
+  let matchCount = 0;
+  for (const { key, label } of entries) {
+    if (q && !label.toLowerCase().includes(q)) continue;
+    matchCount++;
+    const visible = !hidden.has(key);
+    const row = document.createElement('label');
+    row.className = 'ward-visibility-row' + (visible ? '' : ' ward-visibility-row--off');
+    row.setAttribute('role', 'listitem');
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = visible;
+    cb.dataset.wardKey = key;
+    cb.addEventListener('change', function () {
+      setWardBoundaryVisible(map || window.mapInstance, key, cb.checked);
+    });
+    const span = document.createElement('span');
+    span.className = 'ward-visibility-row-label';
+    span.textContent = label;
+    row.appendChild(cb);
+    row.appendChild(span);
+    frag.appendChild(row);
+  }
+  listEl.innerHTML = '';
+  if (matchCount === 0) {
+    listEl.innerHTML =
+      '<div class="ward-visibility-empty">Không có đơn vị nào khớp bộ lọc. Thử gõ ít ký tự hơn.</div>';
+    return;
+  }
+  listEl.appendChild(frag);
+}
+
+function initWardVisibilityPanel(map) {
+  const filterInput = document.getElementById('ward-visibility-filter');
+  const showAllBtn = document.getElementById('ward-show-all-btn');
+  const hideAllBtn = document.getElementById('ward-hide-all-btn');
+  if (!filterInput && !showAllBtn && !hideAllBtn) return;
+  if (!wardVisibilityPanelInitialized) {
+    wardVisibilityPanelInitialized = true;
+    if (filterInput) {
+      filterInput.addEventListener('input', function () {
+        rebuildWardVisibilityPanel(map || window.mapInstance);
+      });
+    }
+    if (showAllBtn) {
+      showAllBtn.addEventListener('click', function () {
+        wardBoundaryRegistry.forEach((rec, key) => {
+          if (!rec.groupLayer.hasLayer(rec.subLayer)) {
+            rec.groupLayer.addLayer(rec.subLayer);
+            applyCurrentStyleToWardBoundaryLayer(rec.subLayer);
+          }
+        });
+        getHiddenWardBoundaryKeysSet().clear();
+        persistHiddenWardBoundaryKeys();
+        rebuildWardVisibilityPanel(map || window.mapInstance);
+      });
+    }
+    if (hideAllBtn) {
+      hideAllBtn.addEventListener('click', function () {
+        wardBoundaryRegistry.forEach((rec, key) => {
+          if (rec.groupLayer.hasLayer(rec.subLayer)) {
+            rec.groupLayer.removeLayer(rec.subLayer);
+          }
+          getHiddenWardBoundaryKeysSet().add(key);
+        });
+        persistHiddenWardBoundaryKeys();
+        rebuildWardVisibilityPanel(map || window.mapInstance);
+      });
+    }
+  }
+  rebuildWardVisibilityPanel(map || window.mapInstance);
+}
+
 // ====== HIỂN THỊ GEOJSON LÊN BẢN ĐỒ ======
-function addGeojsonToMap(map, data) {
+function addGeojsonToMap(map, data, sourceFilename = '') {
   const isDhlvb = data && data.name === 'DHLVB';
   
   // Xử lý màu cho tất cả features trước để đảm bảo các feature lân cận không trùng màu
@@ -1562,6 +1745,8 @@ function addGeojsonToMap(map, data) {
     }
   });
   
+  registerWardBoundariesFromGeoJsonLayer(layer, sourceFilename, isDhlvb);
+  
   // Chỉ add vào map nếu ranh giới đang hiển thị
   if (geojsonVisible) {
     layer.addTo(map);
@@ -1659,7 +1844,7 @@ function loadAllGeojsons(map) {
       geojsonFiles.forEach(filename => {
         fetch('geo-json/' + encodeURIComponent(filename))
           .then(res => res.json())
-          .then(data => addGeojsonToMap(map, data))
+          .then(data => addGeojsonToMap(map, data, filename))
           .catch(err => console.error('Lỗi tải file', filename, err));
       });
       setupSearch(map);
@@ -3543,6 +3728,8 @@ function setupToolsPanelControls(map) {
       });
     });
   }
+
+  initWardVisibilityPanel(map);
 }
 
 
@@ -7723,6 +7910,7 @@ function setupDrawingTools(map) {
   setupInfoPanel();
   setupInfoCard(); // Thiết lập thẻ thông tin
   setupToolsPanel(); // Thiết lập hộp công cụ
+  initWardVisibilityPanel(map);
   setupLocateButton(map);
   loadAllGeojsons(map);
   // Tải các dự án sau một khoảng thời gian ngắn để đảm bảo chúng nằm phía trên các layer khác
