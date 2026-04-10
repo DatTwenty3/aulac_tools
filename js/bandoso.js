@@ -50,6 +50,7 @@ let selectedGeojsonLayer = null; // Layer phường/xã đang được chọn
 // Ẩn/hiện ranh giới từng xã (không áp dụng lớp DHLVB)
 const wardBoundaryRegistry = new Map();
 let hiddenWardBoundaryKeysSet = null;
+let wardCustomColorsMap = null;
 let wardVisibilityPanelInitialized = false;
 let wardVisibilityRebuildTimer = null;
 
@@ -75,6 +76,23 @@ function getHiddenWardBoundaryKeysSet() {
 
 function persistHiddenWardBoundaryKeys() {
   localStorage.setItem('hiddenWardBoundaryKeys', JSON.stringify([...getHiddenWardBoundaryKeysSet()]));
+}
+
+function getWardCustomColorsMap() {
+  if (!wardCustomColorsMap) {
+    try {
+      const raw = localStorage.getItem('wardCustomColors');
+      const parsed = raw ? JSON.parse(raw) : {};
+      wardCustomColorsMap = parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (e) {
+      wardCustomColorsMap = {};
+    }
+  }
+  return wardCustomColorsMap;
+}
+
+function persistWardCustomColors() {
+  localStorage.setItem('wardCustomColors', JSON.stringify(getWardCustomColorsMap()));
 }
 
 // Biến cho quản lý các file DuAn
@@ -1383,10 +1401,12 @@ function buildWardBoundaryKey(sourceFilename, feature, featureIndex) {
 function applyCurrentStyleToWardBoundaryLayer(featureLayer) {
   const orig = featureLayer._originalGeojsonStyle;
   if (!orig) return;
+  const wardKey = featureLayer._wardBoundaryKey;
+  const customFill = wardKey ? getWardCustomColorsMap()[wardKey] : null;
   featureLayer.setStyle({
     color: currentBoundaryColor,
     weight: currentBoundaryWeight,
-    fillColor: orig.fillColor,
+    fillColor: customFill || orig.fillColor,
     fillOpacity: currentOverlayOpacity
   });
 }
@@ -1407,7 +1427,8 @@ function registerWardBoundariesFromGeoJsonLayer(layer, sourceFilename, isDhlvb) 
     wardBoundaryRegistry.set(wardKey, {
       subLayer: featureLayer,
       groupLayer: layer,
-      displayName
+      displayName,
+      defaultFillColor: featureLayer._originalGeojsonStyle ? featureLayer._originalGeojsonStyle.fillColor : '#3388ff'
     });
     featureLayer._wardBoundaryKey = wardKey;
     if (hidden.has(wardKey)) {
@@ -1437,6 +1458,32 @@ function setWardBoundaryVisible(map, wardKey, visible) {
   rebuildWardVisibilityPanel(map);
 }
 
+function setWardBoundaryFillColor(wardKey, color, map) {
+  const rec = wardBoundaryRegistry.get(wardKey);
+  if (!rec) return;
+  const customColors = getWardCustomColorsMap();
+  if (color) {
+    customColors[wardKey] = color;
+  } else {
+    delete customColors[wardKey];
+  }
+  persistWardCustomColors();
+  if (rec.groupLayer.hasLayer(rec.subLayer)) {
+    applyCurrentStyleToWardBoundaryLayer(rec.subLayer);
+  }
+}
+
+function resetAllWardBoundaryColors(map) {
+  wardCustomColorsMap = {};
+  persistWardCustomColors();
+  wardBoundaryRegistry.forEach((rec) => {
+    if (rec.groupLayer.hasLayer(rec.subLayer)) {
+      applyCurrentStyleToWardBoundaryLayer(rec.subLayer);
+    }
+  });
+  rebuildWardVisibilityPanel(map || window.mapInstance);
+}
+
 function rebuildWardVisibilityPanel(map) {
   const listEl = document.getElementById('ward-visibility-list');
   if (!listEl) return;
@@ -1459,7 +1506,7 @@ function rebuildWardVisibilityPanel(map) {
     if (q && !label.toLowerCase().includes(q)) continue;
     matchCount++;
     const visible = !hidden.has(key);
-    const row = document.createElement('label');
+    const row = document.createElement('div');
     row.className = 'ward-visibility-row' + (visible ? '' : ' ward-visibility-row--off');
     row.setAttribute('role', 'listitem');
     const cb = document.createElement('input');
@@ -1472,8 +1519,28 @@ function rebuildWardVisibilityPanel(map) {
     const span = document.createElement('span');
     span.className = 'ward-visibility-row-label';
     span.textContent = label;
+    const controls = document.createElement('div');
+    controls.className = 'ward-visibility-row-controls';
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.className = 'ward-visibility-color-input';
+    const rec = wardBoundaryRegistry.get(key);
+    const customFill = getWardCustomColorsMap()[key];
+    colorInput.value = customFill || (rec && rec.defaultFillColor) || '#3388ff';
+    colorInput.title = 'Chọn màu xã/phường';
+    colorInput.addEventListener('mousedown', function (e) {
+      e.stopPropagation();
+    });
+    colorInput.addEventListener('click', function (e) {
+      e.stopPropagation();
+    });
+    colorInput.addEventListener('change', function () {
+      setWardBoundaryFillColor(key, colorInput.value, map || window.mapInstance);
+    });
+    controls.appendChild(colorInput);
     row.appendChild(cb);
     row.appendChild(span);
+    row.appendChild(controls);
     frag.appendChild(row);
   }
   listEl.innerHTML = '';
@@ -1489,7 +1556,8 @@ function initWardVisibilityPanel(map) {
   const filterInput = document.getElementById('ward-visibility-filter');
   const showAllBtn = document.getElementById('ward-show-all-btn');
   const hideAllBtn = document.getElementById('ward-hide-all-btn');
-  if (!filterInput && !showAllBtn && !hideAllBtn) return;
+  const resetColorsBtn = document.getElementById('ward-reset-colors-btn');
+  if (!filterInput && !showAllBtn && !hideAllBtn && !resetColorsBtn) return;
   if (!wardVisibilityPanelInitialized) {
     wardVisibilityPanelInitialized = true;
     if (filterInput) {
@@ -1520,6 +1588,11 @@ function initWardVisibilityPanel(map) {
         });
         persistHiddenWardBoundaryKeys();
         rebuildWardVisibilityPanel(map || window.mapInstance);
+      });
+    }
+    if (resetColorsBtn) {
+      resetColorsBtn.addEventListener('click', function () {
+        resetAllWardBoundaryColors(map || window.mapInstance);
       });
     }
   }

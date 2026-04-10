@@ -3624,6 +3624,10 @@ h1 {
   margin-bottom: 12px;
 }
 
+.ward-visibility-btn--full {
+  grid-column: 1 / -1;
+}
+
 .ward-visibility-btn {
   display: inline-flex;
   align-items: center;
@@ -3765,6 +3769,37 @@ h1 {
   line-height: 1.4;
   color: #334155;
   font-weight: 500;
+}
+
+.ward-visibility-row-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ward-visibility-color-input {
+  width: 32px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.45);
+}
+
+.ward-visibility-color-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.ward-visibility-color-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.ward-visibility-color-input::-moz-color-swatch {
+  border: none;
+  border-radius: 6px;
 }
 
 .ward-visibility-row--off .ward-visibility-row-label {
