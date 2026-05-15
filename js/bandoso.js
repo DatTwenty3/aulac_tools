@@ -949,7 +949,7 @@ function deactivateAllFeatures(map) {
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
           <circle cx="12" cy="10" r="3"></circle>
         </svg>
-        <span>Xác định vị trí</span>
+        
       `;
     }
     if (currentLocationMarker && map.hasLayer(currentLocationMarker)) {
@@ -972,7 +972,7 @@ function deactivateAllFeatures(map) {
           <line x1="2" y1="12" x2="6" y2="12"></line>
           <line x1="18" y1="12" x2="22" y2="12"></line>
         </svg>
-        <span>Xác định tọa độ</span>
+        
       `;
     }
     if (copyCoordinateClickHandler) {
@@ -980,7 +980,7 @@ function deactivateAllFeatures(map) {
       copyCoordinateClickHandler = null;
     }
     map.getContainer().style.cursor = '';
-    toggleToolsPanel(true);
+    // toggleToolsPanel(true);
     toggleGeojsonInteractivity(true);
   }
 
@@ -1001,7 +1001,7 @@ function deactivateAllFeatures(map) {
           <line x1="17" y1="6" x2="21" y2="6"></line>
           <line x1="17" y1="8" x2="21" y2="8"></line>
         </svg>
-        <span>Đo khoảng cách</span>
+        
       `;
     }
     const clearMeasureBtn = document.getElementById('clear-measure-btn');
@@ -1011,7 +1011,7 @@ function deactivateAllFeatures(map) {
       measureClickHandler = null;
     }
     map.getContainer().style.cursor = '';
-    toggleToolsPanel(true);
+    // toggleToolsPanel(true);
     toggleGeojsonInteractivity(true);
   }
 
@@ -1028,7 +1028,7 @@ function deactivateAllFeatures(map) {
           <line x1="9" y1="3" x2="9" y2="21"></line>
           <line x1="3" y1="9" x2="21" y2="9"></line>
         </svg>
-        <span>Đo diện tích</span>
+        
       `;
     }
     const clearAreaBtn = document.getElementById('clear-area-btn');
@@ -1038,7 +1038,7 @@ function deactivateAllFeatures(map) {
       areaClickHandler = null;
     }
     map.getContainer().style.cursor = '';
-    toggleToolsPanel(true);
+    // toggleToolsPanel(true);
     toggleGeojsonInteractivity(true);
   }
 
@@ -1050,10 +1050,13 @@ function deactivateAllFeatures(map) {
       selectPointsBtn.classList.remove('active');
       selectPointsBtn.innerHTML = `
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-          <circle cx="12" cy="10" r="3"></circle>
+          <circle cx="18" cy="5" r="3"></circle>
+          <circle cx="6" cy="12" r="3"></circle>
+          <circle cx="18" cy="19" r="3"></circle>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
         </svg>
-        <span>Chọn điểm</span>
+        
       `;
     }
     const pointNamingOption = document.getElementById('point-naming-option');
@@ -1063,7 +1066,7 @@ function deactivateAllFeatures(map) {
       selectPointsClickHandler = null;
     }
     map.getContainer().style.cursor = '';
-    toggleToolsPanel(true);
+    // toggleToolsPanel(true);
     toggleGeojsonInteractivity(true);
   }
 
@@ -1093,12 +1096,12 @@ function setupLocateButton(map) {
         <circle cx="12" cy="12" r="10"></circle>
         <polyline points="12 6 12 12 16 14"></polyline>
       </svg>
-      <span>Đang xác định vị trí...</span>
+      
     `;
     locateBtnDom.classList.add('active');
     
     // Ẩn hộp công cụ khi bắt đầu sử dụng
-    toggleToolsPanel(false);
+    // toggleToolsPanel(false);
     
     // Xóa marker cũ nếu có
     if (currentLocationMarker) {
@@ -1186,7 +1189,7 @@ function setupLocateButton(map) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="6" y="6" width="12" height="12" rx="2"></rect>
           </svg>
-          <span>Dừng theo dõi</span>
+          
         `;
       },
       function(err) {
@@ -1199,12 +1202,12 @@ function setupLocateButton(map) {
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
             <circle cx="12" cy="10" r="3"></circle>
           </svg>
-          <span>Xác định vị trí</span>
+          
         `;
         locateBtnDom.classList.remove('active');
         isTrackingLocation = false;
         // Hiện lại hộp công cụ khi có lỗi
-        toggleToolsPanel(true);
+        // toggleToolsPanel(true);
         if (watchPositionId !== null) {
           navigator.geolocation.clearWatch(watchPositionId);
           watchPositionId = null;
@@ -4109,7 +4112,7 @@ function setupAreaButton(map) {
       if (clearBtn) clearBtn.style.display = 'inline-block';
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
-      toggleToolsPanel(false);
+      // toggleToolsPanel(false);
       
       // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
       toggleGeojsonInteractivity(false);
@@ -4175,12 +4178,12 @@ function setupAreaButton(map) {
           <line x1="9" y1="3" x2="9" y2="21"></line>
           <line x1="3" y1="9" x2="21" y2="9"></line>
         </svg>
-        <span>Đo diện tích</span>
+        
       `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi dừng
-      toggleToolsPanel(true);
+      // toggleToolsPanel(true);
       
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
@@ -4204,12 +4207,12 @@ function setupAreaButton(map) {
           <line x1="9" y1="3" x2="9" y2="21"></line>
           <line x1="3" y1="9" x2="21" y2="9"></line>
         </svg>
-        <span>Đo diện tích</span>
+        
       `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi xóa
-      toggleToolsPanel(true);
+      // toggleToolsPanel(true);
       
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
@@ -4400,7 +4403,7 @@ function setupMeasureButton(map) {
       if (clearBtn) clearBtn.style.display = 'inline-block';
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
-      toggleToolsPanel(false);
+      // toggleToolsPanel(false);
       
       // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
       toggleGeojsonInteractivity(false);
@@ -4470,12 +4473,12 @@ function setupMeasureButton(map) {
           <line x1="17" y1="6" x2="21" y2="6"></line>
           <line x1="17" y1="8" x2="21" y2="8"></line>
         </svg>
-        <span>Đo khoảng cách</span>
+        
       `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi dừng
-      toggleToolsPanel(true);
+      // toggleToolsPanel(true);
       
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
@@ -4503,12 +4506,12 @@ function setupMeasureButton(map) {
           <line x1="17" y1="6" x2="21" y2="6"></line>
           <line x1="17" y1="8" x2="21" y2="8"></line>
         </svg>
-        <span>Đo khoảng cách</span>
+        
       `;
       map.getContainer().style.cursor = '';
       
       // Hiện lại hộp công cụ khi xóa
-      toggleToolsPanel(true);
+      // toggleToolsPanel(true);
       
       // Bật lại tương tác với GeoJSON layers
       toggleGeojsonInteractivity(true);
@@ -4577,7 +4580,7 @@ function setupCopyCoordinateButton(map) {
       `;
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
-      toggleToolsPanel(false);
+      // toggleToolsPanel(false);
       
       // Tắt tương tác với GeoJSON layers để tránh nhấn nhầm
       toggleGeojsonInteractivity(false);
@@ -5688,7 +5691,7 @@ function setupSharePointsButton(map) {
           <line x1="15" y1="9" x2="9" y2="15"></line>
           <line x1="9" y1="9" x2="15" y2="15"></line>
         </svg>
-        <span>Dừng chọn</span>
+        
       `;
       map.getContainer().style.cursor = 'crosshair';
       
@@ -5698,7 +5701,7 @@ function setupSharePointsButton(map) {
       }
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
-      toggleToolsPanel(false);
+      // toggleToolsPanel(false);
       
       // Tắt tương tác với GeoJSON layers để có thể click vào bản đồ
       toggleGeojsonInteractivity(false);
@@ -8003,7 +8006,7 @@ function setupDrawingTools(map) {
   
   // Mở hộp công cụ khi khởi động (tùy chọn)
   toolsPanelTimeout = setTimeout(() => {
-    toggleToolsPanel(true);
+    // toggleToolsPanel(true);
   }, 300);
 })();
 
