@@ -1843,7 +1843,7 @@ function formatProjectName(filename) {
 
 // ====== THÊM DỰ ÁN VỚI MÀU SẮC CỤ THỂ ======
 function addProjectToMap(map, filename, color, weight = 6, displayName = '') {
-  fetch('geo-json/' + encodeURIComponent(filename))
+  fetch('geo-json/' + filename.split('/').map(encodeURIComponent).join('/'))
     .then(res => res.json())
     .then(data => {
       // Tạo pane riêng cho các dự án nếu chưa có
@@ -1915,7 +1915,7 @@ function loadAllGeojsons(map) {
     .then(geojsonFiles => {
       cachedGeojsonFiles = geojsonFiles;
       geojsonFiles.forEach(filename => {
-        fetch('geo-json/' + encodeURIComponent(filename))
+        fetch('geo-json/' + filename.split('/').map(encodeURIComponent).join('/'))
           .then(res => res.json())
           .then(data => addGeojsonToMap(map, data, filename))
           .catch(err => console.error('Lỗi tải file', filename, err));
@@ -2040,7 +2040,7 @@ function removeDuanFileFromCache(filename) {
 
 // Hàm tải lại cache của một file DuAn
 function reloadDuanFileToCache(map, filename) {
-  const filepath = 'geo-json/DuAn/' + encodeURIComponent(filename);
+  const filepath = 'geo-json/DuAn/' + filename.split('/').map(encodeURIComponent).join('/');
   const displayName = getDuanDisplayName(filename);
   
   fetch(filepath)
@@ -2097,7 +2097,7 @@ function addDuanFileToMap(map, filename, color, weight = 1, dashArray = null) {
     delete duanLayers[filename];
   }
 
-  const filepath = 'geo-json/DuAn/' + encodeURIComponent(filename);
+  const filepath = 'geo-json/DuAn/' + filename.split('/').map(encodeURIComponent).join('/');
   const displayName = getDuanDisplayName(filename);
   const isPointFile = isDuanPointFile(filename);
 
@@ -2809,7 +2809,7 @@ function setupSearch(map) {
     if (suggestion) {
       if (suggestion.isFile) {
         // Tìm file GeoJSON
-        fetch('geo-json/' + encodeURIComponent(suggestion.filename))
+        fetch('geo-json/' + suggestion.filename.split('/').map(encodeURIComponent).join('/'))
           .then(res => res.json())
           .then(data => {
             let bounds = L.geoJSON(data).getBounds();
@@ -2889,7 +2889,7 @@ function setupSearch(map) {
     });
     
     if (foundFile) {
-      fetch('geo-json/' + encodeURIComponent(foundFile))
+      fetch('geo-json/' + foundFile.split('/').map(encodeURIComponent).join('/'))
         .then(res => res.json())
         .then(data => {
           let bounds = L.geoJSON(data).getBounds();
@@ -7998,7 +7998,7 @@ function setupDrawingTools(map) {
   setupAreaButton(map);
   setupCopyCoordinateButton(map);
   setupSharePointsButton(map);
-  setupDrawingTools(map);
+  // setupDrawingTools(map);
   setupKmlKmzImport(map);
   
   // Mở hộp công cụ khi khởi động (tùy chọn)
