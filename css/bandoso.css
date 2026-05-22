@@ -4017,7 +4017,7 @@ h1 {
 .search-bar-floating {
     position: absolute;
     top: 20px;
-    left: 60px; /* To clear Leaflet zoom controls */
+    left: 20px; /* Align with bottom left card */
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -4430,7 +4430,7 @@ h1 {
 .search-bar-floating {
     position: absolute;
     top: 20px;
-    left: 60px;
+    left: 20px;
     z-index: 1000;
     display: flex;
     align-items: center;
@@ -4670,3 +4670,573 @@ h1 {
         max-width: none;
     }
 }
+
+/* ==========================================================================
+   HIGH-END MODERN PREMIUM OVERRIDES
+   ========================================================================== */
+
+/* 1. Global Typography Reset for Premium App Feel */
+body, input, select, button, textarea, .leaflet-container, .leaflet-tooltip, .leaflet-popup-content {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+    letter-spacing: -0.015em;
+}
+
+/* 2. Seamless Unified Glassmorphism styling */
+.info-card, 
+.tools-panel, 
+.info-panel, 
+.leaflet-popup-content-wrapper, 
+.leaflet-popup-tip, 
+.info-card-minimal, 
+.map-floating-toolbar, 
+.settings-toggle-btn,
+.search-suggestions {
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    background: rgba(255, 255, 255, 0.82) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: 0 16px 36px -12px rgba(17, 12, 46, 0.15), 0 2px 10px -2px rgba(17, 12, 46, 0.05) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* 3. Floating Toolbar Elegant Makeover */
+.map-floating-toolbar {
+    border-radius: 16px !important;
+    padding: 8px !important;
+    gap: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+.tool-btn-icon {
+    border-radius: 12px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: #4b5563 !important;
+}
+.tool-btn-icon:hover {
+    background: rgba(26, 115, 232, 0.08) !important;
+    color: #1a73e8 !important;
+    transform: scale(1.08) translateY(-1px) !important;
+}
+.tool-btn-icon.active {
+    background: rgba(26, 115, 232, 0.14) !important;
+    color: #1a73e8 !important;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.1) !important;
+}
+
+/* 4. Floating Settings Toggle Button (Top Right) */
+.settings-toggle-btn {
+    border-radius: 16px !important;
+    width: 48px !important;
+    height: 48px !important;
+    color: #4b5563 !important;
+}
+.settings-toggle-btn:hover {
+    color: #1a73e8 !important;
+    transform: scale(1.08) rotate(20deg) !important;
+}
+.settings-toggle-btn svg {
+    width: 22px !important;
+    height: 22px !important;
+}
+
+/* 5. Brand Logo Card (Bottom Left - Radiant Gradients) */
+.info-card-minimal {
+    border-radius: 18px !important;
+    padding: 12px 18px !important;
+    left: 20px !important;
+    bottom: 20px !important;
+}
+.info-card-minimal h1 {
+    font-size: 14px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+.info-card-minimal .brand-logo {
+    border-radius: 10px !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+    width: 36px !important;
+    height: 36px !important;
+}
+
+/* 6. High-Fidelity Search suggestions dropdown */
+.search-suggestions {
+    border-radius: 20px !important;
+    margin-top: 8px !important;
+    padding: 8px 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+}
+.search-suggestion-item {
+    padding: 14px 20px !important;
+    transition: all 0.2s ease !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03) !important;
+}
+.search-suggestion-item:hover,
+.search-suggestion-item.active {
+    background: rgba(26, 115, 232, 0.05) !important;
+}
+.search-suggestion-title {
+    font-size: 14.5px !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+}
+.search-suggestion-subtitle {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+}
+.search-suggestion-type {
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    letter-spacing: 0.03em !important;
+    color: #1a73e8 !important;
+    background: rgba(26, 115, 232, 0.08) !important;
+}
+
+/* 7. Slide-Out Side Panels (Settings & Commune Details) */
+.settings-panel, .info-panel {
+    width: 380px !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.45) !important;
+}
+.settings-panel-header, .info-panel-header {
+    padding: 22px 24px !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+}
+.settings-panel-title, .info-panel-title {
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    color: #111827 !important;
+    letter-spacing: -0.02em !important;
+}
+.settings-panel-close-btn, .info-panel-close-btn {
+    width: 36px !important;
+    height: 36px !important;
+    background: rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.settings-panel-close-btn:hover, .info-panel-close-btn:hover {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: #111827 !important;
+    transform: scale(1.08) rotate(90deg) !important;
+}
+.settings-section-title {
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    color: #6b7280 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    margin-bottom: 12px !important;
+}
+
+/* 8. Commune Detail Card Table Grid */
+.info-panel-body {
+    padding: 20px 24px 30px 24px !important;
+}
+.info-panel-table {
+    border-collapse: separate !important;
+    border-spacing: 0 8px !important;
+}
+.info-panel-table tr {
+    background: rgba(255, 255, 255, 0.45) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+.info-panel-table tr:hover {
+    background: rgba(255, 255, 255, 0.8) !important;
+    transform: translateY(-1.5px) scale(1.01) !important;
+    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.08) !important;
+}
+.info-panel-table td {
+    padding: 12px 16px !important;
+    border: 1px solid rgba(0, 0, 0, 0.025) !important;
+}
+.info-panel-table td:first-child {
+    border-radius: 12px 0 0 12px !important;
+    border-right: none !important;
+}
+.info-panel-table td:last-child {
+    border-radius: 0 12px 12px 0 !important;
+    border-left: none !important;
+}
+.info-panel-table td.label {
+    color: #4f46e5 !important; /* Premium Indigo */
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    vertical-align: middle;
+}
+.info-panel-table td.value {
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+    font-size: 0.95rem !important;
+    vertical-align: middle;
+}
+
+/* 9. Sleek UI Inputs & Interactive Controls */
+.coordinate-select, .ward-visibility-filter {
+    border-radius: 12px !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    padding: 10px 14px !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    color: #1f2937 !important;
+}
+.coordinate-select:focus, .ward-visibility-filter:focus {
+    border-color: #1a73e8 !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.12) !important;
+}
+.ward-visibility-btn {
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    padding: 10px 14px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.ward-visibility-btn--primary {
+    background: #1a73e8 !important;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.15) !important;
+}
+.ward-visibility-btn--primary:hover {
+    background: #1557b0 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(26, 115, 232, 0.25) !important;
+}
+
+/* 10. Gorgeous custom track for range sliders */
+input[type="range"] {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background: rgba(0, 0, 0, 0.06) !important;
+    height: 6px !important;
+    border-radius: 3px !important;
+    outline: none !important;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 50% !important;
+    background: #1a73e8 !important;
+    cursor: pointer !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.2s ease !important;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2) !important;
+    background: #1557b0 !important;
+    box-shadow: 0 3px 8px rgba(26, 115, 232, 0.3) !important;
+}
+
+/* ==========================================================================
+   POINT NAME SELECTION & KML/KMZ IMPORT GLASSMORPHIC DOCK STYLES
+   ========================================================================== */
+#point-naming-container {
+    backdrop-filter: blur(24px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    padding: 14px 18px !important;
+    font-family: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.point-naming-option {
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.point-naming-option label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.point-naming-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    cursor: pointer;
+}
+
+.selected-points-info {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 10px;
+    margin-top: 8px;
+}
+
+.points-count {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.points-list {
+    max-height: 160px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding-right: 4px;
+}
+
+/* Custom Scrollbar for points-list */
+.points-list::-webkit-scrollbar {
+    width: 4px;
+}
+.points-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.points-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+}
+
+.point-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 8px 12px;
+    transition: all 0.2s ease;
+}
+
+.point-item:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(26, 115, 232, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.point-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.point-item-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1f2937;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.point-item-coords {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-family: monospace;
+    margin-top: 2px;
+}
+
+.point-item-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+.point-item-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(0, 0, 0, 0.04);
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    padding: 0;
+}
+
+.point-item-btn:hover {
+    background: rgba(26, 115, 232, 0.1);
+    color: #1a73e8;
+}
+
+.point-item-btn.delete:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+/* Ẩn logo khi đang chọn điểm trên di động để nhường không gian */
+body.point-selection-active .info-card-minimal {
+    transform: translateY(150%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+.info-card-minimal {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease !important;
+}
+
+/* ==========================================================================
+   HIGH-FIDELITY MOBILE RESPONSIVE OVERRIDES (Bottom Sheet & Compact Controls)
+   ========================================================================== */
+@media (max-width: 600px) {
+    /* 1. Mobile Search Bar */
+    .search-bar-floating {
+        top: 12px !important;
+        left: 12px !important;
+        width: calc(100vw - 84px) !important;
+        max-width: none !important;
+        height: 46px !important;
+        padding: 0 6px 0 16px !important;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+    }
+    .search-input-pill::placeholder {
+        font-size: 13.5px !important;
+    }
+    
+    /* 2. Mobile Suggestions dropdown */
+    .search-suggestions {
+        width: calc(100vw - 24px) !important;
+        left: -16px !important;
+        right: 0 !important;
+        max-height: 250px !important;
+        border-radius: 16px !important;
+    }
+
+    /* 3. Mobile Settings Toggle Button */
+    .settings-toggle-btn {
+        top: 12px !important;
+        right: 12px !important;
+        width: 46px !important;
+        height: 46px !important;
+        border-radius: 14px !important;
+    }
+
+    /* 4. Compact Floating Toolbar */
+    .map-floating-toolbar {
+        top: 72px !important;
+        right: 12px !important;
+        padding: 4px !important;
+        border-radius: 12px !important;
+        gap: 3px !important;
+    }
+    .tool-btn-icon {
+        width: 35px !important;
+        height: 35px !important;
+        border-radius: 8px !important;
+    }
+    .tool-btn-icon svg {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    .toolbar-divider {
+        margin: 2px 4px !important;
+    }
+
+    /* 5. Minimal Brand Logo Card */
+    .info-card-minimal {
+        left: 12px !important;
+        bottom: 12px !important;
+        padding: 8px 12px !important;
+        border-radius: 12px !important;
+    }
+    .info-card-minimal .brand-logo {
+        width: 28px !important;
+        height: 28px !important;
+        border-radius: 6px !important;
+    }
+    .info-card-minimal h1 {
+        font-size: 11px !important;
+    }
+
+    /* 6. Premium Mobile Bottom Sheets (Settings & Details Panels) */
+    .settings-panel, .info-panel {
+        width: 100% !important;
+        max-width: 100vw !important;
+        height: 55vh !important;
+        max-height: 80vh !important;
+        top: auto !important;
+        bottom: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        border-left: none !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.45) !important;
+        border-radius: 24px 24px 0 0 !important; /* Elegant rounded sheet top */
+        transform: translateY(100%) !important; /* Slide down to hide */
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.15) !important;
+    }
+    .settings-panel.visible, .info-panel.visible {
+        transform: translateY(0) !important; /* Slide up to show */
+    }
+    
+    /* Elegant Native Bottom Sheet Pull-Handle */
+    .settings-panel-header::before, 
+    .info-panel-header::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 36px;
+        height: 4px;
+        background: rgba(0, 0, 0, 0.12) !important;
+        border-radius: 2px !important;
+    }
+
+    .settings-panel-header, .info-panel-header {
+        padding: 18px 20px 10px 20px !important;
+        position: relative !important;
+    }
+    .settings-panel-title, .info-panel-title {
+        font-size: 1.1rem !important;
+    }
+    
+    .info-panel-body {
+        padding: 12px 18px 30px 18px !important;
+    }
+    .info-panel-table {
+        border-spacing: 0 6px !important;
+    }
+    .info-panel-table td {
+        padding: 10px 12px !important;
+    }
+    .info-panel-table td.label {
+        font-size: 0.78rem !important;
+        width: 35% !important;
+    }
+    .info-panel-table td.value {
+        font-size: 0.88rem !important;
+    }
+
+    /* 7. Mobile Point Selection & KML Import Floating Card Overrides */
+    #point-naming-container {
+        position: fixed !important;
+        bottom: 12px !important;
+        left: 12px !important;
+        right: 12px !important;
+        top: auto !important;
+        width: auto !important;
+        max-width: none !important;
+        z-index: 1250 !important;
+        border-radius: 20px !important;
+        padding: 16px !important;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12) !important;
+        max-height: 40vh !important;
+        overflow-y: auto !important;
+    }
+}
+

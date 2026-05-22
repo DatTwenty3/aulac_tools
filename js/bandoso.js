@@ -42,7 +42,7 @@ let cachedGeojsonFiles = [];
 // Thêm biến lưu các layer geojson để quản lý bật/tắt
 let geojsonLayers = [];
 let geojsonVisible = true;
-let currentOverlayOpacity = 0.4;
+let currentOverlayOpacity = 0.5;
 let currentBoundaryColor = '#000000'; // Màu ranh giới mặc định (đen)
 let currentBoundaryWeight = 0.5; // Độ dày ranh giới mặc định
 let selectedGeojsonLayer = null; // Layer phường/xã đang được chọn
@@ -585,8 +585,8 @@ function formatValue(value, key = '') {
     return Math.round(value).toString();
   }
   
-  // Format ngày tháng
-  if (typeof value === 'string' && (value.includes('T') || value.includes('Z'))) {
+  // Format ngày tháng (chỉ chuyển đổi nếu là chuỗi ngày tháng hợp lệ có cấu trúc YYYY-MM-DD hoặc ISO 8601)
+  if (typeof value === 'string' && /^\d{4}[-\/]\d{2}[-\/]\d{2}(T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$/.test(value)) {
     try {
       const date = new Date(value);
       if (!isNaN(date.getTime())) {
@@ -892,7 +892,8 @@ function initMap() {
   const map = L.map('map', {
     center: [10.2536, 105.9722],
     zoom: 10,
-    layers: [googleHybrid]
+    layers: [googleHybrid],
+    zoomControl: false
   });
 
   // Tạo các pane với z-index cố định: polygon < line < point < label < tooltip < popup
@@ -1068,6 +1069,9 @@ function deactivateAllFeatures(map) {
     map.getContainer().style.cursor = '';
     // toggleToolsPanel(true);
     toggleGeojsonInteractivity(true);
+    if (typeof updatePointNamingContainerVisibility === 'function') {
+      updatePointNamingContainerVisibility();
+    }
   }
 
   // 6. Dừng chế độ vẽ chú thích
@@ -1218,168 +1222,81 @@ function setupLocateButton(map) {
   };
 }
 
-// Hàm kiểm tra xem hai feature có lân cận nhau không (có chung biên giới)
-function areFeaturesAdjacent(feature1, feature2) {
-  if (!feature1.geometry || !feature2.geometry) return false;
-  
-  try {
-    const geom1 = feature1.geometry;
-    const geom2 = feature2.geometry;
-    
-    // Lấy tất cả các điểm từ geometry
-    const getCoordinates = (geom) => {
-      if (geom.type === 'Point') return [geom.coordinates];
-      if (geom.type === 'LineString') return geom.coordinates;
-      if (geom.type === 'Polygon') return geom.coordinates.flat();
-      if (geom.type === 'MultiLineString') return geom.coordinates.flat();
-      if (geom.type === 'MultiPolygon') return geom.coordinates.flat(2);
-      return [];
-    };
-    
-    const coords1 = getCoordinates(geom1);
-    const coords2 = getCoordinates(geom2);
-    
-    // Kiểm tra xem có điểm nào chung không (với độ chính xác ~0.0001 độ)
-    const tolerance = 0.0001;
-    for (const c1 of coords1) {
-      for (const c2 of coords2) {
-        const dist = Math.sqrt(
-          Math.pow(c1[0] - c2[0], 2) + 
-          Math.pow(c1[1] - c2[1], 2)
-        );
-        if (dist < tolerance) {
-          return true;
-        }
-      }
-    }
-    
-    return false;
-  } catch (e) {
-    return false;
+// Hàm chuyển đổi màu HSL sang mã màu Hex (#RRGGBB) để Leaflet và bảng chọn màu hiển thị chính xác
+function hslToHex(h, s, l) {
+  s /= 100;
+  l /= 100;
+  let c = (1 - Math.abs(2 * l - 1)) * s;
+  let x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  let m = l - c / 2;
+  let r = 0, g = 0, b = 0;
+  if (0 <= h && h < 60) {
+    r = c; g = x; b = 0;
+  } else if (60 <= h && h < 120) {
+    r = x; g = c; b = 0;
+  } else if (120 <= h && h < 180) {
+    r = 0; g = c; b = x;
+  } else if (180 <= h && h < 240) {
+    r = 0; g = x; b = c;
+  } else if (240 <= h && h < 300) {
+    r = x; g = 0; b = c;
+  } else if (300 <= h && h < 360) {
+    r = c; g = 0; b = x;
   }
+  let rHex = Math.round((r + m) * 255).toString(16).padStart(2, '0');
+  let gHex = Math.round((g + m) * 255).toString(16).padStart(2, '0');
+  let bHex = Math.round((b + m) * 255).toString(16).padStart(2, '0');
+  return `#${rHex}${gHex}${bHex}`;
 }
 
-// Hàm tạo 124 màu khác nhau phân bố đều trên vòng tròn màu
-// Sử dụng cả hue, saturation và lightness để tạo sự khác biệt rõ ràng
-function generate124Colors() {
-  const totalColors = 124;
-  const colors = [];
-  
-  // Phân bố màu trên nhiều lớp để tăng sự khác biệt
-  // Sử dụng 4 mức saturation và 4 mức lightness = 16 nhóm
-  // Mỗi nhóm có khoảng 8 màu hue khác nhau
-  const saturationLevels = [75, 80, 85, 90]; // 4 mức saturation
-  const lightnessLevels = [65, 70, 75, 80]; // 4 mức lightness
-  
-  let colorIndex = 0;
-  for (let s = 0; s < saturationLevels.length && colorIndex < totalColors; s++) {
-    for (let l = 0; l < lightnessLevels.length && colorIndex < totalColors; l++) {
-      // Mỗi nhóm có khoảng 8 màu hue, phân bố đều trên 360 độ
-      const huesPerGroup = Math.ceil((totalColors - colorIndex) / ((saturationLevels.length - s) * (lightnessLevels.length - l)));
-      const hueStep = 360 / huesPerGroup;
-      
-      for (let h = 0; h < huesPerGroup && colorIndex < totalColors; h++) {
-        const hue = (h * hueStep) % 360;
-        colors.push({
-          hue: Math.round(hue),
-          saturation: saturationLevels[s],
-          lightness: lightnessLevels[l]
-        });
-        colorIndex++;
-      }
-    }
+// Hàm gán màu sắc cố định và khác biệt rõ rệt cho từng xã/phường sử dụng lưới màu phân tán cao
+function getDeterministicColor(sourceFilename, feature, index) {
+  if (sourceFilename && sourceFilename.includes('DHLVB')) {
+    return '#ff0000'; // Đường hành lang ven biển luôn màu đỏ
   }
-  
-  return colors;
-}
 
-// Mảng 124 màu được tạo sẵn
-const colorPalette124 = generate124Colors();
+  let colorIndex = -1;
+  // Tra cứu vị trí của file xã/phường này trong danh sách cachedGeojsonFiles đã được sắp xếp
+  if (sourceFilename && cachedGeojsonFiles && cachedGeojsonFiles.length > 0) {
+    colorIndex = cachedGeojsonFiles.indexOf(sourceFilename);
+  }
 
-// Hàm tạo màu cho feature đảm bảo không trùng với các feature lân cận
-function assignColorToFeature(feature, allFeatures, assignedColors, index) {
-  // Tạo màu cơ bản từ tên hoặc mã, sử dụng 124 màu có sẵn
-  let baseColorIndex;
-  const featureName = getFeatureName(feature.properties);
-  if (featureName) {
-    const name = featureName;
+  // Dự phòng nếu không tìm thấy xã trong danh sách file (ví dụ: file import ngoài hoặc feature dynamic)
+  if (colorIndex === -1) {
+    const featureName = getFeatureName(feature.properties);
+    const featureCode = getFeatureCode(feature.properties);
+    const name = featureName || featureCode || `feature_${index}`;
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
       hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-    baseColorIndex = Math.abs(hash % 124);
-  } else {
-    const featureCode = getFeatureCode(feature.properties);
-    if (featureCode) {
-      const ma = featureCode;
-      let hash = 0;
-      for (let i = 0; i < ma.length; i++) {
-        hash = ma.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      baseColorIndex = Math.abs(hash % 124);
-    } else {
-      baseColorIndex = index % 124;
-    }
+    colorIndex = Math.abs(hash);
   }
+
+  // Danh sách 16 tông màu (hues) phân bổ đều trên vòng màu
+  const hues = [0, 22.5, 45, 67.5, 90, 112.5, 135, 157.5, 180, 202.5, 225, 247.5, 270, 292.5, 315, 337.5];
   
-  // Tìm các feature lân cận
-  const adjacentFeatures = [];
-  for (let i = 0; i < allFeatures.length; i++) {
-    if (i !== index && areFeaturesAdjacent(feature, allFeatures[i])) {
-      adjacentFeatures.push(i);
-    }
-  }
+  // Trộn thứ tự hue bằng số nguyên tố coprime 7 để các xã cạnh nhau có tông màu nhảy vọt (cực kỳ khác biệt)
+  const hueIdx = (colorIndex * 7) % hues.length;
+  const hue = hues[hueIdx];
+
+  // 8 nhóm phối hợp Saturation và Lightness được thiết kế tương phản cao trực quan
+  const combos = [
+    [95, 45],  // 0. Dark Vibrant
+    [70, 65],  // 1. Light Pastel
+    [90, 55],  // 2. Medium Vibrant
+    [55, 40],  // 3. Deep Muted
+    [100, 35], // 4. Very Dark & Pure
+    [80, 75],  // 5. Soft & Bright
+    [65, 50],  // 6. Medium Muted
+    [85, 60]   // 7. Vibrant Pastel
+  ];
   
-  // Tìm màu không trùng với các feature lân cận
-  // Kiểm tra cả hue, saturation và lightness để đảm bảo khác biệt rõ ràng
-  let colorIndex = baseColorIndex;
-  let attempts = 0;
-  const minHueDiff = 25; // Chênh lệch tối thiểu về hue (độ) - tăng lên để màu khác biệt hơn
-  
-  while (attempts < 124) {
-    let conflict = false;
-    const currentColor = colorPalette124[colorIndex];
-    
-    for (const adjIndex of adjacentFeatures) {
-      if (assignedColors[adjIndex] !== null) {
-        const adjColor = assignedColors[adjIndex];
-        
-        // Kiểm tra chênh lệch hue
-        const hueDiff = Math.min(
-          Math.abs(currentColor.hue - adjColor.hue),
-          360 - Math.abs(currentColor.hue - adjColor.hue)
-        );
-        
-        // Kiểm tra chênh lệch saturation và lightness
-        const satDiff = Math.abs(currentColor.saturation - adjColor.saturation);
-        const lightDiff = Math.abs(currentColor.lightness - adjColor.lightness);
-        
-        // Màu được coi là quá gần nếu:
-        // - Hue quá gần (< 25 độ) VÀ (saturation hoặc lightness quá gần)
-        // - Hoặc cả 3 đều quá gần
-        if (hueDiff < minHueDiff && (satDiff < 10 || lightDiff < 5)) {
-          conflict = true;
-          break;
-        }
-        // Nếu hue quá gần (< 15 độ) thì cũng coi là conflict
-        if (hueDiff < 15) {
-          conflict = true;
-          break;
-        }
-      }
-    }
-    
-    if (!conflict) {
-      return currentColor;
-    }
-    
-    // Thử màu tiếp theo trong 124 màu, nhảy cách xa hơn
-    colorIndex = (colorIndex + 10) % 124;
-    attempts++;
-  }
-  
-  // Nếu không tìm được màu phù hợp, dùng màu cơ bản
-  return colorPalette124[baseColorIndex];
+  // Lấy nhóm combo theo cơ cấu phân lớp để đảm bảo 128 màu đầu tiên hoàn toàn không trùng lặp
+  const comboIdx = Math.floor(colorIndex / hues.length) % combos.length;
+  const [saturation, lightness] = combos[comboIdx];
+
+  return hslToHex(hue, saturation, lightness);
 }
 
 // ====== HELPER FUNCTION: LẤY TÊN VÀ MÃ TỪ PROPERTIES ======
@@ -1605,53 +1522,25 @@ function initWardVisibilityPanel(map) {
 // ====== HIỂN THỊ GEOJSON LÊN BẢN ĐỒ ======
 function addGeojsonToMap(map, data, sourceFilename = '') {
   const isDhlvb = data && data.name === 'DHLVB';
-  
-  // Xử lý màu cho tất cả features trước để đảm bảo các feature lân cận không trùng màu
   const allFeatures = data.features || [];
-  const assignedColors = new Array(allFeatures.length).fill(null);
-  const featureColors = {};
   
-  // Gán màu cho từng feature
+  // Gán màu cho từng feature bằng thuật toán Golden Ratio cố định
+  const featureColors = [];
   allFeatures.forEach((feature, index) => {
-    const colorObj = assignColorToFeature(feature, allFeatures, assignedColors, index);
-    assignedColors[index] = colorObj;
-    
-    // Lưu màu vào feature để sử dụng sau (sử dụng cả saturation và lightness)
-    const featureId = feature.properties?.ten || feature.properties?.ma || `feature_${index}`;
-    featureColors[featureId] = `hsl(${colorObj.hue}, ${colorObj.saturation}%, ${colorObj.lightness}%)`;
+    featureColors[index] = getDeterministicColor(sourceFilename, feature, index);
   });
   
   const layer = L.geoJSON(data, {
     style: function(feature) {
-      // Lấy màu đã được gán
-      const featureId = feature.properties?.ten || feature.properties?.ma || '';
-      let fillColor = featureColors[featureId];
+      const index = allFeatures.indexOf(feature);
+      const deterministicColor = featureColors[index] || '#3388ff';
       
-      // Fallback nếu không tìm thấy màu đã gán
-      if (!fillColor) {
-        let colorIndex = 0;
-        const featureName = getFeatureName(feature.properties);
-        const featureCode = getFeatureCode(feature.properties);
-        if (featureName) {
-          const name = featureName;
-          let hash = 0;
-          for (let i = 0; i < name.length; i++) {
-            hash = name.charCodeAt(i) + ((hash << 5) - hash);
-          }
-          colorIndex = Math.abs(hash % 124);
-        } else if (featureCode) {
-          const ma = featureCode;
-          let hash = 0;
-          for (let i = 0; i < ma.length; i++) {
-            hash = ma.charCodeAt(i) + ((hash << 5) - hash);
-          }
-          colorIndex = Math.abs(hash % 124);
-        }
-        const colorObj = colorPalette124[colorIndex];
-        fillColor = `hsl(${colorObj.hue}, ${colorObj.saturation}%, ${colorObj.lightness}%)`;
-      }
+      // Kiểm tra màu tùy chỉnh trong localStorage
+      const wardKey = buildWardBoundaryKey(sourceFilename, feature, index >= 0 ? index : 0);
+      const customFill = getWardCustomColorsMap()[wardKey];
       
-      // Sử dụng màu từ GeoJSON nếu có, nếu không thì dùng màu đã gán
+      const fillColor = customFill || deterministicColor;
+      
       const featureStyle = feature.properties.style || {};
       return {
         color: isDhlvb ? '#ff0000' : (featureStyle.color || currentBoundaryColor),
@@ -1661,46 +1550,22 @@ function addGeojsonToMap(map, data, sourceFilename = '') {
       };
     },
     onEachFeature: function (feature, layer) {
+      const index = allFeatures.indexOf(feature);
+      const deterministicColor = featureColors[index] || '#3388ff';
+      
+      const wardKey = buildWardBoundaryKey(sourceFilename, feature, index >= 0 ? index : 0);
+      const customFill = getWardCustomColorsMap()[wardKey];
+      
+      const fillColor = customFill || deterministicColor;
+      
       const featureStyle = feature.properties.style || {};
       const baseColor = isDhlvb ? '#ff0000' : (featureStyle.color || currentBoundaryColor);
       const baseWeight = isDhlvb ? 4 : (featureStyle.weight || currentBoundaryWeight);
       
-      // Lấy màu đã được gán (đảm bảo không trùng với các feature lân cận)
-      const featureName = getFeatureName(feature.properties);
-      const featureCode = getFeatureCode(feature.properties);
-      const featureId = featureName || featureCode || '';
-      let baseFillColor = featureColors[featureId];
-      
-      // Fallback nếu không tìm thấy màu đã gán
-      if (!baseFillColor) {
-        let colorIndex = 0;
-        if (featureName) {
-          const name = featureName;
-          let hash = 0;
-          for (let i = 0; i < name.length; i++) {
-            hash = name.charCodeAt(i) + ((hash << 5) - hash);
-          }
-          colorIndex = Math.abs(hash % 124);
-        } else if (featureCode) {
-          const ma = featureCode;
-          let hash = 0;
-          for (let i = 0; i < ma.length; i++) {
-            hash = ma.charCodeAt(i) + ((hash << 5) - hash);
-          }
-          colorIndex = Math.abs(hash % 124);
-        }
-        if (colorIndex > 0 || featureName || featureCode) {
-          const colorObj = colorPalette124[colorIndex];
-          baseFillColor = `hsl(${colorObj.hue}, ${colorObj.saturation}%, ${colorObj.lightness}%)`;
-        } else {
-          baseFillColor = featureStyle.fillColor || '#3388ff';
-        }
-      }
-      
       const originalStyle = {
         color: baseColor,
         weight: baseWeight,
-        fillColor: baseFillColor,
+        fillColor: deterministicColor,
         fillOpacity: featureStyle.opacity || currentOverlayOpacity
       };
       
@@ -1777,47 +1642,6 @@ function addGeojsonToMap(map, data, sourceFilename = '') {
         
         openInfoPanel(feature.properties, isDhlvb);
       });
-      
-      // Đã loại bỏ hiệu ứng hover (mouseover/mouseout) để không tô đậm màu các xã khi rê chuột
-      // layer.on('mouseover', function() {
-      //   // Nếu đang ẩn ranh giới (geojsonVisible = false), không hiển thị màu khi hover
-      //   if (geojsonVisible) {
-      //     // Chỉ thay đổi border và opacity khi hover, giữ nguyên fillColor
-      //     layer.setStyle({
-      //       fillOpacity: 0.5,
-      //       color: '#ff7800',
-      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-      //     });
-      //   } else {
-      //     // Chỉ thay đổi màu đường viền, không thay đổi fillOpacity và fillColor
-      //     layer.setStyle({
-      //       color: '#ff7800',
-      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-      //     });
-      //   }
-      // });
-      
-      // layer.on('mouseout', function() {
-      //   // Không khôi phục nếu đang được chọn (highlight)
-      //   if (selectedGeojsonLayer === layer) {
-      //     return;
-      //   }
-      //   
-      //   // Nếu đang ẩn ranh giới, giữ fillOpacity = 0
-      //   if (geojsonVisible) {
-      //     layer.setStyle({
-      //       fillOpacity: originalStyle.fillOpacity,
-      //       color: originalStyle.color,
-      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-      //     });
-      //   } else {
-      //     // Chỉ khôi phục màu đường viền và fillColor
-      //     layer.setStyle({
-      //       color: originalStyle.color,
-      //       fillColor: originalStyle.fillColor // Giữ nguyên màu fill
-      //     });
-      //   }
-      // });
     }
   });
   
@@ -4864,6 +4688,9 @@ function updatePointsList() {
     exportKmzBtn.style.display = 'none';
     clearPointsBtn.style.display = 'none';
   }
+  if (typeof updatePointNamingContainerVisibility === 'function') {
+    updatePointNamingContainerVisibility();
+  }
   
   // Xóa danh sách cũ
   pointsList.innerHTML = '';
@@ -4901,6 +4728,29 @@ function updatePointsList() {
     `;
     pointsList.appendChild(pointItem);
   });
+}
+
+// Hàm cập nhật trạng thái hiển thị của point-naming-container (sửa lỗi ẩn cha và responsive di động)
+function updatePointNamingContainerVisibility() {
+  const container = document.getElementById('point-naming-container');
+  if (!container) return;
+  
+  const hasPoints = typeof selectedPoints !== 'undefined' && selectedPoints.length > 0;
+  const hasKml = typeof importedKmlLayers !== 'undefined' && importedKmlLayers.length > 0;
+  const active = (typeof isSelectingPoints !== 'undefined' && isSelectingPoints) || hasPoints || hasKml;
+  
+  if (active) {
+    container.style.display = 'block';
+  } else {
+    container.style.display = 'none';
+  }
+  
+  // Thêm class point-selection-active trên body để ẩn logo khi đang thao tác trên di động
+  if ((typeof isSelectingPoints !== 'undefined' && isSelectingPoints) || hasPoints) {
+    document.body.classList.add('point-selection-active');
+  } else {
+    document.body.classList.remove('point-selection-active');
+  }
 }
 
 // Đổi tên điểm
@@ -5320,7 +5170,14 @@ function renderKmlKmzImportList(map) {
 
   if (!importedKmlLayers.length) {
     container.innerHTML = '';
+    if (typeof updatePointNamingContainerVisibility === 'function') {
+      updatePointNamingContainerVisibility();
+    }
     return;
+  } else {
+    if (typeof updatePointNamingContainerVisibility === 'function') {
+      updatePointNamingContainerVisibility();
+    }
   }
 
   let html = '<div style="margin-top:4px; font-size:0.8rem; color:#4b5563;">';
@@ -5698,6 +5555,9 @@ function setupSharePointsButton(map) {
       // Hiển thị tùy chọn đặt tên
       if (pointNamingOption) {
         pointNamingOption.style.display = 'block';
+      }
+      if (typeof updatePointNamingContainerVisibility === 'function') {
+        updatePointNamingContainerVisibility();
       }
       
       // Ẩn hộp công cụ khi bắt đầu sử dụng
@@ -8004,11 +7864,79 @@ function setupDrawingTools(map) {
   // setupDrawingTools(map);
   setupKmlKmzImport(map);
   
+  // Thiết lập cảm ứng kéo vuốt đóng panel cho di động
+  setupMobileGestures();
+  
   // Mở hộp công cụ khi khởi động (tùy chọn)
   toolsPanelTimeout = setTimeout(() => {
     // toggleToolsPanel(true);
   }, 300);
 })();
+
+// Hàm thiết lập tính năng vuốt kéo để đóng panel thông tin/cài đặt trên di động
+function setupMobileGestures() {
+  const sheets = [
+    { 
+      el: document.getElementById('tools-panel'), 
+      header: document.querySelector('.settings-panel-header'), 
+      closeFn: () => { if (typeof toggleToolsPanel === 'function') toggleToolsPanel(false); } 
+    },
+    { 
+      el: document.getElementById('info-panel'), 
+      header: document.querySelector('.info-panel-header'), 
+      closeFn: () => { const infoPanel = document.getElementById('info-panel'); if (infoPanel) infoPanel.classList.remove('visible'); } 
+    }
+  ];
+
+  sheets.forEach(sheet => {
+    if (!sheet.el || !sheet.header) return;
+
+    let startY = 0;
+    let currentY = 0;
+    let isDragging = false;
+
+    sheet.header.addEventListener('touchstart', (e) => {
+      if (window.innerWidth > 600) return; // Chỉ áp dụng trên màn hình di động
+      startY = e.touches[0].clientY;
+      currentY = startY;
+      sheet.el.style.transition = 'none';
+      isDragging = true;
+    }, { passive: true });
+
+    sheet.header.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+      
+      // Chỉ cho phép kéo kéo xuống dưới (deltaY > 0)
+      if (deltaY > 0) {
+        sheet.el.style.transform = `translateY(${deltaY}px)`;
+      }
+    }, { passive: true });
+
+    sheet.header.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      sheet.el.style.transition = 'transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)';
+      
+      const deltaY = currentY - startY;
+      const threshold = sheet.el.offsetHeight * 0.20; // Vuốt quá 20% chiều cao sẽ đóng
+      
+      if (deltaY > threshold) {
+        sheet.closeFn();
+        // Reset transform sau khi panel đóng hẳn
+        setTimeout(() => {
+          sheet.el.style.transform = '';
+        }, 300);
+      } else {
+        // Trở về vị trí ban đầu
+        sheet.el.style.transform = 'translateY(0)';
+      }
+      startY = 0;
+      currentY = 0;
+    });
+  });
+}
 
 // ====== GLOBAL DEBUG COMMANDS (Development Mode) ======
 // Expose debug functions cho console trong development mode
