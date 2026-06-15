@@ -13,6 +13,8 @@ const LAYER_ZINDEX = {
   popupPane: 1000
 };
 
+const VN2000_API_TOKEN = '7657';
+
 const fieldMap = {
   // Định dạng cũ
   ma: 'Mã xã/phường',
@@ -280,7 +282,7 @@ const provinceCentralMeridians = {
 // Hàm chuyển đổi tọa độ từ WGS84 sang VN2000
 async function convertWGS84toVN2000(lat, lng, centralMeridian) {
   try {
-    const url = `https://vn2000.vn/api/wgs84tovn2000?lat=${lat}&lng=${lng}&zone_width=3&central_meridian=${centralMeridian}`;
+    const url = `https://vn2000.vn/api/wgs84tovn2000?lat=${lat}&lng=${lng}&zone_width=3&central_meridian=${centralMeridian}&token=${VN2000_API_TOKEN}`;
     const response = await fetch(url);
     const result = await response.json();
     
