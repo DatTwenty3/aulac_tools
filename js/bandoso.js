@@ -1313,6 +1313,11 @@ function getFeatureCode(properties) {
   return properties.ma_xa || properties.ma || null;
 }
 
+function getGeojsonSearchLabel(filename) {
+  const base = filename.replace(/\.geojson$/i, '').split('/').pop();
+  return base.replace(/\s*\(phường xã\)\s*-\s*\d+$/i, '').trim() || base;
+}
+
 function buildWardBoundaryKey(sourceFilename, feature, featureIndex) {
   const stem = (sourceFilename || '').replace(/\.geojson$/i, '');
   const p = feature.properties || {};
@@ -2442,13 +2447,15 @@ function setupSearch(map) {
     
     // Tìm trong các file GeoJSON thông thường
     cachedGeojsonFiles.forEach(filename => {
-      const name = removeVietnameseTones(filename.replace('.geojson', '').toLowerCase());
-      if (name.includes(normalizedKeyword)) {
+      const label = getGeojsonSearchLabel(filename);
+      const name = removeVietnameseTones(label.toLowerCase());
+      const fullPath = removeVietnameseTones(filename.replace('.geojson', '').toLowerCase());
+      if (name.includes(normalizedKeyword) || fullPath.includes(normalizedKeyword)) {
         suggestions.push({
           type: 'xaphuong',
-          title: filename.replace('.geojson', ''),
+          title: label,
           subtitle: 'Xã/Phường',
-          value: filename.replace('.geojson', ''),
+          value: label,
           isFile: true,
           filename: filename
         });
@@ -2713,11 +2720,13 @@ function setupSearch(map) {
     
     // Nếu không có suggestion, tìm kiếm như bình thường
     const foundFile = cachedGeojsonFiles.find(f => {
-      const name = removeVietnameseTones(f.replace('.geojson','').toLowerCase());
-      return name.includes(keyword);
+      const label = removeVietnameseTones(getGeojsonSearchLabel(f).toLowerCase());
+      const path = removeVietnameseTones(f.replace('.geojson', '').toLowerCase());
+      return label.includes(keyword) || path.includes(keyword);
     });
     
     if (foundFile) {
+      const foundLabel = getGeojsonSearchLabel(foundFile);
       fetch('geo-json/' + foundFile.split('/').map(encodeURIComponent).join('/'))
         .then(res => res.json())
         .then(data => {
@@ -2729,7 +2738,7 @@ function setupSearch(map) {
             searchResultMarker = null;
           }
           
-          searchResultMarker = createSearchResultMarker(map, center, foundFile.replace('.geojson', ''));
+          searchResultMarker = createSearchResultMarker(map, center, foundLabel);
           searchResultMarker.addTo(map);
           
           map.flyTo(center, 12, {
@@ -2747,7 +2756,7 @@ function setupSearch(map) {
             openInfoPanel(feature.properties, false);
           }
           
-          showSearchNotification('Đã tìm thấy: ' + foundFile.replace('.geojson', ''), 'success');
+          showSearchNotification('Đã tìm thấy: ' + foundLabel, 'success');
         })
         .catch((error) => {
           console.error('Lỗi khi tải dữ liệu GeoJSON:', error);
