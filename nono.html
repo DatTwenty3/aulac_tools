@@ -495,7 +495,7 @@
         //  Lịch sử hoàn tác
         // =====================================================================
         const history = { undo: [], redo: [] };
-        const snapshot = () => JSON.stringify({ s: state.sections, r: topGrid.cur.r, n: nextId });
+        const snapshot = () => JSON.stringify({ s: state.sections, r: topGrid.cur.r, n: nextId, m: modes });
         function pushUndo(snap) {
             history.undo.push(snap);
             if (history.undo.length > 100) history.undo.shift();
@@ -506,6 +506,7 @@
             const o = JSON.parse(snap);
             state.sections = o.s;
             nextId = o.n;
+            if (o.m) Object.assign(modes, o.m);
             topGrid.setSilent(o.r, topGrid.cur.c);
             refreshAll();
         }
@@ -1276,6 +1277,7 @@
                     sec[side].forEach(t => {
                         const d = parseFloat(t.dist) || 0, e = parseFloat(t.elev) || 0;
                         const fcode = t.desc.replace(/\s+/g, ' ').trim();
+                        if (t.dist === '' && t.elev === '' && !fcode) return; // dòng trống không xuất
                         let dist;
                         if (modes.distCum) dist = d; else { acc += d; dist = acc; }
                         if (dist !== 0 || e !== 0 || fcode) {
@@ -1448,12 +1450,58 @@
             $('#opt-ok').focus();
         }
         function closeOptions() { $('#options-modal').classList.remove('active'); }
+        // Đổi chế độ nhập thì quy đổi số liệu đã nhập sang chế độ mới để giá trị thực không đổi
+        function convertModes(next) {
+            if (next.topCum !== modes.topCum) {
+                let prev = 0;
+                state.sections.forEach(s => {
+                    if (s.cumulative === '') return;
+                    const v = parseFloat(s.cumulative);
+                    if (next.topCum) { prev += v; s.cumulative = numStr(prev, 6); }      // lẻ -> cộng dồn
+                    else { s.cumulative = numStr(v - prev, 6); prev = v; }               // cộng dồn -> lẻ
+                });
+            }
+            state.sections.forEach(s => {
+                ['left', 'right'].forEach(side => {
+                    if (next.distCum !== modes.distCum) {
+                        let prev = 0;
+                        s[side].forEach(t => {
+                            if (t.dist === '') return;
+                            const v = parseFloat(t.dist);
+                            if (next.distCum) { prev += v; t.dist = numStr(prev, 6); }
+                            else { t.dist = numStr(v - prev, 6); prev = v; }
+                        });
+                    }
+                    if (next.elevAbs !== modes.elevAbs) {
+                        // Tương đối: điểm đầu so với cao độ cọc, các điểm sau so với điểm liền trước (khớp với biểu đồ)
+                        let prev = parseFloat(s.elevation) || 0;
+                        s[side].forEach(t => {
+                            if (t.elev === '') return;
+                            const v = parseFloat(t.elev);
+                            if (next.elevAbs) { prev += v; t.elev = numStr(prev, 6); }   // tương đối -> tuyệt đối
+                            else { t.elev = numStr(v - prev, 6); prev = v; }             // tuyệt đối -> tương đối
+                        });
+                    }
+                });
+            });
+        }
+
         function applyOptions() {
             const val = name => document.querySelector(`input[name="${name}"]:checked`).value;
-            modes.topCum = val('opt-top') === 'cum';
-            modes.distCum = val('opt-dist') === 'cum';
-            modes.elevAbs = val('opt-elev') === 'abs';
-            modes.angleDms = val('opt-angle') === 'dms';
+            const next = {
+                topCum: val('opt-top') === 'cum',
+                distCum: val('opt-dist') === 'cum',
+                elevAbs: val('opt-elev') === 'abs',
+                angleDms: val('opt-angle') === 'dms'
+            };
+            const convert = next.topCum !== modes.topCum || next.distCum !== modes.distCum || next.elevAbs !== modes.elevAbs;
+            if (convert) {
+                const snap = snapshot();
+                convertModes(next);
+                pushUndo(snap);
+                toast('Đã quy đổi số liệu sang chế độ nhập mới (Ctrl+Z để hoàn tác)');
+            }
+            Object.assign(modes, next);
             colVisible.radius = $('#opt-col-radius').checked;
             colVisible.count = $('#opt-col-count').checked;
             closeOptions();
