@@ -394,7 +394,7 @@
                 </div>
                 <div class="opt-group">
                     <h5>Bảng mặt cắt ngang – cao độ</h5>
-                    <label><input type="radio" name="opt-elev" value="rel"> Cao độ tương đối</label>
+                    <label><input type="radio" name="opt-elev" value="rel"> Cao độ tương đối (chênh so với cao độ cọc)</label>
                     <label><input type="radio" name="opt-elev" value="abs"> Cao độ tuyệt đối</label>
                 </div>
                 <div class="opt-group">
@@ -1089,14 +1089,13 @@
             if (!sec) return null;
             const init = parseFloat(sec.elevation) || 0;
             const pts = [{ dist: 0, y: init }];
-            let accD = 0, accE = init, any = false;
+            let accD = 0, any = false;
             sec[side].forEach(t => {
                 const d = parseFloat(t.dist) || 0, e = parseFloat(t.elev) || 0;
                 accD += d;
-                accE += e;
                 if (t.dist === '' && t.elev === '') return;
                 any = true;
-                pts.push({ dist: modes.distCum ? d : accD, y: modes.elevAbs ? e : accE });
+                pts.push({ dist: modes.distCum ? d : accD, y: modes.elevAbs ? e : init + e });
             });
             return any ? { pts } : null;
         }
@@ -1254,8 +1253,8 @@
             // Định dạng theo file .ntd do ADS tạo: tiêu đề TDN_2, xuống dòng CRLF, POLE dùng 6 chữ số thập phân
             let out = 'TDN_2\tVersion 3.5\nSYMBOLS\tND\tTD\tP\tTC\tNC\n';
             // TYPEINPUT: [1] khoảng cách cọc, [2] khoảng cách điểm mia, [3] cao độ mia, [4] tương đối theo cọc, [5] dự phòng.
-            // Luôn ghi khoảng cách cộng dồn (0) nên hai cờ đầu luôn bằng 0; cao độ ghi đúng như đã nhập.
-            out += `TYPEINPUT\t0\t0\t${modes.elevAbs ? 0 : 1}\t0\t0\n`;
+            // Luôn ghi khoảng cách cộng dồn và cao độ tuyệt đối (quy đổi khi cần) nên các cờ đều bằng 0.
+            out += 'TYPEINPUT\t0\t0\t0\t0\t0\n';
             let run = 0, idx = 0;
             state.sections.forEach(sec => {
                 if (isEmptySection(sec)) return;
@@ -1275,7 +1274,8 @@
                 [['left', 'TARGETL', -1], ['right', 'TARGETR', 1]].forEach(([side, tag, sign]) => {
                     let acc = 0;
                     sec[side].forEach(t => {
-                        const d = parseFloat(t.dist) || 0, e = parseFloat(t.elev) || 0;
+                        const d = parseFloat(t.dist) || 0, ev = parseFloat(t.elev) || 0;
+                        const e = modes.elevAbs ? ev : elevation + ev; // tương đối = chênh so với cao độ cọc
                         const fcode = t.desc.replace(/\s+/g, ' ').trim();
                         if (t.dist === '' && t.elev === '' && !fcode) return; // dòng trống không xuất
                         let dist;
@@ -1341,7 +1341,7 @@
 
         function processNtdData(text) {
             const sections = [];
-            let cur = null, tm = true, dm = modes.distCum, em = modes.elevAbs;
+            let cur = null, tm = true, dm = modes.distCum, em = modes.elevAbs, rp = false;
             text.trim().split(/\r?\n/).forEach(line => {
                 // Các thành phần cách nhau bằng tab (tên cọc có thể chứa dấu cách); file không có tab thì tách theo khoảng trắng
                 const parts = line.includes('\t') ? line.split('\t').map(s => s.trim()) : line.trim().split(/\s+/);
@@ -1350,6 +1350,7 @@
                     tm = (parseInt(parts[1]) || 0) === 0;   // khoảng cách cọc: 0 = cộng dồn
                     dm = (parseInt(parts[2]) || 0) === 0;   // khoảng cách mia: 0 = cộng dồn
                     em = (parseInt(parts[3]) || 0) === 0;   // cao độ mia: 0 = tuyệt đối
+                    rp = (parseInt(parts[4]) || 0) === 1;   // 1 = cao độ tương đối so với cọc
                 } else if (cmd === 'POLE') {
                     cur = newSection();
                     cur.name = parts[1] || `MC${sections.length + 1}`;
@@ -1374,6 +1375,13 @@
             if (!sections.length) {
                 openModal({ title: 'Lỗi Import NTD', message: 'Không tìm thấy dòng POLE nào trong file.', hideCancel: true, confirmText: 'Đóng', confirmClass: 'primary' });
                 return;
+            }
+            // Chế độ tương đối của chương trình là chênh so với cao độ cọc; file ghi chênh so với điểm liền trước thì cộng dồn lại
+            if (!em && !rp) {
+                sections.forEach(s => ['left', 'right'].forEach(side => {
+                    let acc = 0;
+                    s[side].forEach(t => { acc += parseFloat(t.elev) || 0; t.elev = numStr(acc, 6); });
+                }));
             }
             modes.topCum = tm;
             modes.distCum = dm;
@@ -1473,13 +1481,12 @@
                         });
                     }
                     if (next.elevAbs !== modes.elevAbs) {
-                        // Tương đối: điểm đầu so với cao độ cọc, các điểm sau so với điểm liền trước (khớp với biểu đồ)
-                        let prev = parseFloat(s.elevation) || 0;
+                        // Tương đối = chênh so với cao độ cọc
+                        const init = parseFloat(s.elevation) || 0;
                         s[side].forEach(t => {
                             if (t.elev === '') return;
                             const v = parseFloat(t.elev);
-                            if (next.elevAbs) { prev += v; t.elev = numStr(prev, 6); }   // tương đối -> tuyệt đối
-                            else { t.elev = numStr(v - prev, 6); prev = v; }             // tuyệt đối -> tương đối
+                            t.elev = numStr(next.elevAbs ? v + init : v - init, 6);
                         });
                     }
                 });
