@@ -446,7 +446,7 @@
             elevAbs: false,   // bảng ngang: true = cao độ tuyệt đối, false = tương đối
             angleDms: false   // hiển thị góc: độ-phút-giây
         };
-        const ui = { showChart: true, split: 55 };
+        const ui = { showChart: false, split: 55 };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
         const newSection = () => ({ id: nextId++, name: '', cumulative: '', elevation: '', angle: '', radius: '', left: [], right: [] });
@@ -1211,7 +1211,7 @@
                 angleDms: modes.angleDms,
                 colRadius: colVisible.radius,
                 colCount: colVisible.count,
-                showChart: ui.showChart,
+                chartOn: ui.showChart,
                 split: ui.split
             };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { return; }
@@ -1230,7 +1230,7 @@
             if (data.angleDms !== undefined) modes.angleDms = !!data.angleDms;
             if (data.colRadius !== undefined) colVisible.radius = !!data.colRadius;
             if (data.colCount !== undefined) colVisible.count = !!data.colCount;
-            if (data.showChart !== undefined) ui.showChart = !!data.showChart;
+            if (data.chartOn !== undefined) ui.showChart = !!data.chartOn;
             if (data.split) ui.split = clamp(+data.split || 55, 15, 85);
             const items = data.items || data;
             if (!Array.isArray(items)) return;
