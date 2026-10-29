@@ -69,8 +69,6 @@
         .tb-btn:active:not(:disabled) { background: #e2e6d4; }
         .tb-btn:disabled { opacity: 0.4; cursor: default; }
         .tb-btn.on { background: #e2e8d3; border-color: var(--accent); }
-        .tb-btn.primary { background: var(--accent); color: #fff; }
-        .tb-btn.primary:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); }
         .tb-btn.danger .ic { color: var(--danger); }
         .tb-btn.busy { opacity: 0.6; pointer-events: none; }
         .tb-title { margin-left: auto; align-self: center; font-weight: 600; color: var(--muted); padding-right: 6px; white-space: nowrap; }
@@ -312,7 +310,7 @@
         <button class="tb-btn danger" id="btn-delete-all" title="Xóa toàn bộ dữ liệu"><span class="ic">🗑️</span><span>Xóa tất cả</span></button>
         <button class="tb-btn" id="btn-import-ntd" title="Nhập dữ liệu từ file .ntd"><span class="ic">📂</span><span>Import NTD</span></button>
         <button class="tb-btn" id="btn-import-csv" title="Nhập danh sách cọc từ file .csv"><span class="ic">📑</span><span>Import CSV</span></button>
-        <button class="tb-btn primary" id="btn-generate" title="Tạo và tải file .ntd (Ctrl+S)"><span class="ic">💾</span><span>Xuất .ntd</span></button>
+        <button class="tb-btn" id="btn-generate" title="Tạo và tải file .ntd (Ctrl+S)"><span class="ic">💾</span><span>Xuất .ntd</span></button>
         <div class="tb-sep"></div>
         <button class="tb-btn" id="btn-add-item" title="Thêm một cọc / mặt cắt mới ở cuối bảng"><span class="ic">➕</span><span>Thêm cọc</span></button>
         <button class="tb-btn" id="btn-insert-row" title="Chèn dòng phía trên dòng đang chọn (Insert)"><span class="ic">⤴️</span><span>Chèn dòng</span></button>
