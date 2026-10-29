@@ -394,8 +394,9 @@
                 </div>
                 <div class="opt-group">
                     <h5>Bảng mặt cắt ngang – cao độ</h5>
-                    <label><input type="radio" name="opt-elev" value="rel"> Cao độ tương đối (chênh so với cao độ cọc)</label>
                     <label><input type="radio" name="opt-elev" value="abs"> Cao độ tuyệt đối</label>
+                    <label><input type="radio" name="opt-elev" value="pole"> Tương đối so với cao độ cọc</label>
+                    <label><input type="radio" name="opt-elev" value="prev"> Tương đối so với điểm trước</label>
                 </div>
                 <div class="opt-group">
                     <h5>Hiển thị góc chắn cung</h5>
@@ -443,9 +444,23 @@
         const modes = {
             topCum: true,     // bảng cọc: true = lý trình cộng dồn, false = khoảng cách lẻ
             distCum: false,   // bảng ngang: true = khoảng cách cộng dồn, false = lẻ
-            elevAbs: false,   // bảng ngang: true = cao độ tuyệt đối, false = tương đối
+            elevMode: 'pole', // bảng ngang: 'abs' tuyệt đối | 'pole' chênh so với cao độ cọc | 'prev' chênh so với điểm liền trước
             angleDms: false   // hiển thị góc: độ-phút-giây
         };
+        const ELEV_TITLE = { abs: 'Cao độ tuyệt đối', pole: 'Cao độ tương đối (cọc)', prev: 'Cao độ tương đối (điểm trước)' };
+        // Cao độ tuyệt đối của từng dòng điểm mia theo chế độ nhập hiện tại. Tương đối so với cọc: chênh so với cao độ cọc;
+        // so với điểm trước: điểm đầu so với cao độ cọc, các điểm sau so với điểm liền trước.
+        function absElevations(sec, side) {
+            const init = parseFloat(sec.elevation) || 0;
+            let acc = init;
+            return sec[side].map(t => {
+                const v = parseFloat(t.elev) || 0;
+                if (modes.elevMode === 'abs') return v;
+                if (modes.elevMode === 'pole') return init + v;
+                acc += v;
+                return acc;
+            });
+        }
         const ui = { showChart: false, split: 55 };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
@@ -976,7 +991,7 @@
         function makeSideCfg(side) {
             const cols = [
                 { key: 'dist', title: () => (modes.distCum ? 'Khoảng cách cộng dồn' : 'Khoảng cách lẻ'), width: 150, kind: 'number' },
-                { key: 'elev', title: () => (modes.elevAbs ? 'Cao độ tuyệt đối' : 'Cao độ tương đối'), width: 140, kind: 'number' },
+                { key: 'elev', title: () => ELEV_TITLE[modes.elevMode], width: 190, kind: 'number' },
                 { key: 'desc', title: 'FCode', width: 200, kind: 'text' }
             ];
             const rows = () => { const s = activeSection(); return s ? s[side] : []; };
@@ -1089,13 +1104,14 @@
             if (!sec) return null;
             const init = parseFloat(sec.elevation) || 0;
             const pts = [{ dist: 0, y: init }];
+            const absE = absElevations(sec, side);
             let accD = 0, any = false;
-            sec[side].forEach(t => {
-                const d = parseFloat(t.dist) || 0, e = parseFloat(t.elev) || 0;
+            sec[side].forEach((t, i) => {
+                const d = parseFloat(t.dist) || 0;
                 accD += d;
                 if (t.dist === '' && t.elev === '') return;
                 any = true;
-                pts.push({ dist: modes.distCum ? d : accD, y: modes.elevAbs ? e : init + e });
+                pts.push({ dist: modes.distCum ? d : accD, y: absE[i] });
             });
             return any ? { pts } : null;
         }
@@ -1206,7 +1222,8 @@
                     rightTargets: s.right.map(t => ({ cumulative: t.dist, elevation: t.elev, desc: t.desc }))
                 })),
                 globalDistanceMode: modes.distCum,
-                globalElevationMode: modes.elevAbs,
+                globalElevationMode: modes.elevMode === 'abs',
+                elevMode: modes.elevMode,
                 topDistanceMode: modes.topCum,
                 angleDms: modes.angleDms,
                 colRadius: colVisible.radius,
@@ -1225,7 +1242,8 @@
             try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) { data = null; }
             if (!data) return;
             if (data.globalDistanceMode !== undefined) modes.distCum = !!data.globalDistanceMode;
-            if (data.globalElevationMode !== undefined) modes.elevAbs = !!data.globalElevationMode;
+            if (data.globalElevationMode !== undefined) modes.elevMode = data.globalElevationMode ? 'abs' : 'pole';
+            if (ELEV_TITLE[data.elevMode]) modes.elevMode = data.elevMode;
             if (data.topDistanceMode !== undefined) modes.topCum = !!data.topDistanceMode;
             if (data.angleDms !== undefined) modes.angleDms = !!data.angleDms;
             if (data.colRadius !== undefined) colVisible.radius = !!data.colRadius;
@@ -1273,9 +1291,9 @@
                 out += `POLE\t${name}\t${cumulative.toFixed(6)}\t${elevation.toFixed(6)}\t0.00000\t${radius.toFixed(6)}\t${angleRad}\n`;
                 [['left', 'TARGETL', -1], ['right', 'TARGETR', 1]].forEach(([side, tag, sign]) => {
                     let acc = 0;
-                    sec[side].forEach(t => {
-                        const d = parseFloat(t.dist) || 0, ev = parseFloat(t.elev) || 0;
-                        const e = modes.elevAbs ? ev : elevation + ev; // tương đối = chênh so với cao độ cọc
+                    const absE = absElevations(sec, side); // luôn ghi cao độ tuyệt đối
+                    sec[side].forEach((t, i) => {
+                        const d = parseFloat(t.dist) || 0, e = absE[i];
                         const fcode = t.desc.replace(/\s+/g, ' ').trim();
                         if (t.dist === '' && t.elev === '' && !fcode) return; // dòng trống không xuất
                         let dist;
@@ -1341,7 +1359,7 @@
 
         function processNtdData(text) {
             const sections = [];
-            let cur = null, tm = true, dm = modes.distCum, em = modes.elevAbs, rp = false;
+            let cur = null, tm = true, dm = modes.distCum, em = modes.elevMode === 'abs', rp = false;
             text.trim().split(/\r?\n/).forEach(line => {
                 // Các thành phần cách nhau bằng tab (tên cọc có thể chứa dấu cách); file không có tab thì tách theo khoảng trắng
                 const parts = line.includes('\t') ? line.split('\t').map(s => s.trim()) : line.trim().split(/\s+/);
@@ -1376,16 +1394,9 @@
                 openModal({ title: 'Lỗi Import NTD', message: 'Không tìm thấy dòng POLE nào trong file.', hideCancel: true, confirmText: 'Đóng', confirmClass: 'primary' });
                 return;
             }
-            // Chế độ tương đối của chương trình là chênh so với cao độ cọc; file ghi chênh so với điểm liền trước thì cộng dồn lại
-            if (!em && !rp) {
-                sections.forEach(s => ['left', 'right'].forEach(side => {
-                    let acc = 0;
-                    s[side].forEach(t => { acc += parseFloat(t.elev) || 0; t.elev = numStr(acc, 6); });
-                }));
-            }
             modes.topCum = tm;
             modes.distCum = dm;
-            modes.elevAbs = em;
+            modes.elevMode = em ? 'abs' : (rp ? 'pole' : 'prev'); // cờ 3 = 1: chênh cao; cờ 4 = 1: so với cọc, ngược lại so với điểm trước
             replaceAllSections(sections);
             toast(`Đã import ${sections.length} mặt cắt từ file NTD (Ctrl+Z để hoàn tác)`);
         }
@@ -1450,7 +1461,7 @@
             const set = (name, val) => { document.querySelector(`input[name="${name}"][value="${val}"]`).checked = true; };
             set('opt-top', modes.topCum ? 'cum' : 'odd');
             set('opt-dist', modes.distCum ? 'cum' : 'odd');
-            set('opt-elev', modes.elevAbs ? 'abs' : 'rel');
+            set('opt-elev', modes.elevMode);
             set('opt-angle', modes.angleDms ? 'dms' : 'dec');
             $('#opt-col-radius').checked = colVisible.radius;
             $('#opt-col-count').checked = colVisible.count;
@@ -1480,13 +1491,16 @@
                             else { t.dist = numStr(v - prev, 6); prev = v; }
                         });
                     }
-                    if (next.elevAbs !== modes.elevAbs) {
-                        // Tương đối = chênh so với cao độ cọc
+                    if (next.elevMode !== modes.elevMode) {
+                        // Đổi qua cao độ tuyệt đối rồi sang chế độ mới; dòng trống giữ nguyên
                         const init = parseFloat(s.elevation) || 0;
-                        s[side].forEach(t => {
+                        const rows = s[side], abs = absElevations(s, side);
+                        let prev = init;
+                        rows.forEach((t, i) => {
                             if (t.elev === '') return;
-                            const v = parseFloat(t.elev);
-                            t.elev = numStr(next.elevAbs ? v + init : v - init, 6);
+                            const a = abs[i];
+                            t.elev = numStr(next.elevMode === 'abs' ? a : next.elevMode === 'pole' ? a - init : a - prev, 6);
+                            prev = a;
                         });
                     }
                 });
@@ -1498,10 +1512,10 @@
             const next = {
                 topCum: val('opt-top') === 'cum',
                 distCum: val('opt-dist') === 'cum',
-                elevAbs: val('opt-elev') === 'abs',
+                elevMode: val('opt-elev'),
                 angleDms: val('opt-angle') === 'dms'
             };
-            const convert = next.topCum !== modes.topCum || next.distCum !== modes.distCum || next.elevAbs !== modes.elevAbs;
+            const convert = next.topCum !== modes.topCum || next.distCum !== modes.distCum || next.elevMode !== modes.elevMode;
             if (convert) {
                 const snap = snapshot();
                 convertModes(next);
