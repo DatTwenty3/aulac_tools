@@ -1301,15 +1301,15 @@
             // Định dạng theo file .ntd do ADS tạo: tiêu đề TDN_2, xuống dòng CRLF, POLE dùng 6 chữ số thập phân
             let out = 'TDN_2\tVersion 3.5\nSYMBOLS\tND\tTD\tP\tTC\tNC\n';
             // TYPEINPUT: [1] khoảng cách cọc, [2] khoảng cách điểm mia, [3] cao độ mia, [4] tương đối theo cọc, [5] dự phòng.
-            // Luôn ghi khoảng cách cộng dồn và cao độ tuyệt đối (quy đổi khi cần) nên các cờ đều bằng 0.
-            out += 'TYPEINPUT\t0\t0\t0\t0\t0\n';
-            let run = 0, idx = 0;
+            // Số liệu được ghi đúng như đã nhập; cờ TYPEINPUT ghi theo tùy chọn nhập liệu để ADS đọc cùng cách hiểu.
+            // Cao độ: tuyệt đối = 0 0; tương đối so với cọc = 1 1; tương đối so với điểm trước = 1 0.
+            const elevFlags = { abs: '0\t0', pole: '1\t1', prev: '1\t0' }[modes.elevMode];
+            out += `TYPEINPUT\t${modes.topCum ? 0 : 1}\t${modes.distCum ? 0 : 1}\t${elevFlags}\t0\n`;
+            let idx = 0;
             state.sections.forEach(sec => {
                 if (isEmptySection(sec)) return;
                 idx++;
-                const raw = parseFloat(sec.cumulative) || 0;
-                run += raw;
-                const cumulative = modes.topCum ? raw : run;
+                const cumulative = parseFloat(sec.cumulative) || 0;
                 const name = (sec.name.replace(/\s+/g, ' ').trim() || `MC${idx}`);
                 const elevation = parseFloat(sec.elevation) || 0;
                 const angle = sec.angle === '' ? 180 : (parseFloat(sec.angle) || 0);
@@ -1320,14 +1320,10 @@
                 const angleRad = rad.toFixed(12);
                 out += `POLE\t${name}\t${cumulative.toFixed(6)}\t${elevation.toFixed(6)}\t0.00000\t${radius.toFixed(6)}\t${angleRad}\n`;
                 [['left', 'TARGETL', -1], ['right', 'TARGETR', 1]].forEach(([side, tag, sign]) => {
-                    let acc = 0;
-                    const absE = absElevations(sec, side); // luôn ghi cao độ tuyệt đối
-                    sec[side].forEach((t, i) => {
-                        const d = parseFloat(t.dist) || 0, e = absE[i];
+                    sec[side].forEach(t => {
+                        const dist = parseFloat(t.dist) || 0, e = parseFloat(t.elev) || 0;
                         const fcode = t.desc.replace(/\s+/g, ' ').trim();
                         if (t.dist === '' && t.elev === '' && !fcode) return; // dòng trống không xuất
-                        let dist;
-                        if (modes.distCum) dist = d; else { acc += d; dist = acc; }
                         if (dist !== 0 || e !== 0 || fcode) {
                             // Dòng mia gồm đủ 5 thành phần: loại, cự ly, cao độ, tên block, FCODE (rỗng nếu không có mã)
                             out += `${tag}\t${(sign * dist).toFixed(6)}\t${e.toFixed(6)}\tNOBLOCK*0*\t${fcode}\n`;
