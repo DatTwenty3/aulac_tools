@@ -74,8 +74,28 @@
         .tb-title { margin-left: auto; align-self: center; font-weight: 600; color: var(--muted); padding-right: 6px; white-space: nowrap; }
 
         /* ---------- Workspace ---------- */
+        .body-row { flex: 1; min-height: 0; display: flex; }
+        .plan-panel {
+            flex: 0 0 42%;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            margin: 6px 8px 0 0;
+            background: var(--panel);
+            border: 1px solid var(--line);
+        }
+        .plan-panel.hidden { display: none; }
+        .plan-panel .pane-title b { flex: 0 0 auto; }
+        .plan-panel .pane-title .hint { flex: 1; min-width: 0; margin-left: 0; }
+        .plan-btn { padding: 1px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 11px; cursor: pointer; white-space: nowrap; }
+        .plan-btn:hover { background: #eef0e6; }
+        .plan-body { position: relative; flex: 1; min-height: 0; }
+        #canvas-plan { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+        #canvas-plan.dragging { cursor: grabbing; }
+        .plan-foot { padding: 3px 8px; font-size: 11px; line-height: 1.4; color: var(--muted); border-top: 1px solid var(--line-soft); background: #fbfaf7; }
         .workspace {
             flex: 1;
+            min-width: 0;
             min-height: 0;
             display: flex;
             flex-direction: column;
@@ -299,6 +319,8 @@
         @media (max-width: 760px) {
             body { overflow: auto; }
             .workspace { min-height: 900px; }
+            .body-row { flex-direction: column; }
+            .plan-panel { flex: 0 0 420px; margin: 6px 8px 0; }
             .pane-bottom { grid-template-columns: 1fr; }
             .chart-row { grid-template-columns: 1fr; flex-basis: 380px; }
             .tb-title { display: none; }
@@ -322,10 +344,12 @@
         <div class="tb-sep"></div>
         <button class="tb-btn" id="btn-options" title="Tùy chọn chế độ nhập liệu"><span class="ic">⚙️</span><span>Tùy chọn</span></button>
         <button class="tb-btn on" id="btn-chart" title="Hiện / ẩn biểu đồ mặt cắt ngang"><span class="ic">📈</span><span>Biểu đồ</span></button>
+        <button class="tb-btn" id="btn-plan" title="Hiện / ẩn bình đồ tuyến"><span class="ic">🗺️</span><span>Bình đồ</span></button>
         <button class="tb-btn" id="btn-guide" title="Xem hướng dẫn"><span class="ic">🎓</span><span>Hướng dẫn</span></button>
         <div class="tb-title">LEDAT · Dữ liệu mặt cắt (.ntd)</div>
     </div>
 
+    <div class="body-row">
     <div class="workspace" id="workspace">
         <section class="pane pane-top" id="pane-top">
             <div class="pane-title"><b>Danh sách cọc / mặt cắt</b><span class="hint">Gõ trực tiếp vào ô · Enter xuống dòng · Tab sang ô kế · Ctrl+V dán từ Excel</span></div>
@@ -354,6 +378,21 @@
                 <div class="canvas-placeholder" id="ph-right">Nhập dữ liệu bảng phải để xem biểu đồ</div>
             </section>
         </div>
+    </div>
+
+    <aside class="plan-panel hidden" id="plan-panel">
+        <div class="pane-title">
+            <b>Bình đồ</b>
+            <span class="hint" title="Cuộn chuột: phóng to/thu nhỏ · Kéo: di chuyển · Bấm cọc: chọn dòng · Bấm đúp: vừa khung">Cuộn: thu/phóng · Kéo: di chuyển · Bấm cọc: chọn</span>
+            <button class="plan-btn" id="plan-fit" title="Hiển thị toàn tuyến">Vừa khung</button>
+            <button class="plan-btn" id="plan-close" title="Đóng bình đồ">&times;</button>
+        </div>
+        <div class="plan-body">
+            <canvas id="canvas-plan"></canvas>
+            <div class="canvas-placeholder" id="ph-plan">Nhập lý trình và góc chắn cung của các cọc để xem bình đồ</div>
+        </div>
+        <div class="plan-foot">Chưa có tọa độ thực: cọc đầu đặt tại gốc, hướng tuyến ban đầu theo trục ngang; hướng đổi theo góc chắn cung (góc &lt; 180° rẽ trái, &gt; 180° rẽ phải), chưa kể bán kính đường cong.</div>
+    </aside>
     </div>
 
     <div class="statusbar">
@@ -499,7 +538,7 @@
                 return acc;
             });
         }
-        const ui = { showChart: false, split: 55 };
+        const ui = { showChart: false, showPlan: false, split: 55 };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
         const newSection = () => ({ id: nextId++, name: '', cumulative: '', elevation: '', angle: '', radius: '', left: [], right: [] });
@@ -1087,6 +1126,7 @@
             $('#title-left').textContent = `Bên trái — ${label}`;
             $('#title-right').textContent = `Bên phải — ${label}`;
             drawCharts();
+            updatePlan(true);
             updateStatus();
         }
         function refreshAll() {
@@ -1245,6 +1285,233 @@
         new ResizeObserver(() => drawCharts()).observe($('#chart-row'));
 
         // =====================================================================
+        //  Bình đồ tuyến
+        // =====================================================================
+        // Dựng tim tuyến từ lý trình và góc chắn cung: các cọc nối bằng đoạn thẳng theo hiệu lý trình, đổi hướng tại cọc có góc.
+        // Góc < 180° rẽ trái, > 180° rẽ phải (cùng quy ước với trường góc của dòng POLE). Chưa kể bán kính đường cong.
+        const plan = { view: null, data: null, drag: null };
+
+        function buildPlan() {
+            const poles = [];
+            let run = 0, heading = 0, x = 0, y = 0, prevC = null;
+            state.sections.forEach((s, r) => {
+                if (isEmptySection(s)) return;
+                const raw = parseFloat(s.cumulative) || 0;
+                run += raw;
+                const c = modes.topCum ? raw : run;
+                if (prevC !== null) { x += (c - prevC) * Math.cos(heading); y += (c - prevC) * Math.sin(heading); }
+                prevC = c;
+                const a = s.angle === '' ? 180 : (parseFloat(s.angle) || 0);
+                const turn = (180 - a) * Math.PI / 180;
+                const h = heading + turn / 2; // hướng pháp tuyến lấy theo phân giác tại cọc đổi hướng
+                const pole = { r, name: s.name || `Mặt cắt ${r + 1}`, x, y, pts: [] };
+                [['left', 1], ['right', -1]].forEach(([side, sign]) => {
+                    let acc = 0;
+                    s[side].forEach(t => {
+                        if (t.dist === '') return;
+                        const d = parseFloat(t.dist) || 0;
+                        acc += d;
+                        const off = modes.distCum ? d : acc;
+                        // vuông góc với tim: bên trái = (-sin, cos), bên phải = (sin, -cos)
+                        pole.pts.push({ side, x: x - sign * off * Math.sin(h), y: y + sign * off * Math.cos(h), off });
+                    });
+                });
+                heading += turn;
+                poles.push(pole);
+            });
+            return { poles };
+        }
+
+        function planSize() {
+            const cv = $('#canvas-plan'), r = cv.getBoundingClientRect();
+            return { cv, w: r.width, h: r.height };
+        }
+
+        function fitPlan() {
+            const d = plan.data, { w, h } = planSize();
+            if (!d || !d.poles.length || !w || !h) return;
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            const add = p => { minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x); minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); };
+            d.poles.forEach(p => { add(p); p.pts.forEach(add); });
+            const pad = 30, bw = maxX - minX, bh = maxY - minY;
+            let s = Math.min((w - 2 * pad) / (bw || 1), (h - 2 * pad) / (bh || 1));
+            if (!isFinite(s) || s <= 0 || (bw === 0 && bh === 0)) s = 10;
+            plan.view = { s, cx: (minX + maxX) / 2, cy: (minY + maxY) / 2 };
+        }
+
+        // Đoạn mặt cắt ngang của một cọc: từ điểm xa nhất bên trái, qua tim, đến điểm xa nhất bên phải
+        function planSegment(p) {
+            let l = null, r = null;
+            p.pts.forEach(q => {
+                if (q.side === 'left' && (!l || Math.abs(q.off) > Math.abs(l.off))) l = q;
+                if (q.side === 'right' && (!r || Math.abs(q.off) > Math.abs(r.off))) r = q;
+            });
+            return [l || p, r || p];
+        }
+
+        function drawPlan(rebuild = true) {
+            if (!ui.showPlan) return;
+            const { cv, w, h } = planSize();
+            if (!w || !h) return;
+            if (rebuild || !plan.data) plan.data = buildPlan();
+            const d = plan.data, dpr = window.devicePixelRatio || 1;
+            cv.width = w * dpr;
+            cv.height = h * dpr;
+            const ctx = cv.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+            $('#ph-plan').style.display = d.poles.length ? 'none' : 'block';
+            if (!d.poles.length) return;
+            if (!plan.view) fitPlan();
+            const v = plan.view;
+            const toX = x => w / 2 + (x - v.cx) * v.s, toY = y => h / 2 - (y - v.cy) * v.s;
+            const near = (sx, sy, m) => sx > -m && sx < w + m && sy > -m && sy < h + m;
+            const activeR = topGrid.cur.r;
+
+            // Mặt cắt ngang: đoạn nối các điểm mia + chấm điểm mia
+            ctx.lineWidth = 1;
+            d.poles.forEach(p => {
+                const sx = toX(p.x), sy = toY(p.y);
+                if (!near(sx, sy, 250) || !p.pts.length) return;
+                const act = p.r === activeR;
+                const [l, r] = planSegment(p);
+                ctx.strokeStyle = act ? '#1f78d1' : '#cfcdc6';
+                ctx.lineWidth = act ? 1.5 : 1;
+                ctx.beginPath();
+                ctx.moveTo(toX(l.x), toY(l.y));
+                ctx.lineTo(sx, sy);
+                ctx.lineTo(toX(r.x), toY(r.y));
+                ctx.stroke();
+                p.pts.forEach(q => {
+                    ctx.fillStyle = CHART_COLOR[q.side];
+                    ctx.beginPath();
+                    ctx.arc(toX(q.x), toY(q.y), act ? 3 : 1.6, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            });
+
+            // Tim tuyến
+            ctx.strokeStyle = '#3b3433';
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            d.poles.forEach((p, i) => (i ? ctx.lineTo(toX(p.x), toY(p.y)) : ctx.moveTo(toX(p.x), toY(p.y))));
+            ctx.stroke();
+
+            // Cọc và nhãn tên (chỉ ghi nhãn khi đủ thưa để không chồng chữ)
+            ctx.font = '11px "Segoe UI", sans-serif';
+            let lastLX = -1e9, lastLY = -1e9;
+            d.poles.forEach(p => {
+                const sx = toX(p.x), sy = toY(p.y);
+                if (!near(sx, sy, 20)) return;
+                const act = p.r === activeR;
+                ctx.fillStyle = act ? '#1f78d1' : '#3b3433';
+                ctx.beginPath();
+                ctx.arc(sx, sy, act ? 5 : 2.5, 0, Math.PI * 2);
+                ctx.fill();
+                if (act || Math.hypot(sx - lastLX, sy - lastLY) >= 60) {
+                    ctx.fillStyle = act ? '#1f78d1' : '#555';
+                    ctx.font = (act ? 'bold ' : '') + '11px "Segoe UI", sans-serif';
+                    ctx.fillText(p.name, sx + 6, sy - 8);
+                    if (!act) { lastLX = sx; lastLY = sy; }
+                }
+            });
+
+            // Thanh tỉ lệ
+            const raw = 100 / v.s, pow = Math.pow(10, Math.floor(Math.log10(raw)));
+            const nice = [1, 2, 5, 10].map(k => k * pow).reduce((a, b) => (Math.abs(b - raw) < Math.abs(a - raw) ? b : a));
+            const len = nice * v.s;
+            ctx.strokeStyle = ctx.fillStyle = '#3b3433';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(12, h - 14); ctx.lineTo(12 + len, h - 14);
+            ctx.moveTo(12, h - 19); ctx.lineTo(12, h - 9);
+            ctx.moveTo(12 + len, h - 19); ctx.lineTo(12 + len, h - 9);
+            ctx.stroke();
+            ctx.font = '11px "Segoe UI", sans-serif';
+            ctx.fillText(`${+nice.toPrecision(3)} m`, 12, h - 24);
+        }
+
+        function updatePlan(center = false) {
+            if (!ui.showPlan) return;
+            plan.data = buildPlan();
+            const { w, h } = planSize();
+            if (center && plan.view && w) {
+                const p = plan.data.poles.find(q => q.r === topGrid.cur.r);
+                if (p) { // cọc đang chọn nằm ngoài khung nhìn thì dời khung về cọc đó
+                    const sx = w / 2 + (p.x - plan.view.cx) * plan.view.s, sy = h / 2 - (p.y - plan.view.cy) * plan.view.s;
+                    if (sx < 20 || sx > w - 20 || sy < 20 || sy > h - 20) { plan.view.cx = p.x; plan.view.cy = p.y; }
+                }
+            }
+            drawPlan(false);
+        }
+
+        function setPlanVisible(show) {
+            ui.showPlan = show;
+            $('#plan-panel').classList.toggle('hidden', !show);
+            $('#btn-plan').classList.toggle('on', show);
+            if (show) requestAnimationFrame(() => updatePlan());
+            scheduleSave();
+        }
+
+        (function setupPlanEvents() {
+            const cv = $('#canvas-plan');
+            new ResizeObserver(() => drawPlan(false)).observe(cv.parentNode);
+            cv.addEventListener('wheel', e => {
+                if (!plan.view) return;
+                e.preventDefault();
+                const rect = cv.getBoundingClientRect(), mx = e.clientX - rect.left, my = e.clientY - rect.top, v = plan.view;
+                const wx = v.cx + (mx - rect.width / 2) / v.s, wy = v.cy - (my - rect.height / 2) / v.s;
+                v.s = clamp(v.s * Math.exp(-e.deltaY * 0.0015), 1e-4, 1e5);
+                v.cx = wx - (mx - rect.width / 2) / v.s;
+                v.cy = wy + (my - rect.height / 2) / v.s;
+                drawPlan(false);
+            }, { passive: false });
+            cv.addEventListener('pointerdown', e => {
+                if (!plan.view) return;
+                cv.setPointerCapture(e.pointerId);
+                plan.drag = { x: e.clientX, y: e.clientY, cx: plan.view.cx, cy: plan.view.cy, moved: false };
+            });
+            cv.addEventListener('pointermove', e => {
+                const dr = plan.drag;
+                if (!dr) return;
+                const dx = e.clientX - dr.x, dy = e.clientY - dr.y;
+                if (!dr.moved && Math.hypot(dx, dy) < 4) return;
+                dr.moved = true;
+                cv.classList.add('dragging');
+                plan.view.cx = dr.cx - dx / plan.view.s;
+                plan.view.cy = dr.cy + dy / plan.view.s;
+                drawPlan(false);
+            });
+            cv.addEventListener('pointerup', e => {
+                const dr = plan.drag;
+                plan.drag = null;
+                cv.classList.remove('dragging');
+                if (!dr || dr.moved || !plan.data) return;
+                // Bấm (không kéo): chọn cọc có mặt cắt gần điểm bấm nhất
+                const rect = cv.getBoundingClientRect(), v = plan.view;
+                const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+                const toX = x => rect.width / 2 + (x - v.cx) * v.s, toY = y => rect.height / 2 - (y - v.cy) * v.s;
+                let best = null, bestD = 12;
+                plan.data.poles.forEach(p => {
+                    const [l, r] = planSegment(p);
+                    const pts = [[toX(l.x), toY(l.y)], [toX(p.x), toY(p.y)], [toX(r.x), toY(r.y)]];
+                    for (let i = 0; i < 2; i++) {
+                        const [ax, ay] = pts[i], [bx, by] = pts[i + 1], vx = bx - ax, vy = by - ay;
+                        const L = vx * vx + vy * vy;
+                        const t = L ? clamp(((mx - ax) * vx + (my - ay) * vy) / L, 0, 1) : 0;
+                        const dist = Math.hypot(mx - (ax + t * vx), my - (ay + t * vy));
+                        if (dist < bestD) { bestD = dist; best = p; }
+                    }
+                });
+                if (best) topGrid.setCur(best.r, topGrid.cur.c);
+            });
+            cv.addEventListener('dblclick', () => { fitPlan(); drawPlan(false); });
+            $('#plan-fit').addEventListener('click', () => { fitPlan(); drawPlan(false); });
+            $('#plan-close').addEventListener('click', () => setPlanVisible(false));
+        })();
+
+        // =====================================================================
         //  Lưu tự động (localStorage)
         // =====================================================================
         let saveTimeout;
@@ -1267,6 +1534,7 @@
                 colRadius: colVisible.radius,
                 colCount: colVisible.count,
                 chartOn: ui.showChart,
+                planOn: ui.showPlan,
                 split: ui.split
             };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { return; }
@@ -1287,6 +1555,7 @@
             if (data.colRadius !== undefined) colVisible.radius = !!data.colRadius;
             if (data.colCount !== undefined) colVisible.count = !!data.colCount;
             if (data.chartOn !== undefined) ui.showChart = !!data.chartOn;
+            if (data.planOn !== undefined) ui.showPlan = !!data.planOn;
             if (data.split) ui.split = clamp(+data.split || 55, 15, 85);
             const items = data.items || data;
             if (!Array.isArray(items)) return;
@@ -1363,6 +1632,7 @@
             pushUndo(snapshot());
             if (newModes) Object.assign(modes, newModes); // áp chế độ nhập sau khi đã lưu mốc hoàn tác
             state.sections = sections;
+            plan.view = null; // dữ liệu mới: dựng lại khung nhìn bình đồ
             lastActiveId = undefined;
             topGrid.setSilent(selectRow, 0);
             topGrid.root.scrollTop = 0;
@@ -1655,6 +1925,7 @@
             $('#btn-redo').addEventListener('click', redo);
             $('#btn-options').addEventListener('click', openOptions);
             $('#btn-chart').addEventListener('click', () => setChartVisible(!ui.showChart));
+            $('#btn-plan').addEventListener('click', () => setPlanVisible(!ui.showPlan));
             $('#btn-guide').addEventListener('click', startTutorial);
             $('#btn-generate').addEventListener('click', generateAndDownload);
             $('#btn-import-ntd').addEventListener('click', () => $('#ntd-importer').click());
@@ -1734,6 +2005,8 @@
               text: 'Tương tự, bảng <b>bên phải</b> nhập các điểm target phía bên phải tim.' },
             { element: '#btn-options', position: 'bottom',
               text: 'Mở <b>Tùy chọn</b> để chọn cách nhập khoảng cách (lẻ / cộng dồn), cao độ (tương đối / tuyệt đối) và cách hiển thị góc. Áp dụng cho toàn bộ dự án.' },
+            { element: '#btn-plan', position: 'bottom',
+              text: 'Bật <b>Bình đồ</b> để xem tim tuyến dựng từ lý trình và góc chắn cung, kèm các điểm mặt cắt ngang. Cuộn chuột để phóng to, kéo để di chuyển, bấm vào cọc để chọn dòng tương ứng.' },
             { element: '#btn-chart', position: 'bottom',
               text: 'Bật / tắt <b>biểu đồ</b> mặt cắt ngang của cọc đang chọn. Biểu đồ tự cập nhật khi bạn nhập.' },
             { element: '#btn-insert-row', position: 'bottom',
@@ -1794,6 +2067,7 @@
             loadFromLocalStorage();
             applySplit(ui.split);
             setChartVisible(ui.showChart);
+            setPlanVisible(ui.showPlan);
             setActiveGrid(topGrid);
             if (state.sections.length) topGrid.setSilent(0, 0);
             lastActiveId = undefined;
