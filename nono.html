@@ -257,6 +257,7 @@
         .opt-group h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
         .opt-group label { display: inline-flex; align-items: center; gap: 6px; margin-right: 18px; cursor: pointer; }
         .opt-group input { accent-color: var(--select); }
+        .from-file { margin-left: 2px; padding: 0 6px; border-radius: 8px; background: var(--select-soft); color: var(--select); font-size: 11px; white-space: nowrap; }
         .dialog-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 16px 14px; }
         .btn {
             min-width: 88px;
@@ -1427,13 +1428,15 @@
             const preset = hasType
                 ? { top: tm ? 'cum' : 'odd', dist: dm ? 'cum' : 'odd', elev: em ? 'abs' : (rp ? 'pole' : 'prev') }
                 : { top: modes.topCum ? 'cum' : 'odd', dist: modes.distCum ? 'cum' : 'odd', elev: modes.elevMode };
+            const word = { odd: 'lẻ', cum: 'cộng dồn', abs: 'tuyệt đối', pole: 'tương đối so với cọc', prev: 'tương đối so với điểm trước' };
             askImportOptions({
                 title: 'Import file NTD',
                 note: `File có ${sections.length} mặt cắt. ` + (hasType
-                    ? `Dòng khai báo trong file: ${typeLine}. Hãy chọn cách đọc số liệu rồi bấm Import.`
-                    : 'File không có dòng TYPEINPUT, hãy chọn cách đọc số liệu rồi bấm Import.'),
+                    ? `File khai báo (${typeLine}): khoảng cách cọc ${word[preset.top]}, khoảng cách mia ${word[preset.dist]}, cao độ ${word[preset.elev]}. Các mục này đã được chọn sẵn và đánh dấu "theo file"; bạn có thể chọn lại nếu số liệu thực tế nhập theo cách khác.`
+                    : 'File không có dòng TYPEINPUT nên không có chế độ khai báo sẵn, hãy chọn cách đọc số liệu rồi bấm Import.'),
                 show: ['top', 'dist', 'elev'],
-                preset
+                preset,
+                fromFile: hasType ? preset : null
             }, v => {
                 replaceAllSections(sections, 0, { topCum: v.top === 'cum', distCum: v.dist === 'cum', elevMode: v.elev });
                 toast(`Đã import ${sections.length} mặt cắt từ file NTD (Ctrl+Z để hoàn tác)`);
@@ -1442,11 +1445,20 @@
 
         // Hỏi người dùng chọn cách đọc số liệu trước khi import; Hủy thì không thay đổi gì
         let importCallback = null;
-        function askImportOptions({ title, note, show, preset }, onOk) {
+        function askImportOptions({ title, note, show, preset, fromFile = null }, onOk) {
             $('#imp-title').textContent = title;
             $('#imp-note').textContent = note;
             document.querySelectorAll('#import-modal [data-imp]').forEach(g => { g.style.display = show.includes(g.dataset.imp) ? '' : 'none'; });
-            show.forEach(k => { document.querySelector(`input[name="imp-${k}"][value="${preset[k]}"]`).checked = true; });
+            document.querySelectorAll('#import-modal .from-file').forEach(b => b.remove());
+            show.forEach(k => {
+                document.querySelector(`input[name="imp-${k}"][value="${preset[k]}"]`).checked = true;
+                if (fromFile) { // đánh dấu lựa chọn trùng với khai báo trong file
+                    const tag = document.createElement('span');
+                    tag.className = 'from-file';
+                    tag.textContent = 'theo file';
+                    document.querySelector(`input[name="imp-${k}"][value="${fromFile[k]}"]`).parentNode.appendChild(tag);
+                }
+            });
             importCallback = onOk;
             $('#import-modal').classList.add('active');
             $('#imp-ok').focus();
