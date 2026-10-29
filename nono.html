@@ -87,6 +87,7 @@
         .plan-panel.hidden { display: none; }
         .plan-panel .pane-title b { flex: 0 0 auto; }
         .plan-panel .pane-title .hint { flex: 1; min-width: 0; margin-left: 0; }
+        .plan-num { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; white-space: nowrap; cursor: pointer; }
         .plan-btn { padding: 1px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 11px; cursor: pointer; white-space: nowrap; }
         .plan-btn:hover { background: #eef0e6; }
         .plan-body { position: relative; flex: 1; min-height: 0; }
@@ -384,6 +385,7 @@
         <div class="pane-title">
             <b>Bình đồ</b>
             <span class="hint" title="Cuộn chuột: phóng to/thu nhỏ · Kéo: di chuyển · Bấm cọc: chọn dòng · Bấm đúp: vừa khung">Cuộn: thu/phóng · Kéo: di chuyển · Bấm cọc: chọn</span>
+            <label class="plan-num" title="Ghi lý trình, khoảng cách và cao độ lên bình đồ"><input type="checkbox" id="plan-nums"> Ghi số</label>
             <button class="plan-btn" id="plan-fit" title="Hiển thị toàn tuyến">Vừa khung</button>
             <button class="plan-btn" id="plan-close" title="Đóng bình đồ">&times;</button>
         </div>
@@ -538,7 +540,7 @@
                 return acc;
             });
         }
-        const ui = { showChart: false, showPlan: false, split: 55 };
+        const ui = { showChart: false, showPlan: false, planNums: true, split: 55 };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
         const newSection = () => ({ id: nextId++, name: '', cumulative: '', elevation: '', angle: '', radius: '', left: [], right: [] });
@@ -1304,16 +1306,17 @@
                 const a = s.angle === '' ? 180 : (parseFloat(s.angle) || 0);
                 const turn = (180 - a) * Math.PI / 180;
                 const h = heading + turn / 2; // hướng pháp tuyến lấy theo phân giác tại cọc đổi hướng
-                const pole = { r, name: s.name || `Mặt cắt ${r + 1}`, x, y, pts: [] };
+                const pole = { r, name: s.name || `Mặt cắt ${r + 1}`, c, x, y, pts: [] };
                 [['left', 1], ['right', -1]].forEach(([side, sign]) => {
                     let acc = 0;
-                    s[side].forEach(t => {
+                    const absE = absElevations(s, side);
+                    s[side].forEach((t, i) => {
                         if (t.dist === '') return;
                         const d = parseFloat(t.dist) || 0;
                         acc += d;
                         const off = modes.distCum ? d : acc;
                         // vuông góc với tim: bên trái = (-sin, cos), bên phải = (sin, -cos)
-                        pole.pts.push({ side, x: x - sign * off * Math.sin(h), y: y + sign * off * Math.cos(h), off });
+                        pole.pts.push({ side, x: x - sign * off * Math.sin(h), y: y + sign * off * Math.cos(h), off, elev: absE[i] });
                     });
                 });
                 heading += turn;
@@ -1398,9 +1401,7 @@
             d.poles.forEach((p, i) => (i ? ctx.lineTo(toX(p.x), toY(p.y)) : ctx.moveTo(toX(p.x), toY(p.y))));
             ctx.stroke();
 
-            // Cọc và nhãn tên (chỉ ghi nhãn khi đủ thưa để không chồng chữ)
-            ctx.font = '11px "Segoe UI", sans-serif';
-            let lastLX = -1e9, lastLY = -1e9;
+            // Cọc
             d.poles.forEach(p => {
                 const sx = toX(p.x), sy = toY(p.y);
                 if (!near(sx, sy, 20)) return;
@@ -1409,13 +1410,44 @@
                 ctx.beginPath();
                 ctx.arc(sx, sy, act ? 5 : 2.5, 0, Math.PI * 2);
                 ctx.fill();
-                if (act || Math.hypot(sx - lastLX, sy - lastLY) >= 60) {
-                    ctx.fillStyle = act ? '#1f78d1' : '#555';
-                    ctx.font = (act ? 'bold ' : '') + '11px "Segoe UI", sans-serif';
-                    ctx.fillText(p.name, sx + 6, sy - 8);
-                    if (!act) { lastLX = sx; lastLY = sy; }
-                }
             });
+
+            // Ghi số: lý trình ở cọc, khoảng cách | cao độ ở từng điểm mia. Ưu tiên cọc đang chọn,
+            // nhãn nào chồng lên nhãn đã vẽ thì bỏ qua (phóng to để thấy thêm).
+            if (ui.planNums) {
+                const CELL = 60, grid = new Map();
+                const cellsOf = (x, y, w2, h2) => {
+                    const out = [];
+                    for (let i = Math.floor(x / CELL); i <= Math.floor((x + w2) / CELL); i++)
+                        for (let j = Math.floor(y / CELL); j <= Math.floor((y + h2) / CELL); j++) out.push(i + ',' + j);
+                    return out;
+                };
+                const label = (text, x, y, color, bold) => {
+                    ctx.font = (bold ? 'bold ' : '') + '11px "Segoe UI", sans-serif';
+                    const tw = ctx.measureText(text).width, th = 12, bx = x, by = y - th + 2;
+                    if (bx + tw < 0 || bx > w || by + th < 0 || by > h) return false;
+                    const cells = cellsOf(bx, by, tw, th);
+                    for (const k of cells) for (const q of (grid.get(k) || [])) {
+                        if (bx < q[0] + q[2] + 2 && bx + tw + 2 > q[0] && by < q[1] + q[3] && by + th > q[1]) return false;
+                    }
+                    const box = [bx, by, tw, th];
+                    cells.forEach(k => { if (!grid.has(k)) grid.set(k, []); grid.get(k).push(box); });
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+                    ctx.strokeText(text, x, y);
+                    ctx.fillStyle = color;
+                    ctx.fillText(text, x, y);
+                    return true;
+                };
+                const num = v => String(+v.toFixed(3));
+                const poleLabel = (p, act) => label(`${p.name}  ${num(p.c)}`, toX(p.x) + 7, toY(p.y) - 8, act ? '#1f78d1' : '#3b3433', act);
+                const ptLabels = (p, act) => p.pts.forEach(q => label(`${num(q.off)} | ${num(q.elev)}`, toX(q.x) + 6, toY(q.y) + 4, CHART_COLOR[q.side], false));
+                const vis = d.poles.filter(p => near(toX(p.x), toY(p.y), 250));
+                const ap = vis.find(p => p.r === activeR);
+                if (ap) { poleLabel(ap, true); ptLabels(ap, true); }
+                vis.forEach(p => { if (p !== ap && near(toX(p.x), toY(p.y), 20)) poleLabel(p, false); });
+                if (v.s >= 0.3) vis.forEach(p => { if (p !== ap) ptLabels(p, false); }); // xa hơn thì điểm mia dày đặc, không ghi
+            }
 
             // Thanh tỉ lệ
             const raw = 100 / v.s, pow = Math.pow(10, Math.floor(Math.log10(raw)));
@@ -1450,6 +1482,7 @@
             ui.showPlan = show;
             $('#plan-panel').classList.toggle('hidden', !show);
             $('#btn-plan').classList.toggle('on', show);
+            $('#plan-nums').checked = ui.planNums;
             if (show) requestAnimationFrame(() => updatePlan());
             scheduleSave();
         }
@@ -1507,6 +1540,8 @@
                 if (best) topGrid.setCur(best.r, topGrid.cur.c);
             });
             cv.addEventListener('dblclick', () => { fitPlan(); drawPlan(false); });
+            $('#plan-nums').checked = ui.planNums;
+            $('#plan-nums').addEventListener('change', e => { ui.planNums = e.target.checked; drawPlan(false); scheduleSave(); });
             $('#plan-fit').addEventListener('click', () => { fitPlan(); drawPlan(false); });
             $('#plan-close').addEventListener('click', () => setPlanVisible(false));
         })();
@@ -1535,6 +1570,7 @@
                 colCount: colVisible.count,
                 chartOn: ui.showChart,
                 planOn: ui.showPlan,
+                planNums: ui.planNums,
                 split: ui.split
             };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { return; }
@@ -1556,6 +1592,7 @@
             if (data.colCount !== undefined) colVisible.count = !!data.colCount;
             if (data.chartOn !== undefined) ui.showChart = !!data.chartOn;
             if (data.planOn !== undefined) ui.showPlan = !!data.planOn;
+            if (data.planNums !== undefined) ui.planNums = !!data.planNums;
             if (data.split) ui.split = clamp(+data.split || 55, 15, 85);
             const items = data.items || data;
             if (!Array.isArray(items)) return;
