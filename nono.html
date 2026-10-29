@@ -416,6 +416,36 @@
         </div>
     </div>
 
+    <!-- Hộp thoại chọn cách đọc số liệu khi import -->
+    <div id="import-modal" class="modal-overlay">
+        <div class="dialog">
+            <div class="dialog-head"><span id="imp-title">Tùy chọn nhập liệu khi import</span><button class="dialog-x" id="imp-close" title="Hủy import">&times;</button></div>
+            <div class="dialog-body">
+                <p id="imp-note"></p>
+                <div class="opt-group" data-imp="top">
+                    <h5>Bảng cọc – cột khoảng cách</h5>
+                    <label><input type="radio" name="imp-top" value="odd"> Khoảng cách lẻ</label>
+                    <label><input type="radio" name="imp-top" value="cum"> Lý trình (cộng dồn)</label>
+                </div>
+                <div class="opt-group" data-imp="dist">
+                    <h5>Bảng mặt cắt ngang – khoảng cách</h5>
+                    <label><input type="radio" name="imp-dist" value="odd"> Khoảng cách lẻ</label>
+                    <label><input type="radio" name="imp-dist" value="cum"> Khoảng cách cộng dồn</label>
+                </div>
+                <div class="opt-group" data-imp="elev">
+                    <h5>Bảng mặt cắt ngang – cao độ</h5>
+                    <label><input type="radio" name="imp-elev" value="abs"> Cao độ tuyệt đối</label>
+                    <label><input type="radio" name="imp-elev" value="pole"> Tương đối so với cao độ cọc</label>
+                    <label><input type="radio" name="imp-elev" value="prev"> Tương đối so với điểm trước</label>
+                </div>
+            </div>
+            <div class="dialog-foot">
+                <button class="btn primary" id="imp-ok">Import</button>
+                <button class="btn" id="imp-cancel">Hủy</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Hộp thoại xác nhận / thông báo -->
     <div id="confirmation-modal" class="modal-overlay">
         <div class="dialog">
@@ -1325,8 +1355,9 @@
             toast('Đã tạo file LEDAT_data.ntd');
         }
 
-        function replaceAllSections(sections, selectRow = 0) {
+        function replaceAllSections(sections, selectRow = 0, newModes = null) {
             pushUndo(snapshot());
+            if (newModes) Object.assign(modes, newModes); // áp chế độ nhập sau khi đã lưu mốc hoàn tác
             state.sections = sections;
             lastActiveId = undefined;
             topGrid.setSilent(selectRow, 0);
@@ -1359,13 +1390,15 @@
 
         function processNtdData(text) {
             const sections = [];
-            let cur = null, tm = true, dm = modes.distCum, em = modes.elevMode === 'abs', rp = false;
+            let cur = null, tm = true, dm = true, em = true, rp = false, hasType = false, typeLine = '';
             text.trim().split(/\r?\n/).forEach(line => {
                 // Các thành phần cách nhau bằng tab (tên cọc có thể chứa dấu cách); file không có tab thì tách theo khoảng trắng
                 const parts = line.includes('\t') ? line.split('\t').map(s => s.trim()) : line.trim().split(/\s+/);
                 const cmd = (parts[0] || '').toUpperCase();
                 if (cmd === 'TYPEINPUT') {
-                    tm = (parseInt(parts[1]) || 0) === 0;   // khoảng cách cọc: 0 = cộng dồn
+                    hasType = true;
+                    typeLine = parts.join(' ');
+                    tm =(parseInt(parts[1]) || 0) === 0;   // khoảng cách cọc: 0 = cộng dồn
                     dm = (parseInt(parts[2]) || 0) === 0;   // khoảng cách mia: 0 = cộng dồn
                     em = (parseInt(parts[3]) || 0) === 0;   // cao độ mia: 0 = tuyệt đối
                     rp = (parseInt(parts[4]) || 0) === 1;   // 1 = cao độ tương đối so với cọc
@@ -1394,11 +1427,44 @@
                 openModal({ title: 'Lỗi Import NTD', message: 'Không tìm thấy dòng POLE nào trong file.', hideCancel: true, confirmText: 'Đóng', confirmClass: 'primary' });
                 return;
             }
-            modes.topCum = tm;
-            modes.distCum = dm;
-            modes.elevMode = em ? 'abs' : (rp ? 'pole' : 'prev'); // cờ 3 = 1: chênh cao; cờ 4 = 1: so với cọc, ngược lại so với điểm trước
-            replaceAllSections(sections);
-            toast(`Đã import ${sections.length} mặt cắt từ file NTD (Ctrl+Z để hoàn tác)`);
+            // Không tự suy đoán: hỏi người dùng cách đọc số liệu. Giá trị chọn sẵn lấy từ dòng TYPEINPUT của file (nếu có).
+            const preset = hasType
+                ? { top: tm ? 'cum' : 'odd', dist: dm ? 'cum' : 'odd', elev: em ? 'abs' : (rp ? 'pole' : 'prev') }
+                : { top: modes.topCum ? 'cum' : 'odd', dist: modes.distCum ? 'cum' : 'odd', elev: modes.elevMode };
+            askImportOptions({
+                title: 'Import file NTD',
+                note: `File có ${sections.length} mặt cắt. ` + (hasType
+                    ? `Dòng khai báo trong file: ${typeLine}. Hãy chọn cách đọc số liệu rồi bấm Import.`
+                    : 'File không có dòng TYPEINPUT, hãy chọn cách đọc số liệu rồi bấm Import.'),
+                show: ['top', 'dist', 'elev'],
+                preset
+            }, v => {
+                replaceAllSections(sections, 0, { topCum: v.top === 'cum', distCum: v.dist === 'cum', elevMode: v.elev });
+                toast(`Đã import ${sections.length} mặt cắt từ file NTD (Ctrl+Z để hoàn tác)`);
+            });
+        }
+
+        // Hỏi người dùng chọn cách đọc số liệu trước khi import; Hủy thì không thay đổi gì
+        let importCallback = null;
+        function askImportOptions({ title, note, show, preset }, onOk) {
+            $('#imp-title').textContent = title;
+            $('#imp-note').textContent = note;
+            document.querySelectorAll('#import-modal [data-imp]').forEach(g => { g.style.display = show.includes(g.dataset.imp) ? '' : 'none'; });
+            show.forEach(k => { document.querySelector(`input[name="imp-${k}"][value="${preset[k]}"]`).checked = true; });
+            importCallback = onOk;
+            $('#import-modal').classList.add('active');
+            $('#imp-ok').focus();
+        }
+        function closeImport(accept) {
+            const cb = importCallback;
+            importCallback = null;
+            let values = null;
+            if (accept && cb) {
+                const val = k => { const el = document.querySelector(`input[name="imp-${k}"]:checked`); return el ? el.value : null; };
+                values = { top: val('top'), dist: val('dist'), elev: val('elev') };
+            }
+            $('#import-modal').classList.remove('active');
+            if (values) cb(values);
         }
 
         function parseLyTrinh(str) {
@@ -1432,9 +1498,15 @@
                 s.angle = ang === null ? '' : ang;
                 sections.push(s);
             });
-            modes.topCum = true;
-            replaceAllSections(sections);
-            toast(`Đã import ${sections.length} cọc từ file CSV (Ctrl+Z để hoàn tác)`);
+            askImportOptions({
+                title: 'Import file CSV',
+                note: `File có ${sections.length} cọc. Cột LY TRINH trong file là lý trình cộng dồn hay khoảng cách lẻ giữa các cọc?`,
+                show: ['top'],
+                preset: { top: modes.topCum ? 'cum' : 'odd' }
+            }, v => {
+                replaceAllSections(sections, 0, { topCum: v.top === 'cum' });
+                toast(`Đã import ${sections.length} cọc từ file CSV (Ctrl+Z để hoàn tác)`);
+            });
         }
 
         // =====================================================================
@@ -1584,6 +1656,10 @@
             $('#modal-confirm-btn').addEventListener('click', () => { const cb = confirmCallback; closeModal(); if (cb) cb(); });
             $('#confirmation-modal').addEventListener('click', e => { if (e.target.id === 'confirmation-modal') closeModal(); });
             $('#opt-ok').addEventListener('click', applyOptions);
+            $('#imp-ok').addEventListener('click', () => closeImport(true));
+            $('#imp-cancel').addEventListener('click', () => closeImport(false));
+            $('#imp-close').addEventListener('click', () => closeImport(false));
+            $('#import-modal').addEventListener('click', e => { if (e.target.id === 'import-modal') closeImport(false); });
             $('#opt-cancel').addEventListener('click', closeOptions);
             $('#opt-close').addEventListener('click', closeOptions);
             $('#options-modal').addEventListener('click', e => { if (e.target.id === 'options-modal') closeOptions(); });
@@ -1591,12 +1667,14 @@
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape') {
                     hideMenu();
-                    if ($('#options-modal').classList.contains('active')) closeOptions();
+                    if ($('#import-modal').classList.contains('active')) closeImport(false);
+                    else if ($('#options-modal').classList.contains('active')) closeOptions();
                     else if ($('#confirmation-modal').classList.contains('active')) closeModal();
                     return;
                 }
-                if ($('#options-modal').classList.contains('active') || $('#confirmation-modal').classList.contains('active')) {
-                    if (e.key === 'Enter' && $('#options-modal').classList.contains('active')) { e.preventDefault(); applyOptions(); }
+                if (['#import-modal', '#options-modal', '#confirmation-modal'].some(id => $(id).classList.contains('active'))) {
+                    if (e.key === 'Enter' && $('#import-modal').classList.contains('active')) { e.preventDefault(); closeImport(true); }
+                    else if (e.key === 'Enter' && $('#options-modal').classList.contains('active')) { e.preventDefault(); applyOptions(); }
                     return;
                 }
                 if (!(e.ctrlKey || e.metaKey)) return;
