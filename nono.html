@@ -4883,7 +4883,7 @@ EOF
                 const delta = pk ? pk.turn : 0;
                 const Lc = list[j].c - p.c, Ls1 = p.c - list[a].c, Ls2 = list[b].c - list[j].c, L = Lc + (Ls1 + Ls2) / 2;
                 if (Math.abs(delta) < 1e-12 || Lc < 0 || Ls1 < 0 || Ls2 < 0 || L <= 0) return;
-                out.push({ c0: list[a].c, cTD: p.c, cTC: list[j].c, c1: list[b].c, k: delta / L, Ls1, Ls2 });
+                out.push({ c0: list[a].c, cTD: p.c, cTC: list[j].c, c1: list[b].c, k: delta / L, Ls1, Ls2, ia: a, ib: b, delta, R: L / Math.abs(delta) });
             });
             return out;
         }
@@ -4980,6 +4980,42 @@ EOF
             return { poles, segs, curves, axis: axisPoints(segs) };
         }
 
+        // Ký hiệu đường cong như ADS (lớp tim tuyến): tiếp tuyến TD–đỉnh–TC (màu 9), tam giác ở đỉnh chĩa về tâm (màu 3),
+        // khung chữ yếu tố cong (màu 3) cách đỉnh 24 m về phía tâm: A (góc đỉnh), R, D = 2T − K, P (phân cự), K (chiều dài cong), T (tiếp tuyến)
+        function curveMarkItems(d) {
+            if (d.marks) return d.marks;
+            const items = [];
+            const trim = v => String(parseFloat(v.toFixed(3)));
+            d.curves.forEach(cv => {
+                const p0 = d.poles[cv.ia], p1 = d.poles[cv.ib];
+                if (!p0 || !p1) return;
+                const t0 = [Math.cos(p0.h), Math.sin(p0.h)], t1 = [Math.cos(p1.h), Math.sin(p1.h)];
+                const cr = t0[0] * t1[1] - t0[1] * t1[0];
+                if (Math.abs(cr) < 1e-12) return;
+                const sv = ((p1.x - p0.x) * t1[1] - (p1.y - p0.y) * t1[0]) / cr;
+                const V = [p0.x + sv * t0[0], p0.y + sv * t0[1]];
+                const hm = (p0.h + p1.h) / 2, t = [Math.cos(hm), Math.sin(hm)], n = [-t[1], t[0]];
+                const u = cv.delta > 0 ? n : [-n[0], -n[1]]; // về phía tâm cung
+                const at = (a, b) => [V[0] + a * t[0] + b * u[0], V[1] + a * t[1] + b * u[1]];
+                items.push(dPoly([[p0.x, p0.y], V, [p1.x, p1.y]], LAYER.plAxis, { aci: 9 }));
+                items.push(dPoly([at(0, 4 / 3), at(1, -0.399), at(-1, -0.399), at(0, 4 / 3)], LAYER.plAxis, { aci: 3 }));
+                // Có đường cong chuyển tiếp dài Ls: độ dịch p = Ls²/24R, t = Ls/2 − Ls³/240R², K là toàn bộ chiều dài ND→NC
+                const D = Math.abs(cv.delta), R = cv.R, Ls = (cv.Ls1 + cv.Ls2) / 2, pp = Ls * Ls / (24 * R);
+                const T = (R + pp) * Math.tan(D / 2) + Ls / 2 - Ls ** 3 / (240 * R * R), K = cv.c1 - cv.c0, P = (R + pp) / Math.cos(D / 2) - R;
+                const lines = [`A = ${dmsSigned(180 - D * 180 / Math.PI).replace('"', "''")} R = ${Math.round(R / 5) * 5}`,
+                    `D = ${trim(2 * T - K)} P = ${trim(P)}`, `K = ${K.toFixed(3)} T = ${T.toFixed(3)}`];
+                const hw = (0.92 * Math.max(...lines.map(l => l.length)) - 3.66) / 2, hh = 2.4175;
+                const C = [V[0] + 24.1 * u[0], V[1] + 24.1 * u[1]];
+                const bx = (a, b) => [C[0] + a * t[0] + b * n[0], C[1] + a * t[1] + b * n[1]]; // b: theo chiều đứng của chữ
+                items.push(dPoly([bx(-hw, hh), bx(hw, hh), bx(hw, -hh), bx(-hw, -hh), bx(-hw, hh)], LAYER.plAxis, { aci: 3 }));
+                [1.0115, -0.4905, -1.9955].forEach((yy, i) => {
+                    const [x, y] = bx(0, yy);
+                    items.push(dText(lines[i], x, y, 1, hm * 180 / Math.PI, 'c', 'b', LAYER.plAxis, { style: 'pn', wf: 1 }));
+                });
+            });
+            return (d.marks = items);
+        }
+
         // Các điểm của tim tuyến để vẽ lên màn hình (cung tròn chia nhỏ theo góc)
         function axisPoints(segs) {
             const out = [];
@@ -5071,6 +5107,21 @@ EOF
             ctx.beginPath();
             d.axis.forEach(([px, py], i) => (i ? ctx.lineTo(toX(px), toY(py)) : ctx.moveTo(toX(px), toY(py))));
             ctx.stroke();
+
+            // Ký hiệu đường cong như ADS; khi thu nhỏ (ký hiệu thật quá bé) thì đánh dấu đỉnh cong bằng tam giác cỡ cố định
+            const marks = curveMarkItems(d);
+            renderItems(ctx, marks, v, w, h);
+            if (v.s < 3) {
+                ctx.fillStyle = '#00ff00';
+                marks.filter((it, i) => i % 6 === 1).forEach(it => { // tam giác đỉnh của mỗi đường cong
+                    const [ax, ay] = it.pts[0], sx = toX(ax), sy = toY(ay);
+                    if (!near(sx, sy, 10)) return;
+                    ctx.beginPath();
+                    ctx.moveTo(sx, sy - 6); ctx.lineTo(sx + 5, sy + 4); ctx.lineTo(sx - 5, sy + 4);
+                    ctx.closePath();
+                    ctx.fill();
+                });
+            }
 
             // Cọc
             d.poles.forEach(p => {
@@ -5449,6 +5500,7 @@ EOF
             if (!d.poles.length) return items;
             const T = { style: 'pn', wf: 1 };
             d.segs.forEach(sg => items.push(sg.t === 'arc' ? dArc(sg.x, sg.y, sg.r, sg.a0, sg.a1, LAYER.plAxis) : dPoly(sg.pts, LAYER.plAxis)));
+            curveMarkItems(d).forEach(it => items.push(Object.assign({}, it)));
             let prevSide = 1;
             d.poles.forEach((p, i) => {
                 const tx = Math.cos(p.h), ty = Math.sin(p.h), nx = -ty, ny = tx, rot = p.h * 180 / Math.PI;
@@ -5630,6 +5682,56 @@ EOF
             return ctx.createPattern(hatchCache[color], 'repeat');
         }
 
+        // Vẽ danh sách đối tượng bản vẽ lên canvas theo khung nhìn v = { s, cx, cy } (màu như AutoCAD)
+        function renderItems(ctx, items, v, w, h) {
+            const X = x => w / 2 + (x - v.cx) * v.s, Y = y => h / 2 - (y - v.cy) * v.s;
+            const wx0 = v.cx - w / 2 / v.s, wx1 = v.cx + w / 2 / v.s, wy0 = v.cy - h / 2 / v.s, wy1 = v.cy + h / 2 / v.s;
+            ctx.lineJoin = 'round';
+            items.forEach(it => {
+                const b = it.bb || (it.bb = itemBox(it));
+                if (b[2] < wx0 || b[0] > wx1 || b[3] < wy0 || b[1] > wy1) return;
+                if (it.t === 'text') {
+                    const px = it.h * v.s;
+                    if (px < 3.5) return;
+                    ctx.save();
+                    ctx.translate(X(it.x), Y(it.y));
+                    if (it.rot) ctx.rotate(-it.rot * Math.PI / 180);
+                    if (it.wf && it.wf !== 1) ctx.scale(it.wf, 1);
+                    ctx.font = `${px}px "Segoe UI", Arial, sans-serif`;
+                    ctx.textAlign = { l: 'left', c: 'center', r: 'right', M: 'center' }[it.ha] || 'left';
+                    ctx.textBaseline = { m: 'middle', t: 'top', bt: 'bottom' }[it.va] || 'alphabetic';
+                    ctx.fillStyle = aciColor(it);
+                    ctx.fillText(it.s, 0, 0);
+                    ctx.restore();
+                } else if (it.t === 'arc') { // trục y màn hình hướng xuống nên góc đổi dấu
+                    ctx.strokeStyle = aciColor(it);
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(X(it.x), Y(it.y), it.r * v.s, -it.a0 * Math.PI / 180, -it.a1 * Math.PI / 180, true);
+                    ctx.stroke();
+                } else if (it.t === 'circle') {
+                    ctx.strokeStyle = aciColor(it);
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(X(it.x), Y(it.y), Math.max(it.r * v.s, 1.5), 0, Math.PI * 2);
+                    ctx.stroke();
+                } else {
+                    ctx.beginPath();
+                    it.pts.forEach(([x, y], i) => (i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y))));
+                    const col = aciColor(it);
+                    if (it.t === 'fill') {
+                        ctx.closePath();
+                        ctx.fillStyle = it.hatch ? hatchPattern(ctx, col) : col;
+                        ctx.fill();
+                        if (it.hatch) return; // HATCH không có đường biên riêng
+                    }
+                    ctx.strokeStyle = col;
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            });
+        }
+
         class DrawView {
             constructor(canvas, opts = {}) {
                 this.cv = canvas;
@@ -5711,51 +5813,7 @@ EOF
                 if (!this.view) return;
                 const v = this.view, X = x => w / 2 + (x - v.cx) * v.s, Y = y => h / 2 - (y - v.cy) * v.s;
                 drawCadGrid(ctx, w, h, v);
-                const wx0 = v.cx - w / 2 / v.s, wx1 = v.cx + w / 2 / v.s, wy0 = v.cy - h / 2 / v.s, wy1 = v.cy + h / 2 / v.s;
-                ctx.lineJoin = 'round';
-                this.items.forEach(it => {
-                    const b = it.bb;
-                    if (b[2] < wx0 || b[0] > wx1 || b[3] < wy0 || b[1] > wy1) return;
-                    if (it.t === 'text') {
-                        const px = it.h * v.s;
-                        if (px < 3.5) return;
-                        ctx.save();
-                        ctx.translate(X(it.x), Y(it.y));
-                        if (it.rot) ctx.rotate(-it.rot * Math.PI / 180);
-                        if (it.wf && it.wf !== 1) ctx.scale(it.wf, 1);
-                        ctx.font = `${px}px "Segoe UI", Arial, sans-serif`;
-                        ctx.textAlign = { l: 'left', c: 'center', r: 'right', M: 'center' }[it.ha] || 'left';
-                        ctx.textBaseline = { m: 'middle', t: 'top', bt: 'bottom' }[it.va] || 'alphabetic';
-                        ctx.fillStyle = aciColor(it);
-                        ctx.fillText(it.s, 0, 0);
-                        ctx.restore();
-                    } else if (it.t === 'arc') { // trục y màn hình hướng xuống nên góc đổi dấu
-                        ctx.strokeStyle = aciColor(it);
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.arc(X(it.x), Y(it.y), it.r * v.s, -it.a0 * Math.PI / 180, -it.a1 * Math.PI / 180, true);
-                        ctx.stroke();
-                    } else if (it.t === 'circle') {
-                        ctx.strokeStyle = aciColor(it);
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.arc(X(it.x), Y(it.y), Math.max(it.r * v.s, 1.5), 0, Math.PI * 2);
-                        ctx.stroke();
-                    } else {
-                        ctx.beginPath();
-                        it.pts.forEach(([x, y], i) => (i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y))));
-                        const col = aciColor(it);
-                        if (it.t === 'fill') {
-                            ctx.closePath();
-                            ctx.fillStyle = it.hatch ? hatchPattern(ctx, col) : col;
-                            ctx.fill();
-                            if (it.hatch) return; // HATCH không có đường biên riêng
-                        }
-                        ctx.strokeStyle = col;
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
-                });
+                renderItems(ctx, this.items, v, w, h);
                 if (this.opts.overlay) this.opts.overlay(ctx, X, Y, v.s, w, h);
             }
         }
