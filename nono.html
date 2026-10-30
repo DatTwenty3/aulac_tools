@@ -1053,7 +1053,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461344.4421527777
+2461344.4553935183
   9
 $TDUCREATE
  40
@@ -1061,7 +1061,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461344.4421527777
+2461344.4553935183
   9
 $TDUUPDATE
  40
@@ -1113,7 +1113,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-44
+45
   9
 $SURFTAB1
  70
@@ -1493,11 +1493,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{64EED992-7926-44A1-811F-A397A6F950C4}
+{6C643EA4-46B7-4136-88E0-F7E349C6AF63}
   9
 $VERSIONGUID
   2
-{018EAD77-F47D-479F-B52E-FB9F11DC0668}
+{BB6CB1A8-5FEE-4079-9025-041FE7D58D3D}
   9
 $EXTNAMES
 290
@@ -2113,7 +2113,7 @@ LAYER
 100
 AcDbSymbolTable
  70
-18
+19
   0
 LAYER
   5
@@ -2549,6 +2549,30 @@ Continuous
 347
 21
   0
+LAYER
+  5
+3F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1107-Cọc cắm cong
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
 ENDTAB
   0
 TABLE
@@ -2593,7 +2617,7 @@ txt
   0
 STYLE
   5
-3F
+40
 330
 5
 100
@@ -2621,7 +2645,7 @@ arial.ttf
   0
 STYLE
   5
-40
+41
 330
 5
 100
@@ -2705,7 +2729,7 @@ ACAD
   0
 APPID
   5
-41
+42
 330
 3
 100
@@ -2719,7 +2743,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-42
+43
 330
 3
 100
@@ -4017,7 +4041,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-43
+44
   0
 DICTIONARYVAR
   5
@@ -4029,11 +4053,11 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-30T03:36:42.864917+00:00
+1.4.4 @ 2026-10-30T03:55:46.903291+00:00
   0
 DICTIONARYVAR
   5
-43
+44
 330
 2D
 100
@@ -4041,7 +4065,7 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-30T03:36:42.865917+00:00
+1.4.4 @ 2026-10-30T03:55:46.904291+00:00
   0
 ENDSEC
   0
@@ -4834,7 +4858,7 @@ EOF
                 const a = s.angle === '' ? 180 : (parseFloat(s.angle) || 0);
                 const turn = (180 - a) * Math.PI / 180;
                 const h = heading + turn / 2; // hướng pháp tuyến lấy theo phân giác tại cọc đổi hướng
-                const pole = { r, name: s.name || `Mặt cắt ${r + 1}`, c, x, y, pts: [] };
+                const pole = { r, name: s.name || `Mặt cắt ${r + 1}`, c, x, y, h, pts: [] };
                 [['left', 1], ['right', -1]].forEach(([side, sign]) => {
                     let acc = 0;
                     const absE = absElevations(s, side);
@@ -5074,7 +5098,7 @@ EOF
             pGround: 'KS-TUY-2401-Trắc dọc tự nhiên', pStation: 'TK-ADS-9307-Lý trình trắc dọc',
             xBand: 'TK-ADS-9402-Bảng trắc ngang', xText: 'TK-ADS-9403-Chữ trắc ngang', xDong: 'TK-ADS-9405-Đ.dóng trắc ngang',
             xGround: 'KS-TUY-2501-Trắc ngang tự nhiên', xOld: 'KS-TUY-2502-Trắc ngang đường cũ', xTitle: 'TK-ADS-9407-Lý trình trắc ngang',
-            plAxis: 'TK-DBO-1101-Tim tuyến', plPole: 'TK-DBO-1104-Cọc lý trình', plH: 'TK-DBO-1105-Cọc H', plKm: 'TK-DBO-1106-Cọc Km', plPoint: 'KS-DHI-1101-Điểm đo'
+            plAxis: 'TK-DBO-1101-Tim tuyến', plPole: 'TK-DBO-1104-Cọc lý trình', plH: 'TK-DBO-1105-Cọc H', plKm: 'TK-DBO-1106-Cọc Km', plCurve: 'TK-DBO-1107-Cọc cắm cong', plPoint: 'KS-DHI-1101-Điểm đo'
         };
         const dLine = (x1, y1, x2, y2, layer, o = {}) => Object.assign({ t: 'line', pts: [[x1, y1], [x2, y2]], layer }, o);
         const dPoly = (pts, layer, o = {}) => Object.assign({ t: 'poly', pts, layer }, o);
@@ -5284,22 +5308,42 @@ EOF
             return all;
         }
 
-        // Bình đồ dạng đối tượng (dùng khi xuất DXF). Tim tuyến/cọc trong ADS là đối tượng riêng của ADS,
-        // ở đây dùng đối tượng AutoCAD thường đặt trên đúng lớp của ADS.
+        // Bình đồ dạng đối tượng (dùng khi xuất DXF), theo cách ADS vẽ:
+        // - Cọc: vạch 1 m vuông góc tim tại cọc, vạch thứ hai cách tim 20 m, tên cọc (cao 1.5) cách tim 30 m,
+        //   đổi bên so với cọc trước, xoay theo hướng tuyến; lớp theo loại cọc (lý trình, H, Km, cọc cắm cong).
+        // - Điểm đo: chấm tròn r = 0.1, cao độ ghi kiểu trắc địa với chấm là dấu thập phân (chữ cao 2).
         function buildPlanItems() {
-            const d = buildPlan(), items = [], ch = sectionChainages();
+            const d = buildPlan(), items = [];
             if (!d.poles.length) return items;
+            const T = { style: 'pn', wf: 1 };
             items.push(dPoly(d.poles.map(p => [p.x, p.y]), LAYER.plAxis));
-            d.poles.forEach(p => {
-                const isKm = Math.abs(ch[p.r] / 1000 - Math.round(ch[p.r] / 1000)) < 1e-6;
-                const layer = isKm ? LAYER.plKm : /^H\d+/i.test(p.name) ? LAYER.plH : LAYER.plPole;
-                items.push(dCircle(p.x, p.y, 0.6, layer));
-                items.push(dText(p.name, p.x + 1, p.y + 1, 1.5, 0, 'l', 'b', layer, { style: 'pd', wf: 0.8 }));
-                if (p.pts.length) {
-                    const [l, r] = planSegment(p);
-                    items.push(dPoly([[l.x, l.y], [p.x, p.y], [r.x, r.y]], LAYER.plPoint));
-                    p.pts.forEach(q => items.push(dCircle(q.x, q.y, 0.15, LAYER.plPoint)));
-                }
+            let prevSide = 1;
+            d.poles.forEach((p, i) => {
+                const tx = Math.cos(p.h), ty = Math.sin(p.h), nx = -ty, ny = tx, rot = p.h * 180 / Math.PI;
+                const at = (a, b) => [p.x + a * tx + b * nx, p.y + a * ty + b * ny]; // a: dọc tuyến, b: vuông góc (trái +)
+                const nm = p.name.trim();
+                const layer = /^(ND|TD|P|TC|NC)\d*$/i.test(nm) ? LAYER.plCurve
+                    : (/^KM\s*\d+/i.test(nm) || (i > 0 && Math.abs(p.c / 1000 - Math.round(p.c / 1000)) < 1e-6)) ? LAYER.plKm
+                        : /^H\d+/i.test(nm) ? LAYER.plH : LAYER.plPole;
+                // Bên ghi tên: ngược bên với cọc trước; cọc đổi hướng ghi về phía rẽ (góc < 180° trên/trái, > 180° dưới/phải)
+                const a = parseFloat(state.sections[p.r].angle);
+                const side = isFinite(a) && Math.abs(a - 180) > 1e-6 ? (a < 180 ? 1 : -1) : -prevSide;
+                prevSide = side;
+                items.push(dPoly([at(0, 0.5), at(0, -0.5)], layer));
+                items.push(dPoly([at(0, side * 19.5), at(0, side * 20.5)], layer));
+                const [lx, ly] = at(0, side > 0 ? 30 : -31.551);
+                items.push(dText(nm, lx, ly, 1.5, rot, 'c', 'b', layer, T));
+                // Điểm đo gồm cả điểm tim tại cọc (cao độ cọc) như ADS
+                const z0 = parseFloat(state.sections[p.r].elevation);
+                const pts = isFinite(z0) ? [{ x: p.x, y: p.y, elev: z0 }, ...p.pts] : p.pts;
+                pts.forEach(q => {
+                    items.push(dCircle(q.x, q.y, 0.1, LAYER.plPoint));
+                    const [ip, dp] = q.elev.toFixed(3).split('.');
+                    const ofs = (a, b) => [q.x + a * tx + b * nx, q.y + a * ty + b * ny];
+                    const [ax, ay] = ofs(-0.5 - ip.length * 4 / 3, 0.1), [bx, by] = ofs(0.5, 0.1);
+                    items.push(dText(ip, ax, ay, 2, rot, 'l', 'b', LAYER.plPoint, T));
+                    items.push(dText(dp, bx, by, 2, rot, 'l', 'b', LAYER.plPoint, T));
+                });
             });
             return items;
         }
