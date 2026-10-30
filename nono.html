@@ -554,7 +554,7 @@
         </div>
     </div>
 
-    <!-- Khung DXF 2010 lấy từ bản vẽ ADS: lớp (tên, màu), kiểu chữ ADS-Bảng trắc dọc/ngang, đơn vị. Dùng khi xuất DXF. -->
+    <!-- Khung DXF 2010 lấy từ bản vẽ ADS: lớp (tên, màu), kiểu chữ ADS-Bảng trắc dọc/ngang (font Arial để hiện đúng tiếng Việt), đơn vị. Dùng khi xuất DXF. -->
     <script type="text/plain" id="ads-dxf-template">
   0
 SECTION
@@ -4145,7 +4145,7 @@ ADS-Bảng biểu
  42
 2.5
   3
-ads civil.shx
+arial.ttf
   4
 
   0
@@ -4173,7 +4173,7 @@ ADS-Bảng trắc dọc
  42
 2.5
   3
-ads civil.shx
+arial.ttf
   4
 
   0
@@ -4201,7 +4201,7 @@ ADS-Bảng trắc ngang
  42
 2.5
   3
-ads civil.shx
+arial.ttf
   4
 
   0
@@ -7010,13 +7010,13 @@ EOF
                     o.push('100', 'AcDbPolyline', '90', String(it.pts.length), '70', it.closed ? '1' : '0', '43', '0');
                     it.pts.forEach(p => xy(p));
                 } else if (it.t === 'fill') {
-                    if (it.hatch) { // HATCH mẫu ANSI31, tỉ lệ 1, biên là đa tuyến kín
+                    if (it.hatch) { // HATCH mẫu ANSI31, tỉ lệ 0.01, biên là đa tuyến kín
                         head('HATCH', it);
                         o.push('100', 'AcDbHatch', '10', '0', '20', '0', '30', '0', '210', '0', '220', '0', '230', '1',
                             '2', it.hatch, '70', '0', '71', '0', '91', '1', '92', '3', '72', '0', '73', '1', '93', String(it.pts.length));
                         it.pts.forEach(p => xy(p));
-                        o.push('97', '0', '75', '0', '76', '1', '52', '0', '41', '1', '77', '0', '78', '1',
-                            '53', '45', '43', '0', '44', '0', '45', '-2.245064', '46', '2.245064', '79', '0', '98', '0');
+                        o.push('97', '0', '75', '0', '76', '1', '52', '0', '41', '0.01', '77', '0', '78', '1',
+                            '53', '45', '43', '0', '44', '0', '45', '-0.02245064', '46', '0.02245064', '79', '0', '98', '0');
                     } else {
                         head('LWPOLYLINE', it);
                         o.push('100', 'AcDbPolyline', '90', String(it.pts.length), '70', '1', '43', '0');
