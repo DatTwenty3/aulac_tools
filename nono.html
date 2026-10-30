@@ -5359,13 +5359,14 @@ EOF
                     if (dx > 1e-9) items.push(dText(f3(dx), (x + X(pts[i - 1].off)) / 2, rm.mid, 0.4, dx < 1.3 ? 90 : 0, 'M', 'm', LAYER.xText, V));
                 }
             });
-            // Tim tuyến, tên cọc và lý trình
-            const yTop = Y(zMax) + 3;
-            items.push(dLine(X(0), oy, X(0), yTop, LAYER.xTitle));
-            items.push(dPoly([[X(0) - 0.4, yTop - 0.6], [X(0), yTop], [X(0) + 0.4, yTop - 0.6]], LAYER.xTitle));
+            // Tim tuyến, ký hiệu tim, tên cọc và lý trình (toạ độ ký hiệu lấy theo bản vẽ ADS)
+            const yTop = Y(zMax) + 3, cx = X(0);
+            items.push(dLine(cx, oy, cx, yTop, LAYER.xBand));
+            const flag = sg => [[cx - sg * 0.133, yTop - 0.133], [cx + sg * 0.53, yTop + 0.53], [cx + sg * 0.733, yTop + 0.129], [cx + sg * 0.265, yTop + 0.265]];
+            items.push(dPoly([[cx, yTop], [cx, yTop + 0.562]], LAYER.xGround), dPoly(flag(1), LAYER.xGround), dPoly(flag(-1), LAYER.xGround));
             const ch = sectionChainages()[r];
-            items.push(dText(`Cọc ${s.name || 'MC' + (r + 1)}`, X(0), yTop + 2.2, 0.6, 0, 'c', 'b', LAYER.xText, T));
-            items.push(dText(kmText(ch), X(0), yTop + 1.2, 0.6, 0, 'c', 'b', LAYER.xTitle, T));
+            items.push(dText(`Cọc ${s.name || 'MC' + (r + 1)}`, cx, yTop + 2.45, 0.6, 0, 'c', 'b', LAYER.xText, T));
+            items.push(dText(kmText(ch), cx, yTop + 1.65, 0.6, 0, 'c', 'b', LAYER.xTitle, T));
             return { items, name: s.name || `MC${r + 1}`, c: ch };
         }
 
