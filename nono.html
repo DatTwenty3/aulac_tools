@@ -99,9 +99,9 @@
         .plan-btn { padding: 1px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 11px; cursor: pointer; white-space: nowrap; }
         .plan-btn:hover { background: #eef0e6; }
         .plan-body { position: relative; flex: 1; min-height: 0; }
-        #canvas-plan { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+        #canvas-plan { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; background: #212830; }
         #canvas-plan.dragging { cursor: grabbing; }
-        .draw-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+        .draw-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; background: #212830; }
         .draw-canvas.dragging { cursor: grabbing; }
         .draw-head { flex-wrap: wrap; row-gap: 3px; white-space: normal; }
         .draw-tabs { display: flex; gap: 2px; }
@@ -153,7 +153,7 @@
         .pane-title .hint { margin-left: auto; color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
         .pane-left .pane-title b { color: var(--left-color); }
         .pane-right .pane-title b { color: var(--right-color); }
-        .canvas-placeholder { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); color: var(--muted); font-size: 12px; pointer-events: none; }
+        .canvas-placeholder { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); color: #9aa3ad; font-size: 12px; pointer-events: none; }
 
         /* ---------- Grid ---------- */
         .grid-host { flex: 1; min-height: 0; overflow: auto; position: relative; outline: none; background: #fff; }
@@ -4756,7 +4756,7 @@ EOF
         window.addEventListener('blur', hideMenu);
 
         // Màu điểm mia trái / phải trên bình đồ
-        const CHART_COLOR = { left: '#5E8C61', right: '#C27C4E' };
+        const PLAN_PT_COLOR = { left: '#7fd67f', right: '#ffb36b' }; // màu điểm mia trên nền tối của bình đồ
 
         // =====================================================================
         //  Tìm nhanh cọc
@@ -4945,7 +4945,7 @@ EOF
                 if (!near(sx, sy, 250) || !p.pts.length) return;
                 const act = p.r === activeR;
                 const [l, r] = planSegment(p);
-                ctx.strokeStyle = act ? '#1f78d1' : '#cfcdc6';
+                ctx.strokeStyle = act ? '#4da3ff' : '#808080';
                 ctx.lineWidth = act ? 1.5 : 1;
                 ctx.beginPath();
                 ctx.moveTo(toX(l.x), toY(l.y));
@@ -4953,7 +4953,7 @@ EOF
                 ctx.lineTo(toX(r.x), toY(r.y));
                 ctx.stroke();
                 p.pts.forEach(q => {
-                    ctx.fillStyle = CHART_COLOR[q.side];
+                    ctx.fillStyle = PLAN_PT_COLOR[q.side];
                     ctx.beginPath();
                     ctx.arc(toX(q.x), toY(q.y), act ? 3 : 1.6, 0, Math.PI * 2);
                     ctx.fill();
@@ -4961,8 +4961,8 @@ EOF
             });
 
             // Tim tuyến
-            ctx.strokeStyle = '#3b3433';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = 1.5;
             ctx.lineJoin = 'round';
             ctx.beginPath();
             d.poles.forEach((p, i) => (i ? ctx.lineTo(toX(p.x), toY(p.y)) : ctx.moveTo(toX(p.x), toY(p.y))));
@@ -4973,7 +4973,8 @@ EOF
                 const sx = toX(p.x), sy = toY(p.y);
                 if (!near(sx, sy, 20)) return;
                 const act = p.r === activeR;
-                ctx.fillStyle = act ? '#1f78d1' : '#3b3433';
+                if (!act && v.s < 0.3) return; // thu nhỏ thì cọc dày đặc che mất tim tuyến
+                ctx.fillStyle = act ? '#4da3ff' : '#00ff00';
                 ctx.beginPath();
                 ctx.arc(sx, sy, act ? 5 : 2.5, 0, Math.PI * 2);
                 ctx.fill();
@@ -5000,15 +5001,15 @@ EOF
                     const box = [bx, by, tw, th];
                     cells.forEach(k => { if (!grid.has(k)) grid.set(k, []); grid.get(k).push(box); });
                     ctx.lineWidth = 3;
-                    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+                    ctx.strokeStyle = 'rgba(33,40,48,0.9)';
                     ctx.strokeText(text, x, y);
                     ctx.fillStyle = color;
                     ctx.fillText(text, x, y);
                     return true;
                 };
                 const num = v => String(+v.toFixed(3));
-                const poleLabel = (p, act) => label(`${p.name}  ${num(p.c)}`, toX(p.x) + 7, toY(p.y) - 8, act ? '#1f78d1' : '#3b3433', act);
-                const ptLabels = (p, act) => p.pts.forEach(q => label(`${num(q.off)} | ${num(q.elev)}`, toX(q.x) + 6, toY(q.y) + 4, CHART_COLOR[q.side], false));
+                const poleLabel = (p, act) => label(`${p.name}  ${num(p.c)}`, toX(p.x) + 7, toY(p.y) - 8, act ? '#4da3ff' : '#ffffff', act);
+                const ptLabels = (p, act) => p.pts.forEach(q => label(`${num(q.off)} | ${num(q.elev)}`, toX(q.x) + 6, toY(q.y) + 4, PLAN_PT_COLOR[q.side], false));
                 const vis = d.poles.filter(p => near(toX(p.x), toY(p.y), 250));
                 const ap = vis.find(p => p.r === activeR);
                 if (ap) { poleLabel(ap, true); ptLabels(ap, true); }
@@ -5020,7 +5021,7 @@ EOF
             const raw = 100 / v.s, pow = Math.pow(10, Math.floor(Math.log10(raw)));
             const nice = [1, 2, 5, 10].map(k => k * pow).reduce((a, b) => (Math.abs(b - raw) < Math.abs(a - raw) ? b : a));
             const len = nice * v.s;
-            ctx.strokeStyle = ctx.fillStyle = '#3b3433';
+            ctx.strokeStyle = ctx.fillStyle = '#ffffff';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(12, h - 14); ctx.lineTo(12 + len, h - 14);
@@ -5445,6 +5446,43 @@ EOF
         }
 
         // ---- Khung xem bản vẽ: phóng to/thu nhỏ, kéo, bấm ----
+        // Màu hiển thị như AutoCAD (nền model tối): màu ACI của đối tượng, không có thì theo màu lớp trong khung DXF
+        const ACI_RGB = { 1: '#ff0000', 2: '#ffff00', 3: '#00ff00', 4: '#00ffff', 5: '#0000ff', 6: '#ff00ff', 7: '#ffffff', 8: '#808080', 9: '#c0c0c0' };
+        let layerAci = null;
+        function aciColor(it) {
+            if (!layerAci) {
+                layerAci = {};
+                const L = $('#ads-dxf-template').textContent.split(/\r?\n/).map(s => s.trim());
+                for (let i = 0; i < L.length - 1; i++) {
+                    if (L[i] !== '0' || L[i + 1] !== 'LAYER') continue;
+                    let name = null, c = 7;
+                    for (let j = i + 2; j < L.length - 1 && L[j] !== '0'; j += 2) {
+                        if (L[j] === '2') name = L[j + 1];
+                        else if (L[j] === '62') c = Math.abs(parseInt(L[j + 1], 10));
+                    }
+                    if (name !== null) layerAci[name] = c;
+                }
+            }
+            return ACI_RGB[it.aci || layerAci[it.layer] || 7] || '#ffffff';
+        }
+        // Mẫu hatch ANSI31 (nét chéo 45°) theo màu cho trước
+        const hatchCache = {};
+        function hatchPattern(ctx, color) {
+            if (!hatchCache[color]) {
+                const c = document.createElement('canvas');
+                c.width = c.height = 6;
+                const g = c.getContext('2d');
+                g.strokeStyle = color;
+                g.beginPath();
+                g.moveTo(0, 6); g.lineTo(6, 0);
+                g.moveTo(-1, 1); g.lineTo(1, -1);
+                g.moveTo(5, 7); g.lineTo(7, 5);
+                g.stroke();
+                hatchCache[color] = c;
+            }
+            return ctx.createPattern(hatchCache[color], 'repeat');
+        }
+
         class DrawView {
             constructor(canvas, opts = {}) {
                 this.cv = canvas;
@@ -5540,11 +5578,11 @@ EOF
                         ctx.font = `${px}px "Segoe UI", Arial, sans-serif`;
                         ctx.textAlign = { l: 'left', c: 'center', r: 'right', M: 'center' }[it.ha] || 'left';
                         ctx.textBaseline = { m: 'middle', t: 'top', bt: 'bottom' }[it.va] || 'alphabetic';
-                        ctx.fillStyle = it.color || '#3b3433';
+                        ctx.fillStyle = aciColor(it);
                         ctx.fillText(it.s, 0, 0);
                         ctx.restore();
                     } else if (it.t === 'circle') {
-                        ctx.strokeStyle = it.color || '#3b3433';
+                        ctx.strokeStyle = aciColor(it);
                         ctx.lineWidth = 1;
                         ctx.beginPath();
                         ctx.arc(X(it.x), Y(it.y), Math.max(it.r * v.s, 1.5), 0, Math.PI * 2);
@@ -5552,13 +5590,15 @@ EOF
                     } else {
                         ctx.beginPath();
                         it.pts.forEach(([x, y], i) => (i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y))));
+                        const col = aciColor(it);
                         if (it.t === 'fill') {
                             ctx.closePath();
-                            ctx.fillStyle = it.color || 'rgba(120,120,120,0.35)';
+                            ctx.fillStyle = it.hatch ? hatchPattern(ctx, col) : col;
                             ctx.fill();
+                            if (it.hatch) return; // HATCH không có đường biên riêng
                         }
-                        ctx.strokeStyle = it.t === 'fill' ? '#777' : (it.color || '#8a8580');
-                        ctx.lineWidth = it.w || 1;
+                        ctx.strokeStyle = col;
+                        ctx.lineWidth = 1;
                         ctx.stroke();
                     }
                 });
@@ -5580,13 +5620,13 @@ EOF
                 const p = d && d.poles.find(q => q.r === topGrid.cur.r);
                 if (!p) return;
                 const yTop = p.z !== null && isFinite(p.z) ? d.Y(p.z) + 6 : 10;
-                ctx.strokeStyle = '#1f78d1';
+                ctx.strokeStyle = '#4da3ff';
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.moveTo(X(p.c), Y(yTop));
                 ctx.lineTo(X(p.c), Y(-89));
                 ctx.stroke();
-                ctx.fillStyle = '#1f78d1';
+                ctx.fillStyle = '#4da3ff';
                 ctx.font = 'bold 12px "Segoe UI", sans-serif';
                 ctx.textAlign = 'left';
                 ctx.fillText(`${p.name}  ${kmText(p.c)}`, X(p.c) + 5, Y(yTop) + 4);
