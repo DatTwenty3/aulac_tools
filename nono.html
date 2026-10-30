@@ -4856,23 +4856,111 @@ EOF
         // =====================================================================
         //  Bình đồ tuyến
         // =====================================================================
-        // Dựng tim tuyến từ lý trình và góc chắn cung: các cọc nối bằng đoạn thẳng theo hiệu lý trình, đổi hướng tại cọc có góc.
-        // Góc < 180° rẽ trái, > 180° rẽ phải (cùng quy ước với trường góc của dòng POLE). Chưa kể bán kính đường cong.
+        // Dựng tim tuyến từ lý trình và góc chắn cung. Góc < 180° rẽ trái, > 180° rẽ phải (quy ước trường góc của dòng POLE).
+        // - Cọc có góc nằm ngoài đường cong: đổi hướng gãy tại cọc.
+        // - Đường cong TDn…TCn (có thể kèm NDn/NCn): như ADS, tổng góc của các cọc trong đoạn là góc chuyển hướng Δ,
+        //   bán kính R = (TC − TD + (TD − ND)/2 + (NC − TC)/2) / Δ; TD–TC là cung tròn, ND–TD và TC–NC là đường cong chuyển tiếp (clothoid).
         const plan = { view: null, data: null, drag: null };
 
+        function findCurves(list) {
+            const out = [];
+            let lastB = -1;
+            list.forEach((p, i) => {
+                const m = /^TD(\d*)$/.exec(p.nm);
+                if (!m || i <= lastB) return;
+                let j = i + 1;
+                while (j < list.length && j < i + 500 && list[j].nm !== 'TC' + m[1] && !/^TD\d*$/.test(list[j].nm)) j++;
+                if (j >= list.length || list[j].nm !== 'TC' + m[1]) return;
+                let a = i, b = j;
+                for (let k = i - 1; k > lastB && k >= i - 100; k--) if (list[k].nm === 'ND' + m[1]) { a = k; break; }
+                for (let k = j + 1; k < list.length && k <= j + 100 && !/^TD\d*$/.test(list[k].nm); k++) if (list[k].nm === 'NC' + m[1]) { b = k; break; }
+                // Như ADS: góc ghi ở các cọc NDn/TDn/Pn/TCn/NCn không làm gãy tuyến; góc của Pn là góc chuyển hướng của đường cong
+                // (Pn không có góc thì không có cung). Cọc thường nằm trong đoạn cong vẫn gãy theo góc của nó.
+                const own = new RegExp(`^(ND|TD|P|TC|NC)${m[1]}$`);
+                for (let k = a; k <= b; k++) if (own.test(list[k].nm)) list[k].curve = true;
+                lastB = b;
+                const pk = list.slice(i + 1, j).find(q => q.nm === 'P' + m[1]);
+                const delta = pk ? pk.turn : 0;
+                const Lc = list[j].c - p.c, Ls1 = p.c - list[a].c, Ls2 = list[b].c - list[j].c, L = Lc + (Ls1 + Ls2) / 2;
+                if (Math.abs(delta) < 1e-12 || Lc < 0 || Ls1 < 0 || Ls2 < 0 || L <= 0) return;
+                out.push({ c0: list[a].c, cTD: p.c, cTC: list[j].c, c1: list[b].c, k: delta / L, Ls1, Ls2 });
+            });
+            return out;
+        }
+
         function buildPlan() {
-            const poles = [];
-            let run = 0, heading = 0, x = 0, y = 0, prevC = null;
+            const list = [];
+            let run = 0;
             state.sections.forEach((s, r) => {
                 if (isEmptySection(s)) return;
                 const raw = parseFloat(s.cumulative) || 0;
                 run += raw;
-                const c = modes.topCum ? raw : run;
-                if (prevC !== null) { x += (c - prevC) * Math.cos(heading); y += (c - prevC) * Math.sin(heading); }
-                prevC = c;
                 const a = s.angle === '' ? 180 : (parseFloat(s.angle) || 0);
-                const turn = (180 - a) * Math.PI / 180;
-                const h = heading + turn / 2; // hướng pháp tuyến lấy theo phân giác tại cọc đổi hướng
+                list.push({ s, r, c: modes.topCum ? raw : run, turn: (180 - a) * Math.PI / 180, nm: (s.name || '').trim().toUpperCase() });
+            });
+            const curves = findCurves(list);
+            // Độ cong tại lý trình c: 0 trên đoạn thẳng, k trên cung tròn, tăng/giảm tuyến tính trên đường cong chuyển tiếp
+            const curveAt = c => curves.find(cv => c >= cv.c0 - 1e-9 && c <= cv.c1 + 1e-9);
+            const kappa = (cv, c) => !cv ? 0 : c < cv.cTD ? (cv.Ls1 ? cv.k * (c - cv.c0) / cv.Ls1 : cv.k)
+                : c <= cv.cTC ? cv.k : (cv.Ls2 ? cv.k * (cv.c1 - c) / cv.Ls2 : cv.k);
+            const segs = []; // tim tuyến: { t: 'line'|'spiral', pts } hoặc { t: 'arc', x, y, r, a0, a1 }
+            let heading = 0, x = 0, y = 0;
+            const addPt = (t, px, py) => {
+                const last = segs[segs.length - 1];
+                if (last && last.t === t) last.pts.push([px, py]);
+                else segs.push({ t, pts: [[x, y], [px, py]] });
+            };
+            // Đi tiếp một đoạn L với độ cong không đổi k
+            const step = (L, k, t) => {
+                if (Math.abs(k) < 1e-12) {
+                    const nx = x + L * Math.cos(heading), ny = y + L * Math.sin(heading);
+                    addPt(t, nx, ny);
+                    x = nx; y = ny;
+                    return;
+                }
+                const cx = x - Math.sin(heading) / k, cy = y + Math.cos(heading) / k, dth = k * L;
+                const nh = heading + dth, nx = cx + Math.sin(nh) / k, ny = cy - Math.cos(nh) / k;
+                if (t === 'arc') {
+                    const last = segs[segs.length - 1];
+                    const cont = last && last.t === 'arc' && Math.hypot(last.x - cx, last.y - cy) < 1e-6 * Math.abs(1 / k);
+                    const f0 = cont ? last.f0 : Math.atan2(y - cy, x - cx) * 180 / Math.PI;
+                    const f1 = (cont ? last.f1 : f0) + dth * 180 / Math.PI;
+                    // a0→a1 ngược chiều kim đồng hồ (như ARC của DXF); f0→f1 theo chiều đi của tuyến
+                    const arc = { t: 'arc', x: cx, y: cy, r: Math.abs(1 / k), a0: k > 0 ? f0 : f1, a1: k > 0 ? f1 : f0, f0, f1 };
+                    if (cont) segs[segs.length - 1] = Object.assign(arc, { x: last.x, y: last.y }); else segs.push(arc);
+                } else addPt(t, nx, ny);
+                x = nx; y = ny; heading = nh;
+            };
+            // Đi từ lý trình c0 đến c1, chia theo ranh giới đường cong
+            const advance = (c0, c1) => {
+                if (c1 <= c0) { if (c1 < c0) step(c1 - c0, 0, 'line'); return; }
+                let c = c0;
+                while (c < c1 - 1e-9) {
+                    const cv = curveAt(c + 1e-7);
+                    if (!cv || c < cv.c0 - 1e-9) {
+                        const nxt = curves.find(q => q.c0 > c + 1e-9);
+                        const e = Math.min(c1, nxt ? nxt.c0 : Infinity);
+                        step(e - c, 0, 'line');
+                        c = e;
+                    } else if (c >= cv.cTD - 1e-9 && c < cv.cTC - 1e-9) {
+                        const e = Math.min(c1, cv.cTC);
+                        step(e - c, cv.k, 'arc');
+                        c = e;
+                    } else { // đường cong chuyển tiếp: chia nhỏ ≤ 0.5 m, mỗi đoạn lấy độ cong ở giữa
+                        const e = Math.min(c1, c < cv.cTD ? cv.cTD : cv.c1);
+                        const n = Math.max(1, Math.ceil((e - c) / 0.5)), L = (e - c) / n;
+                        for (let i = 0; i < n; i++) step(L, kappa(cv, c + (i + 0.5) * L), 'spiral');
+                        c = e;
+                    }
+                }
+            };
+            const poles = [];
+            let prevC = null;
+            list.forEach(({ s, r, c, turn, curve }) => {
+                if (prevC !== null) advance(prevC, c);
+                prevC = c;
+                const t = curve ? 0 : turn;   // cọc trong đường cong: hướng theo tiếp tuyến, không gãy
+                const h = heading + t / 2;    // hướng pháp tuyến lấy theo phân giác tại cọc đổi hướng
                 const pole = { r, name: s.name || `Mặt cắt ${r + 1}`, c, x, y, h, pts: [] };
                 [['left', 1], ['right', -1]].forEach(([side, sign]) => {
                     let acc = 0;
@@ -4886,10 +4974,25 @@ EOF
                         pole.pts.push({ side, x: x - sign * off * Math.sin(h), y: y + sign * off * Math.cos(h), off, elev: absE[i] });
                     });
                 });
-                heading += turn;
+                heading += t;
                 poles.push(pole);
             });
-            return { poles };
+            return { poles, segs, curves, axis: axisPoints(segs) };
+        }
+
+        // Các điểm của tim tuyến để vẽ lên màn hình (cung tròn chia nhỏ theo góc)
+        function axisPoints(segs) {
+            const out = [];
+            segs.forEach(sg => {
+                if (sg.t !== 'arc') { sg.pts.forEach(p => out.push(p)); return; }
+                const { f0, f1 } = sg;
+                const n = Math.max(2, Math.ceil(Math.abs(f1 - f0) / 0.25));
+                for (let i = 0; i <= n; i++) {
+                    const f = (f0 + (f1 - f0) * i / n) * Math.PI / 180;
+                    out.push([sg.x + sg.r * Math.cos(f), sg.y + sg.r * Math.sin(f)]);
+                }
+            });
+            return out;
         }
 
         function planSize() {
@@ -4966,7 +5069,7 @@ EOF
             ctx.lineWidth = 1.5;
             ctx.lineJoin = 'round';
             ctx.beginPath();
-            d.poles.forEach((p, i) => (i ? ctx.lineTo(toX(p.x), toY(p.y)) : ctx.moveTo(toX(p.x), toY(p.y))));
+            d.axis.forEach(([px, py], i) => (i ? ctx.lineTo(toX(px), toY(py)) : ctx.moveTo(toX(px), toY(py))));
             ctx.stroke();
 
             // Cọc
@@ -5121,6 +5224,7 @@ EOF
         const dPoly = (pts, layer, o = {}) => Object.assign({ t: 'poly', pts, layer }, o);
         const dFill = (pts, layer, o = {}) => Object.assign({ t: 'fill', pts, layer }, o);
         const dCircle = (x, y, r, layer, o = {}) => Object.assign({ t: 'circle', x, y, r, layer }, o);
+        const dArc = (x, y, r, a0, a1, layer, o = {}) => Object.assign({ t: 'arc', x, y, r, a0, a1, layer }, o); // a0→a1 (độ) ngược chiều kim đồng hồ
         const dText = (s, x, y, h, rot, ha, va, layer, o = {}) => Object.assign({ t: 'text', s: String(s), x, y, h, rot, ha, va, layer }, o);
         const f3 = v => v.toFixed(3);
         const kmText = c => { const km = Math.floor(c / 1000 + 1e-9); return `Km ${km} + ${(c - km * 1000).toFixed(3)}`; };
@@ -5139,6 +5243,14 @@ EOF
                 return [it.x - r, it.y - r, it.x + r, it.y + r];
             }
             if (it.t === 'circle') return [it.x - it.r, it.y - it.r, it.x + it.r, it.y + it.r];
+            if (it.t === 'arc') { // hai đầu cung và các điểm 0/90/180/270° nằm trong cung
+                let a1 = it.a1;
+                while (a1 < it.a0) a1 += 360;
+                const angs = [it.a0, a1];
+                for (let q = Math.ceil(it.a0 / 90) * 90; q < a1; q += 90) angs.push(q);
+                const ps = angs.map(a => [it.x + it.r * Math.cos(a * Math.PI / 180), it.y + it.r * Math.sin(a * Math.PI / 180)]);
+                return [Math.min(...ps.map(p => p[0])), Math.min(...ps.map(p => p[1])), Math.max(...ps.map(p => p[0])), Math.max(...ps.map(p => p[1]))];
+            }
             let a = Infinity, b = Infinity, c = -Infinity, d = -Infinity;
             it.pts.forEach(([x, y]) => { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); });
             return [a, b, c, d];
@@ -5303,6 +5415,9 @@ EOF
             const ch = sectionChainages()[r];
             items.push(dText(`Cọc ${s.name || 'MC' + (r + 1)}`, cx, yTop + 2.45, 0.6, 0, 'c', 'b', LAYER.xText, T));
             items.push(dText(kmText(ch), cx, yTop + 1.65, 0.6, 0, 'c', 'b', LAYER.xTitle, T));
+            // ADS ghi "Cao độ :" (cao độ cọc) trùng chỗ dòng lý trình; ở đây đặt ngay dưới để không đè chữ
+            const zc = parseFloat(s.elevation);
+            if (isFinite(zc)) items.push(dText(`Cao độ :${f3(zc)}`, cx, yTop + 0.85, 0.6, 0, 'c', 'b', LAYER.xText, T));
             return { items, name: s.name || `MC${r + 1}`, c: ch };
         }
 
@@ -5333,7 +5448,7 @@ EOF
             const d = buildPlan(), items = [];
             if (!d.poles.length) return items;
             const T = { style: 'pn', wf: 1 };
-            items.push(dPoly(d.poles.map(p => [p.x, p.y]), LAYER.plAxis));
+            d.segs.forEach(sg => items.push(sg.t === 'arc' ? dArc(sg.x, sg.y, sg.r, sg.a0, sg.a1, LAYER.plAxis) : dPoly(sg.pts, LAYER.plAxis)));
             let prevSide = 1;
             d.poles.forEach((p, i) => {
                 const tx = Math.cos(p.h), ty = Math.sin(p.h), nx = -ty, ny = tx, rot = p.h * 180 / Math.PI;
@@ -5404,6 +5519,10 @@ EOF
                 } else if (it.t === 'circle') {
                     head('CIRCLE', it);
                     o.push('100', 'AcDbCircle', '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.r));
+                } else if (it.t === 'arc') {
+                    head('ARC', it);
+                    o.push('100', 'AcDbCircle', '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.r),
+                        '100', 'AcDbArc', '50', dn(((it.a0 % 360) + 360) % 360), '51', dn(((it.a1 % 360) + 360) % 360));
                 } else if (it.t === 'text') {
                     const style = DXF_STYLE[it.style] || DXF_STYLE.pd;
                     if (it.mt) { // MTEXT như ADS (MSS, góc chuyển hướng)
@@ -5610,6 +5729,12 @@ EOF
                         ctx.fillStyle = aciColor(it);
                         ctx.fillText(it.s, 0, 0);
                         ctx.restore();
+                    } else if (it.t === 'arc') { // trục y màn hình hướng xuống nên góc đổi dấu
+                        ctx.strokeStyle = aciColor(it);
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.arc(X(it.x), Y(it.y), it.r * v.s, -it.a0 * Math.PI / 180, -it.a1 * Math.PI / 180, true);
+                        ctx.stroke();
                     } else if (it.t === 'circle') {
                         ctx.strokeStyle = aciColor(it);
                         ctx.lineWidth = 1;
@@ -5705,7 +5830,7 @@ EOF
         }
 
         const DRAW_FOOT = {
-            plan: 'Chưa có tọa độ thực: cọc đầu đặt tại gốc, hướng tuyến ban đầu theo trục ngang; hướng đổi theo góc chắn cung (góc &lt; 180° rẽ trái, &gt; 180° rẽ phải), chưa kể bán kính đường cong.',
+            plan: 'Chưa có tọa độ thực: cọc đầu đặt tại gốc, hướng tuyến ban đầu theo trục ngang; hướng đổi theo góc chắn cung (góc &lt; 180° rẽ trái, &gt; 180° rẽ phải). Đường cong TD–P–TC vẽ cung tròn như ADS (R = chiều dài cong / góc ở cọc P).',
             profile: 'Trắc dọc tự nhiên theo bố cục ADS (hàng thiết kế để trống). MSS = cao độ cọc thấp nhất làm tròn xuống trừ 1 (dùng chung với trắc ngang). Cuộn chuột: thu/phóng · Kéo: di chuyển · Bấm đường dóng: chọn cọc · Bấm đúp: xem toàn tuyến.',
             section: 'Trắc ngang tự nhiên của cọc đang chọn theo bố cục ADS; đoạn giữa điểm FCode 1 và FCode 2 tô là mặt đường cũ. Xuất DXF sẽ xuất toàn bộ trắc ngang.'
         };
