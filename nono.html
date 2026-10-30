@@ -101,6 +101,20 @@
         .plan-body { position: relative; flex: 1; min-height: 0; }
         #canvas-plan { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
         #canvas-plan.dragging { cursor: grabbing; }
+        .draw-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+        .draw-canvas.dragging { cursor: grabbing; }
+        .draw-head { flex-wrap: wrap; row-gap: 3px; white-space: normal; }
+        .draw-tabs { display: flex; gap: 2px; }
+        .draw-tab { padding: 2px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 12px; cursor: pointer; }
+        .draw-tab.active { background: var(--select); border-color: var(--select); color: #fff; font-weight: 600; }
+        .tab-tools { display: inline-flex; align-items: center; gap: 4px; }
+        .tab-tools select { font: inherit; font-size: 11px; padding: 0 2px; }
+        .sec-name { font-size: 11px; font-weight: 600; color: var(--select); white-space: nowrap; }
+        .draw-spacer { flex: 1; }
+        .vsplit { flex: 0 0 6px; margin-top: 6px; cursor: col-resize; position: relative; }
+        .vsplit::after { content: ''; position: absolute; top: 0; bottom: 0; left: 2px; width: 2px; background: var(--line); border-radius: 1px; }
+        .vsplit:hover::after { background: var(--accent); }
+        .vsplit.hidden { display: none; }
         .plan-foot { padding: 3px 8px; font-size: 11px; line-height: 1.4; color: var(--muted); border-top: 1px solid var(--line-soft); background: #fbfaf7; }
         .workspace {
             flex: 1;
@@ -329,7 +343,8 @@
             body { overflow: auto; }
             .workspace { min-height: 900px; }
             .body-row { flex-direction: column; }
-            .plan-panel { flex: 0 0 420px; margin: 6px 8px 0; }
+            .plan-panel { flex: 0 0 420px !important; margin: 6px 8px 0; }
+            .vsplit { display: none; }
             .pane-bottom { grid-template-columns: 1fr; }
             .chart-row { grid-template-columns: 1fr; flex-basis: 380px; }
             .tb-title { display: none; }
@@ -354,6 +369,8 @@
         <button class="tb-btn" id="btn-options" title="Tùy chọn chế độ nhập liệu"><span class="ic">⚙️</span><span>Tùy chọn</span></button>
         <button class="tb-btn on" id="btn-chart" title="Hiện / ẩn biểu đồ mặt cắt ngang"><span class="ic">📈</span><span>Biểu đồ</span></button>
         <button class="tb-btn" id="btn-plan" title="Hiện / ẩn bình đồ tuyến"><span class="ic">🗺️</span><span>Bình đồ</span></button>
+        <button class="tb-btn" id="btn-profile" title="Hiện / ẩn trắc dọc tự nhiên"><span class="ic">📉</span><span>Trắc dọc</span></button>
+        <button class="tb-btn" id="btn-section" title="Hiện / ẩn trắc ngang của cọc đang chọn"><span class="ic">⛰️</span><span>Trắc ngang</span></button>
         <button class="tb-btn" id="btn-guide" title="Xem hướng dẫn"><span class="ic">🎓</span><span>Hướng dẫn</span></button>
         <div class="tb-search">
             <input type="search" id="search-box" placeholder="Tìm cọc: tên, lý trình, Km0+200 (Ctrl+F)" title="Gõ để tìm. Enter: kết quả kế tiếp, Shift+Enter: kết quả trước, Esc: xóa tìm kiếm" autocomplete="off">
@@ -395,19 +412,35 @@
         </div>
     </div>
 
+    <div class="vsplit hidden" id="vsplit" title="Kéo để đổi độ rộng"></div>
     <aside class="plan-panel hidden" id="plan-panel">
-        <div class="pane-title">
-            <b>Bình đồ</b>
-            <span class="hint" title="Cuộn chuột: phóng to/thu nhỏ · Kéo: di chuyển · Bấm cọc: chọn dòng · Bấm đúp: vừa khung">Cuộn: thu/phóng · Kéo: di chuyển · Bấm cọc: chọn</span>
-            <label class="plan-num" title="Ghi lý trình, khoảng cách và cao độ lên bình đồ"><input type="checkbox" id="plan-nums"> Ghi số</label>
-            <button class="plan-btn" id="plan-fit" title="Hiển thị toàn tuyến">Vừa khung</button>
-            <button class="plan-btn" id="plan-close" title="Đóng bình đồ">&times;</button>
+        <div class="pane-title draw-head">
+            <div class="draw-tabs">
+                <button class="draw-tab" data-tab="plan">Bình đồ</button>
+                <button class="draw-tab" data-tab="profile">Trắc dọc</button>
+                <button class="draw-tab" data-tab="section">Trắc ngang</button>
+            </div>
+            <span class="tab-tools" data-for="plan"><label class="plan-num" title="Ghi lý trình, khoảng cách và cao độ lên bình đồ"><input type="checkbox" id="plan-nums"> Ghi số</label></span>
+            <span class="tab-tools" data-for="profile"><label class="plan-num" title="Phóng đại theo phương đứng">Tỉ lệ đứng ×<select id="prof-v"><option>1</option><option>2</option><option>5</option><option>10</option><option>20</option></select></label></span>
+            <span class="tab-tools" data-for="section">
+                <button class="plan-btn" id="sec-prev" title="Cọc trước">&#9664;</button>
+                <span class="sec-name" id="sec-name"></span>
+                <button class="plan-btn" id="sec-next" title="Cọc sau">&#9654;</button>
+                <label class="plan-num" title="Phóng đại theo phương đứng">Tỉ lệ đứng ×<select id="sec-v"><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
+            </span>
+            <span class="draw-spacer"></span>
+            <button class="plan-btn" id="draw-dxf" title="Xuất bản vẽ đang xem ra file DXF (mở bằng AutoCAD). Trắc ngang: xuất toàn bộ các cọc">Xuất DXF</button>
+            <button class="plan-btn" id="plan-fit" title="Hiển thị toàn bộ">Vừa khung</button>
+            <button class="plan-btn" id="plan-close" title="Đóng panel bản vẽ">&times;</button>
         </div>
         <div class="plan-body">
             <canvas id="canvas-plan"></canvas>
+            <canvas id="canvas-profile" class="draw-canvas"></canvas>
+            <canvas id="canvas-section" class="draw-canvas"></canvas>
             <div class="canvas-placeholder" id="ph-plan">Nhập lý trình và góc chắn cung của các cọc để xem bình đồ</div>
+            <div class="canvas-placeholder" id="ph-draw" style="display: none;"></div>
         </div>
-        <div class="plan-foot">Chưa có tọa độ thực: cọc đầu đặt tại gốc, hướng tuyến ban đầu theo trục ngang; hướng đổi theo góc chắn cung (góc &lt; 180° rẽ trái, &gt; 180° rẽ phải), chưa kể bán kính đường cong.</div>
+        <div class="plan-foot" id="draw-foot"></div>
     </aside>
     </div>
 
@@ -554,7 +587,7 @@
                 return acc;
             });
         }
-        const ui = { showChart: false, showPlan: false, planNums: true, split: 55 };
+        const ui = { showChart: false, showPlan: false, planNums: true, drawTab: 'plan', profV: 10, secV: 1, panelW: 42, split: 55 };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
         const newSection = () => ({ id: nextId++, name: '', cumulative: '', elevation: '', angle: '', radius: '', left: [], right: [] });
@@ -1143,10 +1176,11 @@
             $('#title-left').textContent = `Bên trái — ${label}`;
             $('#title-right').textContent = `Bên phải — ${label}`;
             drawCharts();
-            updatePlan(true);
+            refreshDrawings(true);
             updateStatus();
         }
         function refreshAll() {
+            drawState.version++; // dữ liệu đổi: trắc dọc cần dựng lại
             refreshSearchData();
             topGrid.render();
             refreshDetail();
@@ -1464,7 +1498,7 @@
         }
 
         function drawPlan(rebuild = true) {
-            if (!ui.showPlan) return;
+            if (!ui.showPlan || ui.drawTab !== 'plan') return;
             const { cv, w, h } = planSize();
             if (!w || !h) return;
             if (rebuild || !plan.data) plan.data = buildPlan();
@@ -1576,7 +1610,7 @@
         }
 
         function updatePlan(center = false) {
-            if (!ui.showPlan) return;
+            if (!ui.showPlan || ui.drawTab !== 'plan') return;
             plan.data = buildPlan();
             const { w, h } = planSize();
             if (center && plan.view && w) {
@@ -1589,14 +1623,6 @@
             drawPlan(false);
         }
 
-        function setPlanVisible(show) {
-            ui.showPlan = show;
-            $('#plan-panel').classList.toggle('hidden', !show);
-            $('#btn-plan').classList.toggle('on', show);
-            $('#plan-nums').checked = ui.planNums;
-            if (show) requestAnimationFrame(() => updatePlan());
-            scheduleSave();
-        }
 
         (function setupPlanEvents() {
             const cv = $('#canvas-plan');
@@ -1653,8 +1679,537 @@
             cv.addEventListener('dblclick', () => { fitPlan(); drawPlan(false); });
             $('#plan-nums').checked = ui.planNums;
             $('#plan-nums').addEventListener('change', e => { ui.planNums = e.target.checked; drawPlan(false); scheduleSave(); });
-            $('#plan-fit').addEventListener('click', () => { fitPlan(); drawPlan(false); });
-            $('#plan-close').addEventListener('click', () => setPlanVisible(false));
+        })();
+
+        // =====================================================================
+        //  Trắc dọc, trắc ngang (bố cục theo bản vẽ ADS) và xuất DXF
+        // =====================================================================
+        // Bản vẽ là danh sách đối tượng theo đơn vị bản vẽ (m): line, poly, fill, circle, text.
+        // Cùng một danh sách dùng để vẽ lên màn hình và để xuất DXF, nên hai bên luôn giống nhau.
+        const LAYER = {
+            pBand: 'TK-ADS-9302-Bảng trắc dọc', pText: 'TK-ADS-9303-Chữ trắc dọc', pDong: 'TK-ADS-9305-Đ.dóng trắc dọc',
+            pGround: 'KS-TUY-2401-Trắc dọc tự nhiên', pStation: 'TK-ADS-9307-Lý trình trắc dọc',
+            xBand: 'TK-ADS-9402-Bảng trắc ngang', xText: 'TK-ADS-9403-Chữ trắc ngang', xDong: 'TK-ADS-9405-Đ.dóng trắc ngang',
+            xGround: 'KS-TUY-2501-Trắc ngang tự nhiên', xOld: 'KS-TUY-2502-Trắc ngang đường cũ', xTitle: 'TK-ADS-9407-Lý trình trắc ngang',
+            plAxis: 'TK-DBO-1101-Tim tuyến', plPole: 'TK-DBO-1104-Cọc lý trình', plPoint: 'KS-DHI-1101-Điểm đo'
+        };
+        const dLine = (x1, y1, x2, y2, layer, o = {}) => Object.assign({ t: 'line', pts: [[x1, y1], [x2, y2]], layer }, o);
+        const dPoly = (pts, layer, o = {}) => Object.assign({ t: 'poly', pts, layer }, o);
+        const dFill = (pts, layer, o = {}) => Object.assign({ t: 'fill', pts, layer }, o);
+        const dCircle = (x, y, r, layer, o = {}) => Object.assign({ t: 'circle', x, y, r, layer }, o);
+        const dText = (s, x, y, h, rot, ha, va, layer, o = {}) => Object.assign({ t: 'text', s: String(s), x, y, h, rot, ha, va, layer }, o);
+        const f3 = v => v.toFixed(3);
+        const kmText = c => { const km = Math.floor(c / 1000 + 1e-9); return `Km ${km} + ${(c - km * 1000).toFixed(3)}`; };
+        // Góc có dấu trong (-180, 180], ghi độ-phút-giây làm tròn giây như ADS
+        function dmsSigned(deg) {
+            const sign = deg < 0 ? '-' : '';
+            let a = Math.abs(deg), d = Math.floor(a), m = Math.floor((a - d) * 60), s = Math.round(((a - d) * 60 - m) * 60);
+            if (s >= 60) { s = 0; m++; }
+            if (m >= 60) { m = 0; d++; }
+            return `${sign}${d}°${m}'${s}"`;
+        }
+
+        function itemBox(it) {
+            if (it.t === 'text') {
+                const r = it.s.length * it.h * 0.6 + it.h;
+                return [it.x - r, it.y - r, it.x + r, it.y + r];
+            }
+            if (it.t === 'circle') return [it.x - it.r, it.y - it.r, it.x + it.r, it.y + it.r];
+            let a = Infinity, b = Infinity, c = -Infinity, d = -Infinity;
+            it.pts.forEach(([x, y]) => { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); });
+            return [a, b, c, d];
+        }
+        function itemsBox(items) {
+            let a = Infinity, b = Infinity, c = -Infinity, d = -Infinity;
+            items.forEach(it => { const q = it.bb || itemBox(it); a = Math.min(a, q[0]); b = Math.min(b, q[1]); c = Math.max(c, q[2]); d = Math.max(d, q[3]); });
+            return [a, b, c, d];
+        }
+        function moveItems(items, dx, dy) {
+            return items.map(it => {
+                const o = Object.assign({}, it);
+                delete o.bb;
+                if (o.pts) o.pts = o.pts.map(([x, y]) => [x + dx, y + dy]);
+                if (o.x !== undefined) { o.x += dx; o.y += dy; }
+                return o;
+            });
+        }
+
+        // Danh sách cọc dùng cho trắc dọc (bỏ dòng trống)
+        function profilePoles() {
+            const ch = sectionChainages(), out = [];
+            state.sections.forEach((s, r) => {
+                if (isEmptySection(s)) return;
+                const a = s.angle === '' ? 180 : (parseFloat(s.angle) || 0);
+                out.push({ r, name: s.name || `MC${out.length + 1}`, c: ch[r], z: s.elevation === '' ? null : parseFloat(s.elevation), a });
+            });
+            return out;
+        }
+
+        // Mức so sánh dùng chung cho trắc dọc và trắc ngang: cao độ cọc thấp nhất làm tròn xuống trừ 1
+        function globalMSS(P = profilePoles()) {
+            const zs = P.filter(p => p.z !== null && isFinite(p.z)).map(p => p.z);
+            return zs.length ? Math.floor(Math.min(...zs)) - 1 : 0;
+        }
+
+        // Trắc dọc tự nhiên: đường tự nhiên, đường dóng và bảng 8 hàng như ADS. Gốc toạ độ: x = lý trình, y = 0 là mép trên bảng.
+        function buildProfile() {
+            const P = profilePoles(), items = [];
+            if (!P.length) return null;
+            const k = ui.profV;
+            const mss = globalMSS(P); // mức so sánh
+            const Y = z => (z - mss) * k;
+            const x0 = P[0].c, x1 = Math.max(P[P.length - 1].c, x0 + 1), HW = 45;
+            const rows = [['Cao độ thiết kế', 12], ['Dốc dọc thiết kế', 12], ['Cao độ tự nhiên', 12], ['Khoảng cách lẻ', 9],
+                ['Khoảng cách cộng dồn', 9], ['Tên cọc', 9], ['Lý trình', 8], ['Đoạn thẳng - Đoạn cong', 18]];
+            const R = {};
+            let y = 0;
+            items.push(dLine(x0 - HW, 0, x1, 0, LAYER.pBand));
+            rows.forEach(([name, hgt]) => {
+                R[name] = { top: y, bot: y - hgt, mid: y - hgt / 2 };
+                y -= hgt;
+                items.push(dLine(x0 - HW, y, x1, y, LAYER.pBand));
+                items.push(dText(name, x0 - HW / 2, R[name].mid, 2, 0, 'c', 'm', LAYER.pBand));
+            });
+            items.push(dLine(x0 - HW, 0, x0 - HW, y, LAYER.pBand), dLine(x0, 0, x0, y, LAYER.pBand), dLine(x1, 0, x1, y, LAYER.pBand));
+            items.push(dText(`MSS: ${mss}`, x0 - 2, 1, 1.6, 0, 'r', 'b', LAYER.pText));
+            const rd = R['Đoạn thẳng - Đoạn cong'];
+            items.push(dLine(x0, rd.mid, x1, rd.mid, LAYER.pText));
+            const ground = [];
+            P.forEach((p, i) => {
+                const x = p.c;
+                if (p.z !== null && isFinite(p.z)) {
+                    ground.push([x, Y(p.z)]);
+                    items.push(dLine(x, 0, x, Y(p.z), LAYER.pDong));
+                    items.push(dText(f3(p.z), x, R['Cao độ tự nhiên'].mid, 1.5, 90, 'c', 'm', LAYER.pText));
+                }
+                items.push(dLine(x, R['Khoảng cách lẻ'].top, x, R['Khoảng cách lẻ'].bot, LAYER.pText));
+                items.push(dText(f3(p.c), x, R['Khoảng cách cộng dồn'].mid, 1.5, 90, 'c', 'm', LAYER.pText));
+                items.push(dText(p.name, x, R['Tên cọc'].mid + (i % 2 ? -2 : 2), 1.6, 0, 'c', 'm', LAYER.pText));
+                if (i > 0) {
+                    const L = p.c - P[i - 1].c;
+                    items.push(dText(f3(L), (p.c + P[i - 1].c) / 2, R['Khoảng cách lẻ'].mid, 1.5, L < 12 ? 90 : 0, 'c', 'm', LAYER.pText));
+                }
+                // Lý trình: ghi tại cọc đầu, cọc Km tròn và cọc H
+                const isKm = i === 0 || Math.abs(p.c / 1000 - Math.round(p.c / 1000)) < 1e-6;
+                if (isKm || /^H\d+/i.test(p.name)) {
+                    const rl = R['Lý trình'];
+                    items.push(dLine(x, rl.top, x, rl.top - 2.5, LAYER.pStation));
+                    items.push(dText(isKm ? `Km ${Math.round(p.c / 1000)}` : p.name, x, rl.mid - 1, 1.6, 0, 'c', 'm', LAYER.pStation));
+                }
+                // Góc chuyển hướng: rẽ phải vẽ tam giác lên, rẽ trái vẽ tam giác xuống (như ADS)
+                if (Math.abs(p.a - 180) > 1e-6) {
+                    const up = p.a > 180, by = rd.mid, ty = up ? by + 5 : by - 5;
+                    items.push(dPoly([[x - 9, by], [x, ty], [x + 9, by]], LAYER.pText));
+                    items.push(dText(`A = ${dmsSigned(p.a > 180 ? p.a - 360 : p.a)}`, x, up ? by - 3.5 : by + 3.5, 1.5, 0, 'c', 'm', LAYER.pText));
+                }
+            });
+            if (ground.length > 1) items.push(dPoly(ground, LAYER.pGround, { color: '#2b2b2b', w: 1.6 }));
+            return { items, poles: P, mss, Y };
+        }
+
+        // Các điểm của một trắc ngang theo thứ tự từ trái sang phải; tim tuyến ở toạ độ 0
+        function sectionPoints(s) {
+            const init = parseFloat(s.elevation) || 0, L = [], Rr = [];
+            ['left', 'right'].forEach(side => {
+                const absE = absElevations(s, side);
+                let acc = 0;
+                s[side].forEach((t, i) => {
+                    if (t.dist === '' && t.elev === '') return;
+                    const d = parseFloat(t.dist) || 0;
+                    acc += d;
+                    const off = modes.distCum ? d : acc;
+                    (side === 'left' ? L : Rr).push({ off: side === 'left' ? -off : off, z: absE[i], f: t.desc.trim() });
+                });
+            });
+            return [...L.reverse(), { off: 0, z: init, f: '', center: true }, ...Rr];
+        }
+
+        // Trắc ngang tự nhiên của một cọc theo bố cục ADS; (ox, oy) là chân tim tuyến trên mép trên bảng
+        function buildSection(r, ox = 0, oy = 0) {
+            const s = state.sections[r];
+            if (!s) return null;
+            const pts = sectionPoints(s), k = ui.secV, items = [];
+            const zs = pts.map(p => p.z), mss = Math.min(globalMSS(), Math.floor(Math.min(...zs)) - 1), zMax = Math.max(...zs);
+            const X = off => ox + off, Y = z => oy + (z - mss) * k;
+            const offs = pts.map(p => p.off), xL = X(Math.min(...offs) - 1.5), xR = X(Math.max(...offs) + 1.5), HW = 13;
+            const rows = [['Cao độ thiết kế', 1.8], ['Khoảng cách lẻ thiết kế', 1.8], ['Cao độ tự nhiên', 3], ['Khoảng cách mia', 1.8]];
+            const R = {};
+            let y = oy;
+            items.push(dLine(xL - HW, oy, xR, oy, LAYER.xBand));
+            rows.forEach(([name, hgt]) => {
+                R[name] = { top: y, bot: y - hgt, mid: y - hgt / 2 };
+                y -= hgt;
+                items.push(dLine(xL - HW, y, xR, y, LAYER.xBand));
+                items.push(dText(name, xL - HW / 2, R[name].mid, 0.4, 0, 'c', 'm', LAYER.xBand));
+            });
+            items.push(dLine(xL - HW, oy, xL - HW, y, LAYER.xBand), dLine(xL, oy, xL, y, LAYER.xBand), dLine(xR, oy, xR, y, LAYER.xBand));
+            items.push(dText(`MSS: ${mss}`, xL - 0.5, oy + 0.3, 0.35, 0, 'r', 'b', LAYER.xText));
+
+            // Mặt đường cũ: đoạn giữa điểm có FCode 1 và điểm có FCode 2
+            const i1 = pts.findIndex(p => p.f === '1'), i2 = pts.findIndex(p => p.f === '2');
+            if (i1 >= 0 && i2 > i1) {
+                const top = pts.slice(i1, i2 + 1).map(p => [X(p.off), Y(p.z)]);
+                const bot = top.slice().reverse().map(([a, b]) => [a, b - 0.3 * k]);
+                items.push(dFill([...top, ...bot], LAYER.xOld, { color: 'rgba(120,120,120,0.35)' }));
+            }
+            // Đường tự nhiên, đường dóng, cao độ, khoảng cách mia
+            items.push(dPoly(pts.map(p => [X(p.off), Y(p.z)]), LAYER.xGround, { color: '#2b2b2b', w: 1.6 }));
+            const rz = R['Cao độ tự nhiên'], rm = R['Khoảng cách mia'];
+            pts.forEach((p, i) => {
+                const x = X(p.off);
+                if (!p.center) items.push(dLine(x, oy, x, Y(p.z), LAYER.xDong));
+                items.push(dText(f3(p.z), x, rz.mid, 0.35, 90, 'c', 'm', LAYER.xText));
+                items.push(dLine(x, rm.top, x, rm.bot, LAYER.xText));
+                if (i > 0) {
+                    const dx = p.off - pts[i - 1].off;
+                    if (dx > 1e-9) items.push(dText(f3(dx), (x + X(pts[i - 1].off)) / 2, rm.mid, 0.35, dx < 1.3 ? 90 : 0, 'c', 'm', LAYER.xText));
+                }
+            });
+            // Tim tuyến và tiêu đề cọc
+            const yTop = Y(zMax) + 3;
+            items.push(dLine(X(0), oy, X(0), yTop, LAYER.xTitle));
+            items.push(dPoly([[X(0) - 0.4, yTop - 0.6], [X(0), yTop], [X(0) + 0.4, yTop - 0.6]], LAYER.xTitle));
+            const ch = sectionChainages()[r];
+            items.push(dText(`Cọc ${s.name || 'MC' + (r + 1)}`, X(0), yTop + 2.2, 0.6, 0, 'c', 'b', LAYER.xTitle));
+            items.push(dText(kmText(ch), X(0), yTop + 1.2, 0.5, 0, 'c', 'b', LAYER.xTitle));
+            return { items, name: s.name || `MC${r + 1}`, c: ch };
+        }
+
+        // Toàn bộ trắc ngang (cọc có điểm mia) xếp thành cột, mỗi cột 10 mặt cắt, để xuất DXF
+        function buildAllSections() {
+            const all = [];
+            let x = 0, y = 0, n = 0, colW = 0;
+            state.sections.forEach((s, r) => {
+                // như ADS: chỉ vẽ trắc ngang cho cọc có điểm mia
+                if (isEmptySection(s) || !s.left.concat(s.right).some(t => t.dist !== '' || t.elev !== '')) return;
+                const d = buildSection(r);
+                if (!d) return;
+                const bb = itemsBox(d.items);
+                if (n && n % 10 === 0) { x += colW + 20; y = 0; colW = 0; }
+                all.push(...moveItems(d.items, x - bb[0], y - bb[3]));
+                y -= (bb[3] - bb[1]) + 8;
+                colW = Math.max(colW, bb[2] - bb[0]);
+                n++;
+            });
+            return all;
+        }
+
+        // Bình đồ dạng đối tượng (dùng khi xuất DXF)
+        function buildPlanItems() {
+            const d = buildPlan(), items = [];
+            if (!d.poles.length) return items;
+            items.push(dPoly(d.poles.map(p => [p.x, p.y]), LAYER.plAxis));
+            d.poles.forEach(p => {
+                items.push(dCircle(p.x, p.y, 0.6, LAYER.plPole));
+                items.push(dText(p.name, p.x + 1, p.y + 1, 1.5, 0, 'l', 'b', LAYER.plPole));
+                if (p.pts.length) {
+                    const [l, r] = planSegment(p);
+                    items.push(dPoly([[l.x, l.y], [p.x, p.y], [r.x, r.y]], LAYER.plPoint));
+                    p.pts.forEach(q => items.push(dCircle(q.x, q.y, 0.15, LAYER.plPoint)));
+                }
+            });
+            return items;
+        }
+
+        // ---- Xuất DXF (R12, mở được bằng AutoCAD; chữ có dấu ghi dạng \U+xxxx) ----
+        const dxfLayer = name => name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+        const dxfText = s => s.replace(/[^\x20-\x7e]/g, ch => '\\U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0'));
+        const dn = v => (Math.round(v * 1e6) / 1e6).toString();
+        function toDXF(items) {
+            // Kiểu chữ LEDAT dùng font Arial (Unicode) để hiện đúng tiếng Việt trong AutoCAD
+            const o = ['0', 'SECTION', '2', 'TABLES', '0', 'TABLE', '2', 'STYLE', '70', '1',
+                '0', 'STYLE', '2', 'LEDAT', '70', '0', '40', '0', '41', '1', '50', '0', '71', '0', '42', '2', '3', 'arial.ttf', '4', '',
+                '0', 'ENDTAB', '0', 'ENDSEC', '0', 'SECTION', '2', 'ENTITIES'];
+            const ln = (layer, a, b) => o.push('0', 'LINE', '8', layer, '10', dn(a[0]), '20', dn(a[1]), '30', '0', '11', dn(b[0]), '21', dn(b[1]), '31', '0');
+            items.forEach(it => {
+                const layer = dxfLayer(it.layer || '0');
+                if (it.t === 'line') ln(layer, it.pts[0], it.pts[1]);
+                else if (it.t === 'poly' || it.t === 'fill') {
+                    for (let i = 1; i < it.pts.length; i++) ln(layer, it.pts[i - 1], it.pts[i]);
+                    if (it.t === 'fill') ln(layer, it.pts[it.pts.length - 1], it.pts[0]);
+                } else if (it.t === 'circle') {
+                    o.push('0', 'CIRCLE', '8', layer, '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.r));
+                } else if (it.t === 'text') {
+                    const hj = { l: 0, c: 1, r: 2 }[it.ha] || 0, vj = it.va === 'm' ? 2 : 0;
+                    o.push('0', 'TEXT', '8', layer, '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.h), '1', dxfText(it.s), '7', 'LEDAT');
+                    if (it.rot) o.push('50', dn(it.rot));
+                    if (hj || vj) o.push('72', String(hj), '11', dn(it.x), '21', dn(it.y), '31', '0', '73', String(vj));
+                }
+            });
+            o.push('0', 'ENDSEC', '0', 'EOF');
+            return o.join('\r\n') + '\r\n';
+        }
+        function downloadText(text, filename) {
+            const url = URL.createObjectURL(new Blob([text], { type: 'application/dxf' }));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+        function exportDrawingDXF() {
+            const tab = ui.drawTab;
+            const items = tab === 'plan' ? buildPlanItems() : tab === 'profile' ? ((buildProfile() || {}).items || []) : buildAllSections();
+            if (!items.length) { toast('Chưa có dữ liệu để xuất bản vẽ'); return; }
+            const file = { plan: 'LEDAT_binh_do.dxf', profile: 'LEDAT_trac_doc.dxf', section: 'LEDAT_trac_ngang.dxf' }[tab];
+            downloadText(toDXF(items), file);
+            toast(`Đã xuất ${file}` + (tab === 'section' ? ' (toàn bộ trắc ngang)' : ''));
+        }
+
+        // ---- Khung xem bản vẽ: phóng to/thu nhỏ, kéo, bấm ----
+        class DrawView {
+            constructor(canvas, opts = {}) {
+                this.cv = canvas;
+                this.opts = opts;
+                this.items = [];
+                this.box = null;
+                this.view = null;
+                this.drag = null;
+                new ResizeObserver(() => this.draw()).observe(canvas.parentNode);
+                canvas.addEventListener('wheel', e => {
+                    if (!this.view) return;
+                    e.preventDefault();
+                    const r = canvas.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top, v = this.view;
+                    const wx = v.cx + (mx - r.width / 2) / v.s, wy = v.cy - (my - r.height / 2) / v.s;
+                    v.s = clamp(v.s * Math.exp(-e.deltaY * 0.0015), 1e-4, 1e4);
+                    v.cx = wx - (mx - r.width / 2) / v.s;
+                    v.cy = wy + (my - r.height / 2) / v.s;
+                    this.draw();
+                }, { passive: false });
+                canvas.addEventListener('pointerdown', e => {
+                    if (!this.view) return;
+                    canvas.setPointerCapture(e.pointerId);
+                    this.drag = { x: e.clientX, y: e.clientY, cx: this.view.cx, cy: this.view.cy, moved: false };
+                });
+                canvas.addEventListener('pointermove', e => {
+                    const d = this.drag;
+                    if (!d) return;
+                    const dx = e.clientX - d.x, dy = e.clientY - d.y;
+                    if (!d.moved && Math.hypot(dx, dy) < 4) return;
+                    d.moved = true;
+                    canvas.classList.add('dragging');
+                    this.view.cx = d.cx - dx / this.view.s;
+                    this.view.cy = d.cy + dy / this.view.s;
+                    this.draw();
+                });
+                canvas.addEventListener('pointerup', e => {
+                    const d = this.drag;
+                    this.drag = null;
+                    canvas.classList.remove('dragging');
+                    if (!d || d.moved || !this.opts.onClick) return;
+                    const r = canvas.getBoundingClientRect(), v = this.view;
+                    this.opts.onClick(v.cx + (e.clientX - r.left - r.width / 2) / v.s, v.cy - (e.clientY - r.top - r.height / 2) / v.s, v.s);
+                });
+                canvas.addEventListener('dblclick', () => { this.fit(); this.draw(); });
+            }
+            size() { const r = this.cv.getBoundingClientRect(); return { w: r.width, h: r.height }; }
+            setItems(items, keepView) {
+                items.forEach(it => { it.bb = itemBox(it); });
+                this.items = items;
+                this.box = items.length ? itemsBox(items) : null;
+                if (!keepView || !this.view) this.fit();
+            }
+            fit() {
+                const { w, h } = this.size(), b = this.box;
+                if (!b || !w || !h) return;
+                const pad = 20, bw = b[2] - b[0] || 1, bh = b[3] - b[1] || 1;
+                this.view = { s: Math.min((w - 2 * pad) / bw, (h - 2 * pad) / bh), cx: (b[0] + b[2]) / 2, cy: (b[1] + b[3]) / 2 };
+            }
+            // Vừa chiều cao, căn giữa theo x (dùng cho trắc dọc dài)
+            fitHeight(cx) {
+                const { w, h } = this.size(), b = this.box;
+                if (!b || !w || !h) return;
+                const s = (h - 40) / ((b[3] - b[1]) || 1);
+                this.view = { s, cx: cx === undefined ? (b[0] + b[2]) / 2 : cx, cy: (b[1] + b[3]) / 2 };
+            }
+            toScreen(x, y) {
+                const { w, h } = this.size(), v = this.view;
+                return [w / 2 + (x - v.cx) * v.s, h / 2 - (y - v.cy) * v.s];
+            }
+            draw() {
+                const cv = this.cv, { w, h } = this.size();
+                if (!w || !h || cv.offsetParent === null) return;
+                const dpr = window.devicePixelRatio || 1;
+                cv.width = w * dpr;
+                cv.height = h * dpr;
+                const ctx = cv.getContext('2d');
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                ctx.clearRect(0, 0, w, h);
+                if (!this.view) return;
+                const v = this.view, X = x => w / 2 + (x - v.cx) * v.s, Y = y => h / 2 - (y - v.cy) * v.s;
+                const wx0 = v.cx - w / 2 / v.s, wx1 = v.cx + w / 2 / v.s, wy0 = v.cy - h / 2 / v.s, wy1 = v.cy + h / 2 / v.s;
+                ctx.lineJoin = 'round';
+                this.items.forEach(it => {
+                    const b = it.bb;
+                    if (b[2] < wx0 || b[0] > wx1 || b[3] < wy0 || b[1] > wy1) return;
+                    if (it.t === 'text') {
+                        const px = it.h * v.s;
+                        if (px < 3.5) return;
+                        ctx.save();
+                        ctx.translate(X(it.x), Y(it.y));
+                        if (it.rot) ctx.rotate(-it.rot * Math.PI / 180);
+                        ctx.font = `${px}px "Segoe UI", Arial, sans-serif`;
+                        ctx.textAlign = { l: 'left', c: 'center', r: 'right' }[it.ha] || 'left';
+                        ctx.textBaseline = it.va === 'm' ? 'middle' : 'alphabetic';
+                        ctx.fillStyle = it.color || '#3b3433';
+                        ctx.fillText(it.s, 0, 0);
+                        ctx.restore();
+                    } else if (it.t === 'circle') {
+                        ctx.strokeStyle = it.color || '#3b3433';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.arc(X(it.x), Y(it.y), Math.max(it.r * v.s, 1.5), 0, Math.PI * 2);
+                        ctx.stroke();
+                    } else {
+                        ctx.beginPath();
+                        it.pts.forEach(([x, y], i) => (i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y))));
+                        if (it.t === 'fill') {
+                            ctx.closePath();
+                            ctx.fillStyle = it.color || 'rgba(120,120,120,0.35)';
+                            ctx.fill();
+                        }
+                        ctx.strokeStyle = it.t === 'fill' ? '#777' : (it.color || '#8a8580');
+                        ctx.lineWidth = it.w || 1;
+                        ctx.stroke();
+                    }
+                });
+                if (this.opts.overlay) this.opts.overlay(ctx, X, Y, v.s, w, h);
+            }
+        }
+
+        const drawState = { version: 0, profVer: -1, profile: null, section: null };
+        const profView = new DrawView($('#canvas-profile'), {
+            onClick: (wx, wy, s) => { // bấm gần đường dóng của cọc nào thì chọn cọc đó
+                const d = drawState.profile;
+                if (!d) return;
+                let best = null, bestD = 15 / s;
+                d.poles.forEach(p => { const dd = Math.abs(p.c - wx); if (dd < bestD) { bestD = dd; best = p; } });
+                if (best) topGrid.setCur(best.r, topGrid.cur.c);
+            },
+            overlay: (ctx, X, Y) => { // tô cọc đang chọn
+                const d = drawState.profile;
+                const p = d && d.poles.find(q => q.r === topGrid.cur.r);
+                if (!p) return;
+                const yTop = p.z !== null && isFinite(p.z) ? d.Y(p.z) + 6 : 10;
+                ctx.strokeStyle = '#1f78d1';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(X(p.c), Y(yTop));
+                ctx.lineTo(X(p.c), Y(-89));
+                ctx.stroke();
+                ctx.fillStyle = '#1f78d1';
+                ctx.font = 'bold 12px "Segoe UI", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(`${p.name}  ${kmText(p.c)}`, X(p.c) + 5, Y(yTop) + 4);
+            }
+        });
+        const secView = new DrawView($('#canvas-section'));
+
+        function refreshProfile(center, refit) {
+            if (drawState.profVer !== drawState.version || refit) {
+                drawState.profile = buildProfile();
+                const keep = !!profView.view && !refit;
+                profView.setItems(drawState.profile ? drawState.profile.items : [], keep);
+                if (!keep && drawState.profile) {
+                    const p = drawState.profile.poles.find(q => q.r === topGrid.cur.r) || drawState.profile.poles[0];
+                    profView.fitHeight(p.c);
+                }
+                drawState.profVer = drawState.version;
+            } else if (center && profView.view && drawState.profile) {
+                const p = drawState.profile.poles.find(q => q.r === topGrid.cur.r);
+                if (p) {
+                    const [sx] = profView.toScreen(p.c, 0), { w } = profView.size();
+                    if (sx < 30 || sx > w - 30) profView.view.cx = p.c;
+                }
+            }
+            $('#ph-draw').style.display = drawState.profile ? 'none' : 'block';
+            $('#ph-draw').textContent = 'Nhập lý trình và cao độ các cọc để xem trắc dọc';
+            profView.draw();
+        }
+
+        function refreshSection() {
+            const sec = activeSection();
+            const d = sec && !isEmptySection(sec) ? buildSection(topGrid.cur.r) : null;
+            drawState.section = d;
+            secView.setItems(d ? d.items : [], false);
+            $('#sec-name').textContent = d ? `${d.name} · ${kmText(d.c)}` : '—';
+            $('#ph-draw').style.display = d ? 'none' : 'block';
+            $('#ph-draw').textContent = 'Chọn một cọc có số liệu để xem trắc ngang';
+            secView.draw();
+        }
+
+        // Vẽ lại bản vẽ đang mở. center: dời khung về cọc đang chọn; refit: dựng lại và vừa khung
+        function refreshDrawings(center = false, refit = false) {
+            if (!ui.showPlan) return;
+            if (ui.drawTab === 'plan') updatePlan(center);
+            else if (ui.drawTab === 'profile') refreshProfile(center, refit);
+            else refreshSection();
+        }
+
+        const DRAW_FOOT = {
+            plan: 'Chưa có tọa độ thực: cọc đầu đặt tại gốc, hướng tuyến ban đầu theo trục ngang; hướng đổi theo góc chắn cung (góc &lt; 180° rẽ trái, &gt; 180° rẽ phải), chưa kể bán kính đường cong.',
+            profile: 'Trắc dọc tự nhiên theo bố cục ADS (hàng thiết kế để trống). MSS = cao độ cọc thấp nhất làm tròn xuống trừ 1 (dùng chung với trắc ngang). Cuộn chuột: thu/phóng · Kéo: di chuyển · Bấm đường dóng: chọn cọc · Bấm đúp: xem toàn tuyến.',
+            section: 'Trắc ngang tự nhiên của cọc đang chọn theo bố cục ADS; đoạn giữa điểm FCode 1 và FCode 2 tô là mặt đường cũ. Xuất DXF sẽ xuất toàn bộ trắc ngang.'
+        };
+
+        function setDrawPanel(open, tab) {
+            ui.showPlan = open;
+            if (tab) ui.drawTab = tab;
+            const t = ui.drawTab;
+            $('#plan-panel').classList.toggle('hidden', !open);
+            $('#vsplit').classList.toggle('hidden', !open);
+            $('#plan-panel').style.flexBasis = ui.panelW + '%';
+            document.querySelectorAll('.draw-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+            document.querySelectorAll('.tab-tools').forEach(el => { el.style.display = el.dataset.for === t ? '' : 'none'; });
+            $('#canvas-plan').style.display = t === 'plan' ? '' : 'none';
+            $('#canvas-profile').style.display = t === 'profile' ? '' : 'none';
+            $('#canvas-section').style.display = t === 'section' ? '' : 'none';
+            if (t !== 'plan') $('#ph-plan').style.display = 'none';
+            if (t === 'plan') $('#ph-draw').style.display = 'none';
+            $('#draw-foot').innerHTML = DRAW_FOOT[t];
+            [['plan', '#btn-plan'], ['profile', '#btn-profile'], ['section', '#btn-section']].forEach(([k, id]) => $(id).classList.toggle('on', open && t === k));
+            $('#plan-nums').checked = ui.planNums;
+            $('#prof-v').value = String(ui.profV);
+            $('#sec-v').value = String(ui.secV);
+            if (open) requestAnimationFrame(() => refreshDrawings(true, false));
+            scheduleSave();
+        }
+        function setPlanVisible(show) { setDrawPanel(show, 'plan'); }
+        // Nút trên thanh công cụ: bấm lần nữa vào bản vẽ đang mở thì đóng panel
+        function toggleDrawTab(tab) { setDrawPanel(!(ui.showPlan && ui.drawTab === tab), tab); }
+
+        (function setupDrawPanel() {
+            document.querySelectorAll('.draw-tab').forEach(b => b.addEventListener('click', () => setDrawPanel(true, b.dataset.tab)));
+            $('#prof-v').addEventListener('change', e => { ui.profV = +e.target.value; refreshProfile(false, true); scheduleSave(); });
+            $('#sec-v').addEventListener('change', e => { ui.secV = +e.target.value; refreshSection(); scheduleSave(); });
+            const step = dir => {
+                let r = topGrid.cur.r + dir;
+                while (r >= 0 && r < state.sections.length && isEmptySection(state.sections[r])) r += dir;
+                if (r >= 0 && r < state.sections.length) topGrid.setCur(r, topGrid.cur.c);
+            };
+            $('#sec-prev').addEventListener('click', () => step(-1));
+            $('#sec-next').addEventListener('click', () => step(1));
+            $('#draw-dxf').addEventListener('click', exportDrawingDXF);
+            $('#plan-fit').addEventListener('click', () => {
+                if (ui.drawTab === 'plan') { fitPlan(); drawPlan(false); }
+                else { const v = ui.drawTab === 'profile' ? profView : secView; v.fit(); v.draw(); }
+            });
+            $('#plan-close').addEventListener('click', () => setDrawPanel(false));
+            // Kéo thanh chia để đổi độ rộng panel bản vẽ
+            const sp = $('#vsplit');
+            sp.addEventListener('pointerdown', e => {
+                sp.setPointerCapture(e.pointerId);
+                const row = $('.body-row').getBoundingClientRect();
+                const move = ev => {
+                    ui.panelW = clamp(((row.right - ev.clientX - 8) / row.width) * 100, 20, 80);
+                    $('#plan-panel').style.flexBasis = ui.panelW + '%';
+                };
+                const up = () => { sp.removeEventListener('pointermove', move); sp.removeEventListener('pointerup', up); scheduleSave(); };
+                sp.addEventListener('pointermove', move);
+                sp.addEventListener('pointerup', up);
+            });
         })();
 
         // =====================================================================
@@ -1682,6 +2237,10 @@
                 chartOn: ui.showChart,
                 planOn: ui.showPlan,
                 planNums: ui.planNums,
+                drawTab: ui.drawTab,
+                profV: ui.profV,
+                secV: ui.secV,
+                panelW: ui.panelW,
                 split: ui.split
             };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { return; }
@@ -1704,6 +2263,10 @@
             if (data.chartOn !== undefined) ui.showChart = !!data.chartOn;
             if (data.planOn !== undefined) ui.showPlan = !!data.planOn;
             if (data.planNums !== undefined) ui.planNums = !!data.planNums;
+            if (['plan', 'profile', 'section'].includes(data.drawTab)) ui.drawTab = data.drawTab;
+            if (+data.profV > 0) ui.profV = +data.profV;
+            if (+data.secV > 0) ui.secV = +data.secV;
+            if (+data.panelW > 0) ui.panelW = clamp(+data.panelW, 20, 80);
             if (data.split) ui.split = clamp(+data.split || 55, 15, 85);
             const items = data.items || data;
             if (!Array.isArray(items)) return;
@@ -2073,7 +2636,9 @@
             $('#btn-redo').addEventListener('click', redo);
             $('#btn-options').addEventListener('click', openOptions);
             $('#btn-chart').addEventListener('click', () => setChartVisible(!ui.showChart));
-            $('#btn-plan').addEventListener('click', () => setPlanVisible(!ui.showPlan));
+            $('#btn-plan').addEventListener('click', () => toggleDrawTab('plan'));
+            $('#btn-profile').addEventListener('click', () => toggleDrawTab('profile'));
+            $('#btn-section').addEventListener('click', () => toggleDrawTab('section'));
             $('#btn-guide').addEventListener('click', startTutorial);
             $('#btn-generate').addEventListener('click', generateAndDownload);
             $('#btn-import-ntd').addEventListener('click', () => $('#ntd-importer').click());
@@ -2156,6 +2721,8 @@
               text: 'Mở <b>Tùy chọn</b> để chọn cách nhập khoảng cách (lẻ / cộng dồn), cao độ (tương đối / tuyệt đối) và cách hiển thị góc. Áp dụng cho toàn bộ dự án.' },
             { element: '#search-box', position: 'bottom',
               text: '<b>Tìm nhanh cọc</b> (Ctrl+F): gõ tên cọc, lý trình hoặc dạng <b>Km0+200</b>. Các dòng khớp được tô vàng, Enter để chuyển kết quả kế tiếp, Shift+Enter quay lại, Esc để xóa.' },
+            { element: '#btn-profile', position: 'bottom',
+              text: '<b>Trắc dọc</b> và <b>Trắc ngang</b> vẽ theo bố cục bản vẽ ADS (đường tự nhiên, đường dóng, bảng số liệu). Nút <b>Xuất DXF</b> trong panel xuất bản vẽ ra file mở bằng AutoCAD.' },
             { element: '#btn-plan', position: 'bottom',
               text: 'Bật <b>Bình đồ</b> để xem tim tuyến dựng từ lý trình và góc chắn cung, kèm các điểm mặt cắt ngang. Cuộn chuột để phóng to, kéo để di chuyển, bấm vào cọc để chọn dòng tương ứng.' },
             { element: '#btn-chart', position: 'bottom',
@@ -2218,7 +2785,7 @@
             loadFromLocalStorage();
             applySplit(ui.split);
             setChartVisible(ui.showChart);
-            setPlanVisible(ui.showPlan);
+            setDrawPanel(ui.showPlan);
             setActiveGrid(topGrid);
             if (state.sections.length) topGrid.setSilent(0, 0);
             lastActiveId = undefined;
