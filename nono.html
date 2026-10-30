@@ -153,10 +153,6 @@
         .pane-title .hint { margin-left: auto; color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; }
         .pane-left .pane-title b { color: var(--left-color); }
         .pane-right .pane-title b { color: var(--right-color); }
-        .chart-row { flex: 0 0 190px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
-        .chart-row.hidden { display: none; }
-        .chart-box { position: relative; min-height: 0; }
-        .chart-box canvas { flex: 1; min-height: 0; width: 100%; display: block; cursor: crosshair; }
         .canvas-placeholder { position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); color: var(--muted); font-size: 12px; pointer-events: none; }
 
         /* ---------- Grid ---------- */
@@ -254,18 +250,6 @@
             transition: opacity 0.25s;
         }
         #toast.show { opacity: 1; }
-        #chart-tooltip {
-            position: fixed;
-            display: none;
-            background: rgba(40, 40, 40, 0.88);
-            color: #fff;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-            pointer-events: none;
-            z-index: 1002;
-        }
-
         /* ---------- Dialogs ---------- */
         .modal-overlay {
             position: fixed;
@@ -301,6 +285,14 @@
         .opt-group h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
         .opt-group label { display: inline-flex; align-items: center; gap: 6px; margin-right: 18px; cursor: pointer; }
         .opt-group input { accent-color: var(--select); }
+        .dialog-wide { max-width: 540px; }
+        .opt-group.stack label { display: flex; margin: 3px 0; }
+        .opt-group.stack label.disabled { opacity: 0.45; cursor: default; }
+        .cmp-table { width: 100%; border-collapse: collapse; margin: 2px 0 12px; font-size: 12px; }
+        .cmp-table th, .cmp-table td { border: 1px solid var(--line-soft); padding: 4px 6px; text-align: left; }
+        .cmp-table th { background: #f6f5f1; font-weight: 600; }
+        .cmp-table select { font: inherit; width: 100%; }
+        .cmp-table tr.diff td { background: #fff3c4; }
         .opt-hint { margin-top: 3px; font-size: 11px; line-height: 1.45; color: var(--muted); }
         .from-file { margin-left: 2px; padding: 0 6px; border-radius: 8px; background: var(--select-soft); color: var(--select); font-size: 11px; white-space: nowrap; }
         .dialog-foot { display: flex; justify-content: flex-end; gap: 8px; padding: 10px 16px 14px; }
@@ -346,7 +338,6 @@
             .plan-panel { flex: 0 0 420px !important; margin: 6px 8px 0; }
             .vsplit { display: none; }
             .pane-bottom { grid-template-columns: 1fr; }
-            .chart-row { grid-template-columns: 1fr; flex-basis: 380px; }
             .tb-title { display: none; }
         }
     </style>
@@ -354,7 +345,8 @@
 <body>
     <div class="toolbar">
         <button class="tb-btn danger" id="btn-delete-all" title="Xóa toàn bộ dữ liệu"><span class="ic">🗑️</span><span>Xóa tất cả</span></button>
-        <button class="tb-btn" id="btn-import-ntd" title="Nhập dữ liệu từ file .ntd"><span class="ic">📂</span><span>Import NTD</span></button>
+        <button class="tb-btn" id="btn-import-ntd" title="Nhập dữ liệu từ file .ntd (thay toàn bộ dữ liệu hiện có)"><span class="ic">📂</span><span>Import NTD</span></button>
+        <button class="tb-btn" id="btn-insert-ntd" title="Chèn thêm các cọc từ một file .ntd vào dữ liệu hiện có"><span class="ic">📥</span><span>Chèn NTD</span></button>
         <button class="tb-btn" id="btn-import-csv" title="Nhập danh sách cọc từ file .csv"><span class="ic">📑</span><span>Import CSV</span></button>
         <button class="tb-btn" id="btn-generate" title="Tạo và tải file .ntd (Ctrl+S)"><span class="ic">💾</span><span>Xuất .ntd</span></button>
         <div class="tb-sep"></div>
@@ -367,7 +359,6 @@
         <button class="tb-btn" id="btn-redo" title="Làm lại (Ctrl+Y)"><span class="ic">↪️</span><span>Làm lại</span></button>
         <div class="tb-sep"></div>
         <button class="tb-btn" id="btn-options" title="Tùy chọn chế độ nhập liệu"><span class="ic">⚙️</span><span>Tùy chọn</span></button>
-        <button class="tb-btn on" id="btn-chart" title="Hiện / ẩn biểu đồ mặt cắt ngang"><span class="ic">📈</span><span>Biểu đồ</span></button>
         <button class="tb-btn" id="btn-plan" title="Hiện / ẩn bình đồ tuyến"><span class="ic">🗺️</span><span>Bình đồ</span></button>
         <button class="tb-btn" id="btn-profile" title="Hiện / ẩn trắc dọc tự nhiên"><span class="ic">📉</span><span>Trắc dọc</span></button>
         <button class="tb-btn" id="btn-section" title="Hiện / ẩn trắc ngang của cọc đang chọn"><span class="ic">⛰️</span><span>Trắc ngang</span></button>
@@ -396,18 +387,6 @@
             <section class="pane pane-right">
                 <div class="pane-title"><b id="title-right">Bên phải</b><span class="hint">TARGETR</span></div>
                 <div class="grid-host" id="grid-right"></div>
-            </section>
-        </div>
-        <div class="chart-row" id="chart-row">
-            <section class="pane pane-left chart-box">
-                <div class="pane-title"><b>Biểu đồ trái</b></div>
-                <canvas id="canvas-left"></canvas>
-                <div class="canvas-placeholder" id="ph-left">Nhập dữ liệu bảng trái để xem biểu đồ</div>
-            </section>
-            <section class="pane pane-right chart-box">
-                <div class="pane-title"><b>Biểu đồ phải</b></div>
-                <canvas id="canvas-right"></canvas>
-                <div class="canvas-placeholder" id="ph-right">Nhập dữ liệu bảng phải để xem biểu đồ</div>
             </section>
         </div>
     </div>
@@ -453,7 +432,7 @@
 
     <input type="file" id="csv-importer" accept=".csv" style="display: none;">
     <input type="file" id="ntd-importer" accept=".ntd" style="display: none;">
-    <div id="chart-tooltip"></div>
+    <input type="file" id="ntd-inserter" accept=".ntd" style="display: none;">
     <div id="toast"></div>
     <div id="ctx-menu" class="ctx-menu" style="display: none;"></div>
 
@@ -538,6 +517,39 @@
             <div class="dialog-foot">
                 <button class="btn primary" id="imp-ok">Import</button>
                 <button class="btn" id="imp-cancel">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hộp thoại chèn cọc từ file NTD -->
+    <div id="insert-modal" class="modal-overlay">
+        <div class="dialog dialog-wide">
+            <div class="dialog-head"><span>Chèn cọc từ file NTD</span><button class="dialog-x" id="ins-close" title="Hủy">&times;</button></div>
+            <div class="dialog-body">
+                <p id="ins-note"></p>
+                <table class="cmp-table">
+                    <thead><tr><th>Thuộc tính</th><th>Số liệu trong file chèn</th><th>Dữ liệu hiện có</th></tr></thead>
+                    <tbody>
+                        <tr data-k="top"><td>Khoảng cách cọc</td><td><select id="ins-top"><option value="cum">Cộng dồn (lý trình)</option><option value="odd">Lẻ</option></select></td><td id="cur-top"></td></tr>
+                        <tr data-k="dist"><td>Khoảng cách mia</td><td><select id="ins-dist"><option value="cum">Cộng dồn</option><option value="odd">Lẻ</option></select></td><td id="cur-dist"></td></tr>
+                        <tr data-k="elev"><td>Cao độ mia</td><td><select id="ins-elev"><option value="abs">Tuyệt đối</option><option value="pole">Tương đối so với cọc</option><option value="prev">Tương đối so với điểm trước</option></select></td><td id="cur-elev"></td></tr>
+                    </tbody>
+                </table>
+                <div class="opt-group stack" id="ins-conv-group">
+                    <h5>Thuộc tính khác nhau (tô vàng) — xử lý số liệu của file chèn</h5>
+                    <label><input type="radio" name="ins-conv" value="convert"> Chuyển đổi cho phù hợp với dữ liệu hiện có (giữ đúng giá trị thực)</label>
+                    <label><input type="radio" name="ins-conv" value="raw"> Chèn thẳng số liệu của file (giữ nguyên các con số)</label>
+                </div>
+                <div class="opt-group stack">
+                    <h5>Vị trí chèn</h5>
+                    <label><input type="radio" name="ins-pos" value="after"> Sau cọc đang chọn</label>
+                    <label><input type="radio" name="ins-pos" value="end"> Cuối danh sách</label>
+                    <label id="ins-pos-chain"><input type="radio" name="ins-pos" value="chain"> Xếp xen theo lý trình</label>
+                </div>
+            </div>
+            <div class="dialog-foot">
+                <button class="btn primary" id="ins-ok">Chèn</button>
+                <button class="btn" id="ins-cancel">Hủy</button>
             </div>
         </div>
     </div>
@@ -4064,18 +4076,18 @@ EOF
         const ELEV_TITLE = { abs: 'Cao độ tuyệt đối', pole: 'Cao độ tương đối (cọc)', prev: 'Cao độ tương đối (điểm trước)' };
         // Cao độ tuyệt đối của từng dòng điểm mia theo chế độ nhập hiện tại. Tương đối so với cọc: chênh so với cao độ cọc;
         // so với điểm trước: điểm đầu so với cao độ cọc, các điểm sau so với điểm liền trước.
-        function absElevations(sec, side) {
+        function absElevations(sec, side, mode = modes.elevMode) {
             const init = parseFloat(sec.elevation) || 0;
             let acc = init;
             return sec[side].map(t => {
                 const v = parseFloat(t.elev) || 0;
-                if (modes.elevMode === 'abs') return v;
-                if (modes.elevMode === 'pole') return init + v;
+                if (mode === 'abs') return v;
+                if (mode === 'pole') return init + v;
                 acc += v;
                 return acc;
             });
         }
-        const ui = { showChart: false, showPlan: false, planNums: true, drawTab: 'plan', profV: 10, secV: 1, panelW: 42, split: 55 };
+        const ui = { showPlan: false, planNums: true, drawTab: 'plan', profV: 10, secV: 1, panelW: 42, split: 55 };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
         const newSection = () => ({ id: nextId++, name: '', cumulative: '', elevation: '', angle: '', radius: '', left: [], right: [] });
@@ -4663,7 +4675,6 @@ EOF
             const label = sec ? (sec.name || `Mặt cắt ${topGrid.cur.r + 1}`) : '(chưa chọn cọc)';
             $('#title-left').textContent = `Bên trái — ${label}`;
             $('#title-right').textContent = `Bên phải — ${label}`;
-            drawCharts();
             refreshDrawings(true);
             updateStatus();
         }
@@ -4711,118 +4722,8 @@ EOF
         document.addEventListener('mousedown', e => { if (!e.target.closest('#ctx-menu')) hideMenu(); });
         window.addEventListener('blur', hideMenu);
 
-        // =====================================================================
-        //  Biểu đồ mặt cắt ngang
-        // =====================================================================
+        // Màu điểm mia trái / phải trên bình đồ
         const CHART_COLOR = { left: '#5E8C61', right: '#C27C4E' };
-        let hoveredPoint = null;
-
-        function chartData(side) {
-            const sec = activeSection();
-            if (!sec) return null;
-            const init = parseFloat(sec.elevation) || 0;
-            const pts = [{ dist: 0, y: init }];
-            const absE = absElevations(sec, side);
-            let accD = 0, any = false;
-            sec[side].forEach((t, i) => {
-                const d = parseFloat(t.dist) || 0;
-                accD += d;
-                if (t.dist === '' && t.elev === '') return;
-                any = true;
-                pts.push({ dist: modes.distCum ? d : accD, y: absE[i] });
-            });
-            return any ? { pts } : null;
-        }
-
-        function drawCharts() { drawChart('left'); drawChart('right'); }
-
-        function drawChart(side) {
-            if (!ui.showChart) return;
-            const canvas = $('#canvas-' + side), ph = $('#ph-' + side);
-            const rect = canvas.getBoundingClientRect();
-            if (!rect.width || !rect.height) return;
-            const dpr = window.devicePixelRatio || 1;
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            const ctx = canvas.getContext('2d');
-            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-            ctx.clearRect(0, 0, rect.width, rect.height);
-            const data = chartData(side);
-            if (!data) { ph.style.display = 'block'; canvas._tf = null; return; }
-            ph.style.display = 'none';
-
-            const pts = data.pts;
-            let minY = Infinity, maxY = -Infinity, maxX = 0;
-            pts.forEach(p => { minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y); maxX = Math.max(maxX, p.dist); });
-            const dataH = Math.max(maxY - minY, 1);
-            const lo = minY - dataH * 0.2, hi = maxY + dataH * 0.2, spanY = hi - lo;
-            const spanX = maxX === 0 ? 1 : maxX;
-            const pad = { top: 14, right: 20, bottom: 24, left: 50 };
-            const sx = (rect.width - pad.left - pad.right) / spanX;
-            const sy = (rect.height - pad.top - pad.bottom) / spanY;
-            const toY = y => rect.height - pad.bottom - (y - lo) * sy;
-            const toX = d => (side === 'left' ? rect.width - pad.right - d * sx : pad.left + d * sx);
-            canvas._tf = { toX, toY, pts };
-
-            ctx.strokeStyle = '#e0e0e0';
-            ctx.lineWidth = 0.5;
-            ctx.font = '10px "Segoe UI", sans-serif';
-            ctx.fillStyle = '#666';
-            for (let i = 0; i <= 4; i++) {
-                const yv = lo + (spanY / 4) * i, y = toY(yv);
-                ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(rect.width - pad.right, y); ctx.stroke();
-                ctx.fillText(yv.toFixed(2), 5, y + 3);
-            }
-            for (let i = 0; i <= 4; i++) {
-                const dv = (spanX / 4) * i, x = toX(dv);
-                ctx.beginPath(); ctx.moveTo(x, pad.top); ctx.lineTo(x, rect.height - pad.bottom); ctx.stroke();
-                ctx.fillText(dv.toFixed(2), x - 10, rect.height - pad.bottom + 14);
-            }
-            const color = CHART_COLOR[side];
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 2.5;
-            ctx.lineCap = ctx.lineJoin = 'round';
-            ctx.beginPath();
-            pts.forEach((p, i) => (i ? ctx.lineTo(toX(p.dist), toY(p.y)) : ctx.moveTo(toX(p.dist), toY(p.y))));
-            ctx.stroke();
-            pts.forEach((p, i) => {
-                const hov = hoveredPoint && hoveredPoint.side === side && hoveredPoint.index === i;
-                ctx.fillStyle = color;
-                ctx.beginPath();
-                ctx.arc(toX(p.dist), toY(p.y), hov ? 6 : 3, 0, Math.PI * 2);
-                ctx.fill();
-                if (hov) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); }
-            });
-        }
-
-        ['left', 'right'].forEach(side => {
-            const canvas = $('#canvas-' + side), tip = $('#chart-tooltip');
-            canvas.addEventListener('mousemove', e => {
-                const tf = canvas._tf;
-                if (!tf) return;
-                const rect = canvas.getBoundingClientRect();
-                const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-                let found = null, best = 15;
-                tf.pts.forEach((p, i) => {
-                    const d = Math.hypot(mx - tf.toX(p.dist), my - tf.toY(p.y));
-                    if (d < best) { best = d; found = { side, index: i, p }; }
-                });
-                const changed = (found ? found.index : -1) !== (hoveredPoint ? hoveredPoint.index : -1);
-                hoveredPoint = found;
-                if (changed) drawChart(side);
-                if (found) {
-                    tip.innerHTML = `Khoảng cách: ${found.p.dist.toFixed(3)}<br>Cao độ: ${found.p.y.toFixed(3)}`;
-                    tip.style.display = 'block';
-                    tip.style.left = (e.clientX + 15) + 'px';
-                    tip.style.top = (e.clientY + 15) + 'px';
-                } else tip.style.display = 'none';
-            });
-            canvas.addEventListener('mouseleave', () => {
-                if (hoveredPoint) { hoveredPoint = null; drawChart(side); }
-                tip.style.display = 'none';
-            });
-        });
-        new ResizeObserver(() => drawCharts()).observe($('#chart-row'));
 
         // =====================================================================
         //  Tìm nhanh cọc
@@ -5767,7 +5668,6 @@ EOF
                 angleDms: modes.angleDms,
                 colRadius: colVisible.radius,
                 colCount: colVisible.count,
-                chartOn: ui.showChart,
                 planOn: ui.showPlan,
                 planNums: ui.planNums,
                 drawTab: ui.drawTab,
@@ -5793,7 +5693,6 @@ EOF
             if (data.angleDms !== undefined) modes.angleDms = !!data.angleDms;
             if (data.colRadius !== undefined) colVisible.radius = !!data.colRadius;
             if (data.colCount !== undefined) colVisible.count = !!data.colCount;
-            if (data.chartOn !== undefined) ui.showChart = !!data.chartOn;
             if (data.planOn !== undefined) ui.showPlan = !!data.planOn;
             if (data.planNums !== undefined) ui.planNums = !!data.planNums;
             if (['plan', 'profile', 'section'].includes(data.drawTab)) ui.drawTab = data.drawTab;
@@ -5906,7 +5805,8 @@ EOF
             });
         }
 
-        function processNtdData(text) {
+        // Đọc file NTD: danh sách cọc và chế độ nhập khai báo trong dòng TYPEINPUT (nếu có)
+        function parseNtd(text) {
             const sections = [];
             let cur = null, tm = true, dm = true, em = true, rp = false, hasType = false, typeLine = '';
             text.trim().split(/\r?\n/).forEach(line => {
@@ -5941,6 +5841,12 @@ EOF
                     });
                 }
             });
+            return { sections, hasType, typeLine, file: { topCum: tm, distCum: dm, elevMode: em ? 'abs' : (rp ? 'pole' : 'prev') } };
+        }
+
+        function processNtdData(text) {
+            const { sections, hasType, typeLine, file } = parseNtd(text);
+            const tm = file.topCum, dm = file.distCum, em = file.elevMode === 'abs', rp = file.elevMode === 'pole';
             if (!sections.length) {
                 openModal({ title: 'Lỗi Import NTD', message: 'Không tìm thấy dòng POLE nào trong file.', hideCancel: true, confirmText: 'Đóng', confirmClass: 'primary' });
                 return;
@@ -5995,6 +5901,121 @@ EOF
             $('#import-modal').classList.remove('active');
             if (values) cb(values);
         }
+
+        // =====================================================================
+        //  Chèn cọc từ file NTD vào dữ liệu hiện có
+        // =====================================================================
+        const MODE_WORD = { top: { cum: 'Cộng dồn (lý trình)', odd: 'Lẻ' }, dist: { cum: 'Cộng dồn', odd: 'Lẻ' },
+            elev: { abs: 'Tuyệt đối', pole: 'Tương đối so với cọc', prev: 'Tương đối so với điểm trước' } };
+        const insertState = { parsed: null };
+        const curModeVals = () => ({ top: modes.topCum ? 'cum' : 'odd', dist: modes.distCum ? 'cum' : 'odd', elev: modes.elevMode });
+        const insModeVals = () => ({ top: $('#ins-top').value, dist: $('#ins-dist').value, elev: $('#ins-elev').value });
+
+        // Lý trình thực (cộng dồn) của một danh sách cọc theo chế độ khoảng cách cọc của nó
+        function trueChainages(list, topCum) {
+            let run = 0;
+            return list.map(s => { const v = parseFloat(s.cumulative) || 0; run += v; return topCum ? v : run; });
+        }
+
+        function updateInsertDialog() {
+            const cur = curModeVals(), ins = insModeVals();
+            let diff = false;
+            ['top', 'dist', 'elev'].forEach(k => {
+                const d = cur[k] !== ins[k];
+                diff = diff || d;
+                document.querySelector(`#insert-modal tr[data-k="${k}"]`).classList.toggle('diff', d);
+                $('#cur-' + k).textContent = MODE_WORD[k][cur[k]];
+            });
+            $('#ins-conv-group').style.display = diff ? '' : 'none';
+            // Xếp theo lý trình cần so được lý trình thật: không dùng khi chèn thẳng mà khoảng cách cọc khác nhau
+            const raw = diff && document.querySelector('input[name="ins-conv"]:checked').value === 'raw';
+            const noChain = raw && cur.top !== ins.top;
+            const chain = document.querySelector('input[name="ins-pos"][value="chain"]');
+            chain.disabled = noChain;
+            $('#ins-pos-chain').classList.toggle('disabled', noChain);
+            $('#ins-pos-chain').title = noChain ? 'Chèn thẳng với khoảng cách cọc khác chế độ nên không so được lý trình' : '';
+            if (noChain && chain.checked) document.querySelector('input[name="ins-pos"][value="end"]').checked = true;
+        }
+
+        function openInsertDialog(text) {
+            const parsed = parseNtd(text);
+            if (!parsed.sections.length) {
+                openModal({ title: 'Lỗi chèn NTD', message: 'Không tìm thấy dòng POLE nào trong file.', hideCancel: true, confirmText: 'Đóng', confirmClass: 'primary' });
+                return;
+            }
+            insertState.parsed = parsed;
+            const f = parsed.hasType
+                ? { top: parsed.file.topCum ? 'cum' : 'odd', dist: parsed.file.distCum ? 'cum' : 'odd', elev: parsed.file.elevMode }
+                : curModeVals();
+            $('#ins-top').value = f.top;
+            $('#ins-dist').value = f.dist;
+            $('#ins-elev').value = f.elev;
+            const ch = trueChainages(parsed.sections, f.top === 'cum');
+            $('#ins-note').textContent = `File có ${parsed.sections.length} cọc (${parsed.sections[0].name} → ${parsed.sections[parsed.sections.length - 1].name}, lý trình ${f3(ch[0])} → ${f3(ch[ch.length - 1])}). `
+                + (parsed.hasType ? `Cột "Số liệu trong file chèn" lấy theo dòng khai báo ${parsed.typeLine}; sửa lại nếu số liệu thực tế nhập theo cách khác.`
+                    : 'File không có dòng TYPEINPUT: hãy chọn cách đọc số liệu của file ở cột giữa.');
+            document.querySelector('input[name="ins-conv"][value="convert"]').checked = true;
+            document.querySelector(`input[name="ins-pos"][value="${activeSection() ? 'after' : 'end'}"]`).checked = true;
+            updateInsertDialog();
+            $('#insert-modal').classList.add('active');
+            $('#ins-ok').focus();
+        }
+
+        function closeInsertDialog() {
+            $('#insert-modal').classList.remove('active');
+            insertState.parsed = null;
+        }
+
+        function applyInsert() {
+            const parsed = insertState.parsed;
+            if (!parsed) return;
+            const ins = insModeVals(), cur = curModeVals();
+            const from = { topCum: ins.top === 'cum', distCum: ins.dist === 'cum', elevMode: ins.elev };
+            const diff = ['top', 'dist', 'elev'].some(k => ins[k] !== cur[k]);
+            const convert = diff && document.querySelector('input[name="ins-conv"]:checked').value === 'convert';
+            const pos = document.querySelector('input[name="ins-pos"]:checked').value;
+            const list = parsed.sections;
+            const insCh = trueChainages(list, from.topCum);           // lý trình thật của các cọc chèn
+            const oldCh = trueChainages(state.sections, modes.topCum); // lý trình thật của dữ liệu hiện có
+            const snap = snapshot();
+            if (convert) convertSections(list, from, modes);
+            let first, merged;
+            if (pos === 'chain') {
+                // Xếp xen theo lý trình thật rồi, nếu đang nhập khoảng cách lẻ, tính lại khoảng cách lẻ cho cả tuyến
+                const a = state.sections.map((s, i) => ({ s, c: oldCh[i], o: 0 }));
+                const b = list.map((s, i) => ({ s, c: insCh[i], o: 1 }));
+                merged = a.concat(b).sort((x, y) => x.c - y.c || x.o - y.o);
+                if (!modes.topCum) {
+                    let prev = 0;
+                    merged.forEach(m => { m.s.cumulative = numStr(m.c - prev, 6); prev = m.c; });
+                }
+                state.sections = merged.map(m => m.s);
+                first = state.sections.indexOf(list[0]);
+            } else {
+                first = pos === 'after' && activeSection() ? topGrid.cur.r + 1 : state.sections.length;
+                state.sections.splice(first, 0, ...list);
+            }
+            pushUndo(snap);
+            closeInsertDialog();
+            topGrid.setSilent(first, 0);
+            lastActiveId = undefined;
+            refreshAll();
+            topGrid.ensureVisible();
+            // Cảnh báo cọc chèn trùng lý trình với cọc đã có
+            const oldSet = new Set(oldCh.map(c => c.toFixed(3)));
+            const dup = insCh.filter(c => oldSet.has(c.toFixed(3))).length;
+            toast(`Đã chèn ${list.length} cọc` + (diff ? (convert ? ' (đã chuyển đổi số liệu)' : ' (giữ nguyên số liệu file)') : '')
+                + (dup ? `, có ${dup} cọc trùng lý trình với cọc đã có` : '') + ' — Ctrl+Z để hoàn tác');
+        }
+
+        (function setupInsert() {
+            ['#ins-top', '#ins-dist', '#ins-elev'].forEach(id => $(id).addEventListener('change', updateInsertDialog));
+            document.querySelectorAll('input[name="ins-conv"]').forEach(el => el.addEventListener('change', updateInsertDialog));
+            $('#ins-ok').addEventListener('click', applyInsert);
+            $('#ins-cancel').addEventListener('click', closeInsertDialog);
+            $('#ins-close').addEventListener('click', closeInsertDialog);
+            $('#insert-modal').addEventListener('click', e => { if (e.target.id === 'insert-modal') closeInsertDialog(); });
+        })();
 
         function parseLyTrinh(str) {
             if (!str) return 0;
@@ -6072,19 +6093,22 @@ EOF
         }
         function closeOptions() { $('#options-modal').classList.remove('active'); }
         // Đổi chế độ nhập thì quy đổi số liệu đã nhập sang chế độ mới để giá trị thực không đổi
-        function convertModes(next) {
-            if (next.topCum !== modes.topCum) {
+        function convertModes(next) { convertSections(state.sections, modes, next); }
+        // Quy đổi số liệu của danh sách cọc từ chế độ "from" sang chế độ "to" để giá trị thực không đổi
+        function convertSections(list, from, to) {
+            const next = to;
+            if (next.topCum !== from.topCum) {
                 let prev = 0;
-                state.sections.forEach(s => {
+                list.forEach(s => {
                     if (s.cumulative === '') return;
                     const v = parseFloat(s.cumulative);
                     if (next.topCum) { prev += v; s.cumulative = numStr(prev, 6); }      // lẻ -> cộng dồn
                     else { s.cumulative = numStr(v - prev, 6); prev = v; }               // cộng dồn -> lẻ
                 });
             }
-            state.sections.forEach(s => {
+            list.forEach(s => {
                 ['left', 'right'].forEach(side => {
-                    if (next.distCum !== modes.distCum) {
+                    if (next.distCum !== from.distCum) {
                         let prev = 0;
                         s[side].forEach(t => {
                             if (t.dist === '') return;
@@ -6093,10 +6117,10 @@ EOF
                             else { t.dist = numStr(v - prev, 6); prev = v; }
                         });
                     }
-                    if (next.elevMode !== modes.elevMode) {
+                    if (next.elevMode !== from.elevMode) {
                         // Đổi qua cao độ tuyệt đối rồi sang chế độ mới; dòng trống giữ nguyên
                         const init = parseFloat(s.elevation) || 0;
-                        const rows = s[side], abs = absElevations(s, side);
+                        const rows = s[side], abs = absElevations(s, side, from.elevMode);
                         let prev = init;
                         rows.forEach((t, i) => {
                             if (t.elev === '') return;
@@ -6137,13 +6161,6 @@ EOF
         // =====================================================================
         //  Thanh công cụ & phím tắt
         // =====================================================================
-        function setChartVisible(show) {
-            ui.showChart = show;
-            $('#chart-row').classList.toggle('hidden', !show);
-            $('#btn-chart').classList.toggle('on', show);
-            if (show) requestAnimationFrame(drawCharts);
-            scheduleSave();
-        }
         function applySplit(p) {
             ui.split = p;
             $('#pane-top').style.flex = `${p} 1 0`;
@@ -6168,13 +6185,13 @@ EOF
             $('#btn-undo').addEventListener('click', undo);
             $('#btn-redo').addEventListener('click', redo);
             $('#btn-options').addEventListener('click', openOptions);
-            $('#btn-chart').addEventListener('click', () => setChartVisible(!ui.showChart));
             $('#btn-plan').addEventListener('click', () => toggleDrawTab('plan'));
             $('#btn-profile').addEventListener('click', () => toggleDrawTab('profile'));
             $('#btn-section').addEventListener('click', () => toggleDrawTab('section'));
             $('#btn-guide').addEventListener('click', startTutorial);
             $('#btn-generate').addEventListener('click', generateAndDownload);
             $('#btn-import-ntd').addEventListener('click', () => $('#ntd-importer').click());
+            $('#btn-insert-ntd').addEventListener('click', () => $('#ntd-inserter').click());
             $('#btn-import-csv').addEventListener('click', () => $('#csv-importer').click());
             $('#btn-delete-all').addEventListener('click', () => {
                 const n = state.sections.filter(s => !isEmptySection(s)).length;
@@ -6186,6 +6203,7 @@ EOF
                 });
             });
             readFileInto('#ntd-importer', '#btn-import-ntd', processNtdData);
+            readFileInto('#ntd-inserter', '#btn-insert-ntd', openInsertDialog);
             readFileInto('#csv-importer', '#btn-import-csv', processCsvData);
 
             $('#modal-cancel-btn').addEventListener('click', closeModal);
@@ -6203,13 +6221,15 @@ EOF
             document.addEventListener('keydown', e => {
                 if (e.key === 'Escape') {
                     hideMenu();
-                    if ($('#import-modal').classList.contains('active')) closeImport(false);
+                    if ($('#insert-modal').classList.contains('active')) closeInsertDialog();
+                    else if ($('#import-modal').classList.contains('active')) closeImport(false);
                     else if ($('#options-modal').classList.contains('active')) closeOptions();
                     else if ($('#confirmation-modal').classList.contains('active')) closeModal();
                     return;
                 }
-                if (['#import-modal', '#options-modal', '#confirmation-modal'].some(id => $(id).classList.contains('active'))) {
-                    if (e.key === 'Enter' && $('#import-modal').classList.contains('active')) { e.preventDefault(); closeImport(true); }
+                if (['#insert-modal', '#import-modal', '#options-modal', '#confirmation-modal'].some(id => $(id).classList.contains('active'))) {
+                    if (e.key === 'Enter' && $('#insert-modal').classList.contains('active') && e.target.tagName !== 'SELECT') { e.preventDefault(); applyInsert(); }
+                    else if (e.key === 'Enter' && $('#import-modal').classList.contains('active')) { e.preventDefault(); closeImport(true); }
                     else if (e.key === 'Enter' && $('#options-modal').classList.contains('active')) { e.preventDefault(); applyOptions(); }
                     return;
                 }
@@ -6258,12 +6278,12 @@ EOF
               text: '<b>Trắc dọc</b> và <b>Trắc ngang</b> vẽ theo bố cục bản vẽ ADS (đường tự nhiên, đường dóng, bảng số liệu). Nút <b>Xuất DXF</b> trong panel xuất bản vẽ ra file mở bằng AutoCAD.' },
             { element: '#btn-plan', position: 'bottom',
               text: 'Bật <b>Bình đồ</b> để xem tim tuyến dựng từ lý trình và góc chắn cung, kèm các điểm mặt cắt ngang. Cuộn chuột để phóng to, kéo để di chuyển, bấm vào cọc để chọn dòng tương ứng.' },
-            { element: '#btn-chart', position: 'bottom',
-              text: 'Bật / tắt <b>biểu đồ</b> mặt cắt ngang của cọc đang chọn. Biểu đồ tự cập nhật khi bạn nhập.' },
             { element: '#btn-insert-row', position: 'bottom',
               text: '<b>Chèn / Nhân bản / Xóa dòng</b> áp dụng cho bảng đang chọn. Bạn cũng có thể bấm chuột phải vào bảng, hoặc dùng phím Insert / Ctrl+Delete.' },
             { element: '#btn-undo', position: 'bottom',
               text: 'Nhập nhầm? <b>Hoàn tác</b> (Ctrl+Z) và <b>Làm lại</b> (Ctrl+Y), kể cả sau khi import hoặc xóa tất cả.' },
+            { element: '#btn-insert-ntd', position: 'bottom',
+              text: '<b>Chèn NTD</b>: thêm các cọc từ một file .ntd khác vào dữ liệu đang có. Nếu chế độ nhập của file khác dữ liệu hiện có, bạn chọn chuyển đổi số liệu cho phù hợp hoặc chèn thẳng số liệu của file.' },
             { element: '#btn-import-ntd', position: 'bottom',
               text: '<b>Import NTD</b> để tiếp tục công việc từ file .ntd có sẵn, hoặc <b>Import CSV</b> để nhập hàng loạt danh sách cọc.' },
             { element: '#btn-generate', position: 'bottom',
@@ -6317,7 +6337,6 @@ EOF
             setupEvents();
             loadFromLocalStorage();
             applySplit(ui.split);
-            setChartVisible(ui.showChart);
             setDrawPanel(ui.showPlan);
             setActiveGrid(topGrid);
             if (state.sections.length) topGrid.setSilent(0, 0);
