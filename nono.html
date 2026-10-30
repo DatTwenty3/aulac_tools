@@ -5010,7 +5010,7 @@ EOF
                 items.push(dPoly([bx(-hw, hh), bx(hw, hh), bx(hw, -hh), bx(-hw, -hh), bx(-hw, hh)], LAYER.plAxis, { aci: 3 }));
                 [1.0115, -0.4905, -1.9955].forEach((yy, i) => {
                     const [x, y] = bx(0, yy);
-                    items.push(dText(lines[i], x, y, 1, hm * 180 / Math.PI, 'c', 'b', LAYER.plAxis, { style: 'pn', wf: 1 }));
+                    items.push(dText(lines[i], x, y, 1, hm * 180 / Math.PI, 'c', 'b', LAYER.plAxis, { style: 'pn', wf: 1, aci: 7 }));
                 });
             });
             return (d.marks = items);
@@ -5100,14 +5100,6 @@ EOF
                 });
             });
 
-            // Tim tuyến
-            ctx.strokeStyle = '#ff0000';
-            ctx.lineWidth = 1.5;
-            ctx.lineJoin = 'round';
-            ctx.beginPath();
-            d.axis.forEach(([px, py], i) => (i ? ctx.lineTo(toX(px), toY(py)) : ctx.moveTo(toX(px), toY(py))));
-            ctx.stroke();
-
             // Ký hiệu đường cong như ADS; khi thu nhỏ (ký hiệu thật quá bé) thì đánh dấu đỉnh cong bằng tam giác cỡ cố định
             const marks = curveMarkItems(d);
             renderItems(ctx, marks, v, w, h);
@@ -5122,6 +5114,14 @@ EOF
                     ctx.fill();
                 });
             }
+
+            // Tim tuyến
+            ctx.strokeStyle = '#ff0000';
+            ctx.lineWidth = 1.5;
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            d.axis.forEach(([px, py], i) => (i ? ctx.lineTo(toX(px), toY(py)) : ctx.moveTo(toX(px), toY(py))));
+            ctx.stroke();
 
             // Cọc
             d.poles.forEach(p => {
@@ -5499,8 +5499,8 @@ EOF
             const d = buildPlan(), items = [];
             if (!d.poles.length) return items;
             const T = { style: 'pn', wf: 1 };
+            curveMarkItems(d).forEach(it => items.push(Object.assign({}, it))); // ký hiệu cong nằm dưới tim tuyến như ADS
             d.segs.forEach(sg => items.push(sg.t === 'arc' ? dArc(sg.x, sg.y, sg.r, sg.a0, sg.a1, LAYER.plAxis) : dPoly(sg.pts, LAYER.plAxis)));
-            curveMarkItems(d).forEach(it => items.push(Object.assign({}, it)));
             let prevSide = 1;
             d.poles.forEach((p, i) => {
                 const tx = Math.cos(p.h), ty = Math.sin(p.h), nx = -ty, ny = tx, rot = p.h * 180 / Math.PI;
@@ -5524,7 +5524,9 @@ EOF
                     items.push(dCircle(q.x, q.y, 0.1, LAYER.plPoint));
                     const [ip, dp] = q.elev.toFixed(3).split('.');
                     const ofs = (a, b) => [q.x + a * tx + b * nx, q.y + a * ty + b * ny];
-                    const [ax, ay] = ofs(-0.5 - ip.length * 4 / 3, 0.1), [bx, by] = ofs(0.5, 0.1);
+                    // Phần nguyên kết thúc cách chấm 0.5 m; bề rộng từng ký tự (chữ cao 2) đo từ bản vẽ ADS
+                    const iw = [...ip].reduce((s, ch) => s + (ch === '1' ? 0.476 : ch === '4' ? 1.429 : ch === '-' ? 2.381 : 1.333), 0);
+                    const [ax, ay] = ofs(-0.5 - iw, 0.1), [bx, by] = ofs(0.5, 0.1);
                     items.push(dText(ip, ax, ay, 2, rot, 'l', 'b', LAYER.plPoint, T));
                     items.push(dText(dp, bx, by, 2, rot, 'l', 'b', LAYER.plPoint, T));
                 });
