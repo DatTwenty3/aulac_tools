@@ -290,15 +290,17 @@
         .ins-info { margin: 2px 0 12px; padding: 7px 10px; border-radius: 6px; background: #f6f5f1; line-height: 1.55; font-size: 12px; }
         .ins-info b { font-weight: 600; }
         .ins-step { margin-bottom: 12px; }
-        .ins-step h5 { display: flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; margin-bottom: 6px; }
-        .ins-num { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--select); color: #fff; font-size: 11px; }
-        .ins-modes { display: grid; grid-template-columns: 120px 1fr 64px; gap: 5px 8px; align-items: center; padding-left: 24px; font-size: 12px; }
-        .ins-modes select { font: inherit; padding: 2px 4px; }
-        .ins-modes select.diff { background: #fff3c4; }
-        .ins-step > .opt-hint { padding-left: 24px; }
-        .ins-same { margin-left: 24px; padding: 6px 10px; border-radius: 6px; background: #e8f5e9; color: #2e7d32; font-size: 12px; line-height: 1.5; }
-        #ins-conv-group { padding-left: 24px; }
-        .ins-diff { margin-bottom: 6px; padding: 6px 10px; border-radius: 6px; background: #fff3c4; font-size: 12px; line-height: 1.55; }
+        .ins-step h5 { font-size: 12.5px; font-weight: 600; margin-bottom: 6px; }
+        .ins-sub { font-weight: 400; color: var(--muted); font-size: 11px; }
+        .ins-modes { border: 1px solid var(--line-soft); border-radius: 6px; overflow: hidden; font-size: 12px; }
+        .ins-row { display: grid; grid-template-columns: 112px 1fr; gap: 8px; padding: 6px 10px; border-top: 1px solid var(--line-soft); line-height: 1.45; }
+        .ins-row:first-child { border-top: none; }
+        .ins-row > span:first-child { color: var(--muted); }
+        .ins-row b { font-weight: 600; }
+        .ins-row .ok { color: #2e7d32; font-size: 11px; margin-left: 6px; }
+        .ins-row.diff { background: #fff3c4; }
+        .ins-row .warn { display: block; color: #8a5a00; font-size: 11px; }
+        .ins-same { padding: 6px 10px; border-radius: 6px; background: #e8f5e9; color: #2e7d32; font-size: 12px; line-height: 1.5; }
         .ins-choice { display: flex; align-items: flex-start; gap: 7px; padding: 6px 8px; margin-bottom: 4px; border: 1px solid var(--line-soft); border-radius: 6px; cursor: pointer; font-size: 12px; line-height: 1.45; }
         .ins-choice input { margin-top: 2px; accent-color: var(--select); }
         .ins-choice:has(input:checked) { border-color: var(--select); background: var(--select-soft); }
@@ -540,19 +542,13 @@
             <div class="dialog-body">
                 <div class="ins-info" id="ins-note"></div>
                 <div class="ins-step">
-                    <h5><span class="ins-num">1</span>File chèn được nhập theo cách nào?</h5>
-                    <div class="ins-modes">
-                        <label for="ins-top">Khoảng cách cọc</label><select id="ins-top"><option value="cum">Cộng dồn (lý trình)</option><option value="odd">Lẻ</option></select><span id="ins-ff-top"></span>
-                        <label for="ins-dist">Khoảng cách mia</label><select id="ins-dist"><option value="cum">Cộng dồn</option><option value="odd">Lẻ</option></select><span id="ins-ff-dist"></span>
-                        <label for="ins-elev">Cao độ mia</label><select id="ins-elev"><option value="abs">Tuyệt đối</option><option value="pole">Tương đối so với cọc</option><option value="prev">Tương đối so với điểm trước</option></select><span id="ins-ff-elev"></span>
-                    </div>
-                    <div class="opt-hint" id="ins-type-note"></div>
+                    <h5>Cách nhập số liệu <span class="ins-sub" id="ins-type-note"></span></h5>
+                    <div class="ins-modes" id="ins-modes"></div>
                 </div>
                 <div class="ins-step">
-                    <h5><span class="ins-num">2</span>Đưa vào bảng hiện tại</h5>
-                    <div class="ins-same" id="ins-same">✓ Cách nhập giống bảng hiện tại — các cọc được chèn nguyên như trong file, không cần chuyển đổi.</div>
+                    <div class="ins-same" id="ins-same">✓ File chèn có cùng cách nhập với bảng hiện tại — các cọc được chèn nguyên như trong file.</div>
                     <div id="ins-conv-group">
-                        <div class="ins-diff" id="ins-diff"></div>
+                        <h5>Xử lý phần khác nhau</h5>
                         <label class="ins-choice"><input type="radio" name="ins-conv" value="convert">
                             <span><b>Tính lại số liệu cho khớp bảng</b> <i>(nên chọn)</i><small id="ins-conv-ex"></small></span></label>
                         <label class="ins-choice"><input type="radio" name="ins-conv" value="raw">
@@ -5966,7 +5962,7 @@ EOF
             elev: { abs: 'Tuyệt đối', pole: 'Tương đối so với cọc', prev: 'Tương đối so với điểm trước' } };
         const insertState = { parsed: null };
         const curModeVals = () => ({ top: modes.topCum ? 'cum' : 'odd', dist: modes.distCum ? 'cum' : 'odd', elev: modes.elevMode });
-        const insModeVals = () => ({ top: $('#ins-top').value, dist: $('#ins-dist').value, elev: $('#ins-elev').value });
+        const insModeVals = () => insertState.modes;
 
         // Lý trình thực (cộng dồn) của một danh sách cọc theo chế độ khoảng cách cọc của nó
         function trueChainages(list, topCum) {
@@ -6011,17 +6007,15 @@ EOF
         }
 
         function updateInsertDialog() {
-            const cur = curModeVals(), ins = insModeVals(), f = insertState.fileModes;
+            const cur = curModeVals(), ins = insModeVals();
             const keys = ['top', 'dist', 'elev'].filter(k => cur[k] !== ins[k]);
-            ['top', 'dist', 'elev'].forEach(k => {
-                $('#ins-' + k).classList.toggle('diff', cur[k] !== ins[k]);
-                $('#ins-ff-' + k).innerHTML = f && f[k] === ins[k] ? '<span class="from-file">theo file</span>' : '';
-            });
+            $('#ins-modes').innerHTML = ['top', 'dist', 'elev'].map(k => cur[k] === ins[k]
+                ? `<div class="ins-row"><span>${MODE_LABEL[k]}</span><span><b>${MODE_WORD[k][ins[k]]}</b><span class="ok">✓ giống bảng</span></span></div>`
+                : `<div class="ins-row diff"><span>${MODE_LABEL[k]}</span><span><b>${MODE_WORD[k][ins[k]]}</b>`
+                + `<span class="warn">≠ bảng hiện tại đang dùng: ${MODE_WORD[k][cur[k]]}</span></span></div>`).join('');
             $('#ins-same').style.display = keys.length ? 'none' : '';
             $('#ins-conv-group').style.display = keys.length ? '' : 'none';
             if (!keys.length) return;
-            $('#ins-diff').innerHTML = 'Khác với bảng hiện tại:<br>' + keys.map(k =>
-                `• <b>${MODE_LABEL[k]}</b>: file là <b>${MODE_WORD[k][ins[k]]}</b>, bảng là <b>${MODE_WORD[k][cur[k]]}</b>`).join('<br>');
             const from = { topCum: ins.top === 'cum', distCum: ins.dist === 'cum', elevMode: ins.elev };
             const ex = insertExample(keys, from);
             $('#ins-conv-ex').textContent = 'Giá trị thực giữ đúng, các con số được đổi sang cách nhập của bảng.' + (ex ? ` Ví dụ ${ex}.` : '');
@@ -6039,11 +6033,7 @@ EOF
             const f = parsed.hasType
                 ? { top: parsed.file.topCum ? 'cum' : 'odd', dist: parsed.file.distCum ? 'cum' : 'odd', elev: parsed.file.elevMode }
                 : null;
-            insertState.fileModes = f;
-            const m = f || curModeVals();
-            $('#ins-top').value = m.top;
-            $('#ins-dist').value = m.dist;
-            $('#ins-elev').value = m.elev;
+            const m = insertState.modes = f || curModeVals();
             const ch = trueChainages(parsed.sections, m.top === 'cum'), n = parsed.sections.length;
             const pos = activeSection()
                 ? `ngay dưới cọc <b>${esc(activeSection().name || 'dòng ' + (topGrid.cur.r + 1))}</b> (hàng ${topGrid.cur.r + 1})`
@@ -6051,8 +6041,8 @@ EOF
             $('#ins-note').innerHTML = `File chèn: <b>${n} cọc</b>, từ <b>${esc(parsed.sections[0].name)}</b> đến <b>${esc(parsed.sections[n - 1].name)}</b>`
                 + ` (${kmText(ch[0])} → ${kmText(ch[n - 1])})<br>Vị trí chèn: ${pos}`;
             $('#ins-type-note').textContent = parsed.hasType
-                ? `Đã chọn sẵn theo dòng ${parsed.typeLine} trong file. Chỉ sửa khi biết file khai báo sai.`
-                : 'File không có dòng TYPEINPUT nên chưa biết cách nhập: hãy chọn đúng cách số liệu trong file được nhập.';
+                ? `— theo dòng ${parsed.typeLine} của file chèn`
+                : '— file không có dòng TYPEINPUT, coi như nhập giống bảng hiện tại';
             document.querySelector('input[name="ins-conv"][value="convert"]').checked = true;
             updateInsertDialog();
             $('#insert-modal').classList.add('active');
@@ -6093,7 +6083,6 @@ EOF
         }
 
         (function setupInsert() {
-            ['#ins-top', '#ins-dist', '#ins-elev'].forEach(id => $(id).addEventListener('change', updateInsertDialog));
             document.querySelectorAll('input[name="ins-conv"]').forEach(el => el.addEventListener('change', updateInsertDialog));
             $('#ins-ok').addEventListener('click', applyInsert);
             $('#ins-cancel').addEventListener('click', closeInsertDialog);
