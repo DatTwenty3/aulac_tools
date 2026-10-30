@@ -1068,7 +1068,7 @@ $SKPOLY
   9
 $TDCREATE
  40
-2461344.4553935183
+2461344.6283680554
   9
 $TDUCREATE
  40
@@ -1076,7 +1076,7 @@ $TDUCREATE
   9
 $TDUPDATE
  40
-2461344.4553935183
+2461344.6283680554
   9
 $TDUUPDATE
  40
@@ -1128,7 +1128,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-45
+46
   9
 $SURFTAB1
  70
@@ -1508,11 +1508,11 @@ $PSTYLEMODE
   9
 $FINGERPRINTGUID
   2
-{6C643EA4-46B7-4136-88E0-F7E349C6AF63}
+{6B4816F0-FC7B-4FCF-B4B3-0072FCF1DD6F}
   9
 $VERSIONGUID
   2
-{BB6CB1A8-5FEE-4079-9025-041FE7D58D3D}
+{7241829F-85DC-4AEE-890F-8B123EE33C3F}
   9
 $EXTNAMES
 290
@@ -1902,9 +1902,9 @@ ISM
   0
 CLASS
   1
-ACDBPLACEHOLDER
+LAYOUT
   2
-AcDbPlaceHolder
+AcDbLayout
   3
 ObjectDBX Classes
  90
@@ -1918,9 +1918,9 @@ ObjectDBX Classes
   0
 CLASS
   1
-LAYOUT
+ACDBPLACEHOLDER
   2
-AcDbLayout
+AcDbPlaceHolder
   3
 ObjectDBX Classes
  90
@@ -2600,7 +2600,7 @@ STYLE
 100
 AcDbSymbolTable
  70
-3
+4
   0
 STYLE
   5
@@ -2661,6 +2661,34 @@ arial.ttf
 STYLE
   5
 41
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+ADS-Kích thước
+ 70
+0
+ 40
+0.0
+ 41
+0.8
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+arial.ttf
+  4
+
+  0
+STYLE
+  5
+42
 330
 5
 100
@@ -2744,7 +2772,7 @@ ACAD
   0
 APPID
   5
-42
+43
 330
 3
 100
@@ -2758,7 +2786,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-43
+44
 330
 3
 100
@@ -4056,7 +4084,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-44
+45
   0
 DICTIONARYVAR
   5
@@ -4068,11 +4096,11 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-30T03:55:46.903291+00:00
+1.4.4 @ 2026-10-30T08:04:51.341496+00:00
   0
 DICTIONARYVAR
   5
-44
+45
 330
 2D
 100
@@ -4080,7 +4108,7 @@ DictionaryVariables
 280
 0
   1
-1.4.4 @ 2026-10-30T03:55:46.904291+00:00
+1.4.4 @ 2026-10-30T08:04:51.342496+00:00
   0
 ENDSEC
   0
@@ -4883,7 +4911,7 @@ EOF
                 const delta = pk ? pk.turn : 0;
                 const Lc = list[j].c - p.c, Ls1 = p.c - list[a].c, Ls2 = list[b].c - list[j].c, L = Lc + (Ls1 + Ls2) / 2;
                 if (Math.abs(delta) < 1e-12 || Lc < 0 || Ls1 < 0 || Ls2 < 0 || L <= 0) return;
-                out.push({ c0: list[a].c, cTD: p.c, cTC: list[j].c, c1: list[b].c, k: delta / L, Ls1, Ls2, ia: a, ib: b, delta, R: L / Math.abs(delta) });
+                out.push({ c0: list[a].c, cTD: p.c, cTC: list[j].c, c1: list[b].c, cP: pk.c, k: delta / L, Ls1, Ls2, ia: a, ib: b, delta, R: L / Math.abs(delta) });
             });
             return out;
         }
@@ -4977,11 +5005,19 @@ EOF
                 heading += t;
                 poles.push(pole);
             });
-            return { poles, segs, curves, axis: axisPoints(segs) };
+            // curveRows: các dòng là cọc NDn/TDn/Pn/TCn/NCn của đường cong (góc ghi ở đó không làm gãy tuyến)
+            return { poles, segs, curves, axis: axisPoints(segs), curveRows: new Set(list.filter(q => q.curve).map(q => q.r)) };
         }
 
         // Ký hiệu đường cong như ADS (lớp tim tuyến): tiếp tuyến TD–đỉnh–TC (màu 9), tam giác ở đỉnh chĩa về tâm (màu 3),
         // khung chữ yếu tố cong (màu 3) cách đỉnh 24 m về phía tâm: A (góc đỉnh), R, D = 2T − K, P (phân cự), K (chiều dài cong), T (tiếp tuyến)
+        // Yếu tố đường cong: Δ (rad), R, T (tiếp tuyến), K (chiều dài), P (phân cự).
+        // Có đường cong chuyển tiếp dài Ls: độ dịch p = Ls²/24R, t = Ls/2 − Ls³/240R², K là toàn bộ chiều dài ND→NC
+        function curveElements(cv) {
+            const D = Math.abs(cv.delta), R = cv.R, Ls = (cv.Ls1 + cv.Ls2) / 2, pp = Ls * Ls / (24 * R);
+            return { D, R, T: (R + pp) * Math.tan(D / 2) + Ls / 2 - Ls ** 3 / (240 * R * R), K: cv.c1 - cv.c0, P: (R + pp) / Math.cos(D / 2) - R };
+        }
+
         function curveMarkItems(d) {
             if (d.marks) return d.marks;
             const items = [];
@@ -4999,9 +5035,7 @@ EOF
                 const at = (a, b) => [V[0] + a * t[0] + b * u[0], V[1] + a * t[1] + b * u[1]];
                 items.push(dPoly([[p0.x, p0.y], V, [p1.x, p1.y]], LAYER.plAxis, { aci: 9 }));
                 items.push(dPoly([at(0, 4 / 3), at(1, -0.399), at(-1, -0.399), at(0, 4 / 3)], LAYER.plAxis, { aci: 3 }));
-                // Có đường cong chuyển tiếp dài Ls: độ dịch p = Ls²/24R, t = Ls/2 − Ls³/240R², K là toàn bộ chiều dài ND→NC
-                const D = Math.abs(cv.delta), R = cv.R, Ls = (cv.Ls1 + cv.Ls2) / 2, pp = Ls * Ls / (24 * R);
-                const T = (R + pp) * Math.tan(D / 2) + Ls / 2 - Ls ** 3 / (240 * R * R), K = cv.c1 - cv.c0, P = (R + pp) / Math.cos(D / 2) - R;
+                const { D, R, T, K, P } = curveElements(cv);
                 const lines = [`A = ${dmsSigned(180 - D * 180 / Math.PI).replace('"', "''")} R = ${Math.round(R / 5) * 5}`,
                     `D = ${trim(2 * T - K)} P = ${trim(P)}`, `K = ${K.toFixed(3)} T = ${T.toFixed(3)}`];
                 const hw = (0.92 * Math.max(...lines.map(l => l.length)) - 3.66) / 2, hh = 2.4175;
@@ -5010,7 +5044,7 @@ EOF
                 items.push(dPoly([bx(-hw, hh), bx(hw, hh), bx(hw, -hh), bx(-hw, -hh), bx(-hw, hh)], LAYER.plAxis, { aci: 3 }));
                 [1.0115, -0.4905, -1.9955].forEach((yy, i) => {
                     const [x, y] = bx(0, yy);
-                    items.push(dText(lines[i], x, y, 1, hm * 180 / Math.PI, 'c', 'b', LAYER.plAxis, { style: 'pn', wf: 1, aci: 7 }));
+                    items.push(dText(lines[i], x, y, 1, hm * 180 / Math.PI, 'c', 'b', LAYER.plAxis, { style: 'pn', wf: 1 }));
                 });
             });
             return (d.marks = items);
@@ -5348,53 +5382,75 @@ EOF
             const Y = z => (z - mss) * k;
             const x0 = P[0].c, x1 = Math.max(P[P.length - 1].c, x0 + 1), HW = 45;
             const T = { style: 'pd', wf: 0.8 }, V = { style: 'pd', wf: 0.8, aci: 3 };
-            const rows = [['Cao độ thiết kế', 12], ['Dốc dọc thiết kế', 12], ['Cao độ tự nhiên', 12], ['Khoảng cách lẻ', 9],
-                ['Khoảng cách cộng dồn', 9], ['Tên cọc', 9], ['Lý trình', 8], ['Đoạn thẳng - Đoạn cong', 18]];
+            const rows = [['Cao độ thiết kế', 12], ['Dốc dọc thiết kế', 12], ['Cao độ tự nhiên', 12], ['Khoảng cách lẻ', 8],
+                ['Khoảng cách cộng dồn', 10], ['Tên cọc', 8], ['Lý trình', 8], ['Đoạn thẳng - Đoạn cong', 20]];
             const R = {};
             let y = 0;
-            items.push(dLine(x0 - HW, 0, x1, 0, LAYER.pBand));
+            items.push(dLine(x0 - HW, 0, x1 + 2, 0, LAYER.pBand));
             rows.forEach(([name, hgt]) => {
                 R[name] = { top: y, bot: y - hgt, mid: y - hgt / 2 };
                 y -= hgt;
-                items.push(dLine(x0 - HW, y, x1, y, LAYER.pBand));
-                items.push(dText(name, x0 - HW / 2, R[name].mid, 2, 0, 'M', 'm', LAYER.pBand, T));
+                items.push(dLine(x0 - HW, y, x1 + 2, y, LAYER.pBand));
+                items.push(dText(name, x0 - 23.5, R[name].mid, 2, 0, 'M', 'm', LAYER.pBand, T));
             });
-            items.push(dLine(x0 - HW, 0, x0 - HW, y, LAYER.pBand), dLine(x0, 0, x0, y, LAYER.pBand), dLine(x1, 0, x1, y, LAYER.pBand));
+            items.push(dLine(x0 - HW, 0, x0 - HW, y, LAYER.pBand), dLine(x0 - 2, 0, x0 - 2, y, LAYER.pBand), dLine(x1 + 2, 0, x1 + 2, y, LAYER.pBand));
             items.push(dText(`MSS: ${mss}`, x0 - 2, 1, 2, 0, 'r', 'bt', LAYER.pText, { style: 'pd', mt: 9 }));
-            const rd = R['Đoạn thẳng - Đoạn cong'], rz = R['Cao độ tự nhiên'], rc = R['Khoảng cách cộng dồn'], rl = R['Khoảng cách lẻ'], rn = R['Tên cọc'];
-            const ground = [], curve = [[x0, rd.mid]];
+            const rd = R['Đoạn thẳng - Đoạn cong'], rz = R['Cao độ tự nhiên'], rc = R['Khoảng cách cộng dồn'], rl = R['Khoảng cách lẻ'], rn = R['Tên cọc'], ry = R['Lý trình'];
+            // Bề rộng chữ số (chữ cao 2, hệ số rộng 0.8) đo từ bản vẽ ADS: khoảng cách lẻ ngắn hơn chữ thì xoay đứng
+            const numW = s => [...s].reduce((a, ch) => a + (ch === '1' ? 1.224 : ch === '.' ? -0.098 : 1.62), 0);
+            // Cọc Km tròn ghi "Km n"; cọc đầu và cọc cuối ghi đủ "Km n+m.mmm" (như ADS)
+            const kmLabel = (c, full) => { const km = Math.floor(c / 1000 + 1e-9), rest = c - km * 1000; return rest < 5e-4 && !full ? `Km ${km}` : `Km ${km}+${Math.max(rest, 0).toFixed(3)}`; };
+            const al = buildPlan(), skipTurn = al.curveRows;
+            const zs = P.filter(p => p.z !== null && isFinite(p.z)).map(p => Y(p.z));
+            const yKm = (zs.length ? Math.max(...zs) : 0) + 18; // chân khung Km phía trên
+            const ground = [], band = [[x0, rd.mid]], marks = [];
             P.forEach((p, i) => {
                 const x = p.c;
                 if (p.z !== null && isFinite(p.z)) {
                     ground.push([x, Y(p.z)]);
                     items.push(dLine(x, 0, x, Y(p.z), LAYER.pDong));
-                    items.push(dText(f3(p.z), x, rz.top - 0.6, 2, 90, 'r', 'm', LAYER.pText, V));
+                    items.push(dText(f3(p.z), x, rz.top - 1, 2, 90, 'r', 'm', LAYER.pText, V));
                 }
                 items.push(dLine(x, rl.top, x, rl.bot, LAYER.pText, { aci: 3 }));
-                items.push(dText(f3(p.c), x, rc.top - 0.6, 2, 90, 'r', 'm', LAYER.pText, V));
-                // Tên cọc xen kẽ trên/dưới để không chồng chữ (như ADS)
-                items.push(dText(p.name, x, i % 2 ? rn.mid - 0.3 : rn.mid + 0.3, 2, 0, 'c', i % 2 ? 't' : 'bt', LAYER.pText, { style: 'pd', wf: 0.8, aci: 5 }));
+                items.push(dText(f3(p.c), x, rc.top - 0.8, 2, 90, 'r', 'm', LAYER.pText, V));
+                // Tên cọc xen kẽ: cọc chẵn sát dưới, cọc lẻ sát trên (như ADS)
+                items.push(dText(p.name, x, i % 2 ? rn.top - 1 : rn.bot + 1, 2, 0, 'c', i % 2 ? 't' : 'bt', LAYER.pText, { style: 'pd', wf: 0.8, aci: 5 }));
                 if (i > 0) {
-                    const L = p.c - P[i - 1].c, narrow = L < 12;
-                    items.push(dText(f3(L), (p.c + P[i - 1].c) / 2, rl.mid, 2, narrow ? 90 : 0, 'c', 'm', LAYER.pText, V));
+                    const L = p.c - P[i - 1].c, s = f3(L);
+                    items.push(dText(s, (p.c + P[i - 1].c) / 2, rl.mid, 2, numW(s) > L ? 90 : 0, 'c', 'm', LAYER.pText, V));
                 }
-                // Lý trình: ghi tại cọc đầu, cọc Km tròn và cọc H
-                const isKm = i === 0 || Math.abs(p.c / 1000 - Math.round(p.c / 1000)) < 1e-6;
-                if (isKm || /^H\d+/i.test(p.name)) {
-                    const ry = R['Lý trình'];
-                    items.push(dLine(x, ry.top, x, ry.top - 2.5, LAYER.pStation));
-                    items.push(dText(isKm ? `Km ${Math.round(p.c / 1000)}` : p.name, x, ry.mid - 1, 2, 0, 'c', 'm', LAYER.pStation, T));
+                // Lý trình: cọc đầu, cọc cuối, cọc Km tròn và cọc H; khung Km phía trên tại cọc đầu, cọc Km và cọc cuối
+                const isKm = Math.abs(p.c / 1000 - Math.round(p.c / 1000)) < 1e-6, ends = i === 0 || i === P.length - 1;
+                if (isKm || ends || /^H\d+/i.test(p.name)) {
+                    items.push(dLine(x, ry.top, x, ry.top - 0.8, LAYER.pText));
+                    items.push(dText(isKm || ends ? kmLabel(x, ends) : p.name, x, ry.top - 1.6, 2, 0, 'c', 't', LAYER.pText, { style: 'pd', wf: 0.8, aci: 5 }));
                 }
-                // Góc chuyển hướng: rẽ phải tam giác lên, rẽ trái tam giác xuống, nằm trên một đường liền (như ADS)
-                if (Math.abs(p.a - 180) > 1e-6) {
-                    const up = p.a > 180, ty = up ? rd.mid + 5 : rd.mid - 5;
-                    curve.push([x - 9, rd.mid], [x, ty], [x + 9, rd.mid]);
-                    items.push(dText(`A = ${dmsSigned(p.a > 180 ? p.a - 360 : p.a)}`, x, up ? rd.mid - 3.5 : rd.mid + 3.5, 2, 0, 'c', 'm', LAYER.pText, { style: 'pd', mt: 5 }));
+                if (isKm || ends) {
+                    const s = kmLabel(x, ends), tw = 4.09 + numW(s.replace(/\D/g, '')) + (s.includes('+') ? 2.25 : 0), hw = (1.25 * tw + 2) / 2;
+                    items.push(dPoly([[x, yKm], [x, yKm + 2], [x + hw, yKm + 2], [x + hw, yKm + 8], [x - hw, yKm + 8], [x - hw, yKm + 2], [x, yKm + 2]], LAYER.pStation));
+                    items.push(dText(s, x - tw / 2, yKm + 4, 2, 0, 'l', 'b', LAYER.pStation, { style: 'pk', wf: 0.8 }));
+                }
+                // Góc gãy (cọc không thuộc đường cong): rẽ trái chữ V xuống, rẽ phải chữ V lên, rộng 12 cao 6
+                if (Math.abs(p.a - 180) > 1e-6 && !skipTurn.has(p.r)) {
+                    const right = p.a > 180;
+                    band.push([x - 6, rd.mid], [x, rd.mid + (right ? 6 : -6)], [x + 6, rd.mid]);
+                    marks.push(dText(`A = ${dmsSigned(right ? p.a - 360 : p.a).replace('"', "''")}`, x, rd.mid + (right ? -2 : 2), 2, 0, 'c', 'm', LAYER.pText, { style: 'pd', mt: 5, aci: 1 }));
                 }
             });
-            curve.push([x1, rd.mid]);
-            items.push(dPoly(curve, LAYER.pText, { aci: 1 }));
-            if (ground.length > 1) items.push(dPoly(ground, LAYER.pGround, { color: '#2b2b2b', w: 1.6 }));
+            // Đường cong: bậc chữ nhật cao 4 (rẽ phải lên, rẽ trái xuống), yếu tố cong ghi tại cọc P
+            al.curves.forEach(cv => {
+                const right = cv.delta < 0, h = right ? 4 : -4, e = curveElements(cv);
+                band.push([cv.c0, rd.mid], [cv.c0, rd.mid + h], [cv.c1, rd.mid + h], [cv.c1, rd.mid]); // từ ND (hoặc TD) đến NC (hoặc TC)
+                const A = (right ? -1 : 1) * (180 - e.D * 180 / Math.PI);
+                marks.push(dText(`A = ${dmsSigned(A).replace('"', "''")} R = ${(Math.round(e.R / 5) * 5).toFixed(3)}\nD = ${(2 * e.T - e.K).toFixed(3)} P = ${e.P.toFixed(3)}\nK = ${e.K.toFixed(3)} T = ${e.T.toFixed(3)}`,
+                    cv.cP, rd.mid + 2, 2, 0, 'c', 'm', LAYER.pText, { style: 'pd', mt: 5, aci: 1, curve: true }));
+            });
+            // Như ADS: khung yếu tố cong đặt cùng phía (trên/dưới đường) với chữ góc đứng ngay trước nó
+            marks.sort((a, b) => a.x - b.x).forEach((m, i) => { if (m.curve && i > 0) m.y = marks[i - 1].y; delete m.curve; });
+            band.sort((a, b) => a[0] - b[0]);
+            band.push([x1, rd.mid]);
+            items.push(dPoly(band, LAYER.pText, { aci: 1 }), ...marks);
+            if (ground.length > 1) items.push(dPoly(ground, LAYER.pGround));
             return { items, poles: P, mss, Y };
         }
 
@@ -5535,7 +5591,7 @@ EOF
         }
 
         // ---- Xuất DXF 2010 dựa trên khung lấy từ bản vẽ ADS (đúng tên lớp, màu lớp, kiểu chữ, đơn vị) ----
-        const DXF_STYLE = { pd: 'ADS-Bảng trắc dọc', pn: 'ADS-Bảng trắc ngang' };
+        const DXF_STYLE = { pd: 'ADS-Bảng trắc dọc', pn: 'ADS-Bảng trắc ngang', pk: 'ADS-Kích thước' };
         const DXF_MS = '17'; // handle của *Model_Space trong khung
         const dn = v => (Math.round(v * 1e6) / 1e6).toString();
         function toDXF(items) {
@@ -5582,7 +5638,7 @@ EOF
                     if (it.mt) { // MTEXT như ADS (MSS, góc chuyển hướng)
                         head('MTEXT', it);
                         o.push('100', 'AcDbMText', '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.h), '41', '0',
-                            '71', String(it.mt), '72', '1', '1', it.s, '7', style);
+                            '71', String(it.mt), '72', '1', '1', it.s.replace(/\n/g, '\\P'), '7', style);
                         if (it.rot) o.push('50', dn(it.rot * Math.PI / 180));
                     } else {
                         const hj = { l: 0, c: 1, r: 2, M: 4 }[it.ha] || 0, vj = { b: 0, bt: 1, m: 2, t: 3 }[it.va] || 0;
@@ -5703,7 +5759,8 @@ EOF
                     ctx.textAlign = { l: 'left', c: 'center', r: 'right', M: 'center' }[it.ha] || 'left';
                     ctx.textBaseline = { m: 'middle', t: 'top', bt: 'bottom' }[it.va] || 'alphabetic';
                     ctx.fillStyle = aciColor(it);
-                    ctx.fillText(it.s, 0, 0);
+                    const lines = it.s.split('\n'), lh = px * 1.667; // MTEXT nhiều dòng: giãn dòng mặc định 1.667 lần chiều cao chữ
+                    lines.forEach((ln, j) => ctx.fillText(ln, 0, (j - (lines.length - 1) / 2) * lh));
                     ctx.restore();
                 } else if (it.t === 'arc') { // trục y màn hình hướng xuống nên góc đổi dấu
                     ctx.strokeStyle = aciColor(it);
