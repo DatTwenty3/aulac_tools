@@ -287,7 +287,6 @@
         .opt-group input { accent-color: var(--select); }
         .dialog-wide { max-width: 540px; }
         .opt-group.stack label { display: flex; margin: 3px 0; }
-        .opt-group.stack label.disabled { opacity: 0.45; cursor: default; }
         .cmp-table { width: 100%; border-collapse: collapse; margin: 2px 0 12px; font-size: 12px; }
         .cmp-table th, .cmp-table td { border: 1px solid var(--line-soft); padding: 4px 6px; text-align: left; }
         .cmp-table th { background: #f6f5f1; font-weight: 600; }
@@ -540,12 +539,7 @@
                     <label><input type="radio" name="ins-conv" value="convert"> Chuyển đổi cho phù hợp với dữ liệu hiện có (giữ đúng giá trị thực)</label>
                     <label><input type="radio" name="ins-conv" value="raw"> Chèn thẳng số liệu của file (giữ nguyên các con số)</label>
                 </div>
-                <div class="opt-group stack">
-                    <h5>Vị trí chèn</h5>
-                    <label><input type="radio" name="ins-pos" value="after"> Sau cọc đang chọn</label>
-                    <label><input type="radio" name="ins-pos" value="end"> Cuối danh sách</label>
-                    <label id="ins-pos-chain"><input type="radio" name="ins-pos" value="chain"> Xếp xen theo lý trình</label>
-                </div>
+                <div class="opt-hint" id="ins-pos-note"></div>
             </div>
             <div class="dialog-foot">
                 <button class="btn primary" id="ins-ok">Chèn</button>
@@ -5927,14 +5921,6 @@ EOF
                 $('#cur-' + k).textContent = MODE_WORD[k][cur[k]];
             });
             $('#ins-conv-group').style.display = diff ? '' : 'none';
-            // Xếp theo lý trình cần so được lý trình thật: không dùng khi chèn thẳng mà khoảng cách cọc khác nhau
-            const raw = diff && document.querySelector('input[name="ins-conv"]:checked').value === 'raw';
-            const noChain = raw && cur.top !== ins.top;
-            const chain = document.querySelector('input[name="ins-pos"][value="chain"]');
-            chain.disabled = noChain;
-            $('#ins-pos-chain').classList.toggle('disabled', noChain);
-            $('#ins-pos-chain').title = noChain ? 'Chèn thẳng với khoảng cách cọc khác chế độ nên không so được lý trình' : '';
-            if (noChain && chain.checked) document.querySelector('input[name="ins-pos"][value="end"]').checked = true;
         }
 
         function openInsertDialog(text) {
@@ -5955,7 +5941,9 @@ EOF
                 + (parsed.hasType ? `Cột "Số liệu trong file chèn" lấy theo dòng khai báo ${parsed.typeLine}; sửa lại nếu số liệu thực tế nhập theo cách khác.`
                     : 'File không có dòng TYPEINPUT: hãy chọn cách đọc số liệu của file ở cột giữa.');
             document.querySelector('input[name="ins-conv"][value="convert"]').checked = true;
-            document.querySelector(`input[name="ins-pos"][value="${activeSection() ? 'after' : 'end'}"]`).checked = true;
+            $('#ins-pos-note').textContent = activeSection()
+                ? `Các cọc sẽ được chèn ngay dưới cọc đang chọn: ${activeSection().name || 'dòng ' + (topGrid.cur.r + 1)}.`
+                : 'Chưa chọn cọc nào: các cọc sẽ được chèn vào cuối danh sách.';
             updateInsertDialog();
             $('#insert-modal').classList.add('active');
             $('#ins-ok').focus();
@@ -5973,28 +5961,14 @@ EOF
             const from = { topCum: ins.top === 'cum', distCum: ins.dist === 'cum', elevMode: ins.elev };
             const diff = ['top', 'dist', 'elev'].some(k => ins[k] !== cur[k]);
             const convert = diff && document.querySelector('input[name="ins-conv"]:checked').value === 'convert';
-            const pos = document.querySelector('input[name="ins-pos"]:checked').value;
             const list = parsed.sections;
             const insCh = trueChainages(list, from.topCum);           // lý trình thật của các cọc chèn
             const oldCh = trueChainages(state.sections, modes.topCum); // lý trình thật của dữ liệu hiện có
             const snap = snapshot();
             if (convert) convertSections(list, from, modes);
-            let first, merged;
-            if (pos === 'chain') {
-                // Xếp xen theo lý trình thật rồi, nếu đang nhập khoảng cách lẻ, tính lại khoảng cách lẻ cho cả tuyến
-                const a = state.sections.map((s, i) => ({ s, c: oldCh[i], o: 0 }));
-                const b = list.map((s, i) => ({ s, c: insCh[i], o: 1 }));
-                merged = a.concat(b).sort((x, y) => x.c - y.c || x.o - y.o);
-                if (!modes.topCum) {
-                    let prev = 0;
-                    merged.forEach(m => { m.s.cumulative = numStr(m.c - prev, 6); prev = m.c; });
-                }
-                state.sections = merged.map(m => m.s);
-                first = state.sections.indexOf(list[0]);
-            } else {
-                first = pos === 'after' && activeSection() ? topGrid.cur.r + 1 : state.sections.length;
-                state.sections.splice(first, 0, ...list);
-            }
+            // Chèn ngay dưới cọc đang chọn (chưa chọn cọc thì chèn cuối danh sách)
+            const first = activeSection() ? topGrid.cur.r + 1 : state.sections.length;
+            state.sections.splice(first, 0, ...list);
             pushUndo(snap);
             closeInsertDialog();
             topGrid.setSilent(first, 0);
