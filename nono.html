@@ -429,7 +429,7 @@
                 <label class="plan-num" title="Phóng đại theo phương đứng">Tỉ lệ đứng ×<select id="sec-v"><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
             </span>
             <span class="draw-spacer"></span>
-            <button class="plan-btn" id="draw-dxf" title="Xuất bản vẽ đang xem ra file DXF (mở bằng AutoCAD). Trắc ngang: xuất toàn bộ các cọc">Xuất DXF</button>
+            <button class="plan-btn" id="draw-dxf" title="Xuất bản vẽ đang xem ra file DXF 2010 với lớp, màu, kiểu chữ theo chuẩn bản vẽ ADS (mở bằng AutoCAD). Trắc ngang: xuất toàn bộ các cọc có điểm mia. Muốn làm tiếp bằng ADS thì nạp file .ntd vào ADS.">Xuất DXF</button>
             <button class="plan-btn" id="plan-fit" title="Hiển thị toàn bộ">Vừa khung</button>
             <button class="plan-btn" id="plan-close" title="Đóng panel bản vẽ">&times;</button>
         </div>
@@ -553,6 +553,5072 @@
             </div>
         </div>
     </div>
+
+    <!-- Khung DXF 2010 lấy từ bản vẽ ADS: lớp (tên, màu), kiểu chữ ADS-Bảng trắc dọc/ngang, đơn vị. Dùng khi xuất DXF. -->
+    <script type="text/plain" id="ads-dxf-template">
+  0
+SECTION
+  2
+HEADER
+  9
+$ACADVER
+  1
+AC1024
+  9
+$ACADMAINTVER
+ 70
+6
+  9
+$DWGCODEPAGE
+  3
+ANSI_1252
+  9
+$LASTSAVEDBY
+  1
+ezdxf
+  9
+$INSBASE
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$EXTMIN
+ 10
+1e+20
+ 20
+1e+20
+ 30
+1e+20
+  9
+$EXTMAX
+ 10
+-1e+20
+ 20
+-1e+20
+ 30
+-1e+20
+  9
+$LIMMIN
+ 10
+0.0
+ 20
+0.0
+  9
+$LIMMAX
+ 10
+420.0
+ 20
+297.0
+  9
+$ORTHOMODE
+ 70
+0
+  9
+$REGENMODE
+ 70
+1
+  9
+$FILLMODE
+ 70
+1
+  9
+$QTEXTMODE
+ 70
+0
+  9
+$MIRRTEXT
+ 70
+1
+  9
+$LTSCALE
+ 40
+1.0
+  9
+$ATTMODE
+ 70
+1
+  9
+$TEXTSIZE
+ 40
+2.5
+  9
+$TRACEWID
+ 40
+1.0
+  9
+$TEXTSTYLE
+  7
+Standard
+  9
+$CLAYER
+  8
+0
+  9
+$CELTYPE
+  6
+ByLayer
+  9
+$CECOLOR
+ 62
+256
+  9
+$CELTSCALE
+ 40
+1.0
+  9
+$DISPSILH
+ 70
+0
+  9
+$DIMSCALE
+ 40
+1.0
+  9
+$DIMASZ
+ 40
+2.5
+  9
+$DIMEXO
+ 40
+0.625
+  9
+$DIMDLI
+ 40
+3.75
+  9
+$DIMRND
+ 40
+0.0
+  9
+$DIMDLE
+ 40
+0.0
+  9
+$DIMEXE
+ 40
+1.25
+  9
+$DIMTP
+ 40
+0.0
+  9
+$DIMTM
+ 40
+0.0
+  9
+$DIMTXT
+ 40
+2.5
+  9
+$DIMCEN
+ 40
+2.5
+  9
+$DIMTSZ
+ 40
+0.0
+  9
+$DIMTOL
+ 70
+0
+  9
+$DIMLIM
+ 70
+0
+  9
+$DIMTIH
+ 70
+0
+  9
+$DIMTOH
+ 70
+0
+  9
+$DIMSE1
+ 70
+0
+  9
+$DIMSE2
+ 70
+0
+  9
+$DIMTAD
+ 70
+1
+  9
+$DIMZIN
+ 70
+8
+  9
+$DIMBLK
+  1
+
+  9
+$DIMASO
+ 70
+1
+  9
+$DIMSHO
+ 70
+1
+  9
+$DIMPOST
+  1
+
+  9
+$DIMAPOST
+  1
+
+  9
+$DIMALT
+ 70
+0
+  9
+$DIMALTD
+ 70
+3
+  9
+$DIMALTF
+ 40
+0.03937007874
+  9
+$DIMLFAC
+ 40
+1.0
+  9
+$DIMTOFL
+ 70
+1
+  9
+$DIMTVP
+ 40
+0.0
+  9
+$DIMTIX
+ 70
+0
+  9
+$DIMSOXD
+ 70
+0
+  9
+$DIMSAH
+ 70
+0
+  9
+$DIMBLK1
+  1
+
+  9
+$DIMBLK2
+  1
+
+  9
+$DIMSTYLE
+  2
+ISO-25
+  9
+$DIMCLRD
+ 70
+0
+  9
+$DIMCLRE
+ 70
+0
+  9
+$DIMCLRT
+ 70
+0
+  9
+$DIMTFAC
+ 40
+1.0
+  9
+$DIMGAP
+ 40
+0.625
+  9
+$DIMJUST
+ 70
+0
+  9
+$DIMSD1
+ 70
+0
+  9
+$DIMSD2
+ 70
+0
+  9
+$DIMTOLJ
+ 70
+0
+  9
+$DIMTZIN
+ 70
+8
+  9
+$DIMALTZ
+ 70
+0
+  9
+$DIMALTTZ
+ 70
+0
+  9
+$DIMUPT
+ 70
+0
+  9
+$DIMDEC
+ 70
+2
+  9
+$DIMTDEC
+ 70
+2
+  9
+$DIMALTU
+ 70
+2
+  9
+$DIMALTTD
+ 70
+3
+  9
+$DIMTXSTY
+  7
+Standard
+  9
+$DIMAUNIT
+ 70
+0
+  9
+$DIMADEC
+ 70
+0
+  9
+$DIMALTRND
+ 40
+0.0
+  9
+$DIMAZIN
+ 70
+0
+  9
+$DIMDSEP
+ 70
+44
+  9
+$DIMATFIT
+ 70
+3
+  9
+$DIMFRAC
+ 70
+0
+  9
+$DIMLDRBLK
+  1
+
+  9
+$DIMLUNIT
+ 70
+2
+  9
+$DIMLWD
+ 70
+-2
+  9
+$DIMLWE
+ 70
+-2
+  9
+$DIMTMOVE
+ 70
+0
+  9
+$DIMFXL
+ 40
+1.0
+  9
+$DIMFXLON
+ 70
+0
+  9
+$DIMJOGANG
+ 40
+0.785398163397
+  9
+$DIMTFILL
+ 70
+0
+  9
+$DIMTFILLCLR
+ 70
+0
+  9
+$DIMARCSYM
+ 70
+0
+  9
+$DIMLTYPE
+  6
+
+  9
+$DIMLTEX1
+  6
+
+  9
+$DIMLTEX2
+  6
+
+  9
+$DIMTXTDIRECTION
+ 70
+0
+  9
+$LUNITS
+ 70
+2
+  9
+$LUPREC
+ 70
+4
+  9
+$SKETCHINC
+ 40
+1.0
+  9
+$FILLETRAD
+ 40
+10.0
+  9
+$AUNITS
+ 70
+0
+  9
+$AUPREC
+ 70
+2
+  9
+$MENU
+  1
+.
+  9
+$ELEVATION
+ 40
+0.0
+  9
+$PELEVATION
+ 40
+0.0
+  9
+$THICKNESS
+ 40
+0.0
+  9
+$LIMCHECK
+ 70
+0
+  9
+$CHAMFERA
+ 40
+0.0
+  9
+$CHAMFERB
+ 40
+0.0
+  9
+$CHAMFERC
+ 40
+0.0
+  9
+$CHAMFERD
+ 40
+0.0
+  9
+$SKPOLY
+ 70
+0
+  9
+$TDCREATE
+ 40
+2461344.4330439814
+  9
+$TDUCREATE
+ 40
+2458532.153996898
+  9
+$TDUPDATE
+ 40
+2461344.4330439814
+  9
+$TDUUPDATE
+ 40
+2458532.1544311
+  9
+$TDINDWG
+ 40
+0.0
+  9
+$TDUSRTIMER
+ 40
+0.0
+  9
+$USRTIMER
+ 70
+1
+  9
+$ANGBASE
+ 50
+0.0
+  9
+$ANGDIR
+ 70
+0
+  9
+$PDMODE
+ 70
+0
+  9
+$PDSIZE
+ 40
+0.0
+  9
+$PLINEWID
+ 40
+0.0
+  9
+$SPLFRAME
+ 70
+0
+  9
+$SPLINETYPE
+ 70
+6
+  9
+$SPLINESEGS
+ 70
+8
+  9
+$HANDSEED
+  5
+86
+  9
+$SURFTAB1
+ 70
+6
+  9
+$SURFTAB2
+ 70
+6
+  9
+$SURFTYPE
+ 70
+6
+  9
+$SURFU
+ 70
+6
+  9
+$SURFV
+ 70
+6
+  9
+$UCSBASE
+  2
+
+  9
+$UCSNAME
+  2
+
+  9
+$UCSORG
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSXDIR
+ 10
+1.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSYDIR
+ 10
+0.0
+ 20
+1.0
+ 30
+0.0
+  9
+$UCSORTHOREF
+  2
+
+  9
+$UCSORTHOVIEW
+ 70
+0
+  9
+$UCSORGTOP
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGBOTTOM
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGLEFT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGRIGHT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGFRONT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGBACK
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSBASE
+  2
+
+  9
+$PUCSNAME
+  2
+
+  9
+$PUCSORG
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSXDIR
+ 10
+1.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSYDIR
+ 10
+0.0
+ 20
+1.0
+ 30
+0.0
+  9
+$PUCSORTHOREF
+  2
+
+  9
+$PUCSORTHOVIEW
+ 70
+0
+  9
+$PUCSORGTOP
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGBOTTOM
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGLEFT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGRIGHT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGFRONT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGBACK
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$USERI1
+ 70
+0
+  9
+$USERI2
+ 70
+0
+  9
+$USERI3
+ 70
+0
+  9
+$USERI4
+ 70
+0
+  9
+$USERI5
+ 70
+0
+  9
+$USERR1
+ 40
+0.0
+  9
+$USERR2
+ 40
+0.0
+  9
+$USERR3
+ 40
+0.0
+  9
+$USERR4
+ 40
+0.0
+  9
+$USERR5
+ 40
+0.0
+  9
+$WORLDVIEW
+ 70
+1
+  9
+$SHADEDGE
+ 70
+3
+  9
+$SHADEDIF
+ 70
+70
+  9
+$TILEMODE
+ 70
+1
+  9
+$MAXACTVP
+ 70
+64
+  9
+$PINSBASE
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PLIMCHECK
+ 70
+0
+  9
+$PEXTMIN
+ 10
+1e+20
+ 20
+1e+20
+ 30
+1e+20
+  9
+$PEXTMAX
+ 10
+-1e+20
+ 20
+-1e+20
+ 30
+-1e+20
+  9
+$PLIMMIN
+ 10
+0.0
+ 20
+0.0
+  9
+$PLIMMAX
+ 10
+420.0
+ 20
+297.0
+  9
+$UNITMODE
+ 70
+0
+  9
+$VISRETAIN
+ 70
+1
+  9
+$PLINEGEN
+ 70
+0
+  9
+$PSLTSCALE
+ 70
+1
+  9
+$TREEDEPTH
+ 70
+3020
+  9
+$CMLSTYLE
+  2
+Standard
+  9
+$CMLJUST
+ 70
+0
+  9
+$CMLSCALE
+ 40
+20.0
+  9
+$PROXYGRAPHICS
+ 70
+1
+  9
+$MEASUREMENT
+ 70
+1
+  9
+$CELWEIGHT
+370
+-1
+  9
+$ENDCAPS
+280
+0
+  9
+$JOINSTYLE
+280
+0
+  9
+$LWDISPLAY
+290
+0
+  9
+$INSUNITS
+ 70
+4
+  9
+$HYPERLINKBASE
+  1
+
+  9
+$STYLESHEET
+  1
+
+  9
+$XEDIT
+290
+1
+  9
+$CEPSNTYPE
+380
+0
+  9
+$PSTYLEMODE
+290
+1
+  9
+$FINGERPRINTGUID
+  2
+{2FFC16FD-3014-471B-9584-C6119A9BE5D8}
+  9
+$VERSIONGUID
+  2
+{EE15EBC1-0A3E-449E-ADB2-1CEB60FDE4A9}
+  9
+$EXTNAMES
+290
+1
+  9
+$PSVPSCALE
+ 40
+0.0
+  9
+$OLESTARTUP
+290
+0
+  9
+$SORTENTS
+280
+127
+  9
+$INDEXCTL
+280
+0
+  9
+$HIDETEXT
+280
+1
+  9
+$XCLIPFRAME
+280
+1
+  9
+$HALOGAP
+280
+0
+  9
+$OBSCOLOR
+ 70
+257
+  9
+$OBSLTYPE
+280
+0
+  9
+$INTERSECTIONDISPLAY
+280
+0
+  9
+$INTERSECTIONCOLOR
+ 70
+257
+  9
+$DIMASSOC
+280
+2
+  9
+$PROJECTNAME
+  1
+
+  9
+$CAMERADISPLAY
+290
+0
+  9
+$LENSLENGTH
+ 40
+50.0
+  9
+$CAMERAHEIGHT
+ 40
+0.0
+  9
+$STEPSPERSEC
+ 40
+24.0
+  9
+$STEPSIZE
+ 40
+100.0
+  9
+$3DDWFPREC
+ 40
+2.0
+  9
+$PSOLWIDTH
+ 40
+0.005
+  9
+$PSOLHEIGHT
+ 40
+0.08
+  9
+$LOFTANG1
+ 40
+1.570796326795
+  9
+$LOFTANG2
+ 40
+1.570796326795
+  9
+$LOFTMAG1
+ 40
+0.0
+  9
+$LOFTMAG2
+ 40
+0.0
+  9
+$LOFTPARAM
+ 70
+7
+  9
+$LOFTNORMALS
+280
+1
+  9
+$LATITUDE
+ 40
+37.795
+  9
+$LONGITUDE
+ 40
+-122.394
+  9
+$NORTHDIRECTION
+ 40
+0.0
+  9
+$TIMEZONE
+ 70
+-8000
+  9
+$LIGHTGLYPHDISPLAY
+280
+1
+  9
+$TILEMODELIGHTSYNCH
+280
+1
+  9
+$CMATERIAL
+347
+20
+  9
+$SOLIDHIST
+280
+0
+  9
+$SHOWHIST
+280
+1
+  9
+$DWFFRAME
+280
+2
+  9
+$DGNFRAME
+280
+2
+  9
+$REALWORLDSCALE
+290
+1
+  9
+$INTERFERECOLOR
+ 62
+256
+  9
+$CSHADOW
+280
+0
+  9
+$SHADOWPLANELOCATION
+ 40
+0.0
+  0
+ENDSEC
+  0
+SECTION
+  2
+CLASSES
+  0
+CLASS
+  1
+ACDBDICTIONARYWDFLT
+  2
+AcDbDictionaryWithDefault
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+SUN
+  2
+AcDbSun
+  3
+SCENEOE
+ 90
+1153
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+VISUALSTYLE
+  2
+AcDbVisualStyle
+  3
+ObjectDBX Classes
+ 90
+4095
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+MATERIAL
+  2
+AcDbMaterial
+  3
+ObjectDBX Classes
+ 90
+1153
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+SCALE
+  2
+AcDbScale
+  3
+ObjectDBX Classes
+ 90
+1153
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+TABLESTYLE
+  2
+AcDbTableStyle
+  3
+ObjectDBX Classes
+ 90
+4095
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+MLEADERSTYLE
+  2
+AcDbMLeaderStyle
+  3
+ACDB_MLEADERSTYLE_CLASS
+ 90
+4095
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+DICTIONARYVAR
+  2
+AcDbDictionaryVar
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+CELLSTYLEMAP
+  2
+AcDbCellStyleMap
+  3
+ObjectDBX Classes
+ 90
+1152
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+MENTALRAYRENDERSETTINGS
+  2
+AcDbMentalRayRenderSettings
+  3
+SCENEOE
+ 90
+1024
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBDETAILVIEWSTYLE
+  2
+AcDbDetailViewStyle
+  3
+ObjectDBX Classes
+ 90
+1025
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBSECTIONVIEWSTYLE
+  2
+AcDbSectionViewStyle
+  3
+ObjectDBX Classes
+ 90
+1025
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+RASTERVARIABLES
+  2
+AcDbRasterVariables
+  3
+ISM
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBPLACEHOLDER
+  2
+AcDbPlaceHolder
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+LAYOUT
+  2
+AcDbLayout
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+ENDSEC
+  0
+SECTION
+  2
+TABLES
+  0
+TABLE
+  2
+VPORT
+  5
+8
+330
+0
+100
+AcDbSymbolTable
+ 70
+1
+  0
+VPORT
+  5
+23
+330
+8
+100
+AcDbSymbolTableRecord
+100
+AcDbViewportTableRecord
+  2
+*Active
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 11
+1.0
+ 21
+1.0
+ 12
+0.0
+ 22
+0.0
+ 13
+0.0
+ 23
+0.0
+ 14
+0.5
+ 24
+0.5
+ 15
+0.5
+ 25
+0.5
+ 16
+0.0
+ 26
+0.0
+ 36
+1.0
+ 17
+0.0
+ 27
+0.0
+ 37
+0.0
+ 40
+1000.0
+ 41
+1.34
+ 42
+50.0
+ 43
+0.0
+ 44
+0.0
+ 50
+0.0
+ 51
+0.0
+ 71
+0
+ 72
+1000
+ 73
+1
+ 74
+3
+ 75
+0
+ 76
+0
+ 77
+0
+ 78
+0
+281
+0
+ 65
+0
+146
+0.0
+  0
+ENDTAB
+  0
+TABLE
+  2
+LTYPE
+  5
+2
+330
+0
+100
+AcDbSymbolTable
+ 70
+3
+  0
+LTYPE
+  5
+24
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+ByBlock
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+25
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+ByLayer
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+26
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+Continuous
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+ENDTAB
+  0
+TABLE
+  2
+LAYER
+  5
+1
+330
+0
+100
+AcDbSymbolTable
+ 70
+82
+  0
+LAYER
+  5
+27
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+0
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+28
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Defpoints
+ 70
+0
+ 62
+7
+  6
+Continuous
+290
+0
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+2F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9301-Ghi chú trắc dọc
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+30
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9302-Bảng trắc dọc
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+31
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9303-Chữ trắc dọc
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+32
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9304-Hatch Trắc dọc
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+33
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9305-Đ.dóng trắc dọc
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+34
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9306-Thước TL trắc dọc
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+35
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9307-Lý trình trắc dọc
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+36
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9308-Địa vật trắc dọc
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+37
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9311-Trắc dọc mã hiệu 1
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+38
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9312-Trắc dọc mã hiệu 2
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+39
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9313-Trắc dọc mã hiệu 3
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+3A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9314-Trắc dọc mã hiệu 4
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+3B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9315-Trắc dọc mã hiệu 5
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+3C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9321-Thông số cong đứng
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+3D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9322-Ghi chú đầu c.đứng
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+3E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9323-Ghi chú giữa c.đứng
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+3F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9324-G.chú cực trị c.đứng
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+40
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9331-Chênh cđ tim tuyến
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+41
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9332-Chênh cđ đáy r.đan
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+42
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9333-Chênh cđ đáy r.dọc
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+43
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9334-Chênh cđ đáy cống
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+44
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9335-Chênh cđ đỉnh t.chắn
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+45
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9336-Chênh cđ chân t.chắn
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+46
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9337-Chênh cđ gia cố taluy
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+47
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9401-Ghi chú trắc ngang
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+48
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9402-Bảng trắc ngang
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+49
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9403-Chữ trắc ngang
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+4A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9404-Hatch Trắc ngang
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+4B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9405-Đ.dóng trắc ngang
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+4C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9406-Thước TL trắc ngang
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+4D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9407-Lý trình trắc ngang
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+4E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9408-Địa vật trắc ngang
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+4F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9409-DIM trắc ngang
+ 70
+0
+ 62
+9
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+50
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9410-BTN trắc ngang
+ 70
+0
+ 62
+11
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+51
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9421-Mc d.tích mã hiệu 1
+ 70
+0
+ 62
+1
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+52
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9422-Mc d.tích mã hiệu 2
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+53
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9423-Mc d.tích mã hiệu 3
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+54
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9424-Mc d.tích mã hiệu 4
+ 70
+0
+ 62
+4
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+55
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9425-Mc d.tích mã hiệu 5
+ 70
+0
+ 62
+5
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+56
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9426-Mc d.tích mã hiệu 6
+ 70
+0
+ 62
+6
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+57
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9427-Mc d.tích mã hiệu 7
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+58
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9428-Mc d.tích mã hiệu 8
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+59
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9429-Mc d.tích mã hiệu 9
+ 70
+0
+ 62
+9
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+5A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9430-Mc d.tích mã hiệu 10
+ 70
+0
+ 62
+10
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+5B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9431-Mc d.tích mã hiệu 11
+ 70
+0
+ 62
+1
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+5C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9432-Mc d.tích mã hiệu 12
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+5D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9433-Mc d.tích mã hiệu 13
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+5E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9434-Mc d.tích mã hiệu 14
+ 70
+0
+ 62
+4
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+5F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9435-Mc d.tích mã hiệu 15
+ 70
+0
+ 62
+5
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+60
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9436-Mc d.tích mã hiệu 16
+ 70
+0
+ 62
+6
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+61
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9437-Mc d.tích mã hiệu 17
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+62
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9438-Mc d.tích mã hiệu 18
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+63
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9439-Mc d.tích mã hiệu 19
+ 70
+0
+ 62
+9
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+64
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9440-Mc d.tích mã hiệu 20
+ 70
+0
+ 62
+10
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+65
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9451-Mc ghi chú siêu cao
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+66
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9452-Mc ghi chú chênh cao
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+67
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9453-Mc ghi chú cao độ tim
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+68
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9454-Mc ghi chú độ dốc TK
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+69
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9455-Mc ghi chú cao độ TK
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+6A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9456-Mc ghi chú cao độ
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+6B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9457-Mc d.tích điền p.trái
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+6C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-ADS-9458-Mc d.tích điền p.phải
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+6D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1101-Tim tuyến
+ 70
+0
+ 62
+1
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+6E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1102-Tim tuyến gom
+ 70
+0
+ 62
+1
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+6F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1103-Đường offset
+ 70
+0
+ 62
+5
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+70
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1104-Cọc lý trình
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+71
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1105-Cọc H
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+72
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1106-Cọc Km
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+73
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1107-Cọc cắm cong
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+74
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1111-Điểm đo thiết kế
+ 70
+0
+ 62
+1
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+75
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1112-Điểm đo tim thiết kế
+ 70
+0
+ 62
+1
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+76
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1121-Mb Khe co
+ 70
+0
+ 62
+2
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+77
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1122-Mb Khe dãn
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+78
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+TK-DBO-1123-Mb Khe công vụ
+ 70
+0
+ 62
+4
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+79
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+KS-DHI-1101-Điểm đo
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+7A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+KS-DHI-1102-Trạm đo
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+7B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+KS-TUY-2401-Trắc dọc tự nhiên
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+7C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+KS-TUY-2402-Trắc dọc đất yếu
+ 70
+0
+ 62
+9
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+7D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+KS-TUY-2501-Trắc ngang tự nhiên
+ 70
+0
+ 62
+3
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+7E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+KS-TUY-2502-Trắc ngang đường cũ
+ 70
+0
+ 62
+8
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+ENDTAB
+  0
+TABLE
+  2
+STYLE
+  5
+5
+330
+0
+100
+AcDbSymbolTable
+ 70
+4
+  0
+STYLE
+  5
+29
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+Standard
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+txt
+  4
+
+  0
+STYLE
+  5
+7F
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+ADS-Bảng biểu
+ 70
+0
+ 40
+0.0
+ 41
+0.8
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+ads civil.shx
+  4
+
+  0
+STYLE
+  5
+80
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+ADS-Bảng trắc dọc
+ 70
+0
+ 40
+0.0
+ 41
+0.8
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+ads civil.shx
+  4
+
+  0
+STYLE
+  5
+81
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+ADS-Bảng trắc ngang
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+ads civil.shx
+  4
+
+  0
+ENDTAB
+  0
+TABLE
+  2
+VIEW
+  5
+7
+330
+0
+100
+AcDbSymbolTable
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+UCS
+  5
+6
+330
+0
+100
+AcDbSymbolTable
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+APPID
+  5
+3
+330
+0
+100
+AcDbSymbolTable
+ 70
+4
+  0
+APPID
+  5
+2A
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+ACAD
+ 70
+0
+  0
+APPID
+  5
+82
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+LEDAT
+ 70
+0
+  0
+APPID
+  5
+83
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+HATCHBACKGROUNDCOLOR
+ 70
+0
+  0
+APPID
+  5
+84
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+EZDXF
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+DIMSTYLE
+  5
+4
+330
+0
+100
+AcDbSymbolTable
+ 70
+1
+100
+AcDbDimStyleTable
+  0
+DIMSTYLE
+105
+2B
+330
+4
+100
+AcDbSymbolTableRecord
+100
+AcDbDimStyleTableRecord
+  2
+Standard
+ 70
+0
+ 40
+1.0
+ 41
+2.5
+ 42
+0.625
+ 43
+3.75
+ 44
+1.25
+ 45
+0.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+2.5
+140
+2.5
+141
+2.5
+142
+0.0
+143
+0.03937007874
+144
+1.0
+145
+0.0
+146
+1.0
+147
+0.625
+148
+0.0
+ 69
+0
+ 70
+0
+ 71
+0
+ 72
+0
+ 73
+0
+ 74
+0
+ 75
+0
+ 76
+0
+ 77
+1
+ 78
+8
+ 79
+3
+170
+0
+171
+3
+172
+1
+173
+0
+174
+0
+175
+0
+176
+0
+177
+0
+178
+0
+179
+2
+271
+2
+272
+2
+273
+2
+274
+3
+275
+0
+276
+0
+277
+2
+278
+44
+279
+0
+280
+0
+281
+0
+282
+0
+283
+0
+284
+8
+285
+0
+286
+0
+288
+0
+289
+3
+290
+0
+371
+-2
+372
+-2
+  0
+ENDTAB
+  0
+TABLE
+  2
+BLOCK_RECORD
+  5
+9
+330
+0
+100
+AcDbSymbolTable
+ 70
+2
+  0
+BLOCK_RECORD
+  5
+17
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+*Model_Space
+340
+1A
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+1B
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+*Paper_Space
+340
+1E
+ 70
+0
+280
+1
+281
+0
+  0
+ENDTAB
+  0
+ENDSEC
+  0
+SECTION
+  2
+BLOCKS
+  0
+BLOCK
+  5
+18
+330
+17
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+*Model_Space
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+*Model_Space
+  1
+
+  0
+ENDBLK
+  5
+19
+330
+17
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1C
+330
+1B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+*Paper_Space
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+*Paper_Space
+  1
+
+  0
+ENDBLK
+  5
+1D
+330
+1B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+ENDSEC
+  0
+SECTION
+  2
+ENTITIES
+  0
+ENDSEC
+  0
+SECTION
+  2
+OBJECTS
+  0
+DICTIONARY
+  5
+A
+330
+0
+100
+AcDbDictionary
+281
+1
+  3
+ACAD_COLOR
+350
+B
+  3
+ACAD_GROUP
+350
+C
+  3
+ACAD_LAYOUT
+350
+D
+  3
+ACAD_MATERIAL
+350
+E
+  3
+ACAD_MLEADERSTYLE
+350
+F
+  3
+ACAD_MLINESTYLE
+350
+10
+  3
+ACAD_PLOTSETTINGS
+350
+11
+  3
+ACAD_PLOTSTYLENAME
+350
+12
+  3
+ACAD_SCALELIST
+350
+14
+  3
+ACAD_TABLESTYLE
+350
+15
+  3
+ACAD_VISUALSTYLE
+350
+16
+  3
+EZDXF_META
+350
+2D
+  0
+DICTIONARY
+  5
+B
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+C
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+D
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Model
+350
+1A
+  3
+Layout1
+350
+1E
+  0
+DICTIONARY
+  5
+E
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+ByBlock
+350
+1F
+  3
+ByLayer
+350
+20
+  3
+Global
+350
+21
+  0
+DICTIONARY
+  5
+F
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Standard
+350
+2C
+  0
+DICTIONARY
+  5
+10
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Standard
+350
+22
+  0
+DICTIONARY
+  5
+11
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+ACDBDICTIONARYWDFLT
+  5
+12
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Normal
+350
+13
+100
+AcDbDictionaryWithDefault
+340
+13
+  0
+ACDBPLACEHOLDER
+  5
+13
+330
+12
+  0
+DICTIONARY
+  5
+14
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+15
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+16
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+LAYOUT
+  5
+1A
+330
+D
+100
+AcDbPlotSettings
+  1
+
+  4
+A3
+  6
+
+ 40
+7.5
+ 41
+20.0
+ 42
+7.5
+ 43
+20.0
+ 44
+420.0
+ 45
+297.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+0.0
+140
+0.0
+141
+0.0
+142
+1.0
+143
+1.0
+ 70
+1024
+ 72
+1
+ 73
+0
+ 74
+5
+  7
+
+ 75
+16
+ 76
+0
+ 77
+2
+ 78
+300
+147
+1.0
+148
+0.0
+149
+0.0
+100
+AcDbLayout
+  1
+Model
+ 70
+1
+ 71
+0
+ 10
+0.0
+ 20
+0.0
+ 11
+420.0
+ 21
+297.0
+ 12
+0.0
+ 22
+0.0
+ 32
+0.0
+ 14
+1e+20
+ 24
+1e+20
+ 34
+1e+20
+ 15
+-1e+20
+ 25
+-1e+20
+ 35
+-1e+20
+146
+0.0
+ 13
+0.0
+ 23
+0.0
+ 33
+0.0
+ 16
+1.0
+ 26
+0.0
+ 36
+0.0
+ 17
+0.0
+ 27
+1.0
+ 37
+0.0
+ 76
+1
+330
+17
+  0
+LAYOUT
+  5
+1E
+330
+D
+100
+AcDbPlotSettings
+  1
+
+  4
+A3
+  6
+
+ 40
+7.5
+ 41
+20.0
+ 42
+7.5
+ 43
+20.0
+ 44
+420.0
+ 45
+297.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+0.0
+140
+0.0
+141
+0.0
+142
+1.0
+143
+1.0
+ 70
+0
+ 72
+1
+ 73
+0
+ 74
+5
+  7
+
+ 75
+16
+ 76
+0
+ 77
+2
+ 78
+300
+147
+1.0
+148
+0.0
+149
+0.0
+100
+AcDbLayout
+  1
+Layout1
+ 70
+1
+ 71
+1
+ 10
+0.0
+ 20
+0.0
+ 11
+420.0
+ 21
+297.0
+ 12
+0.0
+ 22
+0.0
+ 32
+0.0
+ 14
+1e+20
+ 24
+1e+20
+ 34
+1e+20
+ 15
+-1e+20
+ 25
+-1e+20
+ 35
+-1e+20
+146
+0.0
+ 13
+0.0
+ 23
+0.0
+ 33
+0.0
+ 16
+1.0
+ 26
+0.0
+ 36
+0.0
+ 17
+0.0
+ 27
+1.0
+ 37
+0.0
+ 76
+1
+330
+1B
+  0
+MATERIAL
+  5
+1F
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+ByBlock
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MATERIAL
+  5
+20
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+ByLayer
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MATERIAL
+  5
+21
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+Global
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MLINESTYLE
+  5
+22
+102
+{ACAD_REACTORS
+330
+10
+102
+}
+330
+10
+100
+AcDbMlineStyle
+  2
+Standard
+ 70
+0
+  3
+
+ 62
+256
+ 51
+90.0
+ 52
+90.0
+ 71
+2
+ 49
+0.5
+ 62
+256
+  6
+BYLAYER
+ 49
+-0.5
+ 62
+256
+  6
+BYLAYER
+  0
+MLEADERSTYLE
+  5
+2C
+102
+{ACAD_REACTORS
+330
+F
+102
+}
+330
+F
+100
+AcDbMLeaderStyle
+179
+2
+170
+2
+171
+1
+172
+0
+ 90
+2
+ 40
+0.0
+ 41
+0.0
+173
+1
+ 91
+-1056964608
+ 92
+-2
+290
+1
+ 42
+2.0
+291
+1
+ 43
+8.0
+  3
+Standard
+ 44
+4.0
+300
+
+342
+29
+174
+1
+175
+1
+176
+0
+178
+1
+ 93
+-1056964608
+ 45
+4.0
+292
+0
+297
+0
+ 46
+4.0
+ 94
+-1056964608
+ 47
+1.0
+ 49
+1.0
+140
+1.0
+294
+1
+141
+0.0
+177
+0
+142
+1.0
+295
+0
+296
+0
+143
+3.75
+271
+0
+272
+9
+273
+9
+  0
+DICTIONARY
+  5
+2D
+330
+A
+100
+AcDbDictionary
+280
+1
+281
+1
+  3
+CREATED_BY_EZDXF
+350
+2E
+  3
+WRITTEN_BY_EZDXF
+350
+85
+  0
+DICTIONARYVAR
+  5
+2E
+330
+2D
+100
+DictionaryVariables
+280
+0
+  1
+1.4.4 @ 2026-10-30T03:23:35.977319+00:00
+  0
+DICTIONARYVAR
+  5
+85
+330
+2D
+100
+DictionaryVariables
+280
+0
+  1
+1.4.4 @ 2026-10-30T03:23:35.980319+00:00
+  0
+ENDSEC
+  0
+EOF
+</script>
 
     <script>
         // =====================================================================
@@ -1691,7 +6757,7 @@
             pGround: 'KS-TUY-2401-Trắc dọc tự nhiên', pStation: 'TK-ADS-9307-Lý trình trắc dọc',
             xBand: 'TK-ADS-9402-Bảng trắc ngang', xText: 'TK-ADS-9403-Chữ trắc ngang', xDong: 'TK-ADS-9405-Đ.dóng trắc ngang',
             xGround: 'KS-TUY-2501-Trắc ngang tự nhiên', xOld: 'KS-TUY-2502-Trắc ngang đường cũ', xTitle: 'TK-ADS-9407-Lý trình trắc ngang',
-            plAxis: 'TK-DBO-1101-Tim tuyến', plPole: 'TK-DBO-1104-Cọc lý trình', plPoint: 'KS-DHI-1101-Điểm đo'
+            plAxis: 'TK-DBO-1101-Tim tuyến', plPole: 'TK-DBO-1104-Cọc lý trình', plH: 'TK-DBO-1105-Cọc H', plKm: 'TK-DBO-1106-Cọc Km', plPoint: 'KS-DHI-1101-Điểm đo'
         };
         const dLine = (x1, y1, x2, y2, layer, o = {}) => Object.assign({ t: 'line', pts: [[x1, y1], [x2, y2]], layer }, o);
         const dPoly = (pts, layer, o = {}) => Object.assign({ t: 'poly', pts, layer }, o);
@@ -1752,6 +6818,7 @@
         }
 
         // Trắc dọc tự nhiên: đường tự nhiên, đường dóng và bảng 8 hàng như ADS. Gốc toạ độ: x = lý trình, y = 0 là mép trên bảng.
+        // Thuộc tính chữ/đường (lớp, kiểu chữ, cao chữ, hệ số rộng, canh lề, màu) lấy đúng theo bản vẽ do ADS tạo.
         function buildProfile() {
             const P = profilePoles(), items = [];
             if (!P.length) return null;
@@ -1759,6 +6826,7 @@
             const mss = globalMSS(P); // mức so sánh
             const Y = z => (z - mss) * k;
             const x0 = P[0].c, x1 = Math.max(P[P.length - 1].c, x0 + 1), HW = 45;
+            const T = { style: 'pd', wf: 0.8 }, V = { style: 'pd', wf: 0.8, aci: 3 };
             const rows = [['Cao độ thiết kế', 12], ['Dốc dọc thiết kế', 12], ['Cao độ tự nhiên', 12], ['Khoảng cách lẻ', 9],
                 ['Khoảng cách cộng dồn', 9], ['Tên cọc', 9], ['Lý trình', 8], ['Đoạn thẳng - Đoạn cong', 18]];
             const R = {};
@@ -1768,41 +6836,43 @@
                 R[name] = { top: y, bot: y - hgt, mid: y - hgt / 2 };
                 y -= hgt;
                 items.push(dLine(x0 - HW, y, x1, y, LAYER.pBand));
-                items.push(dText(name, x0 - HW / 2, R[name].mid, 2, 0, 'c', 'm', LAYER.pBand));
+                items.push(dText(name, x0 - HW / 2, R[name].mid, 2, 0, 'M', 'm', LAYER.pBand, T));
             });
             items.push(dLine(x0 - HW, 0, x0 - HW, y, LAYER.pBand), dLine(x0, 0, x0, y, LAYER.pBand), dLine(x1, 0, x1, y, LAYER.pBand));
-            items.push(dText(`MSS: ${mss}`, x0 - 2, 1, 1.6, 0, 'r', 'b', LAYER.pText));
-            const rd = R['Đoạn thẳng - Đoạn cong'];
-            items.push(dLine(x0, rd.mid, x1, rd.mid, LAYER.pText));
-            const ground = [];
+            items.push(dText(`MSS: ${mss}`, x0 - 2, 1, 2, 0, 'r', 'bt', LAYER.pText, { style: 'pd', mt: 9 }));
+            const rd = R['Đoạn thẳng - Đoạn cong'], rz = R['Cao độ tự nhiên'], rc = R['Khoảng cách cộng dồn'], rl = R['Khoảng cách lẻ'], rn = R['Tên cọc'];
+            const ground = [], curve = [[x0, rd.mid]];
             P.forEach((p, i) => {
                 const x = p.c;
                 if (p.z !== null && isFinite(p.z)) {
                     ground.push([x, Y(p.z)]);
                     items.push(dLine(x, 0, x, Y(p.z), LAYER.pDong));
-                    items.push(dText(f3(p.z), x, R['Cao độ tự nhiên'].mid, 1.5, 90, 'c', 'm', LAYER.pText));
+                    items.push(dText(f3(p.z), x, rz.top - 0.6, 2, 90, 'r', 'm', LAYER.pText, V));
                 }
-                items.push(dLine(x, R['Khoảng cách lẻ'].top, x, R['Khoảng cách lẻ'].bot, LAYER.pText));
-                items.push(dText(f3(p.c), x, R['Khoảng cách cộng dồn'].mid, 1.5, 90, 'c', 'm', LAYER.pText));
-                items.push(dText(p.name, x, R['Tên cọc'].mid + (i % 2 ? -2 : 2), 1.6, 0, 'c', 'm', LAYER.pText));
+                items.push(dLine(x, rl.top, x, rl.bot, LAYER.pText, { aci: 3 }));
+                items.push(dText(f3(p.c), x, rc.top - 0.6, 2, 90, 'r', 'm', LAYER.pText, V));
+                // Tên cọc xen kẽ trên/dưới để không chồng chữ (như ADS)
+                items.push(dText(p.name, x, i % 2 ? rn.mid - 0.3 : rn.mid + 0.3, 2, 0, 'c', i % 2 ? 't' : 'bt', LAYER.pText, { style: 'pd', wf: 0.8, aci: 5 }));
                 if (i > 0) {
-                    const L = p.c - P[i - 1].c;
-                    items.push(dText(f3(L), (p.c + P[i - 1].c) / 2, R['Khoảng cách lẻ'].mid, 1.5, L < 12 ? 90 : 0, 'c', 'm', LAYER.pText));
+                    const L = p.c - P[i - 1].c, narrow = L < 12;
+                    items.push(dText(f3(L), (p.c + P[i - 1].c) / 2, rl.mid, 2, narrow ? 90 : 0, 'c', 'm', LAYER.pText, V));
                 }
                 // Lý trình: ghi tại cọc đầu, cọc Km tròn và cọc H
                 const isKm = i === 0 || Math.abs(p.c / 1000 - Math.round(p.c / 1000)) < 1e-6;
                 if (isKm || /^H\d+/i.test(p.name)) {
-                    const rl = R['Lý trình'];
-                    items.push(dLine(x, rl.top, x, rl.top - 2.5, LAYER.pStation));
-                    items.push(dText(isKm ? `Km ${Math.round(p.c / 1000)}` : p.name, x, rl.mid - 1, 1.6, 0, 'c', 'm', LAYER.pStation));
+                    const ry = R['Lý trình'];
+                    items.push(dLine(x, ry.top, x, ry.top - 2.5, LAYER.pStation));
+                    items.push(dText(isKm ? `Km ${Math.round(p.c / 1000)}` : p.name, x, ry.mid - 1, 2, 0, 'c', 'm', LAYER.pStation, T));
                 }
-                // Góc chuyển hướng: rẽ phải vẽ tam giác lên, rẽ trái vẽ tam giác xuống (như ADS)
+                // Góc chuyển hướng: rẽ phải tam giác lên, rẽ trái tam giác xuống, nằm trên một đường liền (như ADS)
                 if (Math.abs(p.a - 180) > 1e-6) {
-                    const up = p.a > 180, by = rd.mid, ty = up ? by + 5 : by - 5;
-                    items.push(dPoly([[x - 9, by], [x, ty], [x + 9, by]], LAYER.pText));
-                    items.push(dText(`A = ${dmsSigned(p.a > 180 ? p.a - 360 : p.a)}`, x, up ? by - 3.5 : by + 3.5, 1.5, 0, 'c', 'm', LAYER.pText));
+                    const up = p.a > 180, ty = up ? rd.mid + 5 : rd.mid - 5;
+                    curve.push([x - 9, rd.mid], [x, ty], [x + 9, rd.mid]);
+                    items.push(dText(`A = ${dmsSigned(p.a > 180 ? p.a - 360 : p.a)}`, x, up ? rd.mid - 3.5 : rd.mid + 3.5, 2, 0, 'c', 'm', LAYER.pText, { style: 'pd', mt: 5 }));
                 }
             });
+            curve.push([x1, rd.mid]);
+            items.push(dPoly(curve, LAYER.pText, { aci: 1 }));
             if (ground.length > 1) items.push(dPoly(ground, LAYER.pGround, { color: '#2b2b2b', w: 1.6 }));
             return { items, poles: P, mss, Y };
         }
@@ -1824,7 +6894,7 @@
             return [...L.reverse(), { off: 0, z: init, f: '', center: true }, ...Rr];
         }
 
-        // Trắc ngang tự nhiên của một cọc theo bố cục ADS; (ox, oy) là chân tim tuyến trên mép trên bảng
+        // Trắc ngang tự nhiên của một cọc theo bố cục và thuộc tính ADS; (ox, oy) là chân tim tuyến trên mép trên bảng
         function buildSection(r, ox = 0, oy = 0) {
             const s = state.sections[r];
             if (!s) return null;
@@ -1832,6 +6902,7 @@
             const zs = pts.map(p => p.z), mss = Math.min(globalMSS(), Math.floor(Math.min(...zs)) - 1), zMax = Math.max(...zs);
             const X = off => ox + off, Y = z => oy + (z - mss) * k;
             const offs = pts.map(p => p.off), xL = X(Math.min(...offs) - 1.5), xR = X(Math.max(...offs) + 1.5), HW = 13;
+            const T = { style: 'pn', wf: 1 }, V = { style: 'pn', wf: 1, aci: 3 };
             const rows = [['Cao độ thiết kế', 1.8], ['Khoảng cách lẻ thiết kế', 1.8], ['Cao độ tự nhiên', 3], ['Khoảng cách mia', 1.8]];
             const R = {};
             let y = oy;
@@ -1840,17 +6911,18 @@
                 R[name] = { top: y, bot: y - hgt, mid: y - hgt / 2 };
                 y -= hgt;
                 items.push(dLine(xL - HW, y, xR, y, LAYER.xBand));
-                items.push(dText(name, xL - HW / 2, R[name].mid, 0.4, 0, 'c', 'm', LAYER.xBand));
+                items.push(dText(name, xL - HW / 2, R[name].mid, 0.4, 0, 'M', 'm', LAYER.xBand, T));
             });
             items.push(dLine(xL - HW, oy, xL - HW, y, LAYER.xBand), dLine(xL, oy, xL, y, LAYER.xBand), dLine(xR, oy, xR, y, LAYER.xBand));
-            items.push(dText(`MSS: ${mss}`, xL - 0.5, oy + 0.3, 0.35, 0, 'r', 'b', LAYER.xText));
+            items.push(dText(`MSS: ${mss}`, xL - 0.5, oy + 0.3, 0.4, 0, 'r', 'bt', LAYER.xText, { style: 'pn', mt: 9 }));
 
-            // Mặt đường cũ: đoạn giữa điểm có FCode 1 và điểm có FCode 2
+            // Mặt đường cũ: đoạn giữa điểm FCode 1 và FCode 2 — hai đường mép trên/dưới và hatch ANSI31 (như ADS)
             const i1 = pts.findIndex(p => p.f === '1'), i2 = pts.findIndex(p => p.f === '2');
             if (i1 >= 0 && i2 > i1) {
                 const top = pts.slice(i1, i2 + 1).map(p => [X(p.off), Y(p.z)]);
-                const bot = top.slice().reverse().map(([a, b]) => [a, b - 0.3 * k]);
-                items.push(dFill([...top, ...bot], LAYER.xOld, { color: 'rgba(120,120,120,0.35)' }));
+                const bot = top.map(([a, b]) => [a, b - 0.1 * k]);
+                items.push(dPoly(top, LAYER.xOld), dPoly(bot, LAYER.xOld));
+                items.push(dFill([...top, ...bot.slice().reverse()], LAYER.xOld, { hatch: 'ANSI31', color: 'rgba(120,120,120,0.35)' }));
             }
             // Đường tự nhiên, đường dóng, cao độ, khoảng cách mia
             items.push(dPoly(pts.map(p => [X(p.off), Y(p.z)]), LAYER.xGround, { color: '#2b2b2b', w: 1.6 }));
@@ -1858,20 +6930,20 @@
             pts.forEach((p, i) => {
                 const x = X(p.off);
                 if (!p.center) items.push(dLine(x, oy, x, Y(p.z), LAYER.xDong));
-                items.push(dText(f3(p.z), x, rz.mid, 0.35, 90, 'c', 'm', LAYER.xText));
-                items.push(dLine(x, rm.top, x, rm.bot, LAYER.xText));
+                items.push(dText(f3(p.z), x, rz.top - 0.15, 0.4, 90, 'r', 'm', LAYER.xText, V));
+                items.push(dLine(x, rm.top, x, rm.bot, LAYER.xText, { aci: 3 }));
                 if (i > 0) {
                     const dx = p.off - pts[i - 1].off;
-                    if (dx > 1e-9) items.push(dText(f3(dx), (x + X(pts[i - 1].off)) / 2, rm.mid, 0.35, dx < 1.3 ? 90 : 0, 'c', 'm', LAYER.xText));
+                    if (dx > 1e-9) items.push(dText(f3(dx), (x + X(pts[i - 1].off)) / 2, rm.mid, 0.4, dx < 1.3 ? 90 : 0, 'M', 'm', LAYER.xText, V));
                 }
             });
-            // Tim tuyến và tiêu đề cọc
+            // Tim tuyến, tên cọc và lý trình
             const yTop = Y(zMax) + 3;
             items.push(dLine(X(0), oy, X(0), yTop, LAYER.xTitle));
             items.push(dPoly([[X(0) - 0.4, yTop - 0.6], [X(0), yTop], [X(0) + 0.4, yTop - 0.6]], LAYER.xTitle));
             const ch = sectionChainages()[r];
-            items.push(dText(`Cọc ${s.name || 'MC' + (r + 1)}`, X(0), yTop + 2.2, 0.6, 0, 'c', 'b', LAYER.xTitle));
-            items.push(dText(kmText(ch), X(0), yTop + 1.2, 0.5, 0, 'c', 'b', LAYER.xTitle));
+            items.push(dText(`Cọc ${s.name || 'MC' + (r + 1)}`, X(0), yTop + 2.2, 0.6, 0, 'c', 'b', LAYER.xText, T));
+            items.push(dText(kmText(ch), X(0), yTop + 1.2, 0.6, 0, 'c', 'b', LAYER.xTitle, T));
             return { items, name: s.name || `MC${r + 1}`, c: ch };
         }
 
@@ -1894,14 +6966,17 @@
             return all;
         }
 
-        // Bình đồ dạng đối tượng (dùng khi xuất DXF)
+        // Bình đồ dạng đối tượng (dùng khi xuất DXF). Tim tuyến/cọc trong ADS là đối tượng riêng của ADS,
+        // ở đây dùng đối tượng AutoCAD thường đặt trên đúng lớp của ADS.
         function buildPlanItems() {
-            const d = buildPlan(), items = [];
+            const d = buildPlan(), items = [], ch = sectionChainages();
             if (!d.poles.length) return items;
             items.push(dPoly(d.poles.map(p => [p.x, p.y]), LAYER.plAxis));
             d.poles.forEach(p => {
-                items.push(dCircle(p.x, p.y, 0.6, LAYER.plPole));
-                items.push(dText(p.name, p.x + 1, p.y + 1, 1.5, 0, 'l', 'b', LAYER.plPole));
+                const isKm = Math.abs(ch[p.r] / 1000 - Math.round(ch[p.r] / 1000)) < 1e-6;
+                const layer = isKm ? LAYER.plKm : /^H\d+/i.test(p.name) ? LAYER.plH : LAYER.plPole;
+                items.push(dCircle(p.x, p.y, 0.6, layer));
+                items.push(dText(p.name, p.x + 1, p.y + 1, 1.5, 0, 'l', 'b', layer, { style: 'pd', wf: 0.8 }));
                 if (p.pts.length) {
                     const [l, r] = planSegment(p);
                     items.push(dPoly([[l.x, l.y], [p.x, p.y], [r.x, r.y]], LAYER.plPoint));
@@ -1911,34 +6986,68 @@
             return items;
         }
 
-        // ---- Xuất DXF (R12, mở được bằng AutoCAD; chữ có dấu ghi dạng \U+xxxx) ----
-        const dxfLayer = name => name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
-        const dxfText = s => s.replace(/[^\x20-\x7e]/g, ch => '\\U+' + ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0'));
+        // ---- Xuất DXF 2010 dựa trên khung lấy từ bản vẽ ADS (đúng tên lớp, màu lớp, kiểu chữ, đơn vị) ----
+        const DXF_STYLE = { pd: 'ADS-Bảng trắc dọc', pn: 'ADS-Bảng trắc ngang' };
+        const DXF_MS = '17'; // handle của *Model_Space trong khung
         const dn = v => (Math.round(v * 1e6) / 1e6).toString();
         function toDXF(items) {
-            // Kiểu chữ LEDAT dùng font Arial (Unicode) để hiện đúng tiếng Việt trong AutoCAD
-            const o = ['0', 'SECTION', '2', 'TABLES', '0', 'TABLE', '2', 'STYLE', '70', '1',
-                '0', 'STYLE', '2', 'LEDAT', '70', '0', '40', '0', '41', '1', '50', '0', '71', '0', '42', '2', '3', 'arial.ttf', '4', '',
-                '0', 'ENDTAB', '0', 'ENDSEC', '0', 'SECTION', '2', 'ENTITIES'];
-            const ln = (layer, a, b) => o.push('0', 'LINE', '8', layer, '10', dn(a[0]), '20', dn(a[1]), '30', '0', '11', dn(b[0]), '21', dn(b[1]), '31', '0');
+            const tpl = $('#ads-dxf-template').textContent.replace(/^\s+/, '');
+            let hnd = 0x200;
+            const o = [];
+            const head = (type, it) => {
+                o.push('0', type, '5', (hnd++).toString(16).toUpperCase(), '330', DXF_MS, '100', 'AcDbEntity', '8', it.layer || '0');
+                if (it.aci) o.push('62', String(it.aci));
+            };
+            const xy = (p, a = '10', b = '20') => o.push(a, dn(p[0]), b, dn(p[1]));
             items.forEach(it => {
-                const layer = dxfLayer(it.layer || '0');
-                if (it.t === 'line') ln(layer, it.pts[0], it.pts[1]);
-                else if (it.t === 'poly' || it.t === 'fill') {
-                    for (let i = 1; i < it.pts.length; i++) ln(layer, it.pts[i - 1], it.pts[i]);
-                    if (it.t === 'fill') ln(layer, it.pts[it.pts.length - 1], it.pts[0]);
+                if (it.t === 'line') {
+                    head('LINE', it);
+                    o.push('100', 'AcDbLine');
+                    xy(it.pts[0]); o.push('30', '0');
+                    xy(it.pts[1], '11', '21'); o.push('31', '0');
+                } else if (it.t === 'poly') {
+                    head('LWPOLYLINE', it);
+                    o.push('100', 'AcDbPolyline', '90', String(it.pts.length), '70', it.closed ? '1' : '0', '43', '0');
+                    it.pts.forEach(p => xy(p));
+                } else if (it.t === 'fill') {
+                    if (it.hatch) { // HATCH mẫu ANSI31, tỉ lệ 1, biên là đa tuyến kín
+                        head('HATCH', it);
+                        o.push('100', 'AcDbHatch', '10', '0', '20', '0', '30', '0', '210', '0', '220', '0', '230', '1',
+                            '2', it.hatch, '70', '0', '71', '0', '91', '1', '92', '3', '72', '0', '73', '1', '93', String(it.pts.length));
+                        it.pts.forEach(p => xy(p));
+                        o.push('97', '0', '75', '0', '76', '1', '52', '0', '41', '1', '77', '0', '78', '1',
+                            '53', '45', '43', '0', '44', '0', '45', '-2.245064', '46', '2.245064', '79', '0', '98', '0');
+                    } else {
+                        head('LWPOLYLINE', it);
+                        o.push('100', 'AcDbPolyline', '90', String(it.pts.length), '70', '1', '43', '0');
+                        it.pts.forEach(p => xy(p));
+                    }
                 } else if (it.t === 'circle') {
-                    o.push('0', 'CIRCLE', '8', layer, '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.r));
+                    head('CIRCLE', it);
+                    o.push('100', 'AcDbCircle', '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.r));
                 } else if (it.t === 'text') {
-                    const hj = { l: 0, c: 1, r: 2 }[it.ha] || 0, vj = it.va === 'm' ? 2 : 0;
-                    o.push('0', 'TEXT', '8', layer, '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.h), '1', dxfText(it.s), '7', 'LEDAT');
-                    if (it.rot) o.push('50', dn(it.rot));
-                    if (hj || vj) o.push('72', String(hj), '11', dn(it.x), '21', dn(it.y), '31', '0', '73', String(vj));
+                    const style = DXF_STYLE[it.style] || DXF_STYLE.pd;
+                    if (it.mt) { // MTEXT như ADS (MSS, góc chuyển hướng)
+                        head('MTEXT', it);
+                        o.push('100', 'AcDbMText', '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.h), '41', '0',
+                            '71', String(it.mt), '72', '1', '1', it.s, '7', style);
+                        if (it.rot) o.push('50', dn(it.rot * Math.PI / 180));
+                    } else {
+                        const hj = { l: 0, c: 1, r: 2, M: 4 }[it.ha] || 0, vj = { b: 0, bt: 1, m: 2, t: 3 }[it.va] || 0;
+                        head('TEXT', it);
+                        o.push('100', 'AcDbText', '10', dn(it.x), '20', dn(it.y), '30', '0', '40', dn(it.h), '1', it.s,
+                            '50', dn(it.rot || 0), '41', dn(it.wf || 1), '7', style, '72', String(hj),
+                            '11', dn(it.x), '21', dn(it.y), '31', '0', '100', 'AcDbText', '73', String(vj));
+                    }
                 }
             });
-            o.push('0', 'ENDSEC', '0', 'EOF');
-            return o.join('\r\n') + '\r\n';
+            const ents = o.join('\n');
+            const out = tpl
+                .replace(/(\$HANDSEED\n\s*5\n)[0-9A-Fa-f]+/, (m, a) => a + hnd.toString(16).toUpperCase())
+                .replace(/(\n\s*2\nENTITIES\n)(\s*0\nENDSEC)/, (m, a, b) => a + ents + '\n' + b);
+            return out.replace(/\r?\n/g, '\r\n');
         }
+
         function downloadText(text, filename) {
             const url = URL.createObjectURL(new Blob([text], { type: 'application/dxf' }));
             const a = document.createElement('a');
@@ -2050,9 +7159,10 @@
                         ctx.save();
                         ctx.translate(X(it.x), Y(it.y));
                         if (it.rot) ctx.rotate(-it.rot * Math.PI / 180);
+                        if (it.wf && it.wf !== 1) ctx.scale(it.wf, 1);
                         ctx.font = `${px}px "Segoe UI", Arial, sans-serif`;
-                        ctx.textAlign = { l: 'left', c: 'center', r: 'right' }[it.ha] || 'left';
-                        ctx.textBaseline = it.va === 'm' ? 'middle' : 'alphabetic';
+                        ctx.textAlign = { l: 'left', c: 'center', r: 'right', M: 'center' }[it.ha] || 'left';
+                        ctx.textBaseline = { m: 'middle', t: 'top', bt: 'bottom' }[it.va] || 'alphabetic';
                         ctx.fillStyle = it.color || '#3b3433';
                         ctx.fillText(it.s, 0, 0);
                         ctx.restore();
