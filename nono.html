@@ -5428,7 +5428,8 @@ EOF
                 if (isKm || ends) {
                     const s = kmLabel(x, ends), tw = 4.09 + numW(s.replace(/\D/g, '')) + (s.includes('+') ? 2.25 : 0), hw = (1.25 * tw + 2) / 2;
                     items.push(dPoly([[x, yKm], [x, yKm + 2], [x + hw, yKm + 2], [x + hw, yKm + 8], [x - hw, yKm + 8], [x - hw, yKm + 2], [x, yKm + 2]], LAYER.pStation));
-                    items.push(dText(s, x - tw / 2, yKm + 4, 2, 0, 'l', 'b', LAYER.pStation, { style: 'pk', wf: 0.8 }));
+                    // Căn giữa khung (font thay bằng Arial nên không căn trái theo bề rộng chữ của ADS)
+                    items.push(dText(s, x, yKm + 5, 2, 0, 'c', 'm', LAYER.pStation, { style: 'pk', wf: 0.8 }));
                 }
                 // Góc gãy (cọc không thuộc đường cong): rẽ trái chữ V xuống, rẽ phải chữ V lên, rộng 12 cao 6
                 if (Math.abs(p.a - 180) > 1e-6 && !skipTurn.has(p.r)) {
