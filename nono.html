@@ -6182,15 +6182,95 @@ EOF
         }
 
         // Kết quả đo giữa hai điểm (đổi chênh cao về mét thật theo tỉ lệ đứng)
-        function measureText(kind, a, b) {
+        // Số đo giữa hai điểm bản vẽ a → b (trắc dọc/ngang: chênh cao đổi về mét thật theo tỉ lệ đứng, kèm cao độ hai đầu)
+        function measureVals(kind, a, b) {
             const dx = b[0] - a[0], dy = b[1] - a[1];
-            if (kind === 'plan') {
-                const az = (90 - Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
-                return `Đo: D = <b>${fmtN(Math.hypot(dx, dy))}</b> m   ΔX = ${fmtN(dx)}   ΔY = ${fmtN(dy)}   góc phương vị ${dmsSigned(az)}`;
+            if (kind === 'plan') return { kind, dx, dy, D: Math.hypot(dx, dy), az: (90 - Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360 };
+            const sec = kind === 'section', k = sec ? (drawState.section ? drawState.section.k : 1) : ui.profV;
+            const mss = sec ? (drawState.section ? drawState.section.mss : 0) : (drawState.profile ? drawState.profile.mss : 0);
+            const dz = dy / k;
+            return { kind, dx, dy, L: Math.abs(dx), dz, D: Math.hypot(dx, dz), i: Math.abs(dx) > 1e-9 ? dz / Math.abs(dx) * 100 : NaN, za: mss + a[1] / k, zb: mss + b[1] / k };
+        }
+        function measureText(kind, a, b) {
+            const m = measureVals(kind, a, b);
+            if (kind === 'plan') return `Đo: D = <b>${fmtN(m.D)}</b> m   ΔX = ${fmtN(m.dx)}   ΔY = ${fmtN(m.dy)}   góc phương vị ${dmsSigned(m.az)}`;
+            return `Đo: ${kind === 'profile' ? 'ΔL' : 'Δ ngang'} = <b>${fmtN(m.L)}</b> m   ΔH = <b>${fmtN(m.dz)}</b> m   độ dốc ${isFinite(m.i) ? m.i.toFixed(2) + ' %' : '—'}   chiều dài nghiêng ${fmtN(m.D)} m`;
+        }
+
+        // Nhãn đo: hộp nền tối viền màu, nhiều dòng; (x, y) là tâm hộp, được đẩy vào trong khung bản vẽ
+        function measureLabel(ctx, lines, x, y, box, color = '#ffd166', main = false) {
+            ctx.font = `${main ? 'bold ' : ''}12px "Segoe UI", sans-serif`;
+            const lh = 15, pw = 7, w = Math.max(...lines.map(s => ctx.measureText(s).width)) + pw * 2, h = lines.length * lh + 6;
+            const bx = clamp(x - w / 2, box.x + 2, box.x + box.w - w - 2), by = clamp(y - h / 2, box.y + 2, box.y + box.h - h - 2);
+            ctx.fillStyle = 'rgba(20,25,32,0.92)';
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect ? ctx.roundRect(bx, by, w, h, 4) : ctx.rect(bx, by, w, h);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            lines.forEach((s, j) => {
+                ctx.fillStyle = j === 0 && main ? color : '#ffffff';
+                ctx.fillText(s, bx + pw, by + 3 + lh * (j + 0.5));
+            });
+        }
+
+        // Vẽ phép đo: đường đo, tam giác vuông (cạnh ngang / cạnh đứng) và nhãn giá trị ngay trên bản vẽ
+        function drawMeasure(ctx, kind, A, B, a, b, box) {
+            const m = measureVals(kind, a, b), C = [B[0], A[1]]; // C: góc vuông
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(255,209,102,0.55)';
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(C[0], C[1]); ctx.lineTo(B[0], B[1]); ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.strokeStyle = '#ffd166';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]); ctx.stroke();
+            // Mũi tên chỉ chiều đo ở giữa đường
+            const ang = Math.atan2(B[1] - A[1], B[0] - A[0]), mx = (A[0] + B[0]) / 2, my = (A[1] + B[1]) / 2;
+            if (Math.hypot(B[0] - A[0], B[1] - A[1]) > 40) {
+                ctx.fillStyle = '#ffd166';
+                ctx.beginPath();
+                ctx.moveTo(mx + 7 * Math.cos(ang), my + 7 * Math.sin(ang));
+                ctx.lineTo(mx - 5 * Math.cos(ang) + 5 * Math.sin(ang), my - 5 * Math.sin(ang) - 5 * Math.cos(ang));
+                ctx.lineTo(mx - 5 * Math.cos(ang) - 5 * Math.sin(ang), my - 5 * Math.sin(ang) + 5 * Math.cos(ang));
+                ctx.closePath(); ctx.fill();
             }
-            const k = kind === 'profile' ? ui.profV : (drawState.section ? drawState.section.k : 1), dz = dy / k;
-            const i = Math.abs(dx) > 1e-9 ? dz / Math.abs(dx) * 100 : NaN;
-            return `Đo: ${kind === 'profile' ? 'ΔL' : 'Δ ngang'} = <b>${fmtN(Math.abs(dx))}</b> m   ΔH = <b>${fmtN(dz)}</b> m   độ dốc ${isFinite(i) ? i.toFixed(2) + ' %' : '—'}`;
+            // Ô vuông góc
+            if (Math.abs(B[0] - A[0]) > 14 && Math.abs(B[1] - A[1]) > 14) {
+                const sx = Math.sign(A[0] - B[0]) * 7, sy = Math.sign(B[1] - A[1]) * 7;
+                ctx.strokeStyle = 'rgba(255,209,102,0.55)';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(Math.min(C[0], C[0] + sx), Math.min(C[1], C[1] + sy), 7, 7);
+            }
+            const legH = kind === 'plan' ? `ΔX = ${fmtN(m.dx)}` : `${kind === 'profile' ? 'ΔL' : 'Δ ngang'} = ${fmtN(m.L)} m`;
+            const legV = kind === 'plan' ? `ΔY = ${fmtN(m.dy)}` : `ΔH = ${m.dz >= 0 ? '+' : ''}${fmtN(m.dz)} m`;
+            const below = B[1] < A[1] ? 1 : -1; // nhãn cạnh ngang đặt phía ngoài tam giác
+            const showH = Math.abs(B[0] - A[0]) > 30, showV = Math.abs(B[1] - A[1]) > 24;
+            if (showH) measureLabel(ctx, [legH], (A[0] + C[0]) / 2, A[1] + below * 14, box, 'rgba(255,209,102,0.6)');
+            if (showV) measureLabel(ctx, [legV], C[0] + (B[0] >= A[0] ? 1 : -1) * (ctx.measureText(legV).width / 2 + 16), (C[1] + B[1]) / 2, box, 'rgba(255,209,102,0.6)');
+            // Nhãn chính: kết quả quan trọng nhất; giá trị cạnh nào chưa có nhãn riêng thì ghi thêm ở đây
+            const main = kind === 'plan'
+                ? [`D = ${fmtN(m.D)} m`, `Phương vị ${dmsSigned(m.az)}`, ...(showH ? [] : [legH]), ...(showV ? [] : [legV])]
+                : [`i = ${isFinite(m.i) ? (m.i >= 0 ? '+' : '') + m.i.toFixed(2) + ' %' : '—'}`, ...(showV ? [] : [legV]), ...(showH ? [] : [legH])];
+            // Nhãn chính lệch khỏi đường đo về phía không có tam giác
+            const nx = -Math.sin(ang), ny = Math.cos(ang), side = (C[0] - mx) * nx + (C[1] - my) * ny > 0 ? -1 : 1;
+            measureLabel(ctx, main, mx + side * nx * 34, my + side * ny * 34, box, '#ffd166', true);
+            // Cao độ (hoặc toạ độ) hai đầu
+            const endTxt = kind === 'plan' ? null : [`${fmtN(m.za)}`, `${fmtN(m.zb)}`];
+            if (endTxt) [[A, endTxt[0]], [B, endTxt[1]]].forEach(([P, s]) => {
+                ctx.font = '11px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.lineWidth = 3;
+                ctx.strokeStyle = 'rgba(20,25,32,0.9)';
+                ctx.strokeText(s, P[0], P[1] - 7);
+                ctx.fillStyle = '#ffd166';
+                ctx.fillText(s, P[0], P[1] - 7);
+            });
         }
 
         function cadStatus() {
@@ -6224,11 +6304,10 @@ EOF
                 ctx.strokeStyle = ctx.fillStyle = '#ffd166';
                 ctx.lineWidth = 1.5;
                 if (pts.length === 2) {
-                    const [a, b] = pts.map(S);
-                    ctx.setLineDash([6, 4]);
-                    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-                    ctx.setLineDash([]);
+                    const [A, B] = pts.map(S);
+                    drawMeasure(ctx, cad.mkind, A, B, pts[0], pts[1], { x: r.left - br.left, y: r.top - br.top, w: r.width, h: r.height });
                 }
+                ctx.fillStyle = '#ffd166';
                 pts.map(S).forEach(([x, y]) => ctx.fillRect(x - 3, y - 3, 6, 6));
                 ctx.restore();
             }
