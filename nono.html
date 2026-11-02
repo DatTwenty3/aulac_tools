@@ -103,6 +103,33 @@
         #canvas-plan.dragging { cursor: grabbing; }
         .draw-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; background: #212830; }
         .draw-canvas.dragging { cursor: grabbing; }
+        /* Thao tác kiểu CAD: con trỏ chữ thập vẽ trên lớp phủ, ẩn con trỏ chuột khi rê trên bản vẽ */
+        .plan-body.cad-hover #canvas-plan:not(.dragging), .plan-body.cad-hover .draw-canvas:not(.dragging) { cursor: none; }
+        #draw-overlay { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        .plan-body.split #canvas-plan { height: 50%; }
+        .plan-body.split #canvas-profile { top: 50%; height: 50%; border-top: 2px solid #4a5563; }
+        .plan-btn.on { background: var(--select); border-color: var(--select); color: #fff; }
+        .cad-status { padding: 2px 8px; font: 11px Consolas, "Courier New", monospace; color: #c9d1d9; background: #2b3440; border-top: 1px solid #1b2129; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .cad-status b { color: #fff; font-weight: 600; }
+        .cad-status .m { color: #ffd166; }
+        .cad-pop-wrap { position: relative; display: inline-flex; }
+        .cad-pop { display: none; position: absolute; top: calc(100% + 4px); right: 0; z-index: 30; min-width: 230px; max-height: 340px; overflow: auto; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, .18); font-size: 12px; white-space: nowrap; }
+        .cad-pop.open { display: block; }
+        .cad-pop label { display: flex; align-items: center; gap: 6px; padding: 2px 4px; cursor: pointer; border-radius: 3px; }
+        .cad-pop label:hover { background: #f2f1ec; }
+        .cad-pop .sw { width: 10px; height: 10px; border: 1px solid #555; flex: none; }
+        .cad-pop .pop-head { display: flex; justify-content: space-between; gap: 8px; padding: 0 4px 4px; margin-bottom: 4px; border-bottom: 1px solid var(--line-soft); color: var(--muted); }
+        .cad-pop .pop-head a { color: var(--select); cursor: pointer; }
+        .warn-pop { min-width: 320px; }
+        .warn-pop .wi { padding: 3px 4px; border-radius: 3px; cursor: pointer; white-space: normal; line-height: 1.35; }
+        .warn-pop .wi:hover { background: #fff3c4; }
+        .warn-pop .wi b { color: #b3261e; }
+        .plan-btn.cad-warn { color: #b3261e; border-color: #e3b3ae; }
+        .plan-btn.cad-warn.none { color: var(--muted); border-color: var(--line); }
+        .mini-sec { display: none; position: absolute; z-index: 20; width: 300px; padding: 4px; background: #1b2129; border: 1px solid #4a5563; border-radius: 4px; box-shadow: 0 6px 18px rgba(0, 0, 0, .35); pointer-events: none; }
+        .mini-sec.show { display: block; }
+        .mini-title { font-size: 11px; color: #e6edf3; padding: 0 2px 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #mini-canvas { display: block; width: 300px; height: 170px; background: #212830; }
         .draw-head { flex-wrap: wrap; row-gap: 3px; white-space: normal; }
         .draw-tabs { display: flex; gap: 2px; }
         .draw-tab { padding: 2px 10px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 12px; cursor: pointer; }
@@ -413,7 +440,8 @@
                 <button class="draw-tab" data-tab="profile">Trắc dọc</button>
                 <button class="draw-tab" data-tab="section">Trắc ngang</button>
             </div>
-            <span class="tab-tools" data-for="plan"><label class="plan-num" title="Ghi lý trình, khoảng cách và cao độ lên bình đồ"><input type="checkbox" id="plan-nums"> Ghi số</label></span>
+            <span class="tab-tools" data-for="plan"><label class="plan-num" title="Ghi lý trình, khoảng cách và cao độ lên bình đồ"><input type="checkbox" id="plan-nums"> Ghi số</label>
+                <label class="plan-num" title="Tô màu các điểm đo và mặt cắt theo cao độ (thấp xanh lam → cao đỏ)"><input type="checkbox" id="plan-heat"> Tô cao độ</label></span>
             <span class="tab-tools" data-for="profile"><label class="plan-num" title="Phóng đại theo phương đứng">Tỉ lệ đứng ×<select id="prof-v"><option>1</option><option>2</option><option>5</option><option>10</option><option>20</option></select></label></span>
             <span class="tab-tools" data-for="section">
                 <button class="plan-btn" id="sec-prev" title="Cọc trước">&#9664;</button>
@@ -422,6 +450,16 @@
                 <label class="plan-num" title="Phóng đại theo phương đứng">Tỉ lệ đứng ×<select id="sec-v"><option>1</option><option>2</option><option>5</option><option>10</option></select></label>
             </span>
             <span class="draw-spacer"></span>
+            <button class="plan-btn" id="cad-split" title="Xem bình đồ (trên) và trắc dọc (dưới) cùng lúc">Chia đôi</button>
+            <button class="plan-btn" id="cad-measure" title="Đo: bấm hai điểm để biết khoảng cách, chênh cao, độ dốc. Esc để thoát">Đo</button>
+            <span class="cad-pop-wrap">
+                <button class="plan-btn" id="cad-layers" title="Bật/tắt lớp hiển thị (không ảnh hưởng file DXF xuất ra)">Lớp ▾</button>
+                <div class="cad-pop" id="layers-pop"></div>
+            </span>
+            <span class="cad-pop-wrap">
+                <button class="plan-btn cad-warn" id="cad-warn" title="Các chỗ số liệu có thể sai">⚠ 0</button>
+                <div class="cad-pop warn-pop" id="warn-pop"></div>
+            </span>
             <button class="plan-btn" id="draw-dxf" title="Xuất bản vẽ đang xem ra file DXF 2010 với lớp, màu, kiểu chữ theo chuẩn bản vẽ ADS (mở bằng AutoCAD). Trắc ngang: xuất toàn bộ các cọc có điểm mia. Muốn làm tiếp bằng ADS thì nạp file .ntd vào ADS.">Xuất DXF</button>
             <button class="plan-btn" id="plan-fit" title="Hiển thị toàn bộ">Vừa khung</button>
             <button class="plan-btn" id="plan-close" title="Đóng panel bản vẽ">&times;</button>
@@ -432,7 +470,10 @@
             <canvas id="canvas-section" class="draw-canvas"></canvas>
             <div class="canvas-placeholder" id="ph-plan">Nhập lý trình và góc chắn cung của các cọc để xem bình đồ</div>
             <div class="canvas-placeholder" id="ph-draw" style="display: none;"></div>
+            <canvas id="draw-overlay"></canvas>
+            <div class="mini-sec" id="mini-sec"><div class="mini-title" id="mini-title"></div><canvas id="mini-canvas"></canvas></div>
         </div>
+        <div class="cad-status" id="cad-status">&nbsp;</div>
         <div class="plan-foot" id="draw-foot"></div>
     </aside>
     </div>
@@ -4148,7 +4189,10 @@ EOF
                 return acc;
             });
         }
-        const ui = { showPlan: false, planNums: true, drawTab: 'plan', profV: 10, secV: 1, panelW: 42, split: 55 };
+        const ui = { showPlan: false, planNums: true, drawTab: 'plan', profV: 10, secV: 1, panelW: 42, split: 55, splitView: false, planHeat: false };
+        // Thao tác kiểu CAD trên bản vẽ: lớp đang ẩn, chế độ đo, vị trí chuột, danh sách bất thường, bộ nhớ trắc ngang thu nhỏ
+        const cad = { hidden: new Set(), measure: false, mpts: [], mkind: null, hover: null, down: null, lastEvent: null,
+            warnVer: -1, warns: [], warnRows: new Set(), miniCache: new Map(), miniKey: '', miniR: null };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
         const newSection = () => ({ id: nextId++, name: '', cumulative: '', elevation: '', angle: '', radius: '', left: [], right: [] });
@@ -5093,7 +5137,7 @@ EOF
         }
 
         function drawPlan(rebuild = true) {
-            if (!ui.showPlan || ui.drawTab !== 'plan') return;
+            if (!ui.showPlan || (ui.drawTab !== 'plan' && !ui.splitView)) return;
             const { cv, w, h } = planSize();
             if (!w || !h) return;
             if (rebuild || !plan.data) plan.data = buildPlan();
@@ -5112,12 +5156,33 @@ EOF
             const near = (sx, sy, m) => sx > -m && sx < w + m && sy > -m && sy < h + m;
             const activeR = topGrid.cur.r;
 
-            // Mặt cắt ngang: đoạn nối các điểm mia + chấm điểm mia
+            // Mặt cắt ngang: đoạn nối các điểm mia + chấm điểm mia; bật "Tô cao độ" thì tô theo thang màu cao độ
             ctx.lineWidth = 1;
-            d.poles.forEach(p => {
+            const heat = ui.planHeat ? planHeatRange(d) : null;
+            if (!cad.hidden.has(LAYER.plPoint)) d.poles.forEach(p => {
                 const sx = toX(p.x), sy = toY(p.y);
                 if (!near(sx, sy, 250) || !p.pts.length) return;
                 const act = p.r === activeR;
+                if (heat) {
+                    const z0 = parseFloat(state.sections[p.r].elevation);
+                    const seq = [...p.pts.filter(q => q.side === 'left').sort((a, b) => b.off - a.off),
+                        ...(isFinite(z0) ? [{ x: p.x, y: p.y, elev: z0 }] : []), ...p.pts.filter(q => q.side === 'right').sort((a, b) => a.off - b.off)];
+                    ctx.lineWidth = act ? 4 : 3;
+                    for (let i = 1; i < seq.length; i++) {
+                        ctx.strokeStyle = heatColor(heat, (seq[i - 1].elev + seq[i].elev) / 2);
+                        ctx.beginPath();
+                        ctx.moveTo(toX(seq[i - 1].x), toY(seq[i - 1].y));
+                        ctx.lineTo(toX(seq[i].x), toY(seq[i].y));
+                        ctx.stroke();
+                    }
+                    seq.forEach(q => {
+                        ctx.fillStyle = heatColor(heat, q.elev);
+                        ctx.beginPath();
+                        ctx.arc(toX(q.x), toY(q.y), act ? 3.5 : 2.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    });
+                    return;
+                }
                 const [l, r] = planSegment(p);
                 ctx.strokeStyle = act ? '#4da3ff' : '#808080';
                 ctx.lineWidth = act ? 1.5 : 1;
@@ -5137,7 +5202,7 @@ EOF
             // Ký hiệu đường cong như ADS; khi thu nhỏ (ký hiệu thật quá bé) thì đánh dấu đỉnh cong bằng tam giác cỡ cố định
             const marks = curveMarkItems(d);
             renderItems(ctx, marks, v, w, h);
-            if (v.s < 3) {
+            if (v.s < 3 && !cad.hidden.has(LAYER.plAxis)) {
                 ctx.fillStyle = '#00ff00';
                 marks.filter((it, i) => i % 6 === 1).forEach(it => { // tam giác đỉnh của mỗi đường cong
                     const [ax, ay] = it.pts[0], sx = toX(ax), sy = toY(ay);
@@ -5154,11 +5219,24 @@ EOF
             ctx.lineWidth = 1.5;
             ctx.lineJoin = 'round';
             ctx.beginPath();
-            d.axis.forEach(([px, py], i) => (i ? ctx.lineTo(toX(px), toY(py)) : ctx.moveTo(toX(px), toY(py))));
+            if (!cad.hidden.has(LAYER.plAxis)) d.axis.forEach(([px, py], i) => (i ? ctx.lineTo(toX(px), toY(py)) : ctx.moveTo(toX(px), toY(py))));
             ctx.stroke();
 
-            // Cọc
+            // Cọc có số liệu bất thường: vòng đỏ
+            const warnRows = findWarnings().rows;
+            ctx.strokeStyle = '#ff4d4f';
+            ctx.lineWidth = 2;
             d.poles.forEach(p => {
+                if (!warnRows.has(p.r)) return;
+                const sx = toX(p.x), sy = toY(p.y);
+                if (!near(sx, sy, 12)) return;
+                ctx.beginPath();
+                ctx.arc(sx, sy, 8, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+
+            // Cọc
+            if (!cad.hidden.has(LAYER.plPole)) d.poles.forEach(p => {
                 const sx = toX(p.x), sy = toY(p.y);
                 if (!near(sx, sy, 20)) return;
                 const act = p.r === activeR;
@@ -5219,10 +5297,12 @@ EOF
             ctx.stroke();
             ctx.font = '11px "Segoe UI", sans-serif';
             ctx.fillText(`${+nice.toPrecision(3)} m`, 12, h - 24);
+            if (heat) drawHeatLegend(ctx, heat, w);
+            cadDrawOverlay();
         }
 
         function updatePlan(center = false) {
-            if (!ui.showPlan || ui.drawTab !== 'plan') return;
+            if (!ui.showPlan || (ui.drawTab !== 'plan' && !ui.splitView)) return;
             plan.data = buildPlan();
             const { w, h } = planSize();
             if (center && plan.view && w) {
@@ -5269,7 +5349,7 @@ EOF
                 const dr = plan.drag;
                 plan.drag = null;
                 cv.classList.remove('dragging');
-                if (!dr || dr.moved || !plan.data) return;
+                if (!dr || dr.moved || !plan.data || cad.measure) return;
                 // Bấm (không kéo): chọn cọc có mặt cắt gần điểm bấm nhất
                 const rect = cv.getBoundingClientRect(), v = plan.view;
                 const mx = e.clientX - rect.left, my = e.clientY - rect.top;
@@ -5526,7 +5606,7 @@ EOF
             // ADS ghi "Cao độ :" (cao độ cọc) trùng chỗ dòng lý trình; ở đây đặt ngay dưới để không đè chữ
             const zc = parseFloat(s.elevation);
             if (isFinite(zc)) items.push(dText(`Cao độ :${f3(zc)}`, cx, yTop + 0.85, 0.6, 0, 'c', 'b', LAYER.xText, T));
-            return { items, name: s.name || `MC${r + 1}`, c: ch };
+            return { items, name: s.name || `MC${r + 1}`, c: ch, mss, k };
         }
 
         // Toàn bộ trắc ngang (cọc có điểm mia) xếp thành cột, mỗi cột 10 mặt cắt, để xuất DXF
@@ -5747,6 +5827,7 @@ EOF
             const wx0 = v.cx - w / 2 / v.s, wx1 = v.cx + w / 2 / v.s, wy0 = v.cy - h / 2 / v.s, wy1 = v.cy + h / 2 / v.s;
             ctx.lineJoin = 'round';
             items.forEach(it => {
+                if (cad.hidden.has(it.layer)) return;
                 const b = it.bb || (it.bb = itemBox(it));
                 if (b[2] < wx0 || b[0] > wx1 || b[3] < wy0 || b[1] > wy1) return;
                 if (it.t === 'text') {
@@ -5831,7 +5912,7 @@ EOF
                     const d = this.drag;
                     this.drag = null;
                     canvas.classList.remove('dragging');
-                    if (!d || d.moved || !this.opts.onClick) return;
+                    if (!d || d.moved || !this.opts.onClick || cad.measure) return;
                     const r = canvas.getBoundingClientRect(), v = this.view;
                     this.opts.onClick(v.cx + (e.clientX - r.left - r.width / 2) / v.s, v.cy - (e.clientY - r.top - r.height / 2) / v.s, v.s);
                 });
@@ -5875,6 +5956,7 @@ EOF
                 drawCadGrid(ctx, w, h, v);
                 renderItems(ctx, this.items, v, w, h);
                 if (this.opts.overlay) this.opts.overlay(ctx, X, Y, v.s, w, h);
+                cadDrawOverlay();
             }
         }
 
@@ -5887,9 +5969,19 @@ EOF
                 d.poles.forEach(p => { const dd = Math.abs(p.c - wx); if (dd < bestD) { bestD = dd; best = p; } });
                 if (best) topGrid.setCur(best.r, topGrid.cur.c);
             },
-            overlay: (ctx, X, Y) => { // tô cọc đang chọn
+            overlay: (ctx, X, Y) => { // tô cọc đang chọn, vòng đỏ ở cọc có số liệu bất thường
                 const d = drawState.profile;
-                const p = d && d.poles.find(q => q.r === topGrid.cur.r);
+                if (!d) return;
+                const warnRows = findWarnings().rows;
+                ctx.strokeStyle = '#ff4d4f';
+                ctx.lineWidth = 2;
+                d.poles.forEach(q => {
+                    if (!warnRows.has(q.r)) return;
+                    ctx.beginPath();
+                    ctx.arc(X(q.c), Y(q.z !== null && isFinite(q.z) ? d.Y(q.z) : 0), 7, 0, Math.PI * 2);
+                    ctx.stroke();
+                });
+                const p = d.poles.find(q => q.r === topGrid.cur.r);
                 if (!p) return;
                 const yTop = p.z !== null && isFinite(p.z) ? d.Y(p.z) + 6 : 10;
                 ctx.strokeStyle = '#4da3ff';
@@ -5907,7 +5999,7 @@ EOF
         const secView = new DrawView($('#canvas-section'));
 
         function refreshProfile(center, refit) {
-            if (drawState.profVer !== drawState.version || refit) {
+            if (drawState.profVer !== drawState.version || refit || !profView.view) {
                 drawState.profile = buildProfile();
                 const keep = !!profView.view && !refit;
                 profView.setItems(drawState.profile ? drawState.profile.items : [], keep);
@@ -5942,6 +6034,8 @@ EOF
         // Vẽ lại bản vẽ đang mở. center: dời khung về cọc đang chọn; refit: dựng lại và vừa khung
         function refreshDrawings(center = false, refit = false) {
             if (!ui.showPlan) return;
+            updateWarnButton();
+            if (ui.splitView) { updatePlan(center); refreshProfile(center, refit); return; }
             if (ui.drawTab === 'plan') updatePlan(center);
             else if (ui.drawTab === 'profile') refreshProfile(center, refit);
             else refreshSection();
@@ -5956,18 +6050,25 @@ EOF
         function setDrawPanel(open, tab) {
             ui.showPlan = open;
             if (tab) ui.drawTab = tab;
-            const t = ui.drawTab;
+            if (ui.splitView && ui.drawTab === 'section') ui.drawTab = 'plan';
+            const t = ui.drawTab, sv = ui.splitView;
+            const shown = k => k === t || (sv && (k === 'plan' || k === 'profile')); // chia đôi: bình đồ trên, trắc dọc dưới
             $('#plan-panel').classList.toggle('hidden', !open);
             $('#vsplit').classList.toggle('hidden', !open);
             $('#plan-panel').style.flexBasis = ui.panelW + '%';
-            document.querySelectorAll('.draw-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
-            document.querySelectorAll('.tab-tools').forEach(el => { el.style.display = el.dataset.for === t ? '' : 'none'; });
-            $('#canvas-plan').style.display = t === 'plan' ? '' : 'none';
-            $('#canvas-profile').style.display = t === 'profile' ? '' : 'none';
-            $('#canvas-section').style.display = t === 'section' ? '' : 'none';
-            if (t !== 'plan') $('#ph-plan').style.display = 'none';
-            if (t === 'plan') $('#ph-draw').style.display = 'none';
-            $('#draw-foot').innerHTML = DRAW_FOOT[t];
+            $('.plan-body').classList.toggle('split', sv);
+            $('#cad-split').classList.toggle('on', sv);
+            document.querySelectorAll('.draw-tab').forEach(b => b.classList.toggle('active', shown(b.dataset.tab)));
+            document.querySelectorAll('.tab-tools').forEach(el => { el.style.display = shown(el.dataset.for) ? '' : 'none'; });
+            $('#canvas-plan').style.display = shown('plan') ? '' : 'none';
+            $('#canvas-profile').style.display = shown('profile') ? '' : 'none';
+            $('#canvas-section').style.display = shown('section') ? '' : 'none';
+            if (!shown('plan')) $('#ph-plan').style.display = 'none';
+            if (t === 'plan' || sv) $('#ph-draw').style.display = 'none';
+            $('#draw-foot').innerHTML = sv ? 'Bình đồ (trên) và trắc dọc (dưới) cùng theo cọc đang chọn. Rê chuột lên cọc để xem nhanh trắc ngang.' : DRAW_FOOT[t];
+            $('#plan-heat').checked = ui.planHeat;
+            closeCadPops();
+            cadSetHover(null);
             [['plan', '#btn-plan'], ['profile', '#btn-profile'], ['section', '#btn-section']].forEach(([k, id]) => $(id).classList.toggle('on', open && t === k));
             $('#plan-nums').checked = ui.planNums;
             $('#prof-v').value = String(ui.profV);
@@ -5980,7 +6081,10 @@ EOF
         function toggleDrawTab(tab) { setDrawPanel(!(ui.showPlan && ui.drawTab === tab), tab); }
 
         (function setupDrawPanel() {
-            document.querySelectorAll('.draw-tab').forEach(b => b.addEventListener('click', () => setDrawPanel(true, b.dataset.tab)));
+            document.querySelectorAll('.draw-tab').forEach(b => b.addEventListener('click', () => {
+                if (b.dataset.tab === 'section') ui.splitView = false;
+                setDrawPanel(true, b.dataset.tab);
+            }));
             $('#prof-v').addEventListener('change', e => { ui.profV = +e.target.value; refreshProfile(false, true); scheduleSave(); });
             $('#sec-v').addEventListener('change', e => { ui.secV = +e.target.value; refreshSection(); scheduleSave(); });
             const step = dir => {
@@ -5992,8 +6096,9 @@ EOF
             $('#sec-next').addEventListener('click', () => step(1));
             $('#draw-dxf').addEventListener('click', exportDrawingDXF);
             $('#plan-fit').addEventListener('click', () => {
-                if (ui.drawTab === 'plan') { fitPlan(); drawPlan(false); }
-                else { const v = ui.drawTab === 'profile' ? profView : secView; v.fit(); v.draw(); }
+                if (ui.drawTab === 'plan' || ui.splitView) { fitPlan(); drawPlan(false); }
+                if (ui.splitView) { profView.fit(); profView.draw(); }
+                else if (ui.drawTab !== 'plan') { const v = ui.drawTab === 'profile' ? profView : secView; v.fit(); v.draw(); }
             });
             $('#plan-close').addEventListener('click', () => setDrawPanel(false));
             // Kéo thanh chia để đổi độ rộng panel bản vẽ
@@ -6008,6 +6113,434 @@ EOF
                 const up = () => { sp.removeEventListener('pointermove', move); sp.removeEventListener('pointerup', up); scheduleSave(); };
                 sp.addEventListener('pointermove', move);
                 sp.addEventListener('pointerup', up);
+            });
+        })();
+
+        // =====================================================================
+        //  Thao tác kiểu CAD trên bản vẽ: con trỏ chữ thập + toạ độ, đo, bật/tắt lớp,
+        //  trắc ngang thu nhỏ khi rê chuột lên cọc, tô màu cao độ, đánh dấu số liệu bất thường
+        // =====================================================================
+        const fmtN = (v, n = 3) => (isFinite(v) ? v.toFixed(n) : '—');
+
+        // Các bản vẽ đang hiện (chia đôi thì có hai), kèm canvas và khung nhìn của từng bản vẽ
+        function cadViews() {
+            if (!ui.showPlan) return [];
+            return [['plan', '#canvas-plan', plan.view], ['profile', '#canvas-profile', profView.view], ['section', '#canvas-section', secView.view]]
+                .filter(([, sel, view]) => view && $(sel).style.display !== 'none')
+                .map(([kind, sel, view]) => ({ kind, cv: $(sel), view }));
+        }
+        // Chuột đang ở bản vẽ nào, toạ độ trên canvas (mx, my) và toạ độ bản vẽ (wx, wy)
+        function cadLocate(e) {
+            for (const it of cadViews()) {
+                const r = it.cv.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+                if (mx < 0 || my < 0 || mx > r.width || my > r.height) continue;
+                const v = it.view;
+                return Object.assign(it, { r, mx, my, wx: v.cx + (mx - r.width / 2) / v.s, wy: v.cy - (my - r.height / 2) / v.s });
+            }
+            return null;
+        }
+
+        // Cao độ tự nhiên tại lý trình c (nội suy giữa hai cọc)
+        function groundAt(poles, c) {
+            const ps = poles.filter(p => p.z !== null && isFinite(p.z));
+            for (let i = 1; i < ps.length; i++) {
+                const a = ps[i - 1], b = ps[i];
+                if (c >= a.c && c <= b.c && b.c > a.c) return a.z + (b.z - a.z) * (c - a.c) / (b.c - a.c);
+            }
+            return null;
+        }
+
+        // Dòng toạ độ theo loại bản vẽ
+        function cadReadout(L) {
+            if (L.kind === 'plan') {
+                let s = `X <b>${fmtN(L.wx)}</b>  Y <b>${fmtN(L.wy)}</b>`;
+                const d = plan.data;
+                if (d && d.poles.length) {
+                    let best = null, bd = Infinity;
+                    d.poles.forEach(p => { const dd = Math.hypot(p.x - L.wx, p.y - L.wy); if (dd < bd) { bd = dd; best = p; } });
+                    if (best && bd < 300) {
+                        const off = -(L.wx - best.x) * Math.sin(best.h) + (L.wy - best.y) * Math.cos(best.h);
+                        s += `   ·   gần cọc <b>${esc(best.name)}</b> (${kmText(best.c)}), cách tim ${fmtN(Math.abs(off), 2)} m ${off >= 0 ? 'trái' : 'phải'}`;
+                    }
+                }
+                return s;
+            }
+            if (L.kind === 'profile') {
+                const d = drawState.profile;
+                if (!d) return '';
+                let s = `Lý trình <b>${L.wx >= 0 ? kmText(L.wx) : fmtN(L.wx) + ' m'}</b>`;
+                if (L.wy >= 0) s += `   Cao độ <b>${fmtN(d.mss + L.wy / ui.profV)}</b>`;
+                const g = groundAt(d.poles, L.wx);
+                if (g !== null) s += `   ·   tự nhiên tại đây ${fmtN(g)}`;
+                return s;
+            }
+            const d = drawState.section;
+            if (!d) return '';
+            let s = `Cách tim <b>${fmtN(Math.abs(L.wx))}</b> m ${L.wx < -1e-9 ? 'trái' : L.wx > 1e-9 ? 'phải' : ''}`;
+            if (L.wy >= 0) s += `   Cao độ <b>${fmtN(d.mss + L.wy / d.k)}</b>`;
+            return s;
+        }
+
+        // Kết quả đo giữa hai điểm (đổi chênh cao về mét thật theo tỉ lệ đứng)
+        function measureText(kind, a, b) {
+            const dx = b[0] - a[0], dy = b[1] - a[1];
+            if (kind === 'plan') {
+                const az = (90 - Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
+                return `Đo: D = <b>${fmtN(Math.hypot(dx, dy))}</b> m   ΔX = ${fmtN(dx)}   ΔY = ${fmtN(dy)}   góc phương vị ${dmsSigned(az)}`;
+            }
+            const k = kind === 'profile' ? ui.profV : (drawState.section ? drawState.section.k : 1), dz = dy / k;
+            const i = Math.abs(dx) > 1e-9 ? dz / Math.abs(dx) * 100 : NaN;
+            return `Đo: ${kind === 'profile' ? 'ΔL' : 'Δ ngang'} = <b>${fmtN(Math.abs(dx))}</b> m   ΔH = <b>${fmtN(dz)}</b> m   độ dốc ${isFinite(i) ? i.toFixed(2) + ' %' : '—'}`;
+        }
+
+        function cadStatus() {
+            const L = cad.hover, parts = [];
+            parts.push(L ? cadReadout(L) : 'Rê chuột lên bản vẽ để xem toạ độ');
+            if (cad.measure) {
+                const pts = cad.mpts.slice();
+                if (pts.length === 1 && L && L.kind === cad.mkind) pts.push([L.wx, L.wy]);
+                parts.push(`<span class="m">${pts.length === 2 ? measureText(cad.mkind, pts[0], pts[1]) : 'Đo: bấm điểm đầu (Esc để thoát)'}</span>`);
+            }
+            $('#cad-status').innerHTML = parts.join('   |   ');
+        }
+
+        // Lớp phủ: đường đo và con trỏ chữ thập (vẽ lại mỗi khi chuột di chuyển hoặc bản vẽ đổi khung nhìn)
+        function cadDrawOverlay() {
+            const ov = $('#draw-overlay'), br = ov.parentNode.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+            const W = Math.round(br.width * dpr), H = Math.round(br.height * dpr);
+            if (ov.width !== W || ov.height !== H) { ov.width = W; ov.height = H; }
+            const ctx = ov.getContext('2d');
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.clearRect(0, 0, br.width, br.height);
+            if (!ui.showPlan) return;
+            const it = cad.mpts.length && cadViews().find(x => x.kind === cad.mkind);
+            if (it) {
+                const r = it.cv.getBoundingClientRect(), v = it.view;
+                const S = ([x, y]) => [r.left - br.left + r.width / 2 + (x - v.cx) * v.s, r.top - br.top + r.height / 2 - (y - v.cy) * v.s];
+                const pts = cad.mpts.slice();
+                if (pts.length === 1 && cad.hover && cad.hover.kind === cad.mkind) pts.push([cad.hover.wx, cad.hover.wy]);
+                ctx.save();
+                ctx.beginPath(); ctx.rect(r.left - br.left, r.top - br.top, r.width, r.height); ctx.clip();
+                ctx.strokeStyle = ctx.fillStyle = '#ffd166';
+                ctx.lineWidth = 1.5;
+                if (pts.length === 2) {
+                    const [a, b] = pts.map(S);
+                    ctx.setLineDash([6, 4]);
+                    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+                pts.map(S).forEach(([x, y]) => ctx.fillRect(x - 3, y - 3, 6, 6));
+                ctx.restore();
+            }
+            const L = cad.hover;
+            if (L && cadViews().some(x => x.kind === L.kind)) {
+                const ox = L.r.left - br.left, oy = L.r.top - br.top, x = Math.round(ox + L.mx) + 0.5, y = Math.round(oy + L.my) + 0.5;
+                ctx.save();
+                ctx.beginPath(); ctx.rect(ox, oy, L.r.width, L.r.height); ctx.clip();
+                ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(ox, y); ctx.lineTo(x - 6, y); ctx.moveTo(x + 6, y); ctx.lineTo(ox + L.r.width, y);
+                ctx.moveTo(x, oy); ctx.lineTo(x, y - 6); ctx.moveTo(x, y + 6); ctx.lineTo(x, oy + L.r.height);
+                ctx.stroke();
+                ctx.strokeRect(x - 4, y - 4, 8, 8); // ô chọn ở giữa như AutoCAD
+                ctx.restore();
+            }
+        }
+
+        // Cọc đang được rê chuột tới (bình đồ: gần đoạn mặt cắt; trắc dọc: gần đường dóng)
+        function cadHoverPole(L) {
+            if (!L || cad.measure) return null;
+            if (L.kind === 'plan' && plan.data) {
+                const v = L.view, toX = x => L.r.width / 2 + (x - v.cx) * v.s, toY = y => L.r.height / 2 - (y - v.cy) * v.s;
+                let best = null, bestD = 10;
+                plan.data.poles.forEach(p => {
+                    const sx = toX(p.x), sy = toY(p.y);
+                    if (Math.abs(sx - L.mx) > 400 || Math.abs(sy - L.my) > 400) return;
+                    const [l, r] = planSegment(p);
+                    const pts = [[toX(l.x), toY(l.y)], [sx, sy], [toX(r.x), toY(r.y)]];
+                    for (let i = 0; i < 2; i++) {
+                        const [ax, ay] = pts[i], vx = pts[i + 1][0] - ax, vy = pts[i + 1][1] - ay, Lq = vx * vx + vy * vy;
+                        const t = Lq ? clamp(((L.mx - ax) * vx + (L.my - ay) * vy) / Lq, 0, 1) : 0;
+                        const dd = Math.hypot(L.mx - (ax + t * vx), L.my - (ay + t * vy));
+                        if (dd < bestD) { bestD = dd; best = p.r; }
+                    }
+                });
+                return best;
+            }
+            if (L.kind === 'profile' && drawState.profile) {
+                let best = null, bestD = 6 / L.view.s;
+                drawState.profile.poles.forEach(p => { const dd = Math.abs(p.c - L.wx); if (dd < bestD) { bestD = dd; best = p.r; } });
+                return best;
+            }
+            return null;
+        }
+
+        // Trắc ngang thu nhỏ cạnh con trỏ (chỉ phần mặt đất, bỏ bảng số)
+        function showMiniSection(r, L) {
+            const box = $('#mini-sec');
+            if (r === null || r === undefined) { box.classList.remove('show'); cad.miniR = null; return; }
+            const key = drawState.version + '/' + ui.secV;
+            if (cad.miniKey !== key) { cad.miniCache.clear(); cad.miniKey = key; cad.miniR = null; }
+            let d = cad.miniCache.get(r);
+            if (d === undefined) {
+                const s = state.sections[r];
+                const hasPts = s && ['left', 'right'].some(side => s[side].some(t => t.dist !== '' || t.elev !== ''));
+                d = null; // cọc chỉ có cao độ tim thì không có gì để xem
+                if (hasPts) { // tự phóng đứng để thấy rõ địa hình trong khung nhỏ
+                    const pts = sectionPoints(s), zs = pts.map(p => p.z).filter(isFinite), offs = pts.map(p => p.off);
+                    const keep = ui.secV, rz = Math.max(Math.max(...zs) - Math.min(...zs), 0.1);
+                    ui.secV = clamp(Math.round((Math.max(...offs) - Math.min(...offs)) * 0.3 / rz), 1, 10);
+                    d = buildSection(r);
+                    d.k = ui.secV;
+                    ui.secV = keep;
+                }
+                if (d) { // chỉ giữ phần phía trên mép bảng (y > 0): đường tự nhiên, đường dóng, ký hiệu tim, tên cọc
+                    d.items.forEach(it => { it.bb = itemBox(it); });
+                    d.items = d.items.filter(it => (it.t === 'text' ? it.y > 0.05 : it.bb[1] >= -0.01 && it.bb[3] > 0.01));
+                }
+                cad.miniCache.set(r, d);
+            }
+            if (!d || !d.items.length) { box.classList.remove('show'); cad.miniR = null; return; }
+            if (cad.miniR !== r) {
+                const s = state.sections[r];
+                $('#mini-title').textContent = `${d.name} · ${kmText(d.c)} · cao độ ${s.elevation || '—'} · trái ${s.left.length} / phải ${s.right.length} điểm · đứng ×${d.k}`;
+                const cv = $('#mini-canvas'), W = 300, H = 170, dpr = window.devicePixelRatio || 1;
+                cv.width = W * dpr; cv.height = H * dpr;
+                const ctx = cv.getContext('2d');
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                ctx.fillStyle = '#212830';
+                ctx.fillRect(0, 0, W, H);
+                const b = itemsBox(d.items), s2 = Math.min((W - 16) / ((b[2] - b[0]) || 1), (H - 16) / ((b[3] - b[1]) || 1));
+                const v = { s: s2, cx: (b[0] + b[2]) / 2, cy: (b[1] + b[3]) / 2 };
+                drawCadGrid(ctx, W, H, v);
+                renderItems(ctx, d.items, v, W, H);
+                cad.miniR = r;
+            }
+            const br = box.parentNode.getBoundingClientRect(), bw = 310, bh = 200;
+            let x = L.r.left - br.left + L.mx + 18, y = L.r.top - br.top + L.my + 18;
+            if (x + bw > br.width) x = L.r.left - br.left + L.mx - bw - 12;
+            if (y + bh > br.height) y = L.r.top - br.top + L.my - bh - 12;
+            box.style.left = Math.max(2, x) + 'px';
+            box.style.top = Math.max(2, y) + 'px';
+            box.classList.add('show');
+        }
+
+        function cadSetHover(L) {
+            cad.hover = L;
+            $('.plan-body').classList.toggle('cad-hover', !!L);
+            showMiniSection(L && !(plan.drag && plan.drag.moved) ? cadHoverPole(L) : null, L);
+            cadStatus();
+            cadDrawOverlay();
+        }
+
+        // ---- Tô màu theo cao độ (bình đồ) ----
+        const HEAT_STOPS = [[0, [44, 123, 182]], [0.25, [0, 166, 202]], [0.5, [144, 235, 157]], [0.75, [249, 208, 87]], [1, [215, 25, 28]]];
+        function planHeatRange(d) {
+            if (d.heat) return d.heat;
+            const zs = [];
+            d.poles.forEach(p => {
+                const z0 = parseFloat(state.sections[p.r].elevation);
+                if (isFinite(z0) && z0 !== 0) zs.push(z0); // cọc cao độ 0 (thường là chưa có số liệu) không tính vào thang màu
+                p.pts.forEach(q => { if (isFinite(q.elev)) zs.push(q.elev); });
+            });
+            zs.sort((a, b) => a - b);
+            // Bỏ 2% hai đầu để vài điểm sai (ví dụ cao độ 0) không làm nhạt cả thang màu
+            const q = f => zs.length ? zs[Math.min(zs.length - 1, Math.max(0, Math.round(f * (zs.length - 1))))] : 0;
+            let lo = q(0.02), hi = q(0.98);
+            if (hi - lo < 1e-6) hi = lo + 1;
+            return (d.heat = { lo, hi });
+        }
+        function heatColor(hr, z) {
+            if (!isFinite(z)) return '#808080';
+            const t = clamp((z - hr.lo) / (hr.hi - hr.lo), 0, 1);
+            let i = 1;
+            while (i < HEAT_STOPS.length - 1 && t > HEAT_STOPS[i][0]) i++;
+            const [t0, c0] = HEAT_STOPS[i - 1], [t1, c1] = HEAT_STOPS[i], f = (t - t0) / (t1 - t0);
+            return `rgb(${c0.map((c, k) => Math.round(c + (c1[k] - c) * f)).join(',')})`;
+        }
+        function drawHeatLegend(ctx, hr, w) {
+            const x = w - 58, y = 14, bh = 120;
+            const g = ctx.createLinearGradient(0, y + bh, 0, y);
+            HEAT_STOPS.forEach(([t, c]) => g.addColorStop(t, `rgb(${c.join(',')})`));
+            ctx.fillStyle = 'rgba(27,33,41,0.85)';
+            ctx.fillRect(x - 8, y - 8, 62, bh + 30);
+            ctx.fillStyle = g;
+            ctx.fillRect(x, y, 12, bh);
+            ctx.fillStyle = '#e6edf3';
+            ctx.font = '10px "Segoe UI", sans-serif';
+            ctx.textAlign = 'left';
+            [[hr.hi, y + 4], [(hr.lo + hr.hi) / 2, y + bh / 2 + 3], [hr.lo, y + bh]].forEach(([z, yy]) => ctx.fillText(z.toFixed(2), x + 16, yy));
+            ctx.fillText('Cao độ (m)', x - 4, y + bh + 15);
+        }
+
+        // ---- Số liệu bất thường ----
+        const WARN_LIMIT = { poleJump: 1.5, miaJump: 2.0 }; // m: chênh với cọc lân cận / với điểm mia liền trước
+        function findWarnings() {
+            if (cad.warnVer === drawState.version) return { list: cad.warns, rows: cad.warnRows };
+            const out = [], ch = sectionChainages();
+            const rows = state.sections.map((s, r) => ({ s, r })).filter(o => !isEmptySection(o.s));
+            const zs = rows.map(o => (o.s.elevation === '' ? NaN : parseFloat(o.s.elevation)));
+            let prevC = null;
+            const zeroRows = [];
+            rows.forEach(({ s, r }, i) => {
+                const add = msg => out.push({ r, msg });
+                const c = ch[r];
+                if (prevC !== null && !(c > prevC)) add(`lý trình ${f3(c)} không lớn hơn cọc trước (${f3(prevC)})`);
+                prevC = c;
+                if (!isFinite(zs[i])) add('thiếu cao độ cọc');
+                else if (zs[i] === 0) zeroRows.push(i); // cao độ 0: thường là chưa có số liệu (xử lý sau vòng lặp)
+                else {
+                    const nb = [zs[i - 2], zs[i - 1], zs[i + 1], zs[i + 2]].filter(z => isFinite(z) && z !== 0).sort((a, b) => a - b);
+                    if (nb.length >= 2) {
+                        const m = nb.length / 2, med = nb.length % 2 ? nb[m - 0.5] : (nb[m - 1] + nb[m]) / 2;
+                        if (Math.abs(zs[i] - med) > WARN_LIMIT.poleJump) add(`cao độ cọc ${f3(zs[i])} chênh ${f3(zs[i] - med)} m so với các cọc lân cận`);
+                    }
+                }
+                ['left', 'right'].forEach(side => {
+                    const absE = absElevations(s, side);
+                    let prevZ = isFinite(zs[i]) ? zs[i] : null, prevD = null;
+                    s[side].forEach((t, j) => {
+                        if (t.dist === '' && t.elev === '') return;
+                        const nm = `${side === 'left' ? 'trái' : 'phải'} điểm ${j + 1}`;
+                        if (t.elev === '') { add(`${nm}: thiếu cao độ`); return; }
+                        const z = absE[j];
+                        if (prevZ !== null && isFinite(z) && Math.abs(z - prevZ) > WARN_LIMIT.miaJump) add(`${nm}: cao độ ${f3(z)} chênh ${f3(z - prevZ)} m so với điểm trước`);
+                        if (isFinite(z)) prevZ = z;
+                        const dd = parseFloat(t.dist);
+                        if (modes.distCum && prevD !== null && isFinite(dd) && dd < prevD) add(`${nm}: khoảng cách ${f3(dd)} nhỏ hơn điểm trước (${f3(prevD)})`);
+                        if (isFinite(dd)) prevD = dd;
+                    });
+                });
+            });
+            // Cọc cao độ 0: cọc lẻ (lỗi nhập) liệt kê từng cọc; đoạn liên tiếp từ 3 cọc trở lên (đoạn chưa đo) gộp một mục
+            const zeroWarn = [];
+            for (let a = 0; a < zeroRows.length;) {
+                let b = a;
+                while (b + 1 < zeroRows.length && zeroRows[b + 1] === zeroRows[b] + 1) b++;
+                const r0 = rows[zeroRows[a]].r, r1 = rows[zeroRows[b]].r;
+                if (b - a >= 2) zeroWarn.push({ r: r0, msg: `${b - a + 1} cọc liên tiếp có cao độ bằng 0 (đến ${kmText(ch[r1])}) — có thể chưa có số liệu` });
+                else for (let k = a; k <= b; k++) zeroWarn.push({ r: rows[zeroRows[k]].r, msg: 'cao độ cọc bằng 0 — có thể thiếu số liệu' });
+                a = b + 1;
+            }
+            out.push(...zeroWarn);
+            const order = new Map(rows.map((o, i) => [o.r, i]));
+            out.sort((x, y) => order.get(x.r) - order.get(y.r));
+            cad.warnVer = drawState.version;
+            cad.warns = out;
+            cad.warnRows = new Set([...out.map(w => w.r), ...zeroRows.map(i => rows[i].r)]);
+            return { list: out, rows: cad.warnRows };
+        }
+        function updateWarnButton() {
+            const n = findWarnings().list.length, b = $('#cad-warn');
+            b.textContent = `⚠ ${n}`;
+            b.classList.toggle('none', !n);
+            b.title = n ? `${n} chỗ số liệu có thể sai — bấm để xem` : 'Không thấy số liệu bất thường';
+        }
+        function renderWarnPop() {
+            const { list } = findWarnings(), ch = sectionChainages(), MAX = 400;
+            $('#warn-pop').innerHTML = `<div class="pop-head"><span>${list.length ? `${list.length} chỗ cần kiểm tra (bấm để chọn cọc)` : 'Không thấy số liệu bất thường'}</span></div>`
+                + list.slice(0, MAX).map(w => `<div class="wi" data-r="${w.r}"><b>${esc(state.sections[w.r].name || 'Dòng ' + (w.r + 1))}</b> · ${kmText(ch[w.r])} — ${esc(w.msg)}</div>`).join('')
+                + (list.length > MAX ? `<div class="wi">… còn ${list.length - MAX} chỗ nữa</div>` : '')
+                + `<div class="pop-head" style="border:0;border-top:1px solid var(--line-soft);margin:4px 0 0;padding:4px 4px 0">Ngưỡng: cao độ cọc chênh &gt; ${WARN_LIMIT.poleJump} m so với cọc lân cận, điểm mia chênh &gt; ${WARN_LIMIT.miaJump} m so với điểm trước</div>`;
+        }
+
+        // ---- Lớp hiển thị ----
+        function cadLayerList() {
+            const out = new Map(), kinds = ui.splitView ? ['plan', 'profile'] : [ui.drawTab];
+            kinds.forEach(k => {
+                if (k === 'plan') [[LAYER.plAxis, 'Tim tuyến, ký hiệu cong'], [LAYER.plPole, 'Cọc'], [LAYER.plPoint, 'Điểm đo, mặt cắt']].forEach(([l, n]) => out.set(l, n));
+                else {
+                    const src = k === 'profile' ? drawState.profile : drawState.section;
+                    (src ? src.items : []).forEach(it => { if (!out.has(it.layer)) out.set(it.layer, it.layer); });
+                }
+            });
+            return [...out];
+        }
+        function renderLayersPop() {
+            $('#layers-pop').innerHTML = `<div class="pop-head"><span>Lớp hiển thị (chỉ trên màn hình)</span><a data-all="1">Bật hết</a></div>`
+                + cadLayerList().map(([l, n]) => `<label><input type="checkbox" data-layer="${esc(l)}" ${cad.hidden.has(l) ? '' : 'checked'}><span class="sw" style="background:${aciColor({ layer: l })}"></span>${esc(n)}</label>`).join('');
+        }
+        function cadRedraw() {
+            if (!ui.showPlan) return;
+            if (ui.splitView || ui.drawTab === 'plan') drawPlan(false);
+            if (ui.splitView || ui.drawTab === 'profile') profView.draw();
+            if (!ui.splitView && ui.drawTab === 'section') secView.draw();
+            cad.miniR = null;
+        }
+
+        function closeCadPops() { document.querySelectorAll('.cad-pop.open').forEach(p => p.classList.remove('open')); }
+        function setMeasure(on) {
+            cad.measure = on;
+            cad.mpts = [];
+            cad.mkind = null;
+            $('#cad-measure').classList.toggle('on', on);
+            cadStatus();
+            cadDrawOverlay();
+        }
+
+        (function setupCad() {
+            const body = $('.plan-body');
+            body.addEventListener('pointermove', e => { cad.lastEvent = e; cadSetHover(cadLocate(e)); });
+            body.addEventListener('pointerleave', () => cadSetHover(null));
+            // Sau khi thu/phóng thì toạ độ dưới chuột đổi: tính lại
+            body.addEventListener('wheel', e => { cad.lastEvent = e; requestAnimationFrame(() => cadSetHover(cadLocate(e))); }, { passive: true });
+            // Chế độ đo: bấm (không kéo) để đặt điểm; kéo vẫn để di chuyển bản vẽ
+            body.addEventListener('pointerdown', e => { cad.down = { x: e.clientX, y: e.clientY }; }, true);
+            body.addEventListener('pointerup', e => {
+                const dn = cad.down;
+                cad.down = null;
+                if (!cad.measure || !dn || Math.hypot(e.clientX - dn.x, e.clientY - dn.y) >= 4) return;
+                const L = cadLocate(e);
+                if (!L) return;
+                if (cad.mpts.length !== 1 || cad.mkind !== L.kind) { cad.mpts = [[L.wx, L.wy]]; cad.mkind = L.kind; }
+                else cad.mpts.push([L.wx, L.wy]);
+                cadSetHover(L);
+            }, true);
+            $('#cad-measure').addEventListener('click', () => setMeasure(!cad.measure));
+            $('#cad-split').addEventListener('click', () => {
+                ui.splitView = !ui.splitView;
+                plan.view = null;          // khung nhìn mới: vừa lại cả hai bản vẽ
+                profView.view = null;
+                setDrawPanel(true, ui.drawTab === 'section' ? 'plan' : ui.drawTab);
+                requestAnimationFrame(() => refreshDrawings(true, true));
+            });
+            $('#plan-heat').addEventListener('change', e => { ui.planHeat = e.target.checked; drawPlan(false); scheduleSave(); });
+            const togglePop = (btn, pop, render) => $(btn).addEventListener('click', e => {
+                e.stopPropagation();
+                const p = $(pop), open = !p.classList.contains('open');
+                closeCadPops();
+                if (open) { render(); p.classList.add('open'); }
+            });
+            togglePop('#cad-layers', '#layers-pop', renderLayersPop);
+            togglePop('#cad-warn', '#warn-pop', renderWarnPop);
+            $('#layers-pop').addEventListener('click', e => e.stopPropagation());
+            $('#layers-pop').addEventListener('change', e => {
+                const l = e.target.dataset.layer;
+                if (l === undefined) return;
+                if (e.target.checked) cad.hidden.delete(l); else cad.hidden.add(l);
+                cadRedraw();
+                scheduleSave();
+            });
+            $('#layers-pop').addEventListener('click', e => {
+                if (!e.target.dataset.all) return;
+                cad.hidden.clear();
+                renderLayersPop();
+                cadRedraw();
+                scheduleSave();
+            });
+            $('#warn-pop').addEventListener('click', e => {
+                e.stopPropagation();
+                const el = e.target.closest('.wi[data-r]');
+                if (!el) return;
+                topGrid.setCur(+el.dataset.r, topGrid.cur.c);
+                topGrid.ensureVisible();
+            });
+            document.addEventListener('click', closeCadPops);
+            document.addEventListener('keydown', e => {
+                if (e.key !== 'Escape') return;
+                if (document.querySelector('.cad-pop.open')) closeCadPops();
+                else if (cad.measure) setMeasure(false);
             });
         })();
 
@@ -6039,7 +6572,10 @@ EOF
                 profV: ui.profV,
                 secV: ui.secV,
                 panelW: ui.panelW,
-                split: ui.split
+                split: ui.split,
+                splitView: ui.splitView,
+                planHeat: ui.planHeat,
+                hiddenLayers: [...cad.hidden]
             };
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { return; }
             const el = $('#save-status');
@@ -6065,6 +6601,9 @@ EOF
             if (+data.secV > 0) ui.secV = +data.secV;
             if (+data.panelW > 0) ui.panelW = clamp(+data.panelW, 20, 80);
             if (data.split) ui.split = clamp(+data.split || 55, 15, 85);
+            ui.splitView = !!data.splitView;
+            ui.planHeat = !!data.planHeat;
+            if (Array.isArray(data.hiddenLayers)) data.hiddenLayers.forEach(l => cad.hidden.add(String(l)));
             const items = data.items || data;
             if (!Array.isArray(items)) return;
             const str = v => (v === undefined || v === null ? '' : String(v));
