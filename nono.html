@@ -452,6 +452,7 @@
             <span class="draw-spacer"></span>
             <button class="plan-btn" id="cad-split" title="Xem bình đồ (trên) và trắc dọc (dưới) cùng lúc">Chia đôi</button>
             <button class="plan-btn" id="cad-measure" title="Đo: bấm hai điểm để biết khoảng cách, chênh cao, độ dốc. Esc để thoát">Đo</button>
+            <button class="plan-btn on" id="cad-snap" title="Bắt điểm khi đo (F3): điểm cuối □, trung điểm △, gần nhất trên đường ⧗">Bắt điểm</button>
             <span class="cad-pop-wrap">
                 <button class="plan-btn" id="cad-layers" title="Bật/tắt lớp hiển thị (không ảnh hưởng file DXF xuất ra)">Lớp ▾</button>
                 <div class="cad-pop" id="layers-pop"></div>
@@ -4192,6 +4193,7 @@ EOF
         const ui = { showPlan: false, planNums: true, drawTab: 'plan', profV: 10, secV: 1, panelW: 42, split: 55, splitView: false, planHeat: false };
         // Thao tác kiểu CAD trên bản vẽ: lớp đang ẩn, chế độ đo, vị trí chuột, danh sách bất thường, bộ nhớ trắc ngang thu nhỏ
         const cad = { hidden: new Set(), measure: false, mpts: [], mkind: null, hover: null, down: null, lastEvent: null,
+            snapOn: true, snapKey: '', snapC: null,
             warnVer: -1, warns: [], warnRows: new Set(), miniCache: new Map(), miniKey: '', miniR: null };
 
         const newTarget = () => ({ dist: '', elev: '', desc: '' });
@@ -6324,6 +6326,10 @@ EOF
                 ctx.stroke();
                 ctx.strokeRect(x - 4, y - 4, 8, 8); // ô chọn ở giữa như AutoCAD
                 ctx.restore();
+                if (L.snap) {
+                    const v = L.view, sx = ox + L.r.width / 2 + (L.snap.x - v.cx) * v.s, sy = oy + L.r.height / 2 - (L.snap.y - v.cy) * v.s;
+                    drawSnapMarker(ctx, L.snap, sx, sy, { x: ox, y: oy, w: L.r.width, h: L.r.height });
+                }
             }
         }
 
@@ -6405,7 +6411,107 @@ EOF
             box.classList.add('show');
         }
 
+        // ---- Bắt điểm khi đo (như OSNAP của AutoCAD) ----
+        const SNAP_NAME = { end: 'Điểm cuối', mid: 'Trung điểm', near: 'Gần nhất' };
+        const layerShort = l => String(l).split('-').slice(3).join('-') || l; // "TK-ADS-9303-Chữ trắc dọc" → "Chữ trắc dọc"
+        // Các điểm và đoạn có thể bắt của từng bản vẽ (toạ độ bản vẽ), dựng lại khi số liệu hoặc tỉ lệ đổi
+        function snapCandidates(kind) {
+            const key = [kind, drawState.version, kind === 'section' ? topGrid.cur.r + '/' + ui.secV : kind === 'profile' ? ui.profV : ''].join('/');
+            if (cad.snapKey === key && cad.snapC) return cad.snapC;
+            const pts = [], segs = [];
+            if (kind === 'plan') {
+                const d = plan.data;
+                if (d) {
+                    d.poles.forEach(p => {
+                        pts.push({ x: p.x, y: p.y, t: 'end', layer: LAYER.plPole, info: `Cọc ${p.name} · ${kmText(p.c)}` });
+                        p.pts.forEach((q, j) => pts.push({ x: q.x, y: q.y, t: 'end', layer: LAYER.plPoint, info: `${p.name} · mia ${q.side === 'left' ? 'trái' : 'phải'} ${fmtN(q.off)} m · cao độ ${fmtN(q.elev)}` }));
+                    });
+                    for (let i = 1; i < d.axis.length; i++) segs.push({ a: d.axis[i - 1], b: d.axis[i], layer: LAYER.plAxis, info: 'Tim tuyến' });
+                }
+            } else {
+                const src = kind === 'profile' ? drawState.profile : drawState.section;
+                (src ? src.items : []).forEach(it => {
+                    if ((it.t !== 'line' && it.t !== 'poly') || !it.pts) return;
+                    const info = layerShort(it.layer);
+                    it.pts.forEach(([x, y]) => pts.push({ x, y, t: 'end', layer: it.layer, info }));
+                    for (let i = 1; i < it.pts.length; i++) {
+                        const a = it.pts[i - 1], b = it.pts[i];
+                        pts.push({ x: (a[0] + b[0]) / 2, y: (a[1] + b[1]) / 2, t: 'mid', layer: it.layer, info });
+                        segs.push({ a, b, layer: it.layer, info });
+                    }
+                });
+            }
+            cad.snapKey = key;
+            return (cad.snapC = { pts, segs });
+        }
+        // Điểm bắt gần con trỏ (trong 10 px): ưu tiên điểm cuối, rồi trung điểm, rồi điểm gần nhất trên đường
+        function findSnap(L) {
+            if (!cad.snapOn || !L) return null;
+            const C = snapCandidates(L.kind), tol = 10 / L.view.s, best = { end: null, mid: null };
+            const bd = { end: tol, mid: tol };
+            const ground = l => /^KS-/.test(l); // nhiều đường trùng một điểm: ưu tiên đường tự nhiên / điểm đo
+            for (const p of C.pts) {
+                const dx = p.x - L.wx, dy = p.y - L.wy;
+                if (Math.abs(dx) > tol || Math.abs(dy) > tol || cad.hidden.has(p.layer)) continue;
+                const d = Math.hypot(dx, dy);
+                if (d < bd[p.t] - 1e-9 || (Math.abs(d - bd[p.t]) <= 1e-9 && ground(p.layer) && !ground(best[p.t].layer))) { bd[p.t] = d; best[p.t] = p; }
+            }
+            if (best.end) return best.end;
+            if (best.mid) return best.mid;
+            let near = null, nd = tol;
+            for (const s of C.segs) {
+                if (cad.hidden.has(s.layer)) continue;
+                const [ax, ay] = s.a, [bx, by] = s.b;
+                if (Math.min(ax, bx) - tol > L.wx || Math.max(ax, bx) + tol < L.wx || Math.min(ay, by) - tol > L.wy || Math.max(ay, by) + tol < L.wy) continue;
+                const vx = bx - ax, vy = by - ay, q = vx * vx + vy * vy, t = q ? clamp(((L.wx - ax) * vx + (L.wy - ay) * vy) / q, 0, 1) : 0;
+                const x = ax + t * vx, y = ay + t * vy, d = Math.hypot(x - L.wx, y - L.wy);
+                if (d < nd) { nd = d; near = { x, y, t: 'near', layer: s.layer, info: s.info }; }
+            }
+            return near;
+        }
+        // Khi đang đo: thay toạ độ chuột bằng điểm bắt được
+        function applySnap(L) {
+            if (!L || !cad.measure) return L;
+            const sn = findSnap(L);
+            if (sn) {
+                L.snap = Object.assign({}, sn);
+                L.wx = sn.x; L.wy = sn.y;
+                // Trắc dọc / trắc ngang: ghi thêm vị trí và cao độ thật của điểm bắt
+                const d = L.kind === 'profile' ? drawState.profile : L.kind === 'section' ? drawState.section : null;
+                if (d) {
+                    const k = L.kind === 'profile' ? ui.profV : d.k, pos = L.kind === 'profile' ? (sn.x >= 0 ? kmText(sn.x) : fmtN(sn.x) + ' m') : `cách tim ${fmtN(Math.abs(sn.x))} m`;
+                    L.snap.info += ` · ${pos}` + (sn.y >= -1e-9 ? ` · cao độ ${fmtN(d.mss + sn.y / k)}` : '');
+                }
+            }
+            return L;
+        }
+        // Ký hiệu bắt điểm như AutoCAD: □ điểm cuối, △ trung điểm, ⧗ gần nhất; kèm ô ghi chú
+        function drawSnapMarker(ctx, sn, x, y, box) {
+            ctx.save();
+            ctx.strokeStyle = '#ff9f1c';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            if (sn.t === 'end') ctx.rect(x - 6, y - 6, 12, 12);
+            else if (sn.t === 'mid') { ctx.moveTo(x, y - 7); ctx.lineTo(x + 7, y + 5); ctx.lineTo(x - 7, y + 5); ctx.closePath(); }
+            else { ctx.moveTo(x - 6, y - 6); ctx.lineTo(x + 6, y - 6); ctx.lineTo(x - 6, y + 6); ctx.lineTo(x + 6, y + 6); ctx.closePath(); }
+            ctx.stroke();
+            const s = `${SNAP_NAME[sn.t]} · ${sn.info}`;
+            ctx.font = '11px "Segoe UI", sans-serif';
+            const w = ctx.measureText(s).width + 10, bx = clamp(x + 12, box.x + 2, box.x + box.w - w - 2), by = clamp(y + 12, box.y + 2, box.y + box.h - 20);
+            ctx.fillStyle = 'rgba(255,248,220,0.95)';
+            ctx.fillRect(bx, by, w, 18);
+            ctx.strokeStyle = '#ff9f1c';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(bx + 0.5, by + 0.5, w - 1, 17);
+            ctx.fillStyle = '#222';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(s, bx + 5, by + 9);
+            ctx.restore();
+        }
+
         function cadSetHover(L) {
+            applySnap(L);
             cad.hover = L;
             $('.plan-body').classList.toggle('cad-hover', !!L);
             showMiniSection(L && !(plan.drag && plan.drag.moved) ? cadHoverPole(L) : null, L);
@@ -6570,13 +6676,23 @@ EOF
                 const dn = cad.down;
                 cad.down = null;
                 if (!cad.measure || !dn || Math.hypot(e.clientX - dn.x, e.clientY - dn.y) >= 4) return;
-                const L = cadLocate(e);
+                const L = applySnap(cadLocate(e));
                 if (!L) return;
                 if (cad.mpts.length !== 1 || cad.mkind !== L.kind) { cad.mpts = [[L.wx, L.wy]]; cad.mkind = L.kind; }
                 else cad.mpts.push([L.wx, L.wy]);
                 cadSetHover(L);
             }, true);
             $('#cad-measure').addEventListener('click', () => setMeasure(!cad.measure));
+            const toggleSnap = () => {
+                cad.snapOn = !cad.snapOn;
+                $('#cad-snap').classList.toggle('on', cad.snapOn);
+                if (cad.lastEvent) cadSetHover(cadLocate(cad.lastEvent));
+                toast(`Bắt điểm: ${cad.snapOn ? 'bật' : 'tắt'}`);
+            };
+            $('#cad-snap').addEventListener('click', toggleSnap);
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F3' && ui.showPlan) { e.preventDefault(); toggleSnap(); }
+            });
             $('#cad-split').addEventListener('click', () => {
                 ui.splitView = !ui.splitView;
                 plan.view = null;          // khung nhìn mới: vừa lại cả hai bản vẽ
